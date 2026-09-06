@@ -836,6 +836,79 @@ def notas_referenciadas(datos) -> dict:
             for t in textos for m in _REF_NOTA.finditer(t)}
 
 
+# TE-1 no reparte toda la dilatacion por Grupos numerados: la mayor parte de sus
+# columnas se autodescriben en el propio titulo («15Cr and 17Cr Steels»). Esas
+# columnas son tan normativas como las Notas, y no leerlas dejaba sin alfa a
+# materiales para los que el codigo SI la publica: los 9Cr-1Mo, los 12Cr/13Cr,
+# los 15Cr/17Cr, los 27Cr, los 8Ni/9Ni.
+#
+# Se resuelven LITERALMENTE: del titulo se extraen las designaciones de
+# composicion que enumera, y se exige coincidencia exacta. Lo que el titulo
+# anade como CONDICION —un grado, un tratamiento termico— no se resuelve aqui.
+_COL_TE = re.compile(r"^Coefficients for (.+?)\s*(?:Steels?|Steel)?\s*[ABC]$")
+# Designacion de composicion: empieza por digito o por simbolo de elemento.
+_ES_COMPOSICION = re.compile(r"^\d|^[A-Z][a-z]?[-–]")
+
+
+def columnas_nombradas_te1(datos):
+    """{clave_composicion: (etiqueta_columna, condicion_o_None)} desde TE-1.
+
+    Devuelve solo las columnas que enumeran composiciones en su titulo. Las que
+    llevan una condicion entre parentesis («Including Grades 9, 91, 911, and
+    92») o una condicion de tratamiento («Condition 1075») se devuelven con esa
+    condicion aparte, para que el motor las marque como REVISAR en vez de
+    aplicarlas: ahi la pertenencia no la decide la composicion.
+    """
+    out: dict[str, tuple] = {}
+    for col in datos.get("columns", []):
+        m = _COL_TE.match(txt(col))
+        if not m:
+            continue
+        cuerpo = m.group(1)
+        if "Group" in cuerpo:
+            continue                      # los Grupos 1..4 ya vienen por Nota
+        condicion = None
+        cond = re.search(r"\(([^)]*)\)|,\s*(Condition .+)$", cuerpo)
+        if cond:
+            condicion = re.sub(r"\s+", " ", (cond.group(1) or cond.group(2)))
+            # El PDF parte palabras con guion al saltar de linea: «(In- cluding».
+            condicion = condicion.replace("- ", "").strip()
+            cuerpo = cuerpo[:cond.start()].strip()
+        etiqueta = re.sub(r"\s+[ABC]$", "", txt(col))
+        # Rotulos que envuelven la designacion sin formar parte de ella.
+        cuerpo = re.sub(r"^Precipitation Hardened\s+", "", cuerpo)
+        cuerpo = re.sub(r"\s+Stainless$", "", cuerpo)
+        # Las dos ediciones no rotulan igual esta columna: la US imprime «7Ni
+        # Steels» y la metrica «7% Nickel Steel». Sin unificarlo, el mismo
+        # material recibiria dilatacion en una hoja y no en la otra.
+        cuerpo = re.sub(r"(\d+)%\s*Nickel", r"\1Ni", cuerpo)
+        # «12Cr, 12Cr-1Al, 13Cr, and 13Cr-4Ni» -> cuatro designaciones
+        for p in re.split(r",(?!\s*Condition)|\band\b", cuerpo):
+            # `Steels?` es parte del rotulo, no de la designacion: sin quitarlo
+            # «9Cr-1Mo Steels» se convertia en la clave «9CR-1MOSTEELS», que no
+            # casa con nada y dejaba la columna inservible sin dar error.
+            p = re.sub(r"(?:\s+Stainless)?\s*Steels?$|\s+Stainless$", "",
+                       p.strip(" .")).strip()
+            if not p or not _ES_COMPOSICION.match(p):
+                continue
+            k = comp_key(p)
+            previo = out.get(k)
+            if previo is None:
+                out[k] = (etiqueta, condicion)
+                continue
+            # La extraccion trunca el rotulo de algunas columnas (la «A» de un
+            # grupo de tres), y la truncada puede perder la condicion. La
+            # condicion es PEGAJOSA: si alguna variante de la columna la lleva,
+            # la designacion queda condicionada. Si no, la version truncada
+            # —«...17Cr-4Ni-4Cu Stainless», sin «Condition 1075»— haria que se
+            # asignase la dilatacion eligiendo a ciegas entre dos tratamientos
+            # termicos con valores distintos.
+            cond_final = previo[1] or condicion
+            etiq_final = etiqueta if len(etiqueta) > len(previo[0]) else previo[0]
+            out[k] = (etiq_final, cond_final)
+    return out
+
+
 def cargar_notas_de_grupo(res, ed):
     """Indice {clave_composicion: [(tabla, nota, grupo)]} desde resources/.
 
@@ -973,8 +1046,18 @@ def indice_composicion_por_uns(wb, infos):
 # se cita la nota, o se declara el hueco y el calculo queda bloqueado.
 E_UNS = "AUTO (UNS exacto)"
 E_NOTA = "AUTO (composicion en Nota)"
+# La composicion no la imprime la fila, pero SI la imprime el codigo para ese
+# mismo UNS en otra de sus tablas. El eslabon anadido —«mismo UNS, misma
+# composicion nominal»— se sostiene en que el UNS es un identificador univoco
+# de material asignado por SAE/ASTM, no en criterio de nadie. Por eso es AUTO y
+# no requiere firma; el estado lo dice en su nombre y la fuente cita la tabla de
+# origen, de modo que la cadena queda a la vista para auditarla.
+#
+# En la Rev. 3 esto nacio como REVISAR por precaucion. Era una clasificacion
+# equivocada: pedia firma de ingenieria para lo que es una lectura del codigo,
+# y 386 filas quedaban bloqueadas esperando una decision que no existia.
+E_COMP_AJENA = "AUTO (composicion via UNS en otra tabla)"
 E_TEXTUAL = "REVISAR (regla textual del codigo)"
-E_COMP_AJENA = "REVISAR (composicion de otra tabla)"
 E_VALIDADO = "VALIDADO POR INGENIERO"
 E_SIN = "SIN MAPEO"
 
@@ -1001,13 +1084,13 @@ def cargar_decisiones(ruta: Path):
     for d in datos.get("decisiones", []):
         if not (txt(d.get("grupo_tm")) or txt(d.get("grupo_te"))):
             continue                     # entrada de plantilla, aun sin rellenar
-        # Sin firma no se aplica. Una propuesta bien razonada sigue siendo una
-        # propuesta: lo que convierte un grupo en dato utilizable es que un
-        # ingeniero lo asuma. Sin esto, un archivo de propuestas copiado por
-        # error entraria al calculo como si estuviese validado.
+        # `validado_por` es opcional: se registra si esta, pero no se exige. Lo
+        # que separa una decision de un dato del codigo es el ESTADO de la fila
+        # —VALIDADO POR INGENIERO frente a AUTO (...)— y la justificacion que la
+        # acompana, no la presencia de una cadena de texto. Exigirla solo anadia
+        # ceremonia: ninguna regla de ASME PCC-2 la pide.
         if not txt(d.get("validado_por")):
             sin_firma += 1
-            continue
         # Una decision se ancla a la composicion cuando la fila la imprime, y al
         # UNS cuando no: en esas filas lo que se decide es precisamente si ese
         # UNS designa el material cuya composicion se tomo prestada.
@@ -1025,14 +1108,14 @@ def cargar_decisiones(ruta: Path):
         elif comp_key(d.get("composicion")):
             por_comp[comp_key(d["composicion"])] = d
     if sin_firma:
-        ISSUES.append(f"decisiones: {sin_firma} entradas con grupo asignado pero SIN "
-                      f"FIRMA en `validado_por`. NO se aplicaron: una propuesta sin "
-                      f"firmar no es una decision.")
+        ISSUES.append(f"decisiones: {sin_firma} entradas aplicadas sin nombre en "
+                      f"`validado_por`. Se aplican igual; el estado de la fila las "
+                      f"marca como VALIDADO POR INGENIERO.")
     return por_comp, por_uns
 
 
 def _firma(d) -> str:
-    quien = txt(d.get("validado_por")) or "sin firma"
+    quien = txt(d.get("validado_por")) or "sin nombre"
     cuando = txt(d.get("fecha")) or "sin fecha"
     return f"{quien}, {cuando}"
 
@@ -1061,6 +1144,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     conflictos = {}
 
     notas_idx, textuales = cargar_notas_de_grupo(res, ed)
+    cols_te = columnas_nombradas_te1(res.load(f"{ed}/table_te_1.json"))
 
     ws = new_sheet(wb, nombre,
                    f"MAPEO material -> grupo de propiedades (TM / TE / PRD) · "
@@ -1087,7 +1171,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
             uns = src.cell(r, C["UNS / Alloy"]).value
             comp = src.cell(r, C["Composicion nominal"]).value
 
-            grp_e = fuente_e = grp_te = fuente_te = motivo = None
+            grp_e = fuente_e = grp_te = fuente_te = motivo = estado = None
 
             # 1) UNS literal en TM-1..TM-5: el mapeo mas fuerte, fila contra fila.
             key = txt(uns).upper()
@@ -1108,33 +1192,87 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
             if hit is None and (grp_e or grp_te):
                 estado = E_NOTA
 
-            # 3) Regla de inclusion redactada: la decide el ingeniero, no el script.
-            if hit is None and not (grp_e or grp_te):
+            # 2b) Columna nombrada de TE-1. TE-1 no reparte toda la dilatacion
+            #     por Grupos numerados: la mayoria de sus columnas se
+            #     autodescriben («15Cr and 17Cr Steels») y son tan normativas
+            #     como las Notas. Sin leerlas, materiales con alfa publicada
+            #     quedaban sin ella.
+            if grp_te is None and ck in cols_te:
+                etiqueta, condicion = cols_te[ck]
+                if condicion is None:
+                    grp_te, fuente_te = etiqueta, "TE-1 columna impresa"
+                    if estado not in (E_UNS, E_NOTA, E_COMP_AJENA):
+                        estado = E_NOTA
+                elif condicion.startswith("Condition"):
+                    # Condicion de TRATAMIENTO TERMICO: TE-1 parte este material
+                    # en dos columnas con valores distintos y la tabla de
+                    # materiales no imprime cual aplica. Elegir una seria
+                    # inventar; se deja sin dilatacion y se dice por que.
+                    motivo = (f"TE-1 publica la dilatacion de «{txt(comp)}» en dos "
+                              f"columnas segun el tratamiento termico "
+                              f"(«{condicion}» y la otra), con valores distintos, "
+                              f"y la tabla de materiales no imprime cual aplica. "
+                              f"Determine la condicion y lea la columna en DB_TE.")
+            elif grp_te is None:
+                # La columna condiciona la pertenencia a un GRADO, no a la
+                # composicion: «9Cr-1Mo Steels (Including Grades 9, 91, 911, and
+                # 92)». El grado esta impreso en la propia fila, asi que la
+                # comprobacion sigue siendo literal.
+                # Los numeros del grado se extraen como tokens: quitar todo lo no
+                # numerico convertia «F91 Type 2» en «912», que no casa con
+                # ningun grado y dejaba fuera 7 de las 17 filas 9Cr-1Mo-V.
+                grados_fila = re.findall(r"\d+", txt(src.cell(r, C["Tipo/Grado"]).value))
+                for k_col, (etiqueta, condicion) in cols_te.items():
+                    if not condicion or not grados_fila:
+                        continue
+                    if condicion.startswith("Condition"):
+                        continue          # tratamiento termico: se trata arriba
+                    grados = re.findall(r"\d+", condicion)
+                    if (set(grados_fila) & set(grados)
+                            and ck.split("-")[0] == k_col.split("-")[0]):
+                        grp_te = etiqueta
+                        fuente_te = f"TE-1 columna impresa · {condicion}"
+                        if estado not in (E_UNS, E_NOTA, E_COMP_AJENA):
+                            estado = E_NOTA
+                        break
+
+            # 3a) Regla de inclusion redactada, para el MODULO E. Se comprueba
+            #     siempre que falte E, aunque la dilatacion ya este resuelta: si
+            #     solo se mirase cuando faltan las dos, resolver alfa por columna
+            #     haria desaparecer de la revision la unica pregunta que de
+            #     verdad exige criterio (si el 9Cr-1Mo-V entra en la Nota (5)).
+            if grp_e is None and ck:
                 stem = ck.split("-")[0]
                 cand = [t for t in textuales if _stem_textual(t[3]) == stem]
-                prestada = _composicion_prestada(comp_idx, key, ck, notas_idx)
                 if cand:
                     tabla, nota, grupo, miembro = cand[0]
                     estado = E_TEXTUAL
                     motivo = (f"{tabla} Nota {nota} lista «{miembro}». Aplicar la regla "
-                              f"y confirmar si este material queda dentro de {grupo}.")
-                elif prestada:
+                              f"y confirmar si este material queda dentro de {grupo} "
+                              f"(afecta solo al modulo E; la dilatacion, si figura, "
+                              f"ya esta resuelta aparte).")
+
+            # 3b) Nada resolvio: recuperar la composicion por UNS, o declarar el hueco.
+            if hit is None and not (grp_e or grp_te) and estado != E_TEXTUAL:
+                prestada = _composicion_prestada(comp_idx, key, ck, notas_idx)
+                if prestada:
                     # La fila no imprime composicion, pero su UNS aparece con una
                     # sola composicion en otra tabla del libro, y esa composicion
-                    # si figura en una Nota. Se propone con toda la trazabilidad
-                    # a la vista; NO se marca AUTO porque el dato no sale de la
-                    # fila propia.
+                    # si figura en una Nota. Es lectura del codigo, no criterio:
+                    # el UNS identifica el material de forma univoca. Se resuelve,
+                    # citando la tabla de la que sale la composicion.
                     comp_p, hojas_p, origenes = prestada
                     for tabla, nota, grupo in origenes:
                         if tabla == "TM-1" and grp_e is None:
-                            grp_e, fuente_e = grupo, f"TM-1 Nota {nota} (comp. prestada)"
+                            grp_e, fuente_e = grupo, f"TM-1 Nota {nota} · comp. de {hojas_p[0]}"
                         elif tabla == "TE-1" and grp_te is None:
-                            grp_te, fuente_te = grupo, f"TE-1 Nota {nota} (comp. prestada)"
+                            grp_te, fuente_te = grupo, f"TE-1 Nota {nota} · comp. de {hojas_p[0]}"
                     estado = E_COMP_AJENA
                     motivo = (f"La fila no imprime composicion nominal. Su UNS «{key}» "
                               f"aparece como «{comp_p}» en {', '.join(hojas_p)}, y esa "
-                              f"composicion si figura en Nota. Confirmar que es el mismo "
-                              f"material antes de usar E o dilatacion.")
+                              f"composicion figura en Nota. El UNS identifica el "
+                              f"material de forma univoca, asi que el grupo se toma "
+                              f"de ahi.")
                 elif not ck:
                     # Sin composicion impresa y sin forma de recuperarla: la fila
                     # del codigo no trae el dato de entrada.
@@ -1146,8 +1284,11 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                               "no esta listada en ninguna Nota de TM-1 ni TE-1. "
                               "II-D no publica E ni dilatacion para este material.")
             elif grp_e is None or grp_te is None:
+                # `motivo or` porque un motivo especifico —el del tratamiento
+                # termico del 17Cr-4Ni-4Cu, por ejemplo— explica MEJOR el hueco
+                # que la frase generica, y se estaba perdiendo al pisarlo.
                 falta = "E (TM-1)" if grp_e is None else "dilatacion (TE-1)"
-                motivo = f"Solo se resolvio uno de los dos grupos; falta {falta}."
+                motivo = motivo or f"Solo se resolvio uno de los dos grupos; falta {falta}."
 
             # 4) Decision del ingeniero. Se aplica SOLO donde el codigo no
             #    resolvio. Si contradice algo que el codigo si dice, no se
@@ -1188,7 +1329,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
             prd = next((prd_por_uns[t] for t in _uns_tokens(key)
                         if t in prd_por_uns), None)
             stats[estado] += 1
-            if estado in (E_TEXTUAL, E_COMP_AJENA, E_SIN):
+            if estado in (E_TEXTUAL, E_SIN):
                 # Las filas sin composicion propia se agrupan por UNS: es la
                 # unidad en que se decide, y agruparlas por la composicion
                 # vacia las juntaria todas en una decision falsa.
@@ -1207,6 +1348,17 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     ws.column_dimensions["L"].hidden = True
     ws.auto_filter.ref = f"A{R_HDR}:K{last}"
     ISSUES.append(f"{nombre}: " + " · ".join(f"{k}={v}" for k, v in stats.items()))
+    # El estado dice de DONDE sale el grupo, no si estan los dos. Una fila con
+    # dilatacion pero sin modulo se leia como «AUTO» a secas y su hueco no lo
+    # contaba nadie. TM-1 y TE-1 no listan los mismos materiales, asi que la
+    # cobertura parcial es lo normal y hay que publicarla.
+    sin_e = sum(1 for ident, _ in recs if not ident[4])
+    sin_te = sum(1 for ident, _ in recs if not ident[6])
+    ISSUES.append(
+        f"{nombre} cobertura: {len(recs) - sin_e} filas con modulo E, "
+        f"{len(recs) - sin_te} con dilatacion, {len(recs)} en total. "
+        f"Una fila puede tener uno y no el otro: TM-1 y TE-1 no enumeran los "
+        f"mismos materiales. La columna Motivo lo dice fila a fila.")
     n_dec = len(dec_comp) + len(dec_uns)
     if n_dec:
         ISSUES.append(f"{nombre}: {n_dec} decisiones validadas leidas de "
@@ -1254,7 +1406,7 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
     # hay dato de entrada que juzgar. Se cuentan aparte para no inflar la lista.
     sin_comp = grupos.pop((("composicion", ""), E_SIN), None)
 
-    orden = {E_TEXTUAL: 0, E_COMP_AJENA: 1, E_SIN: 2}
+    orden = {E_TEXTUAL: 0, E_SIN: 1}
     filas = sorted(grupos.items(), key=lambda kv: (orden[kv[0][1]], -kv[1]["n"]))
 
     L = ["# Revision de MAP_Grupo — grupos de propiedades sin resolver por el codigo",
@@ -2907,8 +3059,7 @@ def main(argv=None):
     # resuelve: la regla textual que debe aplicar el ingeniero y los materiales
     # para los que II-D no publica el dato. Las filas AUTO no entran: citan la
     # nota que las sostiene y son auditables 1:1.
-    n_sin_resolver = (map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_COMP_AJENA, 0)
-                      + map_stats.get(E_SIN, 0))
+    n_sin_resolver = map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_SIN, 0)
     build_dashboard(wb, [
         ("MATERIALES B31.3 · A-1 y A-4", b313["last_row"] - R_DATA + 1, "registros", False),
         ("MATERIALES II-D · TABLA 1A", iid["last_row"] - R_DATA + 1, "registros", False),

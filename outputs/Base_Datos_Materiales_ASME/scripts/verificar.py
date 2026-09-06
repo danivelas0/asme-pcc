@@ -721,20 +721,27 @@ def auditar():
                 if not fuente:
                     sin_cita += 1           # grupo sin fuente: prohibido
                     continue
-                # Una fila validada por una persona tiene que decirlo en la fuente:
-                # es lo que permite separarla de lo que dice el codigo.
-                if est.startswith("VALIDADO") and "Validado por ingeniero" not in fuente:
-                    validado_sin_marca += 1
+                # (la marca de decision se comprueba por FILA, mas abajo)
                 # Una composicion tomada de otra tabla tiene que declarar su origen.
-                if "otra tabla" in est and "prestada" not in fuente:
+                if "otra tabla" in est and "comp. de " not in fuente:
                     prestada_sin_origen += 1
-                if "Nota" not in fuente or "prestada" in fuente or "Validado" in fuente:
+                if "Nota" not in fuente or "comp. de " in fuente or "Validado" in fuente:
                     continue                # UNS impreso, comp. prestada o decision
                 nota = fuente.split("Nota")[-1].strip()
                 if (tabla, nota, grupo) not in respaldo.get(comp, set()):
                     huerfanas += 1
             if "otra tabla" in est and "aparece como" not in motivo:
                 prestada_sin_origen += 1
+            # La marca de decision se exige a la FILA, no a cada columna: una
+            # fila validada puede tener un grupo decidido por una persona y el
+            # otro leido del codigo. Es el caso del 9Cr-1Mo-V, cuyo modulo E se
+            # decide por la Nota (5) mientras su dilatacion sale de la columna
+            # impresa de TE-1. Exigirlo columna a columna marcaba eso como fallo.
+            if est.startswith("VALIDADO"):
+                fuentes = " ".join(str(ws_map.cell(r, cm[c]).value or "")
+                                   for c in ("Fuente E", "Fuente alfa"))
+                if "Validado por ingeniero" not in fuentes:
+                    validado_sin_marca += 1
 
     log("| Comprobacion | Detalle | Estado |")
     log("|---|---|---|")
@@ -761,10 +768,10 @@ def auditar():
          f"{len(completas)}/4 archivos con note_members"
          + (f" · faltan: {', '.join(faltan)}" if faltan else ""),
          not faltan),
-        ("Lo validado por una persona se declara como tal",
-         f"{validado_sin_marca} filas VALIDADO sin firma en la fuente",
+        ("Lo decidido por una persona se declara como tal",
+         f"{validado_sin_marca} filas VALIDADO sin marca en la fuente",
          validado_sin_marca == 0),
-        ("Toda composicion prestada declara de donde salio",
+        ("Toda composicion tomada por UNS cita su tabla de origen",
          f"{prestada_sin_origen} filas sin citar la tabla de origen",
          prestada_sin_origen == 0),
     ]

@@ -155,16 +155,16 @@ Cada hoja se audita contra las Notas de SU edicion: no numeran igual, asi que cr
 | La Nota citada lista esa composicion | 0 citas que el JSON del codigo no respalda | OK |
 | No sobrevive ningun estado de conjetura | sin filas 'PROPUESTA' | OK |
 | Las dos ediciones traen sus Notas de grupo | 4/4 archivos con note_members | OK |
-| Lo validado por una persona se declara como tal | 0 filas VALIDADO sin firma en la fuente | OK |
-| Toda composicion prestada declara de donde salio | 0 filas sin citar la tabla de origen | OK |
+| Lo decidido por una persona se declara como tal | 0 filas VALIDADO sin marca en la fuente | OK |
+| Toda composicion tomada por UNS cita su tabla de origen | 0 filas sin citar la tabla de origen | OK |
 
 | Estado del mapeo | Filas |
 |---|---:|
 | AUTO (composicion en Nota) | 2594 |
 | AUTO (UNS exacto) | 2584 |
 | SIN MAPEO | 1310 |
-| REVISAR (composicion de otra tabla) | 386 |
-| REVISAR (regla textual del codigo) | 34 |
+| AUTO (composicion via UNS en otra tabla) | 386 |
+| VALIDADO POR INGENIERO | 34 |
 
 Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
 

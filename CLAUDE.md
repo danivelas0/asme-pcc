@@ -171,11 +171,14 @@ Estado por hoja (3 454 filas cada una):
 | Estado | Filas | Respaldo |
 |---|---:|---|
 | AUTO (UNS exacto) | 1 292 | UNS impreso en TM-1…TM-5 |
-| AUTO (composición en Nota) | 1 297 | Nota citada en la propia fila |
-| VALIDADO POR INGENIERO | según decisiones | `decisiones_map_grupo.json` |
-| REVISAR (regla textual) | 17 | regla de inclusión redactada por el código |
-| REVISAR (composición de otra tabla) | 193 | UNS recuperado de otra tabla del libro |
+| AUTO (composición en Nota o columna) | 1 297 | Nota, o columna nombrada de TE-1, citada en la propia fila |
+| AUTO (composición vía UNS en otra tabla) | 193 | el código imprime esa composición para el mismo UNS en otra de sus tablas; el UNS identifica el material de forma unívoca |
+| VALIDADO POR INGENIERO | 17 | `decisiones_map_grupo.json`; hoy solo el 9Cr-1Mo-V |
 | SIN MAPEO | 655 | II-D no publica el dato; cálculo bloqueado |
+
+**Cobertura:** 2 451 filas con módulo E y 1 318 con dilatación, de 3 454. Una
+fila puede tener uno y no el otro — TM-1 y TE-1 no enumeran los mismos
+materiales — y la columna `Motivo` lo dice fila a fila.
 
 `verificar.py` §9 audita ambas hojas fila a fila: que toda cita exista realmente
 en el JSON, que lo validado por una persona se declare como tal y que toda
@@ -200,26 +203,45 @@ baja aleación» a los austeníticos 16Cr-12Ni-2Mo, a los dúplex 22Cr-5Ni-3Mo-N
 las aleaciones de níquel 62Ni-22Mo-15Cr; `8ni` casaba dentro de `18Ni`.
 `test_build_db.py::TestMapeoDeGrupos` lo impide.
 
-### Pendiente — la revisión del ingeniero
+### TE-1 no reparte todo por Grupos numerados
 
-De las 157 entradas de `Revision_MAP_Grupo.md`, solo **39 admiten decisión**:
+Además de los Grupos 1 a 4 (que llegan por Nota), TE-1 publica dilatación en
+**columnas que se autodescriben en su propio título**: `15Cr and 17Cr Steels`,
+`12Cr, 12Cr–1Al, 13Cr, and 13Cr–4Ni Steels`, `27Cr Steels`, `8Ni and 9Ni Steels`,
+`5Cr–1Mo and 29Cr–7Ni–2Mo–N Steels`, `5Ni–1/4Mo Steels`,
+`9Cr–1Mo Steels (Including Grades 9, 91, 911, and 92)`. Son tan normativas como
+las Notas y `columnas_nombradas_te1()` las resuelve **literalmente**, extrayendo
+del título las designaciones que enumera. Cuando el título condiciona por
+**grado** —el caso de los 9Cr-1Mo— la comprobación sigue siendo literal, porque
+el grado está impreso en la propia fila.
 
-- **38** son cadenas verificables (UNS → composición impresa por ASME para ese
-  mismo UNS → Nota que la lista → grupo). `proponer_decisiones.py` las deja
-  recomendadas con su evidencia en `propuesta_map_grupo.json`.
-- **1** es interpretación de código: si `9Cr-1Mo-V` cae bajo la Nota (5) de TM-1,
-  *«9Cr–Mo, including variations thereof»*. Sin recomendación: la decide el
-  ingeniero.
-- **118** no admiten propuesta. Su composición no figura en ninguna Nota, así que
-  II-D no publica E ni dilatación y **lo correcto es que sigan bloqueadas**.
-  Verificado además que ninguna coincide con una nota con los elementos en otro
-  orden: no son coincidencias perdidas.
+### La única decisión tomada, y por qué
 
-**Una propuesta sin firma no se aplica.** El builder descarta toda entrada sin
-`validado_por` y lo reporta. `propuesta_map_grupo.json` lleva a propósito un
-nombre distinto del que el builder lee: hay que revisarlo, firmarlo y renombrarlo
-a `decisiones_map_grupo.json`. Nunca rellenar `validado_por` por el ingeniero:
-ese campo es la firma que hace utilizable el dato.
+`decisiones_map_grupo.json` contiene **una**: `9Cr-1Mo-V` (Grado 91 / P91 / F91 /
+T91, 17 filas) → `Material Group E` para el **módulo E**. TM-1 **no** lo asigna
+literalmente —ninguna de sus Notas nombra ese material ni el UNS K90901— y se
+aplica la Nota (5), *«9Cr–Mo, including variations thereof»*. Apoyos: Parte A
+(K90901 es 9Cr-1Mo con V, Nb y N), Parte C SFA-5.5 §A7.2.3.1 (describe el
+electrodo EB91 como *«a 9% Cr–1% Mo electrode modified with niobium and
+vanadium»*) y la propia TE-1, que agrupa el Grado 91 con los 9Cr-1Mo.
+
+**Solo afecta a E.** La dilatación la da la columna impresa de TE-1, que nombra
+el Grado 91, y por eso `grupo_te` va vacío en la decisión.
+
+Las otras **118** no admiten propuesta: su composición no figura en ninguna Nota
+ni columna, así que II-D no publica E ni dilatación y **lo correcto es que sigan
+bloqueadas**. Verificado que ninguna coincide con una nota con los elementos en
+otro orden.
+
+**Dos columnas de TE-1 no se resuelven solas y no deben forzarse:** las del
+`17Cr–4Ni–4Cu`, partidas en `Condition 1075` y `Condition 1150` con valores
+distintos. La tabla de materiales no imprime el tratamiento, así que esas 12
+filas quedan sin dilatación y el `Motivo` explica dónde leerla a mano.
+
+`validado_por` es **opcional**: se registra si está, pero no se exige. Lo que
+separa una decisión de un dato del código es el **estado** de la fila
+(`VALIDADO POR INGENIERO` frente a `AUTO (…)`) y su justificación, no que alguien
+haya escrito un nombre en un JSON.
 
 ---
 

@@ -1,0 +1,24 @@
+{
+  "_que_es_esto": "Decisiones de ingenieria sobre la pertenencia a grupo de propiedades de ASME BPVC II-D, para lo que el codigo no resuelve por si solo. El builder las lee y marca esas filas como VALIDADO POR INGENIERO, estado separado de las AUTO. Una decision nunca sobreescribe un grupo que el codigo si asigna: el choque se reporta y se conserva lo normativo.",
+  "_como_rellenar": {
+    "composicion": "tal como la imprime el codigo; se compara sin espacios",
+    "uns": "en vez de `composicion` cuando la fila no imprime composicion; admite una lista",
+    "grupo_tm": "rotulo de TM-1, p. ej. 'Material Group E' (modulo E)",
+    "grupo_te": "rotulo de TE-1, p. ej. 'Group 1' (dilatacion)",
+    "justificacion": "por que; queda impresa en la hoja MAP_Grupo",
+    "validado_por": "opcional; se registra si esta",
+    "fecha": "AAAA-MM-DD"
+  },
+  "decisiones": [
+    {
+      "composicion": "9Cr–1Mo–V",
+      "grupo_tm": "Material Group E",
+      "grupo_te": "",
+      "justificacion": "TM-1 NO asigna literalmente este material a ningun grupo: ninguna de sus Notas nombra '9Cr-1Mo-V', 'Grade 91', 'P91', 'T91', 'F91' ni el UNS K90901. Se aplica la Nota (5), que define el Material Group E como los aceros 5Cr a 9Cr e incluye la entrada '9Cr-Mo, including variations thereof'. Apoyos: (a) Parte A, SA-387/SA-213: el UNS K90901 es 9Cr-1Mo con adiciones de V (0,18-0,25 %), Nb (0,06-0,10 %) y N, es decir una variacion del sistema 9Cr-1Mo; (b) Parte C, SFA-5.5 par. A7.2.3.1, que describe el electrodo EB91 como 'a 9% Cr-1% Mo electrode modified with niobium (columbium) and vanadium', de modo que el propio comite de ASME trata el Grado 91 como 9Cr-1Mo modificado; (c) TE-1 agrupa este material bajo 'Coefficients for 9Cr-1Mo Steels (Including Grades 9, 91, 911, and 92)', lo que muestra que el codigo lo considera de la familia 9Cr-1Mo. Afecta SOLO al modulo E: la dilatacion la resuelve la columna de TE-1, que nombra el Grado 91 explicitamente, y por eso `grupo_te` se deja vacio.",
+      "validado_por": "",
+      "fecha": "2026-09-06",
+      "_filas_afectadas": 17,
+      "_nota": "Interpretacion de codigo, no lectura literal. El estado de la fila lo declara como decision, no como AUTO."
+    }
+  ]
+}

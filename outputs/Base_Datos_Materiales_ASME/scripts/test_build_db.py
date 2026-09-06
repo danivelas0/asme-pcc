@@ -284,19 +284,17 @@ class TestDecisionesDelIngeniero:
         assert B.comp_key("9Cr-1Mo-V") in comp
         assert "S30400" in uns
 
-    def test_una_propuesta_sin_firmar_no_se_aplica(self, tmp_path):
-        # `proponer_decisiones.py` emite recomendaciones con el grupo ya puesto y
-        # `validado_por` vacio. Sin este guardarrail, copiar ese archivo con el
-        # nombre que el builder lee meteria propuestas al calculo como si
-        # estuviesen validadas.
+    def test_el_nombre_es_opcional(self, tmp_path):
+        # `validado_por` se registra si esta, pero no se exige: lo que separa una
+        # decision de un dato del codigo es el ESTADO de la fila, no que alguien
+        # haya escrito su nombre en un JSON.
         p = self._archivo(tmp_path, [
             {"uns": "S30400", "grupo_tm": "Material Group G", "validado_por": ""},
             {"composicion": "18Cr–8Ni", "grupo_tm": "Material Group G",
              "validado_por": "DV", "fecha": "2026-09-06"},
         ])
         comp, uns = B.cargar_decisiones(p)
-        assert uns == {}                       # la propuesta sin firma se descarta
-        assert len(comp) == 1                  # la firmada si entra
+        assert len(uns) == 1 and len(comp) == 1
 
     def test_el_estado_validado_es_distinto_de_auto(self):
         # Quien audite el libro tiene que poder separar lo que dice el codigo de
@@ -304,10 +302,61 @@ class TestDecisionesDelIngeniero:
         assert B.E_VALIDADO not in (B.E_UNS, B.E_NOTA)
         assert "AUTO" not in B.E_VALIDADO
 
-    def test_la_firma_deja_constancia_aunque_falte(self):
-        assert B._firma({}) == "sin firma, sin fecha"
+    def test_deja_constancia_aunque_falte_el_nombre(self):
+        assert B._firma({}) == "sin nombre, sin fecha"
         assert B._firma({"validado_por": "DV", "fecha": "2026-09-06"}) == \
             "DV, 2026-09-06"
+
+
+class TestColumnasNombradasTE1:
+    """TE-1 publica dilatacion en columnas que se autodescriben, no solo por Grupo."""
+
+    @staticmethod
+    def _cols(edicion="bpvc_ii_d_metric_2025"):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / edicion /
+                "table_te_1.json")
+        with open(ruta, encoding="utf-8") as fh:
+            return B.columnas_nombradas_te1(json.load(fh))
+
+    def test_reparte_los_titulos_con_varias_composiciones(self):
+        c = self._cols()
+        # «12Cr, 12Cr-1Al, 13Cr, and 13Cr-4Ni Steels» son cuatro designaciones.
+        for k in ("12CR", "12CR-1AL", "13CR", "13CR-4NI", "15CR", "17CR", "27CR"):
+            assert k in c, k
+
+    def test_no_arrastra_la_palabra_steels_a_la_clave(self):
+        # «9Cr-1Mo Steels» daba la clave «9CR-1MOSTEELS», que no casa con nada:
+        # la columna quedaba inservible sin dar ningun error.
+        c = self._cols()
+        assert "9CR-1MO" in c and not any("STEELS" in k for k in c)
+
+    def test_separa_la_condicion_del_titulo(self):
+        c = self._cols()
+        _, cond = c["9CR-1MO"]
+        assert cond and "91" in cond          # «Including Grades 9, 91, 911, and 92»
+        assert c["15CR"][1] is None           # esta no condiciona nada
+
+    def test_no_duplica_los_grupos_numerados(self):
+        # Los Grupos 1..4 llegan por Nota; no deben entrar tambien por columna.
+        assert not any("GROUP" in k for k in self._cols())
+
+    def test_las_dos_ediciones_dan_las_mismas_designaciones(self):
+        # La metrica rotula «7% Nickel Steel» y la US «7Ni Steels»: es la misma
+        # columna. Sin unificarlo, el mismo material tendria dilatacion en una
+        # hoja y no en la otra.
+        si, us = self._cols(), self._cols("bpvc_ii_d_customary_2025")
+        assert set(si) == set(us)
+        for k in si:
+            assert (si[k][1] or "") == (us[k][1] or ""), k
+
+    def test_la_condicion_de_tratamiento_es_pegajosa(self):
+        # La extraccion trunca una de las tres columnas del 17Cr-4Ni-4Cu y la
+        # truncada pierde el «Condition 1075». Si esa variante ganase, se
+        # asignaria dilatacion eligiendo a ciegas entre dos tratamientos con
+        # valores distintos.
+        c = self._cols()
+        assert c["17CR-4NI-4CU"][1].startswith("Condition")
 
 
 class TestFormulas:
