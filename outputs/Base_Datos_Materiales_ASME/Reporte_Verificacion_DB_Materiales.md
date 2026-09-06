@@ -1,16 +1,16 @@
-# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 2
+# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_v2.xlsx`  ·  37 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  38 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
 | Fuente | Filas JSON | Filas en la hoja | Estado |
 |---|---|---|---|
 | A-1 + A-4 -> DB_B31_3 | 1288 | 1288 | OK |
-| 1A -> DB_BPVC_IID | 1808 | 1799 | OK — 9 filas sin identificacion ni valores descartadas (ruido de extraccion) |
-| 1B + 3 -> DB_BPVC_IID_B | 1662 | 1655 | OK — 7 filas sin identificacion ni valores descartadas (ruido de extraccion) |
-| U -> DB_Su | 2484 | 2473 | OK — 11 filas sin identificacion ni valores descartadas (ruido de extraccion) |
-| Y-1 -> DB_Sy | 2475 | 2462 | OK — 13 filas sin identificacion ni valores descartadas (ruido de extraccion) |
+| 1A -> DB_BPVC_IID | 1808 | 1799 | OK — 9 filas sin identificacion ni valores (ruido de extraccion) |
+| 1B + 3 -> DB_BPVC_IID_B | 1662 | 1655 | OK — 7 filas sin identificacion ni valores (ruido de extraccion) |
+| U -> DB_Su | 2484 | 2473 | OK — 11 filas sin identificacion ni valores (ruido de extraccion) |
+| Y-1 -> DB_Sy | 2475 | 2462 | OK — 13 filas sin identificacion ni valores (ruido de extraccion) |
 
 ## 2. Unicidad de material_id
 
@@ -121,10 +121,59 @@ Validaciones de lista revisadas en todo el libro; con origen NO portable: **0**
 
 ## 7. Regresion del caso semilla (collar 12"-CWS-46-032-B1)
 
-| Magnitud | Antes (Datos_Ref) | Ahora (DB ASME) | Dictamen |
-|---|---|---|---|
-| Sa collar (A516 Gr.70) | 160,7 | 161 | OK |
-| Sa metal base (A106 Gr.B) | 137,9 | 138 | OK |
-| Sa gobernante | 137,9 | 138 | — |
+Temperatura de evaluacion: **25 °C** · metal base `A-1 | A106 | B | Pipe & tube | K03006 | ` · collar `A-1 | A516 | 70 | Plate, bar, shps., she`
 
-Dictamen global del modulo: **APTO**.
+| Magnitud | Referencia Python (MPa) | Hoja recalculada (MPa) | Dictamen | Estado |
+|---|---|---|---|---|
+| Sa collar (A516 Gr.70) | 161 | 161 | OK | OK |
+| Sa metal base (A106 Gr.B) | 138 | 138 | OK | OK |
+| Sa gobernante | 138 | 138 | — | OK |
+
+Dictamen global del modulo: **APTO** (OK).
+
+## 8. Capa de navegacion (Dashboard y proyecto VBA)
+
+| Comprobacion | Detalle | Estado |
+|---|---|---|
+| Unica hoja visible es el Dashboard | Dashboard | OK |
+| Las 9 hojas navegables estan hidden | 9 hojas | OK |
+| El resto esta veryHidden | 28 hojas | OK |
+| Ninguna base de datos alcanzable desde la UI |  | OK |
+| El paquete conserva xl/vbaProject.bin | .xlsm | OK |
+| Los botones cubren las 9 hojas navegables | 9 botones | OK |
+| Cada hoja navegable tiene enlace de retorno |  | OK |
+
+La visibilidad esta grabada en el archivo, no la impone la macro: con las macros bloqueadas el usuario sigue sin ver ninguna base de datos.
+
+## 9. Mapeo de grupos de propiedades (MAP_Grupo -> Notas de TM-1 / TE-1)
+
+| Comprobacion | Detalle | Estado |
+|---|---|---|
+| Todo grupo asignado cita su fuente | 0 filas con grupo y sin fuente | OK |
+| La Nota citada lista esa composicion | 0 citas que el JSON del codigo no respalda | OK |
+| No sobrevive ningun estado de conjetura | sin filas 'PROPUESTA' | OK |
+
+| Estado del mapeo | Filas |
+|---|---:|
+| AUTO (composicion en Nota) | 1297 |
+| AUTO (UNS exacto) | 1292 |
+| SIN MAPEO | 848 |
+| REVISAR (regla textual del codigo) | 17 |
+
+Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
+
+## Resultado
+
+| Seccion | Fallos |
+|---|---|
+| 1. Conteos | 0 |
+| 2. Unicidad | 0 |
+| 3. Auditoria fila a fila | 0 |
+| 4. Contiguidad de la cascada | 0 |
+| 5. Portabilidad de formulas | 0 |
+| 6. Interpolacion recalculada | 0 |
+| 7. Caso semilla | 0 |
+| 8. Capa de navegacion | 0 |
+| 9. Mapeo de grupos | 0 |
+
+**Total de fallos: 0.**

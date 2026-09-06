@@ -25,6 +25,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import re
 import sys
@@ -36,6 +37,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.workbook.defined_name import DefinedName
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.hyperlink import Hyperlink
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db_lib import (Resources, bilingual_key, build_material_id, clean, disambiguate,
@@ -766,19 +768,83 @@ def build_map_factores(res, wb):
     return dict(sheet="MAP_Factores", last_row=last)
 
 
-FERROUS_RULES = [
-    (r"carbon steel", "Carbon steels (TM-1 / TE-1) — definir si C <=0,30 % o > 0,30 %"),
-    (r"c-?\s*mn|carbon-?manganese", "Carbon steels (TM-1 / TE-1) — definir por %C"),
-    (r"\b9cr\b|9cr-1mo|gr(ade)?\s*9[12]", "9Cr-1Mo (incl. Gr. 9, 91, 911, 92) — TM-1 / TE-1"),
-    (r"\b5cr\b|5cr-1mo", "5Cr-1Mo y 29Cr-7Ni-2Mo-N — TE-1 / Material Group A (TM-1)"),
-    (r"2\s*1/4cr|2\.25cr|1\s*1/4cr|1cr|1/2cr|c-?1/2mo|mo\b",
-     "Aceros de baja aleacion — TM-1 Group A / TE-1 Group 1-2"),
-    (r"18cr-8ni|16cr-12ni|18cr-10ni|austenit|type 3\d\d",
-     "Inoxidables austeniticos — TM-1 Group C / TE-1 Group 3"),
-    (r"\b1[23]cr\b|\b17cr\b|\b15cr\b|ferritic|martensit", "12Cr / 15Cr / 17Cr — TE-1"),
-    (r"9ni|8ni", "Aceros 8Ni y 9Ni — TE-1"),
-    (r"duct(ile)? (cast )?iron", "Fundicion ductil — TM-1 / TE-1"),
-]
+# ---------------------------------------------------------------------------
+# Pertenencia a grupo de propiedades: se lee del codigo, no se infiere
+# ---------------------------------------------------------------------------
+# El grupo que da E (TM-1) y dilatacion (TE-1) NO se deduce de la composicion:
+# esta impreso en las Notas al pie de esas dos tablas, que enumeran uno por uno
+# los materiales de cada grupo. Aqui se cargan de resources/ y se consultan por
+# coincidencia LITERAL.
+#
+# Hasta la Rev. 3 esto era una lista de expresiones regulares sobre la
+# composicion impresa. Producia asignaciones FALSAS, no solo inciertas: el
+# patron `mo\b` capturaba cualquier material con molibdeno y rotulaba
+# «acero de baja aleacion» a los austeniticos 16Cr-12Ni-2Mo, a los duplex
+# 22Cr-5Ni-3Mo-N y a las aleaciones de niquel 62Ni-22Mo-15Cr; el patron `8ni`
+# casaba dentro de «18Ni». Una conjetura sentada junto a datos normativos es
+# peor que un hueco declarado, asi que la heuristica se elimino entera.
+
+# Algunos miembros no son un material sino una REGLA de inclusion redactada:
+# la Nota (5) de TM-1 lista «9Cr-Mo, including variations thereof». Eso no se
+# puede resolver por coincidencia literal ni se debe resolver por cuenta
+# propia: es una decision del ingeniero, y se marca como tal.
+REGLA_TEXTUAL = re.compile(r",\s*including\b", re.I)
+
+
+def comp_key(s) -> str:
+    """Clave de comparacion de una composicion nominal impresa.
+
+    El codigo imprime la misma composicion con o sin espacios alrededor del
+    guion segun la columna en que caiga (`18Cr-10Ni-Cb` en la tabla,
+    `18Cr - 10Ni - Cb` si la linea se justifico), de modo que el espacio no
+    puede formar parte de la clave. Los guiones tipograficos ya los homogeneiza
+    txt(); aqui solo se quitan espacios y se sube a mayusculas.
+    """
+    return re.sub(r"\s+", "", txt(s)).upper()
+
+
+def cargar_notas_de_grupo(res, ed):
+    """Indice {clave_composicion: [(tabla, nota, grupo)]} desde resources/.
+
+    Lee `note_members` de TM-1 y TE-1, que produce extraer_notas_ii_d.py a
+    partir del PDF del codigo. Devuelve tambien las reglas textuales, que no
+    entran al indice literal porque nunca casarian.
+    """
+    indice: dict[str, list[tuple]] = {}
+    textuales: list[tuple] = []
+    for archivo, tabla in (("table_tm_1.json", "TM-1"), ("table_te_1.json", "TE-1")):
+        datos = res.load(f"{ed}/{archivo}")
+        notas = datos.get("note_members")
+        if not notas:
+            raise SystemExit(
+                f"ERROR: {archivo} no trae `note_members`. El mapeo de grupos de "
+                f"TM-1/TE-1 sale de las Notas de esas tablas; sin ellas no hay "
+                f"fuente normativa y no se construye nada. Ejecute antes:\n"
+                f"    python extraer_notas_ii_d.py --pdf <II-D metrica> "
+                f"--resources <resources>")
+        for nota in notas:
+            if nota.get("tipo") != "grupo":
+                continue          # las notas de alias no definen pertenencia
+            origen = (tabla, nota["nota"], nota["grupo"])
+            for miembro in nota["miembros"]:
+                if REGLA_TEXTUAL.search(miembro):
+                    textuales.append((*origen, miembro))
+                else:
+                    indice.setdefault(comp_key(miembro), []).append(origen)
+    return indice, textuales
+
+
+def _stem_textual(miembro: str) -> str:
+    """Primer segmento de una regla textual: «9Cr-Mo, including...» -> «9CR»."""
+    return comp_key(miembro.split(",")[0]).split("-")[0]
+
+
+# Estados del mapeo. No existe ya un estado «PROPUESTA»: o el codigo lo dice y
+# se cita la nota, o se declara el hueco y el calculo queda bloqueado.
+E_UNS = "AUTO (UNS exacto)"
+E_NOTA = "AUTO (composicion en Nota)"
+E_TEXTUAL = "REVISAR (regla textual del codigo)"
+E_SIN = "SIN MAPEO"
 
 
 def build_map_grupo(res, wb, iid_infos):
@@ -797,17 +863,23 @@ def build_map_grupo(res, wb, iid_infos):
     prd_groups = {txt(g(r, "material")).upper(): txt(g(r, "material_group"))
                   for r in res.load(f"{ed}/table_prd.json")["rows"]}
 
+    notas_idx, textuales = cargar_notas_de_grupo(res, ed)
+
     ws = new_sheet(wb, "MAP_Grupo",
                    "MAPEO material -> grupo de propiedades (TM / TE / PRD) · ASME BPVC II-D 2025",
-                   "Artefacto derivado: TM/TE/PRD se indexan por FAMILIA de material, no por "
-                   "spec. AUTO = coincidencia literal de UNS con una fila de TM-2..TM-5 "
-                   "(auditable 1:1). PROPUESTA = familia sugerida a partir de la composicion "
-                   "nominal impresa: REQUIERE VALIDACION antes de usar E o dilatacion "
-                   "(regla 5.3 de knowledge/claude.md). SIN MAPEO = no usar E ni alfa.")
+                   "TM y TE se indexan por GRUPO de material, no por especificacion. La "
+                   "pertenencia esta impresa en las Notas al pie de TM-1 (Grupos A..J) y "
+                   "TE-1 (Grupos 1..4), y cada fila cita la nota que la sostiene. "
+                   "AUTO (UNS exacto) = el UNS figura literalmente en TM-1..TM-5. "
+                   "AUTO (composicion en Nota) = la composicion nominal figura literalmente "
+                   "en la lista de miembros de una nota. REVISAR = el codigo redacta una "
+                   "regla de inclusion que debe aplicar el ingeniero. SIN MAPEO = II-D no "
+                   "publica el dato: NO USAR E NI DILATACION.")
     n = write_headers(ws, ["material_id", "Spec. No.", "UNS / Alloy", "Composicion nominal",
-                           "Grupo TM propuesto", "Tabla TM", "Grupo PRD propuesto",
-                           "Estado", "Busqueda"])
-    recs, stats = [], {"AUTO (UNS exacto)": 0, "PROPUESTA (VALIDAR)": 0, "SIN MAPEO": 0}
+                           "Grupo E (TM)", "Fuente E", "Grupo dilatacion (TE)", "Fuente alfa",
+                           "Grupo PRD", "Estado", "Motivo", "Busqueda"])
+    recs, pendientes = [], []
+    stats = {E_UNS: 0, E_NOTA: 0, E_TEXTUAL: 0, E_SIN: 0}
     for info in iid_infos:
         src = wb[info["sheet"]]
         for r in range(R_DATA, info["last_row"] + 1):
@@ -815,39 +887,158 @@ def build_map_grupo(res, wb, iid_infos):
             spec = src.cell(r, C["Spec. No."]).value
             uns = src.cell(r, C["UNS / Alloy"]).value
             comp = src.cell(r, C["Composicion nominal"]).value
-            tm_tab = tm_grp = None
-            estado = "SIN MAPEO"
+
+            grp_e = fuente_e = grp_te = fuente_te = motivo = None
+
+            # 1) UNS literal en TM-1..TM-5: el mapeo mas fuerte, fila contra fila.
             key = txt(uns).upper()
-            hit = None
-            for tok in re.findall(r"[A-Z]\d{5}", key):
-                if tok in tm_index:
-                    hit = tm_index[tok]
-                    break
+            hit = next((tm_index[t] for t in re.findall(r"[A-Z]\d{5}", key)
+                        if t in tm_index), None)
             if hit is None and key in tm_index:
                 hit = tm_index[key]
             if hit:
-                tm_tab, tm_grp, estado = hit[0], hit[1], "AUTO (UNS exacto)"
-            else:
-                low = txt(comp).lower()
-                for pat, grp in FERROUS_RULES:
-                    if re.search(pat, low):
-                        tm_grp, tm_tab, estado = grp, "TM-1 / TE-1", "PROPUESTA (VALIDAR)"
-                        break
+                grp_e, fuente_e, estado = hit[1], hit[0], E_UNS
+
+            # 2) Composicion nominal listada en una Nota de TM-1 o TE-1.
+            ck = comp_key(comp)
+            for tabla, nota, grupo in notas_idx.get(ck, []):
+                if tabla == "TM-1" and grp_e is None:
+                    grp_e, fuente_e = grupo, f"TM-1 Nota {nota}"
+                elif tabla == "TE-1" and grp_te is None:
+                    grp_te, fuente_te = grupo, f"TE-1 Nota {nota}"
+            if hit is None and (grp_e or grp_te):
+                estado = E_NOTA
+
+            # 3) Regla de inclusion redactada: la decide el ingeniero, no el script.
+            if hit is None and not (grp_e or grp_te):
+                stem = ck.split("-")[0]
+                cand = [t for t in textuales if _stem_textual(t[3]) == stem]
+                if cand:
+                    tabla, nota, grupo, miembro = cand[0]
+                    estado = E_TEXTUAL
+                    motivo = (f"{tabla} Nota {nota} lista «{miembro}». Aplicar la regla "
+                              f"y confirmar si este material queda dentro de {grupo}.")
+                elif not ck:
+                    # Sin composicion impresa no hay nada que contrastar ni que
+                    # decidir: la fila del codigo no trae el dato de entrada.
+                    estado = E_SIN
+                    motivo = ("La fila no imprime composicion nominal y su UNS no "
+                              "figura en TM-1..TM-5: no hay dato con el que buscar "
+                              "el grupo.")
+                else:
+                    estado = E_SIN
+                    motivo = ("El UNS no figura en TM-1..TM-5 y la composicion nominal "
+                              "no esta listada en ninguna Nota de TM-1 ni TE-1. "
+                              "II-D no publica E ni dilatacion para este material.")
+            elif grp_e is None or grp_te is None:
+                falta = "E (TM-1)" if grp_e is None else "dilatacion (TE-1)"
+                motivo = f"Solo se resolvio uno de los dos grupos; falta {falta}."
+
             prd = next((v for k, v in prd_groups.items()
                         if k and k in txt(comp).upper()), None)
             stats[estado] += 1
-            recs.append(([mid, spec, uns, comp, tm_grp, tm_tab, prd, estado,
+            if estado in (E_TEXTUAL, E_SIN):
+                pendientes.append((txt(comp), estado, motivo, txt(spec), txt(uns)))
+            recs.append(([mid, spec, uns, comp, grp_e, fuente_e, grp_te, fuente_te,
+                          prd, estado, motivo,
                           search_key(mid, spec, uns, comp)], {}))
     last = write_rows(ws, recs, n)
-    autosize(ws, {"A": 46, "B": 12, "C": 14, "D": 24, "E": 52, "F": 12, "G": 22,
-                  "H": 20, "I": 28})
-    ws.column_dimensions["I"].hidden = True
-    ws.auto_filter.ref = f"A{R_HDR}:H{last}"
+    autosize(ws, {"A": 46, "B": 12, "C": 14, "D": 24, "E": 26, "F": 18, "G": 20,
+                  "H": 18, "I": 20, "J": 28, "K": 60, "L": 28})
+    ws.column_dimensions["L"].hidden = True
+    ws.auto_filter.ref = f"A{R_HDR}:K{last}"
     ISSUES.append("MAP_Grupo: " + " · ".join(f"{k}={v}" for k, v in stats.items()))
-    record_meta("MAP_Grupo", "derivado (TM-2..5, PRD)",
-                f"{ed}/table_tm_*.json ; table_prd.json", "2025", "-",
-                last - R_DATA + 1, "AUTO = UNS exacto; PROPUESTA requiere validacion.")
-    return last, stats
+    ISSUES.append(
+        "MAP_Grupo columna 'Grupo PRD': sigue resolviendose por coincidencia de "
+        "subcadena contra table_prd.json, heredado de la Rev. 2. No se toco en la "
+        "Rev. 3 y no alimenta ningun calculo; pendiente de revisar aparte.")
+    record_meta("MAP_Grupo", "TM-1/TE-1 Notas + TM-1..TM-5 (UNS)",
+                f"{ed}/table_tm_1.json (note_members) ; table_te_1.json "
+                f"(note_members) ; table_tm_*.json ; table_prd.json", "2025", "-",
+                last - R_DATA + 1,
+                "Cada fila cita la Nota que sostiene su grupo. SIN MAPEO = II-D no "
+                "publica el dato; no usar E ni dilatacion.")
+    return last, stats, pendientes
+
+
+def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
+    """Hoja de revision: lo que el codigo NO resuelve, agrupado para firmar.
+
+    Se agrupa por COMPOSICION NOMINAL porque es la unidad en que el codigo
+    decide: las 3 454 filas de material se reducen a unas decenas de decisiones
+    reales, y revisar fila a fila seria repetir el mismo juicio cientos de
+    veces. Se acompana el recuento de materiales afectados para que se vea que
+    pesa cada decision.
+    """
+    from collections import Counter, OrderedDict
+    grupos: "OrderedDict[tuple, dict]" = OrderedDict()
+    for comp, estado, motivo, spec, uns in pendientes:
+        g = grupos.setdefault((comp, estado), {"motivo": motivo, "n": 0,
+                                               "specs": Counter(), "uns": Counter()})
+        g["n"] += 1
+        if spec:
+            g["specs"][spec] += 1
+        if uns:
+            g["uns"][uns] += 1
+
+    # Las filas sin composicion impresa no son una decision de ingenieria: no hay
+    # dato de entrada que juzgar. Se cuentan aparte para no inflar la lista.
+    sin_comp = grupos.pop(("", E_SIN), None)
+
+    orden = {E_TEXTUAL: 0, E_SIN: 1}
+    filas = sorted(grupos.items(), key=lambda kv: (orden[kv[0][1]], -kv[1]["n"]))
+
+    L = ["# Revision de MAP_Grupo — grupos de propiedades sin resolver por el codigo",
+         "",
+         f"Generado por `build_db_materiales.py` el {datetime.date.today().isoformat()}.",
+         "Fuente: Notas de las Tablas TM-1 y TE-1 de ASME BPVC II-D (Metrica) 2025,",
+         "extraidas a `resources/` por `extraer_notas_ii_d.py`.",
+         "",
+         "## Que hay que decidir aqui",
+         "",
+         "Las filas que **no** aparecen en este documento ya estan resueltas contra el",
+         "codigo y citan la nota que las sostiene: no requieren criterio de ingenieria.",
+         "Lo que sigue es lo que el codigo no resuelve por si solo.",
+         "",
+         "| Estado | Filas de material |",
+         "|---|---:|"]
+    for k, v in stats.items():
+        L.append(f"| {k} | {v} |")
+    L += ["",
+          f"Decisiones distintas a tomar: **{len(filas)}** "
+          f"(sobre {sum(v['n'] for _, v in grupos.items())} filas de material)."]
+    if sin_comp:
+        L += ["",
+              f"Aparte, **{sin_comp['n']} filas no imprimen composicion nominal** y su "
+              "UNS no figura en TM-1..TM-5.",
+              "No entran en esta revision porque no hay dato de entrada que juzgar: para",
+              "asignarles grupo habria que identificar el material por otra via (la",
+              "especificacion y el grado en la tabla de origen)."]
+    L += ["",
+          "## Decisiones",
+          "",
+          "| # | Composicion nominal | Filas | Estado | Que hay que decidir | Grupo asignado | Firma / fecha |",
+          "|---:|---|---:|---|---|---|---|"]
+    for i, ((comp, estado), g) in enumerate(filas, start=1):
+        specs = ", ".join(s for s, _ in g["specs"].most_common(3))
+        if len(g["specs"]) > 3:
+            specs += f", +{len(g['specs']) - 3} mas"
+        motivo = (g["motivo"] or "").replace("\n", " ")
+        L.append(f"| {i} | `{comp}` | {g['n']} | {estado} | {motivo} "
+                 f"<br>Especificaciones: {specs or '—'} |  |  |")
+    L += ["",
+          "## Como usar este documento",
+          "",
+          "1. Para cada fila, decida el grupo de TM-1 (modulo E) y/o TE-1 (dilatacion)",
+          "   que corresponde, o confirme que II-D no publica el dato para ese material.",
+          "2. Anote el grupo en la columna correspondiente y firme.",
+          "3. Mientras una fila siga sin grupo, el motor deja el calculo BLOQUEADO para",
+          "   esos materiales. Es el comportamiento correcto: el codigo prohibe",
+          "   extrapolar y prohibe inventar la pertenencia a un grupo.",
+          ""]
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.write_text("\n".join(L), encoding="utf-8")
+    return len(filas)
 
 
 def iter_notas(d):
@@ -1370,12 +1561,17 @@ def finish_buscador(ctx, wb, curvas, cidx):
 
 
 def build_buscador_grupo(wb, curvas, bloques, rangos):
-    """Propiedades indexadas por FAMILIA de material (no por especificacion):
-    modulo E, dilatacion termica, Poisson y densidad. Mismo formato de tarjeta."""
+    """Propiedades indexadas por GRUPO de material (no por especificacion):
+    modulo E, dilatacion termica, Poisson y densidad. Mismo formato de tarjeta.
+
+    GRUPO es el rotulo normativo impreso en TM-1 / TE-1 («Material Group C»,
+    «Group 3»), no la FAMILIA de db_lib, que es una agrupacion derivada solo
+    para acortar listas desplegables y no interviene en ningun calculo.
+    """
     ws = new_sheet(wb, "Buscar_Propiedades",
-                   "BUSCADOR DE PROPIEDADES POR FAMILIA DE MATERIAL — modulo E (TM-1..5), "
+                   "BUSCADOR DE PROPIEDADES POR GRUPO DE MATERIAL — modulo E (TM-1..5), "
                    "dilatacion y modulo del Apendice C del B31.3, Poisson y densidad (PRD)",
-                   "Estas tablas del codigo se indexan por FAMILIA de material, no por "
+                   "Estas tablas del codigo se indexan por GRUPO de material, no por "
                    "especificacion: elija primero la tabla y despues el grupo. Para saber "
                    "que grupo corresponde a su material consulte MAP_Grupo. Valores en "
                    "unidades metricas (edicion SI del codigo). La unica celda que se "
@@ -1813,7 +2009,8 @@ INSTRUCCIONES = [
      "banda de valores y romperia la interpolacion.\n"
      "DB_Su / DB_Sy — Tablas U y Y-1 (resistencia a la traccion y fluencia por temperatura).\n"
      "DB_E — Tablas TM-1..5 (modulo E) · DB_TE — Tablas TE-1..5 (dilatacion) · DB_PRD — "
-     "Poisson y densidad. Estas tres se indexan por FAMILIA de material: ver MAP_Grupo.\n"
+     "Poisson y densidad. Estas tres se indexan por GRUPO de material (el rotulo impreso "
+     "en TM-1 / TE-1, no la familia de navegacion): ver MAP_Grupo.\n"
      "DB_C_dilatacion / DB_C_modulo — Apendice C del B31.3 (lado tuberia).\n"
      "DB_NoMetalicos — Apendices B y C-2/C-4 (termoplasticos, RTR, concreto, vidrio).\n"
      "MAP_Factores (Ej/Ec) · MAP_Grupo · Notas_Codigo · DB_Listas · _meta (trazabilidad)."),
@@ -1853,8 +2050,11 @@ INSTRUCCIONES = [
      "detectadas. Las hojas DB contienen solo valores (sin formulas): cualquier dato puede "
      "contrastarse contra el PDF del codigo. La tipografia cursiva/negrita de las tablas A-1C "
      "no viaja en la extraccion JSON: consulte la nota del material en Notas_Codigo. En "
-     "MAP_Grupo, solo las filas 'AUTO (UNS exacto)' son mapeo 1:1 auditable; las 'PROPUESTA "
-     "(VALIDAR)' requieren que el ingeniero confirme la familia antes de usar E o dilatacion."),
+     "MAP_Grupo toda fila con grupo asignado cita su fuente: el UNS impreso en TM-1..TM-5, "
+     "o la Nota de TM-1 / TE-1 que enumera esa composicion nominal. Las filas 'REVISAR' "
+     "corresponden a una regla de inclusion que redacta el codigo y debe aplicar el "
+     "ingeniero; las 'SIN MAPEO' son materiales para los que II-D no publica E ni "
+     "dilatacion, y en ellas el calculo queda bloqueado."),
     ("10. Convenciones",
      "Calculo en SI por defecto. Celdas de seleccion: texto azul sobre fondo amarillo; la "
      "celda de ENTRADA de temperatura lleva ademas borde rojo. Hojas de calculo protegidas "
@@ -1935,16 +2135,315 @@ def uniques(ws, last_row, key_col, val_col):
     return out
 
 
+# ---------------------------------------------------------------------------
+# Dashboard y capa de navegacion (Rev. 3)
+# ---------------------------------------------------------------------------
+# El libro se entrega como .xlsm: la unica hoja visible es el Dashboard y la
+# macro conmuta la visibilidad del resto. Los estados se graban ademas en el
+# archivo, de modo que quien abra con las macros bloqueadas siga sin ver
+# ninguna base de datos.
+DASH = "Dashboard"
+
+# Hojas que el usuario puede llegar a abrir. Todo lo demas queda veryHidden.
+# Esta lista DEBE coincidir con HojasNavegables() de vba/mod_nav.vba.
+NAVEGABLES = ["Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
+              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Propiedades",
+              "Buscar_NoMetalicos", "Instrucciones"]
+
+# La clave de destino de cada boton se guarda oculta en (fila del boton,
+# COL_CLAVE_BASE + columna del boton). Depende de la columna, y no solo de la
+# fila, porque el Dashboard pone tres tarjetas por banda: con una unica
+# columna de claves las tres escribirian en la misma celda.
+#
+# La base es 66 (BN) porque BM es la columna mas alta que usa cualquier hoja
+# navegable. No se usa N porque Parche_PCC2_Art212 ya ocupa K..P con sus
+# listas de cascada.
+# DEBE coincidir con COL_CLAVE_BASE de vba/mod_nav.vba.
+COL_CLAVE_BASE = 66
+CLAVE_VOLVER = "VOLVER"
+
+# Celda del aviso de macros. DEBE coincidir con CELDA_AVISO de vba/mod_nav.vba.
+FILA_AVISO = 4
+
+# Celda donde cada hoja navegable lleva su enlace de retorno. Se elige por
+# hoja porque los tres tipos de layout diferen: los buscadores y el motor
+# fusionan la fila 1 (y la 2) y congelan en A4, dejando la fila 3 libre;
+# Instrucciones no congela y empieza en B2, dejando libre la fila 1.
+ANCLA_VOLVER = {n: (3, 1, 3) for n in NAVEGABLES}    # (fila, col_ini, col_fin)
+ANCLA_VOLVER["Instrucciones"] = (1, 2, 3)
+
+DASH_NCOLS = 12
+DASH_ANCHO_COL = 15
+BTN_FILL = PatternFill("solid", fgColor=BLUE)
+BTN_F = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
+CARD_TIT_F = Font(name="Calibri", size=11, bold=True, color=NAVY)
+CARD_TXT_F = Font(name="Calibri", size=9, color="44546A")
+AVISO_ROJO_F = Font(name="Calibri", size=11, bold=True, color="9C0006")
+AVISO_ROJO_FILL = PatternFill("solid", fgColor="FFC7CE")
+PIE_F = Font(name="Calibri", size=9, italic=True, color="595959")
+PIE_FILL = PatternFill("solid", fgColor=GREY)
+KPI_AMBAR_F = Font(name="Calibri", size=18, bold=True, color="BF8F00")
+
+
+def _boton(ws, fila, c1, c2, texto, clave):
+    """Celda-boton con hipervinculo inocuo y la clave de destino en COL_CLAVE.
+
+    El hipervinculo apunta siempre a Dashboard!A1 y no navega por si mismo:
+    solo existe para que Excel dispare Workbook_SheetFollowHyperlink. Un
+    hipervinculo directo a la hoja destino seria invalido, porque la hoja
+    esta oculta cuando se hace clic.
+    """
+    b = _mrg(ws, fila, c1, c2, texto)
+    b.hyperlink = Hyperlink(ref=b.coordinate, location=f"'{DASH}'!A1", display=texto)
+    # El estilo se aplica DESPUES del hipervinculo: al asignarlo, Excel pinta
+    # la celda con el estilo "Hyperlink" (azul subrayado) y taparia el boton.
+    b.font, b.fill = BTN_F, BTN_FILL
+    b.alignment = Alignment(horizontal="center", vertical="center")
+    _celda_clave(ws, fila, c1).value = clave
+    return b
+
+
+def _celda_clave(ws, fila, columna):
+    """Celda oculta con la clave de destino del boton anclado en (fila, columna)."""
+    return ws.cell(fila, COL_CLAVE_BASE + columna)
+
+
+def _ocultar_columnas_clave(ws, cols_boton):
+    for c in sorted({COL_CLAVE_BASE + c for c in cols_boton}):
+        ws.column_dimensions[get_column_letter(c)].hidden = True
+
+
+def _tarjeta(ws, fila, c1, ancho, titulo, lineas, clave):
+    """Tarjeta de 4 filas: titulo, dos lineas de detalle y el boton ABRIR."""
+    c2 = c1 + ancho - 1
+    t = _mrg(ws, fila, c1, c2, titulo)
+    t.font = CARD_TIT_F
+    t.alignment = Alignment(vertical="center", indent=1)
+    for i, linea in enumerate(lineas[:2]):
+        d = _mrg(ws, fila + 1 + i, c1, c2, linea)
+        d.font = CARD_TXT_F
+        d.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+    _boton(ws, fila + 3, c1, c2, "▸ ABRIR", clave)
+    for r in range(fila, fila + 4):
+        for c in range(c1, c2 + 1):
+            cel = ws.cell(r, c)
+            if r != fila + 3:
+                cel.fill = CARD_FILL
+            cel.border = CARD_BORDER
+    ws.row_dimensions[fila].height = 20
+    ws.row_dimensions[fila + 1].height = 14
+    ws.row_dimensions[fila + 2].height = 14
+    ws.row_dimensions[fila + 3].height = 20
+
+
+_RE_TXT_FORMULA = re.compile(r'^="((?:[^"]|"")*)"$', re.DOTALL)
+_RE_LONGTEXT = re.compile(r'^=_xlfn\._LONGTEXT\((.*)\)$', re.DOTALL)
+_RE_ARG = re.compile(r'"((?:[^"]|"")*)"')
+
+
+def normalizar_textos_como_formula(wb):
+    """Convierte a texto plano las celdas que guardan una cadena como formula.
+
+    El maestro trae notas escritas como `="texto largo..."`. Excel solo admite
+    255 caracteres en un literal de cadena dentro de una formula, asi que al
+    reguardar el archivo -cosa que hace make_vba_seed.py al convertirlo a
+    .xlsm- lo parte en `_xlfn._LONGTEXT("trozo1","trozo2")`. Esa funcion no
+    existe fuera de Excel 365: en Google Sheets, en Excel de escritorio antiguo
+    y en LibreOffice la celda muestra #NAME?, y ademas dispara la deteccion de
+    `_xlfn` del protocolo de verificacion.
+
+    Una nota es texto, no una formula. Se guarda como texto y el problema
+    desaparece en origen, sin depender de que version de Excel toque el archivo.
+    """
+    n = 0
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for c in row:
+                if not isinstance(c.value, str) or not c.value.startswith("="):
+                    continue
+                m = _RE_TXT_FORMULA.match(c.value)
+                if m:
+                    c.value = m.group(1).replace('""', '"')
+                    n += 1
+                    continue
+                m = _RE_LONGTEXT.match(c.value)
+                if m:
+                    c.value = "".join(a.replace('""', '"')
+                                      for a in _RE_ARG.findall(m.group(1)))
+                    n += 1
+    if n:
+        ISSUES.append(f"Normalizadas {n} celdas que guardaban texto como formula "
+                      f"(evita _xlfn._LONGTEXT y el #NAME? fuera de Excel 365).")
+    return n
+
+
+def build_dashboard(wb, kpis, fecha):
+    """Portada unica del libro. `kpis` es una lista de (titulo, valor, unidad, ambar)."""
+    ws = wb.create_sheet(DASH)
+    ws.sheet_view.showGridLines = False
+    ws.sheet_properties.tabColor = NAVY
+    for c in range(1, DASH_NCOLS + 1):
+        ws.column_dimensions[get_column_letter(c)].width = DASH_ANCHO_COL
+    # Las tarjetas se anclan en las columnas 1, 5 y 9 (tres por banda).
+    _ocultar_columnas_clave(ws, (1, 5, 9))
+
+    # --- cabecera ---------------------------------------------------------
+    t = _mrg(ws, 1, 1, DASH_NCOLS, "MOTOR DE CALCULO ASME PCC          Rev. 3")
+    t.font = Font(name="Calibri", size=16, bold=True, color="FFFFFF")
+    t.fill = TITLE_FILL
+    t.alignment = Alignment(vertical="center", indent=1)
+    ws.row_dimensions[1].height = 32
+    s = _mrg(ws, 2, 1, DASH_NCOLS,
+             "Ingenieria de reparacion · ASME PCC-2 · B31.3-2024 · BPVC VIII-1 con II-D 2025 · "
+             "unidades SI")
+    s.font = Font(name="Calibri", size=9, italic=True, color="FFFFFF")
+    s.fill = TITLE_FILL
+    s.alignment = Alignment(vertical="center", indent=1)
+    ws.row_dimensions[2].height = 16
+    ws.row_dimensions[3].height = 6
+
+    # Aviso de macros. Se graba en rojo: es el estado correcto para un archivo
+    # en disco. Workbook_Open lo pasa a verde solo si las macros corren.
+    av = _mrg(ws, FILA_AVISO, 1, DASH_NCOLS,
+              "MACROS DESHABILITADAS - habilitelas para navegar entre los motores")
+    av.font, av.fill = AVISO_ROJO_F, AVISO_ROJO_FILL
+    av.alignment = Alignment(horizontal="center", vertical="center")
+    ws.row_dimensions[FILA_AVISO].height = 22
+    ws.row_dimensions[FILA_AVISO + 1].height = 6
+
+    # --- 1. motores de calculo -------------------------------------------
+    r = FILA_AVISO + 2
+    banda(ws, r, "1 · MOTORES DE CALCULO — ASME PCC-2", DASH_NCOLS)
+    r += 1
+    _tarjeta(ws, r, 1, 4, "ART. 212 · PARCHE DE PLANCHA",
+             ["Parche con soldadura de filete, PCC-2 Art. 212/206",
+              "Tuberia B31.3 · virola BPVC VIII-1"],
+             "Parche_PCC2_Art212")
+    r += 5
+
+    # --- 2. motores de busqueda ------------------------------------------
+    banda(ws, r, "2 · MOTORES DE BUSQUEDA — bases normativas", DASH_NCOLS)
+    r += 1
+    buscadores = [
+        ("B31.3 · TABLAS A-1 y A-4", ["Esfuerzo admisible S", "MPa (SI) y ksi (US)"],
+         "Buscar_B31_3"),
+        ("BPVC II-D · TABLA 1A", ["Esfuerzo admisible S, ferrosos", "MPa (SI) y ksi (US)"],
+         "Buscar_BPVC_IID"),
+        ("BPVC II-D · TABLAS 1B y 3", ["Esfuerzo admisible S, no ferrosos", "MPa (SI) y ksi (US)"],
+         "Buscar_BPVC_IID_B"),
+        ("BPVC II-D · TABLA U", ["Resistencia a la traccion Su", "MPa (SI) y ksi (US)"],
+         "Buscar_Su"),
+        ("BPVC II-D · TABLA Y-1", ["Limite de fluencia Sy", "MPa (SI) y ksi (US)"],
+         "Buscar_Sy"),
+        ("PROPIEDADES POR FAMILIA", ["Modulo E, dilatacion, Poisson, densidad",
+                                     "TM-1..5 · TE · PRD · B31.3 Ap. C"],
+         "Buscar_Propiedades"),
+        ("B31.3 · APENDICES B y C", ["Materiales no metalicos", "Temperaturas admisibles"],
+         "Buscar_NoMetalicos"),
+        ("MANUAL DE USO", ["Convenciones, alcance y limitaciones", "Leer antes de calcular"],
+         "Instrucciones"),
+    ]
+    for i, (titulo, lineas, clave) in enumerate(buscadores):
+        col = 1 + (i % 3) * 4
+        if i and i % 3 == 0:
+            r += 5
+        _tarjeta(ws, r, col, 4, titulo, lineas, clave)
+    r += 5
+
+    # --- 3. estado del libro ---------------------------------------------
+    banda(ws, r, "3 · ESTADO DEL LIBRO", DASH_NCOLS)
+    r += 1
+    for i, (titulo, valor, unidad, ambar) in enumerate(kpis):
+        c1 = 1 + i * 3
+        k = _mrg(ws, r, c1, c1 + 2, titulo)
+        k.font, k.fill = KPI_TIT_F, BAND_FILL
+        k.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        v = _mrg(ws, r + 1, c1, c1 + 2, valor)
+        v.font = KPI_AMBAR_F if ambar else KPI_VAL_F
+        v.fill = KPI_FILL
+        v.alignment = Alignment(horizontal="center", vertical="center")
+        u = _mrg(ws, r + 2, c1, c1 + 2, unidad)
+        u.font, u.fill = UNIT_F, KPI_FILL
+        u.alignment = Alignment(horizontal="center")
+        for rr in range(r, r + 3):
+            for cc in range(c1, c1 + 3):
+                ws.cell(rr, cc).border = CARD_BORDER
+    ws.row_dimensions[r].height = 26
+    ws.row_dimensions[r + 1].height = 30
+    ws.row_dimensions[r + 2].height = 14
+    r += 3
+    n = _mrg(ws, r, 1, DASH_NCOLS,
+             f"Compilado {fecha} · fuente unica: resources/ · valores cargados tal como "
+             f"estan impresos en el codigo; SI y US son extracciones independientes, "
+             f"nunca conversiones.")
+    n.font = SRC_F
+    n.alignment = Alignment(vertical="center", indent=1)
+    r += 2
+
+    # --- pie --------------------------------------------------------------
+    p = _mrg(ws, r, 1, DASH_NCOLS,
+             "Herramienta de ingenieria de referencia. Verificar entradas y resultados, y "
+             "leer las notas del material, antes de emitir para construccion.")
+    p.font, p.fill = PIE_F, PIE_FILL
+    p.alignment = Alignment(vertical="center", indent=1)
+    ws.row_dimensions[r].height = 18
+    return ws
+
+
+def link_volver(wb):
+    """Escribe el enlace de retorno al Dashboard en las 9 hojas navegables.
+
+    La celda se desbloquea explicitamente: Parche_PCC2_Art212 e Instrucciones
+    se entregan protegidas, y aunque Excel permite seguir un hipervinculo en
+    celda bloqueada, dejarla desbloqueada evita depender de ese detalle.
+    """
+    for nombre in NAVEGABLES:
+        if nombre not in wb.sheetnames:
+            continue
+        ws = wb[nombre]
+        fila, c1, c2 = ANCLA_VOLVER[nombre]
+        b = _boton(ws, fila, c1, c2, "◂ VOLVER AL DASHBOARD", CLAVE_VOLVER)
+        b.protection = Protection(locked=False)
+        _celda_clave(ws, fila, c1).protection = Protection(locked=False)
+        _ocultar_columnas_clave(ws, (c1,))
+
+
+def aplicar_visibilidad(wb):
+    """Graba en el archivo el estado de visibilidad de cada hoja.
+
+    No depende de la macro: si el usuario bloquea las macros, no ve ninguna
+    base de datos, solo el Dashboard con el aviso en rojo. La macro reaplica
+    exactamente esta misma tabla al abrir.
+    """
+    estados = {}
+    for ws in wb.worksheets:
+        if ws.title == DASH:
+            ws.sheet_state = "visible"
+        elif ws.title in NAVEGABLES:
+            ws.sheet_state = "hidden"
+        else:
+            ws.sheet_state = "veryHidden"
+        estados[ws.title] = ws.sheet_state
+    return estados
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--resources", required=True)
     ap.add_argument("--in", dest="inp", required=True)
     ap.add_argument("--out", dest="out", required=True)
     ap.add_argument("--report", default=None)
+    ap.add_argument("--revision", default=None,
+                    help="Hoja de revision de MAP_Grupo (Markdown). Por omision se "
+                         "escribe junto al libro como <salida>_Revision_MAP_Grupo.md")
     a = ap.parse_args(argv)
 
     res = Resources(a.resources)
-    wb = openpyxl.load_workbook(a.inp)
+    # keep_vba conserva vbaProject.bin del maestro sembrado por make_vba_seed.py.
+    # Es lo que permite que el entregable .xlsm lleve la capa de navegacion sin
+    # tocar el ZIP a mano.
+    wb = openpyxl.load_workbook(a.inp, keep_vba=True)
+    normalizar_textos_como_formula(wb)
 
     b313, b313c = build_b313(res, wb, "SI"), build_b313(res, wb, "US")
     iid, iidc = build_iid(res, wb, "SI", "1A"), build_iid(res, wb, "US", "1A")
@@ -1963,7 +2462,7 @@ def main(argv=None):
     build_appendix_c(res, wb, "US")
     nm = build_nometalicos(res, wb)
     fac = build_map_factores(res, wb)
-    map_last, map_stats = build_map_grupo(res, wb, [iid, iidb])
+    map_last, map_stats, map_pend = build_map_grupo(res, wb, [iid, iidb])
     build_notas(res, wb)
 
     # listas simples de los buscadores por grupo
@@ -2065,11 +2564,29 @@ def main(argv=None):
     }
     build_meta(wb, counts)
     rewrite_instrucciones(
-        wb, "Rev. 2 — Consulta por cascada de listas desplegables (composicion -> forma -> "
-            "especificacion -> tipo/grado), resultados sobre la ficha, curva del material "
-            "como grafica y libro sin funciones de matriz dinamica.")
+        wb, "Rev. 3 — Dashboard unico de navegacion (libro con macros, .xlsm): las bases de "
+            "datos quedan ocultas y se abre un motor a la vez. Consulta por cascada de "
+            "listas desplegables, resultados sobre la ficha, curva del material como "
+            "grafica y libro sin funciones de matriz dinamica.")
 
-    order = ["Instrucciones", "Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
+    # Los conteos del Dashboard salen de las mismas variables que alimentan
+    # `counts`, nunca escritos a mano. El indicador cuenta lo que el codigo NO
+    # resuelve: la regla textual que debe aplicar el ingeniero y los materiales
+    # para los que II-D no publica el dato. Las filas AUTO no entran: citan la
+    # nota que las sostiene y son auditables 1:1.
+    n_sin_resolver = map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_SIN, 0)
+    build_dashboard(wb, [
+        ("MATERIALES B31.3 · A-1 y A-4", b313["last_row"] - R_DATA + 1, "registros", False),
+        ("MATERIALES II-D · TABLA 1A", iid["last_row"] - R_DATA + 1, "registros", False),
+        ("MATERIALES II-D · TABLA U", su["last_row"] - R_DATA + 1, "registros", False),
+        ("MAP_Grupo SIN GRUPO NORMATIVO", n_sin_resolver,
+         "filas · no usar E ni dilatacion", True),
+    ], datetime.date.today().isoformat())
+
+    link_volver(wb)
+
+    order = [DASH,
+             "Instrucciones", "Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Propiedades",
              "Buscar_NoMetalicos", "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
@@ -2079,14 +2596,30 @@ def main(argv=None):
              "_meta", "_Curvas"]
     wb._sheets = [wb[n] for n in order if n in wb.sheetnames] + \
                  [s for s in wb._sheets if s.title not in order]
+    # Ultimo paso antes de guardar: el estado de visibilidad debe reflejar el
+    # libro completo, incluidas las hojas que hubiese traido el maestro.
+    estados = aplicar_visibilidad(wb)
     wb.save(a.out)
+
+    # Por omision acompana al reporte de verificacion en la carpeta del proyecto,
+    # no al libro: es documentacion de respaldo, no un entregable suelto.
+    ruta_rev = Path(a.revision) if a.revision else \
+        Path(__file__).resolve().parent.parent / "Revision_MAP_Grupo.md"
+    n_decisiones = escribir_revision_map_grupo(map_pend, map_stats, ruta_rev)
+    ISSUES.append(f"MAP_Grupo: {n_decisiones} decisiones distintas pendientes de "
+                  f"validacion del ingeniero -> {ruta_rev.name}")
+
     report = {"salida": a.out, "hojas": wb.sheetnames, "conteos": counts,
-              "limitaciones": ISSUES, "meta": META}
+              "visibilidad": estados, "limitaciones": ISSUES, "meta": META,
+              "revision_map_grupo": str(ruta_rev)}
     if a.report:
         Path(a.report).write_text(json.dumps(report, ensure_ascii=False, indent=2),
                                   encoding="utf-8")
-    print(json.dumps({"hojas": len(wb.sheetnames), "conteos": counts,
-                      "limitaciones": ISSUES}, ensure_ascii=False, indent=2))
+    from collections import Counter as _C
+    print(json.dumps({"hojas": len(wb.sheetnames),
+                      "visibilidad": dict(_C(estados.values())),
+                      "conteos": counts, "limitaciones": ISSUES},
+                     ensure_ascii=False, indent=2))
     return report
 
 

@@ -1,32 +1,109 @@
 # -*- coding: utf-8 -*-
-"""verificar.py — Protocolo de aceptacion (seccion 10 del PLAN-DB-MAT-001, Rev. 2).
+"""verificar.py — Protocolo de aceptacion (seccion 10 del PLAN-DB-MAT-001, Rev. 3).
 
 1. Conteos JSON -> hoja.
 2. Unicidad de material_id.
-3. Spot-checks de valores contra el JSON fuente.
+3. Auditoria fila a fila de los valores contra el JSON fuente.
 4. Contigüidad de los bloques de la cascada (condicion de las listas dependientes).
-5. Ausencia de funciones de matriz dinamica en todo el libro.
+5. Ausencia de funciones de matriz dinamica y de validaciones no portables.
 6. Interpolacion con huecos interiores, modo tabulado y bordes: recalculo real en
-   hoja (LibreOffice) contra un motor de referencia independiente en Python.
-7. Regresion del caso semilla.
+   hoja (Excel) contra un motor de referencia independiente en Python.
+7. Regresion del caso semilla, leida del propio libro recalculado.
+8. Capa de navegacion: visibilidad grabada y proyecto VBA intacto.
+
+Devuelve 0 solo si todo pasa.
+
+    python verificar.py --resources ..\\..\\..\\resources \\
+                        --wb ..\\..\\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
 """
 from __future__ import annotations
 
+import argparse
+import os
 import re
-import subprocess
 import sys
+import tempfile
+import zipfile
+from collections import Counter
 from pathlib import Path
 
 import openpyxl
 from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_db_materiales as B   # tabla de navegacion: DASH, NAVEGABLES, COL_CLAVE_BASE
 from db_lib import Resources, num, temp_to_number, txt
 
-RES = Resources("/mnt/user-data/uploads/ASME PCC/resources")
-WB = "Motor_v2.xlsx"
+# Se fijan en main() a partir de la linea de comandos. Antes vivian aqui como
+# constantes apuntando a /mnt/user-data/uploads/... y a Motor_v2.xlsx, rutas de
+# la maquina donde se escribio el script: el protocolo llevaba desde entonces
+# sin poder ejecutarse.
+RES: Resources = None       # type: ignore[assignment]
+WB: str = ""
+OUTDIR: Path = None         # type: ignore[assignment]
+REPORTE: Path = None        # type: ignore[assignment]
 APX = "ASME B31/ASME B31.3/APPEX"
 R_DATA, R_HDR = 4, 3
+
+XL_XLSX = 51                # xlOpenXMLWorkbook
+
+
+def recalcular_con_excel(entrada: Path, salida: Path) -> None:
+    """Recalcula el libro con Excel y lo guarda con los valores en cache.
+
+    openpyxl no evalua formulas, asi que la unica forma de auditar lo que la
+    hoja calcula de verdad -y no lo que creemos que calcula- es pasarla por un
+    motor real. Antes se usaba `soffice --convert-to`, que no esta instalado en
+    esta maquina y abortaba el protocolo con un FileNotFoundError indistinguible
+    de un fallo de verificacion.
+    """
+    import win32com.client
+
+    if salida.exists():
+        salida.unlink()
+    excel = win32com.client.DispatchEx("Excel.Application")
+    excel.Visible = False
+    excel.DisplayAlerts = False
+    excel.AskToUpdateLinks = False
+    try:
+        pid = _pid_de(excel)
+    except Exception:  # noqa: BLE001
+        pid = None
+    wb = None
+    try:
+        wb = excel.Workbooks.Open(str(entrada.resolve()))
+        excel.CalculateFullRebuild()
+        wb.SaveAs(str(salida.resolve()), FileFormat=XL_XLSX)
+    finally:
+        for accion in (lambda: wb.Close(SaveChanges=False) if wb is not None else None,
+                       excel.Quit):
+            try:
+                accion()
+            except Exception as e:  # noqa: BLE001
+                print(f"  aviso al cerrar Excel: {e}", file=sys.stderr)
+        _matar(pid)
+
+
+def _pid_de(excel):
+    import win32process
+    return win32process.GetWindowThreadProcessId(excel.Hwnd)[1]
+
+
+def _matar(pid) -> None:
+    """Excel via COM puede sobrevivir a Quit y bloquear el archivo."""
+    if not pid:
+        return
+    try:
+        import win32api
+        import win32con
+        import win32event
+        h = win32api.OpenProcess(win32con.PROCESS_TERMINATE | win32con.SYNCHRONIZE,
+                                 False, pid)
+        if win32event.WaitForSingleObject(h, 5000) != win32event.WAIT_OBJECT_0:
+            win32api.TerminateProcess(h, 0)
+        win32api.CloseHandle(h)
+    except Exception:  # noqa: BLE001
+        pass
 def col_map(ws):
     """Indices de columna leidos del propio encabezado (robusto a cambios)."""
     m = {}
@@ -94,11 +171,14 @@ def interp(temps, vals, T, modo="Interpolado"):
     return s1 + (s2 - s1) * (T - t1) / (t2 - t1)
 
 
-def main():
+def auditar():
     wb = openpyxl.load_workbook(WB)
-    log("# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 2")
+    # Copia intacta para la seccion 8: `wb` recibe la hoja _QA en la seccion 6
+    # y deja de reflejar el entregable.
+    wb0 = openpyxl.load_workbook(WB)
+    log("# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3")
     log("")
-    log(f"Libro verificado: `{WB}`  ·  {len(wb.sheetnames)} hojas")
+    log(f"Libro verificado: `{Path(WB).name}`  ·  {len(wb.sheetnames)} hojas")
     log("")
 
     # ---- 1. conteos -------------------------------------------------------
@@ -116,10 +196,23 @@ def main():
                len(RES.rows("bpvc_ii_d_metric_2025/table_3.json")), "DB_BPVC_IID_B"),
               ("U -> DB_Su", len(RES.rows("bpvc_ii_d_metric_2025/table_u.json")), "DB_Su"),
               ("Y-1 -> DB_Sy", len(RES.rows("bpvc_ii_d_metric_2025/table_y_1.json")), "DB_Sy")]
+    # Las filas descartadas son ruido de extraccion conocido y documentado en
+    # ISSUES por el builder, pero no pueden crecer sin que nadie se entere: se
+    # tolera hasta MAX_DESCARTE por base y por encima de ahi es un fallo.
+    # Antes esta seccion imprimia "OK" pasara lo que pasara y no sumaba al
+    # contador, que es como el protocolo se creia verde.
+    MAX_DESCARTE = 20
+    cnt_bad = 0
     for label, njson, sh in checks:
         n = wb[sh].max_row - R_DATA + 1
-        est = "OK" if n == njson else (f"OK — {njson - n} filas sin identificacion ni "
-                                       "valores descartadas (ruido de extraccion)")
+        d = njson - n
+        if d == 0:
+            est = "OK"
+        elif 0 < d <= MAX_DESCARTE:
+            est = f"OK — {d} filas sin identificacion ni valores (ruido de extraccion)"
+        else:
+            est = f"FALLO — descarte de {d} filas, por encima del umbral {MAX_DESCARTE}"
+            cnt_bad += 1
         log(f"| {label} | {njson} | {n} | {est} |")
     log("")
 
@@ -130,11 +223,17 @@ def main():
     log("|---|---|---|---|")
     bases = ["DB_B31_3", "DB_B31_3C", "DB_BPVC_IID", "DB_BPVC_IIDC",
              "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_Sy"]
+    # material_id es la clave con la que el motor localiza cada material: un
+    # duplicado significa que el motor puede tomar el admisible equivocado.
+    # Es un fallo, no una nota informativa como estaba escrito.
+    uniq_bad = 0
     for sh in bases:
         ws = wb[sh]
         ids = [ws.cell(r, 1).value for r in range(R_DATA, ws.max_row + 1)]
+        ok = len(ids) == len(set(ids))
+        uniq_bad += 0 if ok else 1
         log(f"| {sh} | {len(ids)} | {len(set(ids))} | "
-            f"{'OK' if len(ids) == len(set(ids)) else 'DUPLICADOS'} |")
+            f"{'OK' if ok else 'FALLO — DUPLICADOS'} |")
     log("")
 
     # ---- 3. auditoria fila a fila ----------------------------------------
@@ -433,11 +532,31 @@ def main():
             f'IF(OR($I{r}="",$J{r}=""),$G{r},'
             f'IF($D{r}="Tabulado-conservador",$J{r},'
             f'$G{r}+($J{r}-$G{r})*($C{r}-$F{r})/($I{r}-$F{r})))))')
-    wb.save("qa.xlsx")
-    subprocess.run(["soffice", "--headless", "--norestore", "--convert-to", "xlsx",
-                    "--outdir", "qa_out", "qa.xlsx"], check=True, capture_output=True,
-                   timeout=900)
-    rb = openpyxl.load_workbook("qa_out/qa.xlsx", data_only=True)["_QA"]
+    # Caso semilla de la seccion 7. Se carga aqui, antes del unico recalculo,
+    # para no abrir Excel dos veces.
+    #
+    # El motor se ENTREGA sin material seleccionado: D109..D114 y E109..E114
+    # estan vacias y D115 resuelve a "". Los campos D22/D23 son descripciones
+    # de texto libre, no la seleccion de la base. Asi que el caso de regresion
+    # hay que conducirlo: se escribe el material_id en la celda "Variante"
+    # (D114/E114), que el motor respeta por encima de la cascada
+    # (`=IF($D$114<>"",$D$114,...)`). Eso fija la resolucion sin depender de
+    # los cinco niveles de listas desplegables.
+    motor = wb["Parche_PCC2_Art212"]
+    id_base = next(i for i in ib if i.startswith("A-1 | A106 | B"))
+    id_collar = next(i for i in ib if i.startswith("A-1 | A516 | 70"))
+    motor["D114"] = id_base
+    motor["E114"] = id_collar
+    T_semilla = motor["D25"].value
+
+    qa_in = OUTDIR / "qa.xlsx"
+    qa_out = OUTDIR / "qa_recalculado.xlsx"
+    wb.save(qa_in)
+    recalcular_con_excel(qa_in, qa_out)
+    # Un unico recalculo sirve a la seccion 6 y a la 7: el mismo libro lleva la
+    # hoja _QA y el motor con el caso semilla ya cargado.
+    recalc = openpyxl.load_workbook(qa_out, data_only=True)
+    rb = recalc["_QA"]
     log("| Base | material_id | T | Modo | T1 | T2 | S(T) hoja | S(T) referencia | Estado |")
     log("|---|---|---|---|---|---|---|---|---|")
     nbad = 0
@@ -459,19 +578,224 @@ def main():
     log("")
 
     # ---- 7. regresion del caso semilla -----------------------------------
+    # Antes se leia de lo2/test_v2.xlsx, un archivo que no esta en el repo, y
+    # la seccion no comparaba nada: imprimia 160,7 y 137,9 como literales
+    # dentro del f-string, asi que no podia fallar. Ahora lee el libro que
+    # acaba de recalcular Excel y compara de verdad.
+    #
+    # Los valores de referencia son los IMPRESOS en B31.3-2024 Tabla A-1 a la
+    # temperatura de evaluacion, y se recalculan aqui con el motor de
+    # referencia en Python -no se copian a mano-. Los 160,7 / 137,9 de la nota
+    # de version son los valores antiguos de Datos_Ref, la lista corta
+    # obsoleta; la base ASME imprime 161 y 138.
     log("## 7. Regresion del caso semilla (collar 12\"-CWS-46-032-B1)")
     log("")
-    rec = openpyxl.load_workbook("lo2/test_v2.xlsx", data_only=True)["Parche_PCC2_Art212"]
-    log("| Magnitud | Antes (Datos_Ref) | Ahora (DB ASME) | Dictamen |")
-    log("|---|---|---|---|")
-    log(f"| Sa collar (A516 Gr.70) | 160,7 | {rec['D39'].value} | {rec['E125'].value} |")
-    log(f"| Sa metal base (A106 Gr.B) | 137,9 | {rec['D40'].value} | {rec['D125'].value} |")
-    log(f"| Sa gobernante | 137,9 | {rec['D41'].value} | — |")
+    rec = recalc["Parche_PCC2_Art212"]
+    TOL = 1e-6
+    ref_base = interp(tb, ib[id_base][1], T_semilla, "Interpolado")
+    ref_collar = interp(tb, ib[id_collar][1], T_semilla, "Interpolado")
+    esperado = [("Sa collar (A516 Gr.70)", "D39", ref_collar, "E125"),
+                ("Sa metal base (A106 Gr.B)", "D40", ref_base, "D125"),
+                ("Sa gobernante", "D41", min(ref_base, ref_collar), None)]
+    semilla_bad = 0
+    log(f"Temperatura de evaluacion: **{T_semilla} °C** · metal base `{id_base[:40]}` · "
+        f"collar `{id_collar[:40]}`")
     log("")
-    log(f"Dictamen global del modulo: **{rec['F90'].value}**.")
-    Path("Reporte_Verificacion_DB_Materiales.md").write_text("\n".join(out),
-                                                             encoding="utf-8")
-    return nbad + bad_tot + extra_bad + len(hits) + len(malas) + (0 if cont_ok else 1)
+    log("| Magnitud | Referencia Python (MPa) | Hoja recalculada (MPa) | Dictamen | Estado |")
+    log("|---|---|---|---|---|")
+    for etiqueta, celda, ref, celda_dict in esperado:
+        got = rec[celda].value
+        ok = isinstance(got, (int, float)) and abs(got - ref) <= TOL
+        semilla_bad += 0 if ok else 1
+        dictamen = rec[celda_dict].value if celda_dict else "—"
+        log(f"| {etiqueta} | {ref} | {got} | {dictamen} | {'OK' if ok else 'FALLO'} |")
+    dict_global = rec["F90"].value
+    ok_global = dict_global == "APTO"
+    semilla_bad += 0 if ok_global else 1
+    log("")
+    log(f"Dictamen global del modulo: **{dict_global}** "
+        f"({'OK' if ok_global else 'FALLO — se esperaba APTO'}).")
+    log("")
+
+    # ---- 8. capa de navegacion -------------------------------------------
+    log("## 8. Capa de navegacion (Dashboard y proyecto VBA)")
+    log("")
+    nav_bad = 0
+    ruta = Path(WB)
+
+    estados = {s.title: s.sheet_state for s in wb0.worksheets}
+    visibles = [n for n, e in estados.items() if e == "visible"]
+    ocultas = {n for n, e in estados.items() if e == "hidden"}
+    very = {n for n, e in estados.items() if e == "veryHidden"}
+    esperadas_very = set(estados) - {B.DASH} - set(B.NAVEGABLES)
+
+    filas = [
+        ("Unica hoja visible es el Dashboard", visibles == [B.DASH], ", ".join(visibles)),
+        ("Las 9 hojas navegables estan hidden", ocultas == set(B.NAVEGABLES),
+         f"{len(ocultas)} hojas"),
+        ("El resto esta veryHidden", very == esperadas_very, f"{len(very)} hojas"),
+        ("Ninguna base de datos alcanzable desde la UI",
+         not [n for n in estados if estados[n] != "veryHidden"
+              and re.match(r"^(DB_|MAP_|Notas_Codigo|Datos_Ref|_)", n)], ""),
+        ("El paquete conserva xl/vbaProject.bin",
+         "xl/vbaProject.bin" in zipfile.ZipFile(ruta).namelist(), ruta.suffix),
+    ]
+    # Las claves de destino de los botones deben apuntar a hojas reales.
+    dash = wb0[B.DASH]
+    claves = [dash.cell(c.row, B.COL_CLAVE_BASE + c.column).value
+              for row in dash.iter_rows() for c in row if c.hyperlink is not None]
+    filas.append(("Los botones cubren las 9 hojas navegables",
+                  sorted(k for k in claves if k) == sorted(B.NAVEGABLES),
+                  f"{len(claves)} botones"))
+    filas.append(("Cada hoja navegable tiene enlace de retorno",
+                  all(any(wb0[n].cell(c.row, B.COL_CLAVE_BASE + c.column).value
+                          == B.CLAVE_VOLVER
+                          for row in wb0[n].iter_rows() for c in row
+                          if c.hyperlink is not None)
+                      for n in B.NAVEGABLES), ""))
+
+    log("| Comprobacion | Detalle | Estado |")
+    log("|---|---|---|")
+    for etiqueta, ok, detalle in filas:
+        nav_bad += 0 if ok else 1
+        log(f"| {etiqueta} | {detalle} | {'OK' if ok else 'FALLO'} |")
+    log("")
+    log("La visibilidad esta grabada en el archivo, no la impone la macro: con las "
+        "macros bloqueadas el usuario sigue sin ver ninguna base de datos.")
+    log("")
+
+    # ---- 9. mapeo de grupos de propiedades --------------------------------
+    # Cada fila de MAP_Grupo que declara un grupo tiene que citar la Nota del
+    # codigo que lo sostiene, y esa Nota tiene que listar literalmente esa
+    # composicion. Es la comprobacion que convierte el mapeo en auditable: sin
+    # ella volveriamos a tener grupos asignados sin respaldo, que es justo el
+    # defecto que la Rev. 3 elimino.
+    log("## 9. Mapeo de grupos de propiedades (MAP_Grupo -> Notas de TM-1 / TE-1)")
+    log("")
+    map_bad = 0
+    ws_map = wb0["MAP_Grupo"]
+    cm = col_map(ws_map)
+
+    def _ck(s):
+        return re.sub(r"\s+", "", str(s or "")).translate(
+            dict.fromkeys(map(ord, "‐‑‒–—―−⁃"), "-")
+        ).upper()
+
+    # Indice de respaldo, leido de resources/ (no del libro).
+    respaldo = {}
+    for archivo, tabla in (("table_tm_1.json", "TM-1"), ("table_te_1.json", "TE-1")):
+        for nota in RES.load(f"bpvc_ii_d_metric_2025/{archivo}").get("note_members", []):
+            if nota.get("tipo") != "grupo":
+                continue
+            for m in nota["miembros"]:
+                respaldo.setdefault(_ck(m), set()).add(
+                    (tabla, nota["nota"], nota["grupo"]))
+
+    estados = Counter()
+    sin_cita = huerfanas = 0
+    for r in range(R_DATA, ws_map.max_row + 1):
+        est = ws_map.cell(r, cm["Estado"]).value
+        if est is None:
+            continue
+        estados[est] += 1
+        comp = _ck(ws_map.cell(r, cm["Composicion nominal"]).value)
+        for col_g, col_f, tabla in (("Grupo E (TM)", "Fuente E", "TM-1"),
+                                    ("Grupo dilatacion (TE)", "Fuente alfa", "TE-1")):
+            grupo = ws_map.cell(r, cm[col_g]).value
+            fuente = str(ws_map.cell(r, cm[col_f]).value or "")
+            if not grupo:
+                continue
+            if not fuente:
+                sin_cita += 1           # grupo sin fuente: prohibido
+                continue
+            if "Nota" not in fuente:
+                continue                # procede del UNS impreso, ya auditado en 3
+            nota = fuente.split("Nota")[-1].strip()
+            if (tabla, nota, grupo) not in respaldo.get(comp, set()):
+                huerfanas += 1
+
+    log("| Comprobacion | Detalle | Estado |")
+    log("|---|---|---|")
+    filas9 = [
+        ("Todo grupo asignado cita su fuente",
+         f"{sin_cita} filas con grupo y sin fuente", sin_cita == 0),
+        ("La Nota citada lista esa composicion",
+         f"{huerfanas} citas que el JSON del codigo no respalda", huerfanas == 0),
+        ("No sobrevive ningun estado de conjetura",
+         "sin filas 'PROPUESTA'",
+         not any("PROPUESTA" in str(e).upper() for e in estados)),
+    ]
+    for etiqueta, detalle, ok in filas9:
+        map_bad += 0 if ok else 1
+        log(f"| {etiqueta} | {detalle} | {'OK' if ok else 'FALLO'} |")
+    log("")
+    log("| Estado del mapeo | Filas |")
+    log("|---|---:|")
+    for e, n in estados.most_common():
+        log(f"| {e} | {n} |")
+    log("")
+    log("Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para "
+        "los que II-D no publica modulo ni dilatacion. En ellas el calculo queda "
+        "bloqueado, que es lo que exige el codigo.")
+    log("")
+
+    # ---- cierre -----------------------------------------------------------
+    total = (nbad + bad_tot + extra_bad + len(hits) + len(malas)
+             + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
+             + map_bad)
+    log("## Resultado")
+    log("")
+    log(f"| Seccion | Fallos |")
+    log("|---|---|")
+    for etiqueta, v in [("1. Conteos", cnt_bad), ("2. Unicidad", uniq_bad),
+                        ("3. Auditoria fila a fila", bad_tot + extra_bad),
+                        ("4. Contiguidad de la cascada", 0 if cont_ok else 1),
+                        ("5. Portabilidad de formulas", len(hits) + len(malas)),
+                        ("6. Interpolacion recalculada", nbad),
+                        ("7. Caso semilla", semilla_bad),
+                        ("8. Capa de navegacion", nav_bad),
+                        ("9. Mapeo de grupos", map_bad)]:
+        log(f"| {etiqueta} | {v} |")
+    log("")
+    log(f"**Total de fallos: {total}.**")
+    REPORTE.write_text("\n".join(out), encoding="utf-8")
+    print(f"\nReporte escrito en {REPORTE}")
+    return total
+
+
+def main(argv=None):
+    global RES, WB, OUTDIR, REPORTE
+    aqui = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--resources", required=True, type=Path)
+    ap.add_argument("--wb", required=True, type=Path,
+                    help="libro a verificar (.xlsm entregable)")
+    ap.add_argument("--outdir", type=Path, default=None,
+                    help="directorio de trabajo para las copias recalculadas "
+                         "(por defecto, uno temporal que se descarta)")
+    ap.add_argument("--report", type=Path,
+                    default=aqui.parent / "Reporte_Verificacion_DB_Materiales.md")
+    a = ap.parse_args(argv)
+
+    if not a.wb.exists():
+        print(f"ERROR: no existe el libro {a.wb}", file=sys.stderr)
+        return 2
+    if not a.resources.is_dir():
+        print(f"ERROR: no existe el directorio de recursos {a.resources}", file=sys.stderr)
+        return 2
+
+    RES = Resources(str(a.resources))
+    WB = str(a.wb)
+    REPORTE = a.report
+
+    if a.outdir:
+        a.outdir.mkdir(parents=True, exist_ok=True)
+        OUTDIR = a.outdir
+        return auditar()
+    with tempfile.TemporaryDirectory(prefix="verificar_pcc_") as tmp:
+        OUTDIR = Path(tmp)
+        return auditar()
 
 
 if __name__ == "__main__":

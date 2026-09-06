@@ -31,8 +31,8 @@ resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ bpvc_ii_d_metric_2025/       II-D métrica (MPa, °C)
                └─ bpvc_ii_d_customary_2025/    II-D U.S. Customary (ksi, °F)
 outputs/       Entregables.
-templates/     Plantillas de formato.
-Motor_de_Calculo_ASME_PCC.xlsx   Libro maestro (Rev. 0, intacto)
+templates/     maestro_con_macros.xlsm — Rev. 0 + proyecto VBA, entrada del builder.
+               Se genera con scripts/make_vba_seed.py; no se edita a mano.
 ```
 
 **Nunca leas `outputs/` ni `templates/`** salvo que se te señale un archivo.
@@ -44,34 +44,84 @@ Ante una duda de alcance, pregunta antes de producir.
 
 ## Motor de cálculo — estado actual
 
-Entregable vigente: `outputs/Base_Datos_Materiales_ASME/Motor_de_Calculo_ASME_PCC_Rev2.xlsx`
-(37 hojas). Se **genera por script**, nunca se edita a mano.
+Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev3.xlsm`
+(38 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
+
+**Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación a los
+nueve motores (Art. 212, los 7 buscadores, `Instrucciones`) la hace un proyecto VBA de
+dos componentes. Los estados de visibilidad van **grabados en el archivo**, así que con
+las macros bloqueadas no se expone ninguna base de datos.
 
 ### Reconstruir
 
-```bash
-cd outputs/Base_Datos_Materiales_ASME/scripts
-python build_db_materiales.py --resources ../../../resources \
-    --in ../../../Motor_de_Calculo_ASME_PCC.xlsx \
-    --out ../Motor_de_Calculo_ASME_PCC_Rev2.xlsx
-python -m pytest test_build_db.py -q      # pruebas unitarias
-python verificar.py                       # protocolo de aceptación completo
+```powershell
+cd outputs\Base_Datos_Materiales_ASME\scripts
+
+# Solo la primera vez, o al tocar vba/*.vba.
+# Activa "Confiar en el acceso al modelo de objetos de proyectos de VBA" unos
+# segundos y lo restaura, verificando el resultado. Si avisa de que no pudo
+# restaurarlo, desactivelo a mano en el Centro de confianza.
+python make_vba_seed.py
+
+# Solo si se repone la extraccion de II-D: notas de grupo de TM-1 / TE-1.
+python extraer_notas_ii_d.py --resources ..\..\..\resources `
+    --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+
+python build_db_materiales.py --resources ..\..\..\resources `
+    --in ..\..\..\templates\maestro_con_macros.xlsm `
+    --out ..\..\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
+python -m pytest test_build_db.py test_dashboard.py -q
+python verificar.py --resources ..\..\..\resources `
+    --wb ..\..\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
 ```
+
+La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale de
+`outputs/Base_Datos_Materiales_ASME/Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx`
+(3 hojas). El `Motor_de_Calculo_ASME_PCC.xlsx` de la raíz **no está en el repo**.
 
 `verificar.py` devuelve 0 solo si todo pasa. Audita **fila a fila** cada valor
 tabulado contra el JSON del código (271 276 valores), la contigüidad de la cascada,
-la ausencia de fórmulas de matriz dinámica y la interpolación recalculada en hoja.
-**Ejecútalo siempre después de tocar el builder.**
+la ausencia de fórmulas de matriz dinámica, la interpolación recalculada en hoja, el
+caso semilla y la capa de navegación. **Requiere Excel instalado**: recalcula con el
+motor real, no con LibreOffice. **Ejecútalo siempre después de tocar el builder.**
+
+### Capa de navegación — dos fuentes de verdad que no pueden divergir
+
+La tabla de navegación vive por duplicado: en `build_db_materiales.py`, que la graba en
+el archivo, y en `scripts/vba/mod_nav.vba`, que la reaplica al abrir. Si se separan, el
+libro se abre mostrando algo distinto de lo que se construyó. `test_dashboard.py` lo
+comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
+
+| Concepto | Python | VBA |
+|---|---|---|
+| Hojas navegables | `NAVEGABLES` | `HojasNavegables()` |
+| Columna base de claves | `COL_CLAVE_BASE = 66` | `COL_CLAVE_BASE` |
+| Celda del aviso | `FILA_AVISO = 4` | `CELDA_AVISO = "A4"` |
+
+Dos trampas ya pagadas, documentadas en el código:
+
+- **El VBA referencia hojas por `.Name`, nunca por CodeName.** openpyxl no asigna
+  `codeName` a las 35 hojas que crea; Excel se los inventa al abrir.
+- **Toda declaración de módulo (`Const`, `Dim`, `Type`) precede a la primera rutina.**
+  Si no, VBA reporta «Variable not defined» en cada uso, Excel abre un diálogo modal al
+  compilar durante `SaveAs`, y la automatización se cuelga sin mensaje. `make_vba_seed.py`
+  lo comprueba con `lint_vba()` antes de tocar COM.
 
 ### Reglas de diseño del libro — no romper
 
 1. **Cero funciones de matriz dinámica.** Nada de `FILTER`, `SORT`, `UNIQUE`,
-   `XLOOKUP`, `VSTACK`. Solo `INDEX`, `MATCH`, `OFFSET`, `COUNTIF`. El libro debe
-   abrirse igual en Excel de escritorio y en Google Sheets.
-2. **Validación de datos: solo rango literal o lista de ítems.** Google Sheets
-   descarta cualquier fórmula (`OFFSET`, `INDIRECT`) como origen de validación. Las
-   listas dependientes se materializan en celdas de columnas ocultas y la validación
-   apunta a ese rango.
+   `XLOOKUP`, `VSTACK`, `_xlfn`. Solo `INDEX`, `MATCH`, `OFFSET`, `COUNTIF`.
+   **Enmienda Rev. 3:** el entregable es `.xlsm` y ya **no abre en Google Sheets** —
+   la capa de navegación es VBA. Lo que se pierde es solo la navegación. La
+   restricción sobre las fórmulas **se mantiene entera**: todo el cálculo debe seguir
+   siendo portable, y `verificar.py` sigue fallando si aparece una matriz dinámica.
+   Corolario aprendido: **un texto no se guarda como fórmula.** Un `="texto…"` de más
+   de 255 caracteres lo parte Excel en `_xlfn._LONGTEXT(...)` al reguardar, y la celda
+   pasa a mostrar `#NAME?` fuera de Excel 365. El builder lo normaliza
+   (`normalizar_textos_como_formula`).
+2. **Validación de datos: solo rango literal o lista de ítems.** Nunca una fórmula
+   (`OFFSET`, `INDIRECT`) como origen. Las listas dependientes se materializan en
+   celdas de columnas ocultas y la validación apunta a ese rango.
 3. **Banda compacta.** Las tablas ASME dejan huecos interiores (la A-1 no imprime
    125 °C para A106 Gr.B). Junto a la banda impresa —que se conserva para auditar—
    cada base lleva una banda con solo los puntos existentes, sin huecos, y la
@@ -88,10 +138,41 @@ la ausencia de fórmulas de matriz dinámica y la interpolación recalculada en 
 9. Los valores se cargan **tal como están impresos**; SI y US son extracciones
    independientes, nunca conversiones.
 
+### `MAP_Grupo` — pertenencia a grupo de propiedades
+
+El grupo que da E (TM-1) y dilatación (TE-1) **no se infiere de la composición**:
+está impreso en las Notas al pie de esas dos tablas. Viven en `resources/` bajo
+`note_members`, y las extrae del PDF de II-D:
+
+```powershell
+python extraer_notas_ii_d.py --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf" `
+    --resources ..\..\..\resources
+```
+
+Solo hay que reejecutarlo si se repone la extracción de II-D. El builder **aborta**
+si `note_members` no está: sin fuente normativa no se construye nada.
+
+Estado del mapeo (3 454 filas): **1 292 AUTO por UNS exacto · 1 297 AUTO por
+composición listada en una Nota · 17 REVISAR · 848 SIN MAPEO.** Cada fila con
+grupo cita la nota que lo sostiene, y `verificar.py` §9 comprueba fila a fila que
+esa nota realmente liste esa composición.
+
+Lo que queda para el ingeniero está en `outputs/Base_Datos_Materiales_ASME/Revision_MAP_Grupo.md`:
+**65 decisiones distintas** (no 1 518 filas), agrupadas por composición nominal.
+Las `SIN MAPEO` no son un defecto de extracción: II-D no publica E ni dilatación
+para esos materiales y el cálculo queda bloqueado, que es lo que exige el código.
+
+**No reintroducir una heurística de composición.** La Rev. 2 asignaba grupo con
+expresiones regulares y producía asignaciones *falsas*: `mo\b` rotulaba «acero de
+baja aleación» a los austeníticos 16Cr-12Ni-2Mo, a los dúplex 22Cr-5Ni-3Mo-N y a
+las aleaciones de níquel 62Ni-22Mo-15Cr; `8ni` casaba dentro de `18Ni`.
+`test_build_db.py::TestMapeoDeGrupos` lo impide.
+
 ### Pendiente
 
-`MAP_Grupo`: 1 292 filas AUTO (UNS exacto, auditables), **1 518 PROPUESTA que
-requieren validación del ingeniero** antes de usar E o dilatación, 644 sin mapeo.
+`MAP_Grupo` columna **Grupo PRD**: sigue resolviéndose por coincidencia de
+subcadena contra `table_prd.json`, heredado de la Rev. 2. No alimenta ningún
+cálculo. Sin revisar.
 
 ---
 
