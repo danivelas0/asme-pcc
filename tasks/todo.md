@@ -82,3 +82,41 @@ correcto y no había nada que remapear.
 
 **Queda pendiente:** la columna `Grupo PRD` sigue con la coincidencia de
 subcadena heredada de la Rev. 2. No alimenta ningún cálculo. Sin tocar.
+
+---
+
+## Segunda tanda — cierre del vacío en la edición U.S. Customary
+
+`bpvc_ii_d_customary_2025` tenía el mismo vacío que la métrica: TM-1 y TE-1 sin
+`note_members`. El libro construye bandas de propiedades en ambas ediciones
+(`DB_E`/`DB_EC`, `DB_TE`/`DB_TEC`), así que media tabla quedaba sin vía trazable
+para saber a qué grupo pertenece un material.
+
+- [x] `extraer_notas_ii_d.py` acepta `--edicion si|us`; cada edición sale de su
+      propio PDF. Nunca copiar una en la otra.
+- [x] Notas de TM-1 (1)–(16) y TE-1 (1)–(4) de la edición US en `resources/`.
+      Cambio puramente aditivo; la métrica quedó intacta (verificado).
+- [x] La observación de duplicado se detecta **por los datos**, no por número de
+      nota. Antes estaba codificada a la Nota (8), que en la US es legítima.
+- [x] `verificar.py` §9 audita que las 4 combinaciones edición × tabla traigan
+      `note_members`, para que el vacío no pueda reabrirse en silencio.
+- [x] `TestNotasEnLasDosEdiciones` en `test_build_db.py`.
+
+**Hallazgo.** Las dos ediciones **no numeran igual sus notas**. La métrica
+imprime el Grupo H duplicado —Notas (8) y (9)— y desde ahí toda su numeración va
+corrida en uno respecto de la US, que lo imprime una sola vez en la Nota (8):
+**17 notas en TM-1 métrica contra 16 en la US**. Esto confirma que la errata es
+exclusiva de la métrica y que conservarla verbatim fue lo correcto.
+
+La **pertenencia** a grupo sí es idéntica en las dos ediciones, verificada grupo
+a grupo. La única diferencia de contenido es el orden de dos miembros del
+`Group 2` de TE-1 (`25Cr–7Ni–4Mo–N` y `25Cr–6Ni–Mo–N` intercambiados), artefacto
+de la maquetación a columnas; cada edición se carga en el orden que imprime.
+
+**Verificación:** 57 pruebas pasan; `verificar.py` 0 fallos, salida 0, con
+`4/4 archivos con note_members`.
+
+**Queda abierto.** `MAP_Grupo` sigue mapeando solo los materiales de la edición
+métrica (`build_map_grupo` fija `ed = "bpvc_ii_d_metric_2025"`). Ahora que las
+notas US existen, construir el mapeo para los materiales US es posible, pero es
+una hoja nueva y no se hizo: excede el cierre del vacío.

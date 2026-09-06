@@ -250,13 +250,30 @@ def extraer(pdf: Path, id_tabla: str) -> tuple[list[dict], list[int]]:
 
 
 # --- Escritura en resources/ ------------------------------------------------
-OBSERVACION_H = (
-    "ASME BPVC.II.D.M-2025 imprime las Notas (8) y (9) duplicadas: ambas "
-    "definen 'Material Group H' (duplex austenitico-ferritico) con identica "
-    "lista de miembros. Verificado por coordenadas en el folio impreso 1190; "
-    "no es un artefacto de extraccion. La tabla solo referencia la Nota (9). "
-    "Se cargan ambas tal como estan impresas (no se deduplican)."
-)
+def detectar_duplicados(notas: list[dict]) -> list[str]:
+    """Notas distintas que definen el MISMO grupo con la MISMA lista.
+
+    Se detecta por los datos y no por el numero de nota, porque la duplicacion
+    no es igual en las dos ediciones: la metrica imprime el Grupo H dos veces,
+    en las Notas (8) y (9), y a partir de ahi toda su numeracion va corrida en
+    uno respecto de la edicion U.S. Customary, que lo imprime una sola vez en
+    la Nota (8). Dar por hecho que las dos ediciones numeran igual seria el
+    error que este proyecto evita: SI y US son extracciones independientes.
+    """
+    vistos: dict[tuple, list[str]] = {}
+    for n in notas:
+        if n["tipo"] != "grupo":
+            continue
+        vistos.setdefault((n["grupo"], tuple(n["miembros"])), []).append(n["nota"])
+    avisos = []
+    for (grupo, _), cuales in vistos.items():
+        if len(cuales) > 1:
+            avisos.append(
+                f"El codigo imprime {' y '.join(cuales)} duplicadas: todas definen "
+                f"'{grupo}' con identica lista de miembros. Verificado en la pagina "
+                f"impresa; no es un artefacto de extraccion. Se cargan todas tal "
+                f"como estan impresas (Regla 9: no se deduplican).")
+    return avisos
 
 
 def escribir(ruta: Path, notas: list[dict], folios: list[int], pdf: Path,
@@ -272,8 +289,7 @@ def escribir(ruta: Path, notas: list[dict], folios: list[int], pdf: Path,
         "folios_impresos": sorted(set(folios)),
         "notas_de_grupo": sum(1 for n in notas if n["tipo"] == "grupo"),
         "notas_de_alias": sum(1 for n in notas if n["tipo"] == "alias"),
-        "observaciones": ([OBSERVACION_H] if any(n["nota"] == "(8)" for n in notas)
-                          else []),
+        "observaciones": detectar_duplicados(notas),
     }
 
     if dry_run:
@@ -288,20 +304,27 @@ def escribir(ruta: Path, notas: list[dict], folios: list[int], pdf: Path,
 
 TABLAS = [("TM-1", "table_tm_1.json"), ("TE-1", "table_te_1.json")]
 
+# Las dos ediciones se extraen por separado, cada una de su propio PDF. No son
+# conversiones una de otra y tampoco numeran igual sus notas.
+EDICIONES = {"si": "bpvc_ii_d_metric_2025", "us": "bpvc_ii_d_customary_2025"}
+
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--pdf", required=True, type=Path,
-                    help="PDF de II-D metrica 2025 (completo o el corte que "
-                         "contenga las Tablas TM-1 y TE-1)")
+                    help="PDF de II-D (completo o el corte que contenga las "
+                         "Tablas TM-1 y TE-1) de la edicion indicada en --edicion")
     ap.add_argument("--resources", required=True, type=Path)
+    ap.add_argument("--edicion", choices=sorted(EDICIONES), default="si",
+                    help="si = metrica (por omision) · us = U.S. Customary")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
 
     if not a.pdf.exists():
         print(f"ERROR: no existe el PDF {a.pdf}", file=sys.stderr)
         return 2
-    base = a.resources / "bpvc_ii_d_metric_2025"
+    base = a.resources / EDICIONES[a.edicion]
+    print(f"Edicion: {a.edicion} -> {base.name}")
 
     fallos = 0
     for id_tabla, archivo in TABLAS:

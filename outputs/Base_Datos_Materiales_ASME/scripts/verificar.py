@@ -716,6 +716,17 @@ def auditar():
 
     log("| Comprobacion | Detalle | Estado |")
     log("|---|---|---|")
+    # Las dos ediciones alimentan bandas de propiedades (DB_E / DB_EC, DB_TE /
+    # DB_TEC). Si una se queda sin notas, media tabla pierde la unica via
+    # trazable para saber a que grupo pertenece un material, y el hueco no se
+    # nota al construir. Se audita aqui para que no pueda reabrirse en silencio.
+    completas, faltan = [], []
+    for ed in ("bpvc_ii_d_metric_2025", "bpvc_ii_d_customary_2025"):
+        for archivo in ("table_tm_1.json", "table_te_1.json"):
+            grupos = [n for n in RES.load(f"{ed}/{archivo}").get("note_members", [])
+                      if n.get("tipo") == "grupo"]
+            (completas if grupos else faltan).append(f"{ed}/{archivo}")
+
     filas9 = [
         ("Todo grupo asignado cita su fuente",
          f"{sin_cita} filas con grupo y sin fuente", sin_cita == 0),
@@ -724,6 +735,10 @@ def auditar():
         ("No sobrevive ningun estado de conjetura",
          "sin filas 'PROPUESTA'",
          not any("PROPUESTA" in str(e).upper() for e in estados)),
+        ("Las dos ediciones traen sus Notas de grupo",
+         f"{len(completas)}/4 archivos con note_members"
+         + (f" · faltan: {', '.join(faltan)}" if faltan else ""),
+         not faltan),
     ]
     for etiqueta, detalle, ok in filas9:
         map_bad += 0 if ok else 1

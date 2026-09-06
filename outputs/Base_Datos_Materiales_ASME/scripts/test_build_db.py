@@ -105,10 +105,10 @@ class TestNotasDeGrupoEnResources:
     """Las Notas de TM-1 y TE-1 deben estar completas en resources/."""
 
     @staticmethod
-    def _notas(archivo):
+    def _notas(archivo, edicion="bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" /
-                "bpvc_ii_d_metric_2025" / archivo)
+                edicion / archivo)
         with open(ruta, encoding="utf-8") as fh:
             return json.load(fh).get("note_members", [])
 
@@ -153,6 +153,51 @@ class TestNotasDeGrupoEnResources:
         te = {m for n in self._notas("table_te_1.json")
               if n.get("grupo") == "Group 3" for m in n["miembros"]}
         assert "16Cr–12Ni–2Mo" in tm and "16Cr–12Ni–2Mo" in te
+
+
+class TestNotasEnLasDosEdiciones:
+    """SI y US son extracciones independientes: ambas deben traer sus Notas.
+
+    El libro construye bandas de propiedades en las dos ediciones (DB_E / DB_EC,
+    DB_TE / DB_TEC), asi que dejar una sin notas deja media tabla sin forma
+    trazable de saber a que grupo pertenece un material.
+    """
+
+    # staticmethod() explicito: al reasignar la funcion como atributo de clase
+    # se pierde el descriptor y Python volveria a inyectar `self` como 1er arg.
+    _N = staticmethod(TestNotasDeGrupoEnResources._notas)
+    US = "bpvc_ii_d_customary_2025"
+
+    def test_la_edicion_us_trae_sus_notas(self):
+        assert {n["grupo"] for n in self._N("table_tm_1.json", self.US)
+                if n["tipo"] == "grupo"} == {f"Material Group {L}" for L in "ABCDEFGHIJ"}
+        assert {n["grupo"] for n in self._N("table_te_1.json", self.US)
+                if n["tipo"] == "grupo"} == {f"Group {i}" for i in (1, 2, 3, 4)}
+
+    def test_la_us_no_duplica_el_grupo_h(self):
+        # La duplicacion es una errata EXCLUSIVA de la edicion metrica.
+        h = [n for n in self._N("table_tm_1.json", self.US)
+             if n.get("grupo") == "Material Group H"]
+        assert len(h) == 1 and h[0]["nota"] == "(8)"
+
+    def test_la_numeracion_va_corrida_entre_ediciones(self):
+        # Consecuencia de la errata: a partir del Grupo H la metrica numera uno
+        # mas que la US. Dar por hecho que coinciden romperia el mapeo.
+        si = [n["nota"] for n in self._N("table_tm_1.json")
+              if n.get("grupo") == "Material Group J"]
+        us = [n["nota"] for n in self._N("table_tm_1.json", self.US)
+              if n.get("grupo") == "Material Group J"]
+        assert si == ["(11)"] and us == ["(10)"]
+
+    def test_la_pertenencia_es_la_misma_en_ambas_ediciones(self):
+        # Los valores difieren (MPa vs ksi) pero el reparto de materiales en
+        # grupos no: si difiriera, una de las dos extracciones estaria mal.
+        for archivo in ("table_tm_1.json", "table_te_1.json"):
+            si = {n["grupo"]: set(n["miembros"]) for n in self._N(archivo)
+                  if n["tipo"] == "grupo"}
+            us = {n["grupo"]: set(n["miembros"]) for n in self._N(archivo, self.US)
+                  if n["tipo"] == "grupo"}
+            assert si == us, archivo
 
 
 class TestFormulas:

@@ -152,6 +152,7 @@ La visibilidad esta grabada en el archivo, no la impone la macro: con las macros
 | Todo grupo asignado cita su fuente | 0 filas con grupo y sin fuente | OK |
 | La Nota citada lista esa composicion | 0 citas que el JSON del codigo no respalda | OK |
 | No sobrevive ningun estado de conjetura | sin filas 'PROPUESTA' | OK |
+| Las dos ediciones traen sus Notas de grupo | 4/4 archivos con note_members | OK |
 
 | Estado del mapeo | Filas |
 |---|---:|

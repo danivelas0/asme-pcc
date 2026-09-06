@@ -142,15 +142,26 @@ Dos trampas ya pagadas, documentadas en el código:
 
 El grupo que da E (TM-1) y dilatación (TE-1) **no se infiere de la composición**:
 está impreso en las Notas al pie de esas dos tablas. Viven en `resources/` bajo
-`note_members`, y las extrae del PDF de II-D:
+`note_members`, **en las dos ediciones**, y las extrae del PDF de II-D:
 
 ```powershell
-python extraer_notas_ii_d.py --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf" `
-    --resources ..\..\..\resources
+python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
+    --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
+    --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 ```
 
 Solo hay que reejecutarlo si se repone la extracción de II-D. El builder **aborta**
 si `note_members` no está: sin fuente normativa no se construye nada.
+
+**Las dos ediciones no numeran igual sus notas.** La métrica imprime el Grupo H
+**duplicado**, en las Notas (8) y (9), y a partir de ahí toda su numeración va
+corrida en uno respecto de la US, que lo imprime una sola vez en la Nota (8): 17
+notas en TM-1 métrica contra 16 en la US. La errata es exclusiva de la métrica y
+se conserva tal como está impresa (Regla 9). La **pertenencia** a grupo sí es
+idéntica en ambas, verificado grupo a grupo. Nunca copiar las notas de una
+edición a la otra: son extracciones independientes y `test_build_db.py::TestNotasEnLasDosEdiciones`
+lo comprueba.
 
 Estado del mapeo (3 454 filas): **1 292 AUTO por UNS exacto · 1 297 AUTO por
 composición listada en una Nota · 17 REVISAR · 848 SIN MAPEO.** Cada fila con

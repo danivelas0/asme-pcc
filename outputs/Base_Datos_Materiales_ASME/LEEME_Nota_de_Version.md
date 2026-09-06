@@ -118,6 +118,12 @@ Las tablas ASME no imprimen todos los puntos de la rejilla para cada material: l
 
 > En la Rev. 2 estas filas se rotulaban con expresiones regulares sobre la composición. Producían asignaciones **falsas**, no solo inciertas: los austeníticos 16Cr-12Ni-2Mo, los dúplex 22Cr-5Ni-3Mo-N y las aleaciones de níquel 62Ni-22Mo-15Cr aparecían como «acero de baja aleación». Esa heurística se eliminó entera.
 
+### Una errata del código, conservada tal como está impresa
+
+Las Notas de TM-1 y TE-1 están ahora en `resources/` en **las dos ediciones**. Al extraer la US apareció que **no numeran igual**: la métrica imprime el Grupo H **dos veces**, en las Notas (8) y (9), y desde ahí toda su numeración va corrida en uno frente a la US, que lo imprime una sola vez en la Nota (8) — 17 notas contra 16.
+
+La errata es exclusiva de la edición métrica y **no se corrige**: los valores se cargan tal como están impresos, y queda anotada en `notes_extraction.observaciones`. La **pertenencia** a grupo sí es idéntica en ambas ediciones, verificada grupo a grupo.
+
 **Enlace SI ↔ US:** la selección se hace sobre la edición métrica. El B31.3 enlaza 1 065 de 1 288 materiales con su homólogo A-1C; la II-D, el 100 % de la 1A. Los no enlazados muestran «sin equivalente en la edición US» en lugar de un valor equivocado.
 
 ## Reproducir
@@ -130,10 +136,12 @@ Desde `outputs/Base_Datos_Materiales_ASME/scripts`:
 #    proyectos de VBA" y lo restaura al terminar.
 python make_vba_seed.py
 
-# 2. Notas de grupo de TM-1 / TE-1 en resources/. Solo si se repone la
-#    extraccion de II-D; el builder aborta si faltan.
-python extraer_notas_ii_d.py --resources ..\..\..\resources `
+# 2. Notas de grupo de TM-1 / TE-1 en resources/, una edicion por corrida.
+#    Solo si se repone la extraccion de II-D; el builder aborta si faltan.
+python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
     --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
+    --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 
 # 3. Entregable
 python build_db_materiales.py --resources ..\..\..\resources `
