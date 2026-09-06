@@ -1011,8 +1011,17 @@ def cargar_decisiones(ruta: Path):
         # Una decision se ancla a la composicion cuando la fila la imprime, y al
         # UNS cuando no: en esas filas lo que se decide es precisamente si ese
         # UNS designa el material cuya composicion se tomo prestada.
-        if txt(d.get("uns")):
-            por_uns[txt(d["uns"]).upper()] = d
+        # `uns` admite una lista: la misma pregunta suele cubrir varios UNS del
+        # mismo material (los seis aceros que ASME imprime como «18Cr-8Ni», por
+        # ejemplo). Una firma por pregunta, no por fila: repetir la firma 38
+        # veces para 17 decisiones distintas invita a firmar sin mirar.
+        uns_val = d.get("uns")
+        if isinstance(uns_val, (list, tuple)):
+            for u in uns_val:
+                if txt(u):
+                    por_uns[txt(u).upper()] = d
+        elif txt(uns_val):
+            por_uns[txt(uns_val).upper()] = d
         elif comp_key(d.get("composicion")):
             por_comp[comp_key(d["composicion"])] = d
     if sin_firma:

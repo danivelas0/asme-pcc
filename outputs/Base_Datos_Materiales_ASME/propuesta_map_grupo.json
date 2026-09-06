@@ -1,8 +1,8 @@
 {
   "_que_es_esto": "PROPUESTA, no decision. Preparada por script a partir de las tablas del codigo; `validado_por` esta vacio a proposito y el builder ignora toda entrada sin firmar.",
   "_como_usarla": [
-    "1. Revise cada entrada con su `_recomendacion` y su `_evidencia`.",
-    "2. Si la acepta, escriba su nombre en `validado_por` y la fecha.",
+    "1. Revise cada entrada: `_pregunta` dice que se responde y `_evidencia` de donde sale.",
+    "2. Si la acepta, escriba su nombre en `validado_por` y la fecha. Una firma cubre todos los UNS de esa entrada.",
     "3. Si no, corrija `grupo_tm` / `grupo_te` o deje la entrada sin firmar.",
     "4. Guarde el archivo como `decisiones_map_grupo.json` (nombre distinto,",
     "   a proposito: renombrarlo es el acto deliberado que las activa).",
@@ -11,10 +11,17 @@
   "_sin_propuesta": "127 casos no llevan propuesta: su composicion no figura en ninguna Nota de TM-1 ni TE-1, de modo que II-D no publica modulo ni dilatacion para ese material. Lo correcto es que sigan bloqueados. Se listan al final solo para que conste que se miraron.",
   "decisiones": [
     {
-      "uns": "S30400",
+      "uns": [
+        "J92500",
+        "J92600",
+        "S30200",
+        "S30400",
+        "S30403",
+        "S30409"
+      ],
       "grupo_tm": "Material Group G",
       "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30400» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
+      "justificacion": "UNS listados = «18Cr-8Ni» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group G / Group 3.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -23,46 +30,87 @@
         "fuente_E": "TM-1 Nota (7) (comp. prestada)",
         "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
       },
-      "_filas_afectadas": 43,
-      "_especificaciones": "SA-320, SA-193, SA-182, SA-312"
+      "_filas_afectadas": 113,
+      "_especificaciones": "SA-479, SA-240",
+      "_pregunta": "¿Los 6 UNS de esta lista son el material que ASME imprime como «18Cr-8Ni»? Si lo son, les corresponde Material Group G (E) / Group 3 (dilatacion)."
     },
     {
-      "uns": "S30403",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30403» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
+      "uns": [
+        "J11562",
+        "K11562",
+        "K11564",
+        "K11757",
+        "K12062"
+      ],
+      "grupo_tm": "Material Group C",
+      "grupo_te": "Group 1",
+      "justificacion": "UNS listados = «1Cr-1∕2Mo» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group C / Group 1.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
       "_confianza": "alta — cadena verificable en tablas del propio ASME",
       "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
+        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
+        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
       },
-      "_filas_afectadas": 27,
-      "_especificaciones": "SA-182, SA-312, SA-249, SA-688"
+      "_filas_afectadas": 14,
+      "_especificaciones": "SA-426",
+      "_pregunta": "¿Los 5 UNS de esta lista son el material que ASME imprime como «1Cr-1∕2Mo»? Si lo son, les corresponde Material Group C (E) / Group 1 (dilatacion)."
     },
     {
-      "uns": "S30409",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30409» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
+      "uns": [
+        "J12521",
+        "J12522",
+        "J12524",
+        "K11522",
+        "K12821",
+        "K12822"
+      ],
+      "grupo_tm": "Material Group A",
+      "grupo_te": "Group 1",
+      "justificacion": "UNS listados = «C-1∕2Mo» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group A / Group 1.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
       "_confianza": "alta — cadena verificable en tablas del propio ASME",
       "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
+        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
+        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
       },
-      "_filas_afectadas": 26,
-      "_especificaciones": "SA-182, SA-312, SA-249, SA-479"
+      "_filas_afectadas": 10,
+      "_especificaciones": "SA-352",
+      "_pregunta": "¿Los 6 UNS de esta lista son el material que ASME imprime como «C-1∕2Mo»? Si lo son, les corresponde Material Group A (E) / Group 1 (dilatacion)."
     },
     {
-      "uns": "K31545",
+      "uns": [
+        "J31550",
+        "K31718",
+        "K31918",
+        "K32018",
+        "K32025"
+      ],
+      "grupo_tm": "Material Group B",
+      "grupo_te": "Group 1",
+      "justificacion": "UNS listados = «31∕2Ni» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group B / Group 1.",
+      "validado_por": "",
+      "fecha": "",
+      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
+      "_confianza": "alta — cadena verificable en tablas del propio ASME",
+      "_evidencia": {
+        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
+        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
+      },
+      "_filas_afectadas": 10,
+      "_especificaciones": "SA-352",
+      "_pregunta": "¿Los 5 UNS de esta lista son el material que ASME imprime como «31∕2Ni»? Si lo son, les corresponde Material Group B (E) / Group 1 (dilatacion)."
+    },
+    {
+      "uns": [
+        "K31545"
+      ],
       "grupo_tm": "Material Group D",
       "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K31545» aparece como «3Cr-1Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group D (E) / Group 1 (dilatacion).",
+      "justificacion": "UNS listados = «3Cr-1Mo» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group D / Group 1.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -72,13 +120,16 @@
         "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
       },
       "_filas_afectadas": 8,
-      "_especificaciones": "SA-336, SA-387, SA-369, SA-182"
+      "_especificaciones": "SA-336, SA-387, SA-369, SA-182",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «3Cr-1Mo»? Si lo son, les corresponde Material Group D (E) / Group 1 (dilatacion)."
     },
     {
-      "uns": "K22035",
+      "uns": [
+        "K22035"
+      ],
       "grupo_tm": "Material Group B",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K22035» aparece como «2Ni-1Cu» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «2Ni-1Cu» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group B / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -88,77 +139,16 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 7,
-      "_especificaciones": "SA-333, SA-234, SA-182, SA-420"
+      "_especificaciones": "SA-333, SA-234, SA-182, SA-420",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «2Ni-1Cu»? Si lo son, les corresponde Material Group B (E) / - (dilatacion)."
     },
     {
-      "uns": "J92600",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J92600» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
-      },
-      "_filas_afectadas": 7,
-      "_especificaciones": "SA-351, SA-451"
-    },
-    {
-      "uns": "K11562",
-      "grupo_tm": "Material Group C",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K11562» aparece como «1Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group C (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 6,
-      "_especificaciones": "SA-250, SA-369, SA-182, SA-335"
-    },
-    {
-      "uns": "J92500",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J92500» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
-      },
-      "_filas_afectadas": 6,
-      "_especificaciones": "SA-351, SA-451"
-    },
-    {
-      "uns": "K11522",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K11522» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 5,
-      "_especificaciones": "SA-250, SA-369, SA-335, SA-209"
-    },
-    {
-      "uns": "S40500",
+      "uns": [
+        "S40500"
+      ],
       "grupo_tm": "Material Group F",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S40500» aparece como «12Cr-Al» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «12Cr-Al» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -168,13 +158,16 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 5,
-      "_especificaciones": "SA-240, SA-268, SA-479"
+      "_especificaciones": "SA-240, SA-268, SA-479",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «12Cr-Al»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
-      "uns": "S30500",
+      "uns": [
+        "S30500"
+      ],
       "grupo_tm": "",
       "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30500» aparece como «18Cr-11Ni» en DB_B31_3, DB_B31_3C, DB_BPVC_IID, DB_BPVC_IIDC, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: - (E) / Group 3 (dilatacion).",
+      "justificacion": "UNS listados = «18Cr-11Ni» segun las propias tablas de ASME; esa composicion figura en Nota, que da - / Group 3.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -184,61 +177,16 @@
         "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
       },
       "_filas_afectadas": 5,
-      "_especificaciones": "SA-193"
+      "_especificaciones": "SA-193",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «18Cr-11Ni»? Si lo son, les corresponde - (E) / Group 3 (dilatacion)."
     },
     {
-      "uns": "K31918",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K31918» aparece como «31∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 4,
-      "_especificaciones": "SA-333, SA-334"
-    },
-    {
-      "uns": "K11757",
-      "grupo_tm": "Material Group C",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K11757» aparece como «1Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group C (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 4,
-      "_especificaciones": "SA-387, SA-691"
-    },
-    {
-      "uns": "S30200",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30200» aparece como «18Cr-8Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
-      },
-      "_filas_afectadas": 4,
-      "_especificaciones": "SA-479, SA-240"
-    },
-    {
-      "uns": "S43000",
+      "uns": [
+        "S43000"
+      ],
       "grupo_tm": "Material Group F",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S43000» aparece como «17Cr» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «17Cr» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -248,13 +196,36 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 4,
-      "_especificaciones": "SA-268, SA-479, SA-240"
+      "_especificaciones": "SA-268, SA-479, SA-240",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «17Cr»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
-      "uns": "S42900",
+      "uns": [
+        "J42045",
+        "K42544"
+      ],
+      "grupo_tm": "Material Group E",
+      "grupo_te": "",
+      "justificacion": "UNS listados = «5Cr-1∕2Mo» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group E / -.",
+      "validado_por": "",
+      "fecha": "",
+      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
+      "_confianza": "alta — cadena verificable en tablas del propio ASME",
+      "_evidencia": {
+        "fuente_E": "TM-1 Nota (5) (comp. prestada)",
+        "fuente_alfa": ""
+      },
+      "_filas_afectadas": 4,
+      "_especificaciones": "SA-426, SA-217",
+      "_pregunta": "¿Los 2 UNS de esta lista son el material que ASME imprime como «5Cr-1∕2Mo»? Si lo son, les corresponde Material Group E (E) / - (dilatacion)."
+    },
+    {
+      "uns": [
+        "S42900"
+      ],
       "grupo_tm": "Material Group F",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S42900» aparece como «15Cr» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «15Cr» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -264,77 +235,17 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 3,
-      "_especificaciones": "SA-268, SA-240"
+      "_especificaciones": "SA-268, SA-240",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «15Cr»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
-      "uns": "K11564",
-      "grupo_tm": "Material Group C",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K11564» aparece como «1Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group C (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-182, SA-336"
-    },
-    {
-      "uns": "K42544",
-      "grupo_tm": "Material Group E",
-      "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K42544» aparece como «5Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group E (E) / - (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (5) (comp. prestada)",
-        "fuente_alfa": ""
-      },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-182, SA-336"
-    },
-    {
-      "uns": "K32025",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K32025» aparece como «31∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-350"
-    },
-    {
-      "uns": "K32018",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K32018» aparece como «31∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-203"
-    },
-    {
-      "uns": "K12021",
+      "uns": [
+        "K12021",
+        "K12022"
+      ],
       "grupo_tm": "Material Group A",
       "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K12021» aparece como «Mn-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
+      "justificacion": "UNS listados = «Mn-1∕2Mo» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group A / Group 1.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -343,14 +254,17 @@
         "fuente_E": "TM-1 Nota (1) (comp. prestada)",
         "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
       },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-302, SA-672"
+      "_filas_afectadas": 3,
+      "_especificaciones": "SA-302",
+      "_pregunta": "¿Los 2 UNS de esta lista son el material que ASME imprime como «Mn-1∕2Mo»? Si lo son, les corresponde Material Group A (E) / Group 1 (dilatacion)."
     },
     {
-      "uns": "S40900",
+      "uns": [
+        "S40900"
+      ],
       "grupo_tm": "Material Group F",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S40900» aparece como «11Cr-Ti» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «11Cr-Ti» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -360,125 +274,17 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 2,
-      "_especificaciones": "SA-268"
+      "_especificaciones": "SA-268",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «11Cr-Ti»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
-      "uns": "J42045",
-      "grupo_tm": "Material Group E",
-      "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J42045» aparece como «5Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group E (E) / - (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (5) (comp. prestada)",
-        "fuente_alfa": ""
-      },
-      "_filas_afectadas": 2,
-      "_especificaciones": "SA-426, SA-217"
-    },
-    {
-      "uns": "K12822",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K12822» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-182"
-    },
-    {
-      "uns": "K31718",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K31718» aparece como «31∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-203"
-    },
-    {
-      "uns": "K12022",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K12022» aparece como «Mn-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-302"
-    },
-    {
-      "uns": "K12821",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K12821» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-234"
-    },
-    {
-      "uns": "K12062",
-      "grupo_tm": "Material Group C",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «K12062» aparece como «1Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group C (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-234"
-    },
-    {
-      "uns": "S41008",
-      "grupo_tm": "Material Group F",
-      "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S41008» aparece como «13Cr» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (6) (comp. prestada)",
-        "fuente_alfa": ""
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-240"
-    },
-    {
-      "uns": "S30453",
+      "uns": [
+        "S30451",
+        "S30453"
+      ],
       "grupo_tm": "Material Group G",
       "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30453» aparece como «18Cr-8Ni-N» en DB_BPVC_IID, DB_BPVC_IIDC, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
+      "justificacion": "UNS listados = «18Cr-8Ni-N» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group G / Group 3.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -487,110 +293,17 @@
         "fuente_E": "TM-1 Nota (7) (comp. prestada)",
         "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
       },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-358"
+      "_filas_afectadas": 2,
+      "_especificaciones": "SA-193",
+      "_pregunta": "¿Los 2 UNS de esta lista son el material que ASME imprime como «18Cr-8Ni-N»? Si lo son, les corresponde Material Group G (E) / Group 3 (dilatacion)."
     },
     {
-      "uns": "J12521",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J12521» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-426"
-    },
-    {
-      "uns": "J11562",
-      "grupo_tm": "Material Group C",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J11562» aparece como «1Cr-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group C (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (3) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-426"
-    },
-    {
-      "uns": "J12524",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J12524» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-217"
-    },
-    {
-      "uns": "J12522",
-      "grupo_tm": "Material Group A",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J12522» aparece como «C-1∕2Mo» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group A (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (1) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-352"
-    },
-    {
-      "uns": "J22500",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J22500» aparece como «21∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-352"
-    },
-    {
-      "uns": "J31550",
-      "grupo_tm": "Material Group B",
-      "grupo_te": "Group 1",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J31550» aparece como «31∕2Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group B (E) / Group 1 (dilatacion).",
-      "validado_por": "",
-      "fecha": "",
-      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
-      "_confianza": "alta — cadena verificable en tablas del propio ASME",
-      "_evidencia": {
-        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
-      },
-      "_filas_afectadas": 1,
-      "_especificaciones": "SA-352"
-    },
-    {
-      "uns": "J91540",
+      "uns": [
+        "S41008"
+      ],
       "grupo_tm": "Material Group F",
       "grupo_te": "",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «J91540» aparece como «13Cr-4Ni» en DB_B31_3, DB_B31_3C, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group F (E) / - (dilatacion).",
+      "justificacion": "UNS listados = «13Cr» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
@@ -600,23 +313,46 @@
         "fuente_alfa": ""
       },
       "_filas_afectadas": 1,
-      "_especificaciones": "SA-487"
+      "_especificaciones": "SA-240",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «13Cr»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
-      "uns": "S30451",
-      "grupo_tm": "Material Group G",
-      "grupo_te": "Group 3",
-      "justificacion": "El UNS designa una composicion asignada por SAE/ASTM. La fila no imprime composicion nominal. Su UNS «S30451» aparece como «18Cr-8Ni-N» en DB_BPVC_IID, DB_BPVC_IIDC, y esa composicion si figura en Nota. Confirmar que es el mismo material antes de usar E o dilatacion. Grupo propuesto por esa via: Material Group G (E) / Group 3 (dilatacion).",
+      "uns": [
+        "J22500"
+      ],
+      "grupo_tm": "Material Group B",
+      "grupo_te": "Group 1",
+      "justificacion": "UNS listados = «21∕2Ni» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group B / Group 1.",
       "validado_por": "",
       "fecha": "",
       "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
       "_confianza": "alta — cadena verificable en tablas del propio ASME",
       "_evidencia": {
-        "fuente_E": "TM-1 Nota (7) (comp. prestada)",
-        "fuente_alfa": "TE-1 Nota (3) (comp. prestada)"
+        "fuente_E": "TM-1 Nota (2) (comp. prestada)",
+        "fuente_alfa": "TE-1 Nota (1) (comp. prestada)"
       },
       "_filas_afectadas": 1,
-      "_especificaciones": "SA-193"
+      "_especificaciones": "SA-352",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «21∕2Ni»? Si lo son, les corresponde Material Group B (E) / Group 1 (dilatacion)."
+    },
+    {
+      "uns": [
+        "J91540"
+      ],
+      "grupo_tm": "Material Group F",
+      "grupo_te": "",
+      "justificacion": "UNS listados = «13Cr-4Ni» segun las propias tablas de ASME; esa composicion figura en Nota, que da Material Group F / -.",
+      "validado_por": "",
+      "fecha": "",
+      "_recomendacion": "ACEPTAR si confirma que el UNS es ese material",
+      "_confianza": "alta — cadena verificable en tablas del propio ASME",
+      "_evidencia": {
+        "fuente_E": "TM-1 Nota (6) (comp. prestada)",
+        "fuente_alfa": ""
+      },
+      "_filas_afectadas": 1,
+      "_especificaciones": "SA-487",
+      "_pregunta": "¿Los 1 UNS de esta lista son el material que ASME imprime como «13Cr-4Ni»? Si lo son, les corresponde Material Group F (E) / - (dilatacion)."
     },
     {
       "composicion": "9Cr–1Mo–V",

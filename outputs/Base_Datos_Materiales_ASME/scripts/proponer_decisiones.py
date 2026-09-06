@@ -85,6 +85,43 @@ def agrupar(filas, ix):
     return grupos
 
 
+def agrupar_por_pregunta(entradas):
+    """Colapsa las propuestas por UNS en la pregunta que realmente se responde.
+
+    Los seis UNS que ASME imprime como «18Cr-8Ni» no son seis decisiones: son
+    una. Firmar 38 veces lo que son 17 preguntas distintas invita a firmar sin
+    mirar, y esa es una forma silenciosa de que entren datos sin revisar.
+    """
+    import re
+    por_pregunta, resto = {}, []
+    for e in entradas:
+        if "uns" not in e or "ACEPTAR" not in e["_recomendacion"]:
+            resto.append(e)
+            continue
+        m = re.search(r"aparece como «([^»]+)»", e["justificacion"])
+        clave = (m.group(1) if m else "?", e["grupo_tm"], e["grupo_te"])
+        p = por_pregunta.setdefault(clave, dict(e))
+        p.setdefault("_uns_lista", [])
+        p["_uns_lista"].append(e["uns"])
+        p["_filas_afectadas"] = (p.get("_filas_agrupadas", 0)
+                                 + e["_filas_afectadas"])
+        p["_filas_agrupadas"] = p["_filas_afectadas"]
+        p["_especificaciones"] = e["_especificaciones"]
+    salida = []
+    for (comp, tm, te), p in sorted(por_pregunta.items(),
+                                    key=lambda kv: -kv[1]["_filas_afectadas"]):
+        p.pop("_filas_agrupadas", None)
+        p["uns"] = sorted(p.pop("_uns_lista"))
+        p["_pregunta"] = (f"¿Los {len(p['uns'])} UNS de esta lista son el material "
+                          f"que ASME imprime como «{comp}»? Si lo son, les "
+                          f"corresponde {tm or '-'} (E) / {te or '-'} (dilatacion).")
+        p["justificacion"] = (
+            f"UNS listados = «{comp}» segun las propias tablas de ASME; esa "
+            f"composicion figura en Nota, que da {tm or '-'} / {te or '-'}.")
+        salida.append(p)
+    return salida + resto
+
+
 def proponer(grupos):
     salida, sin_propuesta = [], []
     for ((tipo, valor), estado), g in sorted(
@@ -148,6 +185,7 @@ def main(argv=None) -> int:
 
     filas, ix = leer_map(a.wb)
     salida, sin_propuesta = proponer(agrupar(filas, ix))
+    salida = agrupar_por_pregunta(salida)
 
     doc = {
         "_que_es_esto": (
@@ -155,8 +193,10 @@ def main(argv=None) -> int:
             "del codigo; `validado_por` esta vacio a proposito y el builder "
             "ignora toda entrada sin firmar."),
         "_como_usarla": [
-            "1. Revise cada entrada con su `_recomendacion` y su `_evidencia`.",
-            "2. Si la acepta, escriba su nombre en `validado_por` y la fecha.",
+            "1. Revise cada entrada: `_pregunta` dice que se responde y "
+            "`_evidencia` de donde sale.",
+            "2. Si la acepta, escriba su nombre en `validado_por` y la fecha. Una "
+            "firma cubre todos los UNS de esa entrada.",
             "3. Si no, corrija `grupo_tm` / `grupo_te` o deje la entrada sin firmar.",
             "4. Guarde el archivo como `decisiones_map_grupo.json` (nombre distinto,",
             "   a proposito: renombrarlo es el acto deliberado que las activa).",
