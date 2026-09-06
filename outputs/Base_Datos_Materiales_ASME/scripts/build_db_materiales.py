@@ -997,9 +997,17 @@ def cargar_decisiones(ruta: Path):
     with open(ruta, encoding="utf-8") as fh:
         datos = json.load(fh)
     por_comp, por_uns = {}, {}
+    sin_firma = 0
     for d in datos.get("decisiones", []):
         if not (txt(d.get("grupo_tm")) or txt(d.get("grupo_te"))):
             continue                     # entrada de plantilla, aun sin rellenar
+        # Sin firma no se aplica. Una propuesta bien razonada sigue siendo una
+        # propuesta: lo que convierte un grupo en dato utilizable es que un
+        # ingeniero lo asuma. Sin esto, un archivo de propuestas copiado por
+        # error entraria al calculo como si estuviese validado.
+        if not txt(d.get("validado_por")):
+            sin_firma += 1
+            continue
         # Una decision se ancla a la composicion cuando la fila la imprime, y al
         # UNS cuando no: en esas filas lo que se decide es precisamente si ese
         # UNS designa el material cuya composicion se tomo prestada.
@@ -1007,6 +1015,10 @@ def cargar_decisiones(ruta: Path):
             por_uns[txt(d["uns"]).upper()] = d
         elif comp_key(d.get("composicion")):
             por_comp[comp_key(d["composicion"])] = d
+    if sin_firma:
+        ISSUES.append(f"decisiones: {sin_firma} entradas con grupo asignado pero SIN "
+                      f"FIRMA en `validado_por`. NO se aplicaron: una propuesta sin "
+                      f"firmar no es una decision.")
     return por_comp, por_uns
 
 

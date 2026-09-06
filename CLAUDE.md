@@ -200,10 +200,26 @@ baja aleación» a los austeníticos 16Cr-12Ni-2Mo, a los dúplex 22Cr-5Ni-3Mo-N
 las aleaciones de níquel 62Ni-22Mo-15Cr; `8ni` casaba dentro de `18Ni`.
 `test_build_db.py::TestMapeoDeGrupos` lo impide.
 
-### Pendiente
+### Pendiente — la revisión del ingeniero
 
-Las **157 decisiones** de `Revision_MAP_Grupo.md` esperan validación del
-ingeniero. Todo lo demás del mapeo está cerrado y auditado.
+De las 157 entradas de `Revision_MAP_Grupo.md`, solo **39 admiten decisión**:
+
+- **38** son cadenas verificables (UNS → composición impresa por ASME para ese
+  mismo UNS → Nota que la lista → grupo). `proponer_decisiones.py` las deja
+  recomendadas con su evidencia en `propuesta_map_grupo.json`.
+- **1** es interpretación de código: si `9Cr-1Mo-V` cae bajo la Nota (5) de TM-1,
+  *«9Cr–Mo, including variations thereof»*. Sin recomendación: la decide el
+  ingeniero.
+- **118** no admiten propuesta. Su composición no figura en ninguna Nota, así que
+  II-D no publica E ni dilatación y **lo correcto es que sigan bloqueadas**.
+  Verificado además que ninguna coincide con una nota con los elementos en otro
+  orden: no son coincidencias perdidas.
+
+**Una propuesta sin firma no se aplica.** El builder descarta toda entrada sin
+`validado_por` y lo reporta. `propuesta_map_grupo.json` lleva a propósito un
+nombre distinto del que el builder lee: hay que revisarlo, firmarlo y renombrarlo
+a `decisiones_map_grupo.json`. Nunca rellenar `validado_por` por el ingeniero:
+ese campo es la firma que hace utilizable el dato.
 
 ---
 

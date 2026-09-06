@@ -275,12 +275,28 @@ class TestDecisionesDelIngeniero:
 
     def test_ancla_por_composicion_y_por_uns(self, tmp_path):
         p = self._archivo(tmp_path, [
-            {"composicion": "9Cr–1Mo–V", "grupo_tm": "Material Group E"},
-            {"uns": "S30400", "grupo_te": "Group 3"},
+            {"composicion": "9Cr–1Mo–V", "grupo_tm": "Material Group E",
+             "validado_por": "DV", "fecha": "2026-09-06"},
+            {"uns": "S30400", "grupo_te": "Group 3",
+             "validado_por": "DV", "fecha": "2026-09-06"},
         ])
         comp, uns = B.cargar_decisiones(p)
         assert B.comp_key("9Cr-1Mo-V") in comp
         assert "S30400" in uns
+
+    def test_una_propuesta_sin_firmar_no_se_aplica(self, tmp_path):
+        # `proponer_decisiones.py` emite recomendaciones con el grupo ya puesto y
+        # `validado_por` vacio. Sin este guardarrail, copiar ese archivo con el
+        # nombre que el builder lee meteria propuestas al calculo como si
+        # estuviesen validadas.
+        p = self._archivo(tmp_path, [
+            {"uns": "S30400", "grupo_tm": "Material Group G", "validado_por": ""},
+            {"composicion": "18Cr–8Ni", "grupo_tm": "Material Group G",
+             "validado_por": "DV", "fecha": "2026-09-06"},
+        ])
+        comp, uns = B.cargar_decisiones(p)
+        assert uns == {}                       # la propuesta sin firma se descarta
+        assert len(comp) == 1                  # la firmada si entra
 
     def test_el_estado_validado_es_distinto_de_auto(self):
         # Quien audite el libro tiene que poder separar lo que dice el codigo de
