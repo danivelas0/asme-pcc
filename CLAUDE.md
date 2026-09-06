@@ -64,8 +64,11 @@ cd outputs\Base_Datos_Materiales_ASME\scripts
 python make_vba_seed.py
 
 # Solo si se repone la extraccion de II-D: notas de grupo de TM-1 / TE-1.
-python extraer_notas_ii_d.py --resources ..\..\..\resources `
+# Una corrida por edicion; nunca copiar las notas de una en la otra.
+python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
     --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
+    --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 
 python build_db_materiales.py --resources ..\..\..\resources `
     --in ..\..\..\templates\maestro_con_macros.xlsm `
