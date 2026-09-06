@@ -1,0 +1,458 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 4 - NONMETALLIC AND BONDED REPAIRS",
+  "chapter_kind": "article",
+  "chapter_id": "405",
+  "chapter_title": "Qualification of Nonmetallic Composite Repair Systems",
+  "parent_article": null,
+  "appendix_class": null,
+  "source_pages": [
+    272,
+    277
+  ],
+  "outline_pages": [
+    272,
+    277
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 76,
+    "figures": 0,
+    "tables": 2,
+    "equations": 0
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405",
+      "level": 1,
+      "text": "Article 405 Qualification of Nonmetallic Composite Repair Systems <22>"
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-1",
+      "level": 2,
+      "text": "405-1 DESCRIPTION"
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-1.1",
+      "level": 3,
+      "text": "405-1.1 Scope"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "This Article provides the qualification requirements for Repair Systems."
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-1.2",
+      "level": 3,
+      "text": "405-1.2 Definition of Repair System"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "The Repair System is defined as a combination of the following elements for which qualification testing has been completed:"
+    },
+    {
+      "type": "list_item",
+      "page": 272,
+      "text": "(a) substrate (repair surface)"
+    },
+    {
+      "type": "list_item",
+      "page": 272,
+      "text": "(b) surface preparation"
+    },
+    {
+      "type": "list_item",
+      "page": 272,
+      "text": "(c) load transfer material (filler material)"
+    },
+    {
+      "type": "list_item",
+      "page": 272,
+      "text": "(d) primer layer (an adhesive used in some Repair Systems bonding the composite laminate to the substrate) (e) composite material (repair laminate)"
+    },
+    {
+      "type": "list_item",
+      "page": 272,
+      "text": "(f) application method (including sealing, coating, etc., as needed) (g) curing protocol (h) interlaminar adhesive for Repair Systems that"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "utilize precured plies"
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-1.3",
+      "level": 3,
+      "text": "405-1.3 Materials Allowed"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "(a) The composite materials allowed for the Repair System include — but are not limited to — glass, aramid, or carbon fiber reinforcement in a thermoset polymer (e.g., polyester, polyurethane, phenolic, vinyl ester, or epoxy) matrix."
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "(b) Structural fibers shall be continuous and not be randomly oriented."
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-1.4",
+      "level": 3,
+      "text": "405-1.4 Types of Repair Systems"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "(a) Type A Design Case. Components not leaking, requiring structural reinforcement only."
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "(b) Type B Design Case. Components leaking requiring structural reinforcement and sealing of through-wall defects."
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-2",
+      "level": 2,
+      "text": "405-2 LIMITATIONS"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "Part 1 of this Standard contains additional requirements and limitations. This Article shall be used in conjunction with Part 1"
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-3",
+      "level": 2,
+      "text": "405-3 DESIGN"
+    },
+    {
+      "type": "section_header",
+      "page": 272,
+      "number": "405-3.1",
+      "level": 3,
+      "text": "405-3.1 Symbols"
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "The following symbols are used throughout this Article."
+    },
+    {
+      "type": "paragraph",
+      "page": 272,
+      "text": "A d ( ) i = the function of defect size, di , and repair laminate properties of observation, i , where i = 1, n , determined by Mandatory Appendix 405-IV, eq. (IV-1) D = component outside diameter, mm (in.) Ea = tensile modulus for the composite laminate in the axial direction, determined per Table 405-3.3-1, N/m2 (psi) Ec = tensile modulus for the composite laminate in the circumferential direction, determined per Table 405-3.3-1, N/m2 (psi) Es = tensile modulus for substrate material, N/m2 (psi) G = regression gradient G 31 = shear modulus for the composite laminate, determined per Table 405-3.3-1, N/m2 (psi) HDT = heat distortion temperature, determined per Table 405-3.3-1, °C (°F) l = defect length, determined per Mandatory Appendix 405-III n = the number of observed data points [for A ( di ), Pi ], determined per Mandatory Appendix 405- IV nB = minimum number of layers for Type B repairs nv = number of variables for Student's tv , determined per Table 405-IV-3-1 pf = failure pressure of the undamaged pipe, N/m2 (psi) Pi = the pressure at failure of observation i , where i = 1, n , determined per Table 405-IV-3-1 P test = test pressure, N/m2 (psi) s = SMYS (Specified Minimum Yield Strength derated as required by the appropriate construction code) of component, N/m2 (psi) sa = measured yield strength of component or mill certification, N/m2 (psi) sc = characteristic tensile strength of composite in circumferential (hoop) direction, where the characteristic strength is equal to the mean strength, determined per Table 405-3.3-1 , N/m2 (psi)"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "slt = 95% lower confidence limit of the long-term strength determined by performance testing per Mandatory Appendix 405-II, N/m2 (psi) Tg = glass transition temperature, determined per Table 405-3.3-1, °C (°F) ti = repair thickness of data point i , determined per Mandatory Appendix 405-IV t min = minimum repair thickness determined by applicable equations, mm (in.) t repair = design repair thickness, mm (in.) ts = minimum remaining wall thickness of the component, mm (in.) t test = test thickness of composite, determined per Mandatory Appendix 405-V, mm (in.) tv = Student's t , mm (in.), determined per Mandatory Appendix 405-IV, J/m2 (in.-lb/in. 2 ) w = width of defect in hoop direction to be used in test specified in Mandatory Appendix 405-III , mm (in.) αa = coefficient of thermal expansion of the repair laminate in the axial direction, determined per Table 405-3.3-1, °C−1 (°F−1) αc = coefficient of thermal expansion of the repair laminate in the circumferential direction, determined per Table 405-3.3-1, °C−1 (°F−1) γ = toughness parameter (energy release rate) for the composite–substrate interface, determined per Mandatory Appendix 405-IV, J/ m 2 (in.-lb/in. 2 ) γi = toughness parameter for each observed data point [ A ( di ), Pi ], determined per Mandatory Appendix 405-IV, J/m 2 (in.-lb/in. 2 ) γ LCL = toughness parameter lower confidence limit per Mandatory Appendix 405-IV, J/m 2 (in. lb/in. 2 ) γ mean = toughness parameter mean value per Mandatory Appendix 405-IV, J/m2 (in.-lb/in. 2 ) ε = thermal strain σ = variance of pressure measurement, determined per Mandatory Appendix 405-IV υca = Poisson's ratio for the composite laminate in the circumferential direction (load in circumferential direction, contraction in axial direction), determined per Table 405-3.3-1"
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.2",
+      "level": 3,
+      "text": "405-3.2 Repair System Qualification Process"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(a) Qualification of the Repair System shall be completed in accordance with para. 405-3.6 using test methods listed in Table 405-3.3-1 ."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(b) All elements of the Repair System shall be tested to define thermal performance."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(c) Materials performance and test data shall be measured by a certified or nationally accredited test facility, or certified by a registered professional engineer (or international equivalent)."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(d) Repair System qualification data shall be measured for a representative member of each family of substrate materials (e.g., carbon steel, low- and high-alloy steel, stainless steel, aluminum, polyethylene, PVC, ABS, fiber-reinforced polymer, concrete, etc.) for which qualification for use of the Repair System is desired."
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.3",
+      "level": 3,
+      "text": "405-3.3 Test Methods"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "See Table 405-3.3-1 ."
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.4",
+      "level": 3,
+      "text": "405-3.4 Basic Material Documentation"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "This documentation shall include a descriptive statement of the polymer systems, including reinforcements used, and any standards to which they are supplied. Specifically, the following elements of the Repair System shall be described:"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(a) substrate (repair surface)"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(b) surface preparation"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(c) load transfer material (filler material)"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(d) primer layer (an adhesive used in some Repair Systems, bonding the composite laminate to the substrate) (e) composite material (repair laminate)"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(f) application method (including sealing, coating, etc., as needed) (g) curing protocol"
+    },
+    {
+      "type": "list_item",
+      "page": 273,
+      "text": "(h) interlaminar adhesive for Repair Systems that utilize precured plies"
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.5",
+      "level": 3,
+      "text": "405-3.5 Repair System Qualification Data"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(a) The Repair System qualification data shall be displayed as described in Mandatory Appendix 405-I ."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(b) The Repair System supplier shall state the type of repairs (as listed in para. 405-1.4) to which their Repair System has been qualified."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(c) Data developed according to this Article shall be approved by a licensed professional engineer (or international equivalent)."
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.6",
+      "level": 3,
+      "text": "405-3.6 Specific Repair System Requirements"
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.6.1",
+      "level": 4,
+      "text": "405-3.6.1 For Type A Repairs"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(a) Testing requirements in Mandatory Appendix 405-II shall be performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(b) The pipe spool survival test (see Mandatory Appendix 405-III shall be completed on at least one substrate material."
+    },
+    {
+      "type": "section_header",
+      "page": 273,
+      "number": "405-3.6.2",
+      "level": 4,
+      "text": "405-3.6.2 For Type B Repairs"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(a) Testing requirements in Mandatory Appendices 405-II and 405-III shall be performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(b) Additional data requirements for leaking components shall include the following:"
+    },
+    {
+      "type": "paragraph",
+      "page": 273,
+      "text": "(1) bending modulus for the (composite) repair laminate determined by the following:"
+    },
+    {
+      "type": "table",
+      "page": 274,
+      "number": "405-3.3-1",
+      "caption": "Table 405-3.3-1 Repair System Required Material and Performance Properties",
+      "structure": "not_reconstructed",
+      "text": "Property Test Type Detail Properties Minimum Values Test Methods Engineering Properties Tensile strength ( Swa , Swh ) and tensile modulus ( Ea , Ec ); Poisson's ratio ( υ ) Mandatory Tensile strength ( s ), modulus ( E ), Poisson's ratio ( υ ) (for leaking pipes and some design cases; strain to failure in both hoop and axial directions) Strain to failure shall be >1% ISO 527, ASTM D3039 In-plane shear modulus Mandatory for leaking pipes only Modulus only ( G 31) None ASTM D5379 Per ply thickness Mandatory Thickness per ply None None (may be determined from the tensile tests) Compressive modulus Mandatory Load transfer material None ASTM D695, ASTM D6641, ISO 604, ISO 14126 Lap shear adhesion strength [Note (1)] Mandatory Shear strength of composite bond to substrate 4 NM/m 2 (580 psi) BS EN 1465, ASTM D3165, ASTM D5868 Long-term lap shear performance Mandatory or see Mandatory Appendix 405-II, section 405-II-3 Measurement of lap shear strength after 1 000-h heat exposure 30% of lap shear adhesion strength Mandatory Appendix 405-II, section 405-II-2 Impact performance Mandatory for leaking pipes only Low velocity impact performance Withstand drop test per Mandatory Appendix 405-VI Mandatory Appendix 405-VI Energy release rate ( γ ) Mandatory for leaking pipes only Toughness parameter, energy release rate ( γ ) None Mandatory Appendix 405-IV Long-term strength, Slt [ Note (2) ] Optional Determine long-term (creep-rupture) strength of the wrap by either of three methods None Mandatory Appendix 405-V , ASTM D2990, ASTM D2992 Short-term pipe: spool survival test Mandatory Wrapped pipe with defect must withstand a short-term pressure test Wrap shall not fail Mandatory Appendix 405-III Cyclic loading Optional None None ISO 14692, ISO 24817 Physical Properties Hardness Mandatory Barcol or Shore hardness data None BS EN 59, ISO 868, ASTM D2583, ASTM D2240 Coefficient of thermal expansion Mandatory CTE value None ISO 11359-2, ASTM E831"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(-a) test according to Table 405-3.3-1"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(-b) alternatively, the tensile modulus, Ea , for the laminate may be used as a conservative estimate for the value in bending"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(2) energy release rate (fracture toughness parameter), γ , shall be determined by the tests according to Mandatory Appendix 405-IV. A minimum of three tests are required, and results shall be compared with γ LCL of the original Repair System."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(3) impact performance determined by the tests according to Mandatory Appendix 405-VI ."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(4) validation of the Repair System for repair of leaks of various components according to Mandatory Appendix 405-VII ."
+    },
+    {
+      "type": "section_header",
+      "page": 275,
+      "number": "405-3.6.3",
+      "level": 4,
+      "text": "405-3.6.3 Performance Testing (Additional Qualifi cation Tests)"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(a) The Repair System supplier may carry out performance testing to determine design allowables in accordance with Mandatory Appendix 405-V."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(b) The design allowables shall be determined by either of the following requirements:"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(1) long-term strength, slt , either from 1 000 h survival test or regression testing"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(2) long-term strain to failure, ε , from representative repair laminate regression testing"
+    },
+    {
+      "type": "section_header",
+      "page": 275,
+      "number": "405-3.7",
+      "level": 3,
+      "text": "405-3.7 Requalification"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(a) Where there has been a change to any element of the Repair System, then the testing specified in the relevant paras. 405-3.6.1 through 405-3.6.3 shall be completed. See Nonmandatory Appendix 405-B for guidance."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(b) If the modified Repair System is found to be of lower performance than the original system, then it shall be treated as a new system and validated according to the requirements of this Article."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(c) If the modified Repair System is found to be of higher performance than the original system, then it may be treated as a new system and validated according to the requirements of this Article."
+    },
+    {
+      "type": "table",
+      "page": 275,
+      "number": "405-3.3-1",
+      "caption": "Table 405-3.3-1 Repair System Required Material and Performance Properties (Cont ' d)",
+      "structure": "not_reconstructed",
+      "text": "Property Test Type Detail Properties Minimum Values Test Methods Physical Properties (Cont'd) Glass transition temperature ( Tg ) Mandatory or use HDT Glass transition temperature ( Tg ) None, except this can determine maximum operating temperature of composite system ISO 11357-2, ASTM E831, ASTM E1640, ASTM E6604 Heat distortion temperature (HDT) [Note (3)] Mandatory or use Tg above Heat distortion temperature (HDT) None, except this can determine maximum operating temperature of composite system ISO 75, ASTM D648 Electrical conductivity Optional None None ISO 14692, ASTM D149 Chemical compatibility Optional None None ASTM D543, ASTM C581, ASTM D3681, ISO 10952 Cathodic disbondment Mandatory for cathodically protected pipes Disbondment None ASTM G8, ASTM G42, ASTM G95"
+    },
+    {
+      "type": "section_header",
+      "page": 275,
+      "text": "NOTES:"
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(1) When using the test methods provided in ASTM D3165, ASTM D5868, or BS EN 1465, it shall serve to provide general guidelines for this test. A sample of the composite polymer instead of just the adhesive shall be used between the plates."
+    },
+    {
+      "type": "paragraph",
+      "page": 275,
+      "text": "(2) When using the practices provided in ASTM D2990 and ASTM D2992, they shall serve to provide general guidelines for this test. (3) For the matrix polymer (without the reinforcing fibers), use the test methods provided in ASTM D648 or ISO 75-1 to measure HDT under a load of 1.82 MPa (264 psi). As an alternative, when measuring HDT for reinforced polymers (using ISO 75-3), the minimum load should be 0.1% of the modulus."
+    },
+    {
+      "type": "list_item",
+      "page": 276,
+      "text": "405-4 FABRICATION (INSTALLATION) The Repair System to be qualified shall be designed and installed in accordance with the requirements in Article 401 for Type A or Type B repair. 405-5 EXAMINATION The Repair System to be qualified shall be examined in accordance with the requirements in Article 401. 405-6 SYSTEM PRESSURE TESTING The Repair System to be qualified shall be system pressure tested in accordance with the requirements in Article 401. 405-7 REFERENCES 405-7.1 Referenced Codes and Standards The following codes and standards are referenced in this Article. Unless otherwise specified, the latest edition shall apply. ASME PCC-2–2018, Repair of Pressure Equipment and Piping Publisher: The American Society of Mechanical Engineers (ASME), Two Park Avenue, New York, NY 10016-5990 (www.asme.org) ASTM A106-2018, Standard Specification for Seamless Carbon Steel Pipe for High-Temperature Service ASTM C581-2015, Standard Practice for Determining Chemical Resistance of Thermosetting Resins Used in Glass-Reinforced Structures Intended for Liquid Service ASTM D149-2009(2013), Standard Test Method for Dielectric Breakdown Voltage and Dielectric Strength of Solid Electrical Insulating Materials at Commercial Power Frequencies ASTM D543-2014, Standard Practices for Evaluating the Resistance of Plastics to Chemical Reagents ASTM D648-2018, Standard Test Method for Deflection Temperature of Plastics Under Flexural Load in the Edgewise Position ASTM D695-2015, Standard Test Method for Compressive Properties of Rigid Plastics ASTM D790-2017, Standard Test Method for Flexural Properties of Unreinforced and Reinforced Plastics and Electrical Insulating Materials ASTM D1598-2015a, Standard Test Method for the Timeto-Failure of Plastic Pipe Under Constant Internal Pressure ASTM D1599-2014 e1, Standard Test Method for Resistance to Short-Time Hydraulic Pressure of Plastic Pipe, Tubing and Fittings ASTM D2240-2015 e1, Standard Test Method for Rubber Property — Durometer Hardness ASTM D2583-2013a, Standard Test Method for Indentation Hardness of Rigid Plastics by Means of a Barcol Impressor ASTM D2992-2018, Standard Practice for Obtaining Hydrostatic or Pressure Design Basis for (Glass-Fiber-Reinforced Thermosetting Resin) Pipe and Fittings ASTM D3039-2017, Standard Test Method for Tensile Properties of Polymer Matrix Composite Materials ASTM D3165-2007(2014), Standard Test Method for Strength Properties of Adhesives in Shear by Tension Loading of Single-Lap-Joint Laminated Assemblies ASTM D3681-2012 e1, Standard Test Method for Chemical Resistance of \"Fiberglass\" (Glass-Fiber-Reinforced Thermosetting Resin) Pipe in a Deflected Condition ASTM D5379-2012, Standard Test Method for Shear Properties of Composite Materials by the V-Notched Beam Method ASTM D5868-2001(2014), Standard Test Method for Lap Shear Adhesion for Fiber Reinforced Plastic (FRP) Bonding ASTM D6604-2000(2017), Standard Practice for Glass Transition Temperatures of Hydrocarbon Resins by Differential Scanning Calorimetry ASTM D6641-2016 e1, Standard Test Method for Compressive Properties of Polymer Matrix Composite Materials Using a Combined Loading Compression (CLC) Test Fixture ASTM E84-2018, Standard Test Method for Surface Burning Characteristics of Building Materials ASTM E831-2014, Standard Test Method for Linear Thermal Expansion of Solid Materials by Thermomechanical Analysis ASTM E1640-2013(2018), Standard Test Method for Assignment of the Glass Transition Temperature By Dynamic Mechanical Analysis ASTM G8-1996(2010), Standard Test Methods for Cathodic Disbonding of Pipeline Coatings ASTM G42-2011, Standard Test Method for Cathodic Disbonding of Pipeline Coatings Subjected to Elevated Temperatures ASTM G84-1989(2012), Standard Practice for Measurement of Time-of-Wetness on Surfaces Exposed to Wetting Conditions as in Atmospheric Corrosion Testing ASTM G95-2007(2013), Standard Test Method for Cathodic Disbondment Test of Pipeline Coatings (Attached Cell Method) Publisher: American Society for Testing and Materials (ASTM International), 100 Barr Harbor Drive, P.O. Box C700, West Conshohocken, PA 19428-2959 (www.astm.org )"
+    },
+    {
+      "type": "list_item",
+      "page": 277,
+      "text": "BS EN 59:1977, Measurement of hardness by means of a Barcol impressor BS EN 1465:1995, Adhesives — Determination of tensile lap-shear strength of rigid to rigid bonded assemblies BS 2782: Part 10, Method 1001, Measurement of Hardness by Means of a Barcol Impresser BS 7910:1999, Guide onMethods for Assessing the Acceptability of Flaws in Metallic Structures Publisher: British Standards Institution, Inc. (BSI), 12950 Worldgate Drive, Suite 800, Herndon, VA 20170 (www.bsigroup.com ) ISO 75-1:2013, Plastics — Determination of temperature of deflection under load ISO 75-3:2004, Plastics — Determination of temperature of deflection under load — Part 3: High-strength thermosetting laminates and long-fibre-reinforced plastics ISO 178:2010, Plastics — Determination of flexural properties ISO 527-5:2009, Plastics— Determination of tensile properties— Part 5: Test conditions for unidirectional fibrereinforced plastic composites ISO 604:2002, Compressive properties of plastics ISO 868:2003, Plastics and ebonite — Determination of indentation hardness by means of a durometer (shore hardness) ISO 8501:1988, Preparation of steel substrates before application of paints and related products ISO 8502:1992, Tests for the assessment of steel cleanliness ISO 8503:1988, Surface roughness characteristics of blast cleaned steel substrates ISO 8504:2000, Surface preparation methods ISO 10952:1999, Plastics piping systems — Glass-reinforced thermosetting plastics (GRP) pipes and fittings"
+    },
+    {
+      "type": "list_item",
+      "page": 277,
+      "text": "Determination of the resistance to chemical attack from the inside of a section in a deflected condition ISO 11357-2:1999, Plastics— Differential scanning calorimetry (DSC)— Part 2: Determination of glass transition temperature ISO 11359-2:1999, Plastics—Thermomechanical analysis (TMA) — Part 2: Determination of coefficient of linear thermal expansion and glass transition temperature ISO 14126:1999, Fibre-reinforced plastic composites — Determination of compressive properties in the inplane direction Publisher: International Organization for Standardization (ISO), Central Secretariat, Chemin de Blandonnet 8, Case Postale 401, 1214 Vernier, Geneva, Switzerland (www.iso.org ) ASTM D638, Standard Test Method for Tensile Properties of Plastics ASTM D696, Standard Test Method for Coefficient of Linear Thermal Expansion of Plastics Between −30°C and 30°C with a Vitreous Silica Dilatometer ASTM D903, Standard Test Method for Peel or Stripping Strength of Adhesive Bonds ASTM D2105, Standard Test Method for Longitudinal Tensile Properties of \"Fiberglass\" (Glass-Fiber-Reinforced Thermosetting-Resin) Pipe and Tube ASTM D2344, Standard Test Method for Short-Beam Strength of Polymer Matrix Composite Materials and Their Laminates ASTM D2837, Standard Test Method for Obtaining Hydrostatic Design Basis for Thermoplastic Pipe Materials ASTM D3846, Standard Test Method for In-Plane Shear Strength of Reinforced Plastics ASTM F412, Standard Terminology Relating to Plastic Piping Systems Publisher: American Society for Testing and Materials (ASTM International), 100 Barr Harbor Drive, P.O. Box C700, West Conshohocken, PA 19428-2959 (www.astm.org ) ISO 14129, Fibre-reinforced plastic composites — Determination of the in-plane shear stress/shear strain response, including the in-plane shear modulus and strength, by the plus or minus 45 degree tension test method ISO 15310, Fibre-reinforced plastic composites — Determination of the in-plane shear modulus by the plate twist method Publisher: International Organization for Standardization (ISO), Central Secretariat, Chemin de Blandonnet 8, Case Postale 401, 1214 Vernier, Geneva, Switzerland (www.iso.org )"
+    },
+    {
+      "type": "section_header",
+      "page": 277,
+      "number": "405-7.2",
+      "level": 3,
+      "text": "405-7.2 Related Codes and Standards"
+    },
+    {
+      "type": "paragraph",
+      "page": 277,
+      "text": "The following are related codes and standards. Unless otherwise specified, the latest edition available may be used."
+    }
+  ]
+}

@@ -1,0 +1,521 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "X",
+ "title": "Metallic Bellows Expansion Joints",
+ "document": "Appendix X prose",
+ "pdf_pages": [
+  569,
+  572
+ ],
+ "section_count": 19,
+ "paragraph_count": 58,
+ "preamble": [
+  {
+   "kind": "paragraph",
+   "marker": null,
+   "indent": 5,
+   "text": "(Design requirements of Appendix X are dependent on and compatible with EJMA standards.)"
+  }
+ ],
+ "sections": [
+  {
+   "id": "X300",
+   "heading": "GENERAL",
+   "level": 1,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The intent of this Appendix is to set forth design, manufacturing, and installation requirements and considerations for bellows type expansion joints, supplemented by the EJMA standards. It is intended that applicable provisions and requirements of Chapters I through VI of this Code shall be met, except as modified herein. This Appendix does not specify design details. The detailed design of all elements of the expansion joint is the responsibility of the manufacturer. This Appendix is not applicable to expansion joints in piping designed in accordance with Chapter IX."
+    }
+   ]
+  },
+  {
+   "id": "X301",
+   "heading": "DESIGNER RESPONSIBILITIES",
+   "level": 1,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The designer shall specify the design conditions and requirements necessary for the detailed design and manufacture of the expansion joint in accordance with para. X301.1 and the piping layout, anchors, restraints, guides, and supports required by para. X301.2."
+    }
+   ]
+  },
+  {
+   "id": "X301.1",
+   "heading": "Expansion Joint Design Conditions",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The designer shall specify all necessary design conditions including the following."
+    }
+   ]
+  },
+  {
+   "id": "X301.1.1",
+   "heading": "Static Design Conditions. The design condi-",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "tions shall include any possible variations of pressure or temperature, or both, above operating levels. Use of a design metal temperature other than the fluid temperature for any component of the expansion joint shall be verified by computation, using accepted heat transfer procedures, or by test or measurement on similarly designed equipment in service under equivalent operating conditions."
+    }
+   ]
+  },
+  {
+   "id": "X301.1.2",
+   "heading": "Cyclic Design Conditions. These conditions",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "shall include coincident pressure, temperature, imposed end displacements and thermal expansion of the expansion joint itself, for cycles during operation. Cycles due to transient conditions (startup, shutdown, and abnormal operation) shall be stated separately. (See EJMA standards, 4.12.1.5 on fatigue life expectancy, for guidance in defining cycles.)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "X301.1.3 Other Loads. Other loads, including dynamic effects (e.g., wind, thermal shock, vibration, seismic forces, and hydraulic surge); and static loads, e.g., weight (insulation, snow, ice, etc.), shall be stated."
+    }
+   ]
+  },
+  {
+   "id": "X301.1.4",
+   "heading": "Fluid Properties. Properties of the flowing",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "medium pertinent to design requirements, including the owner-designated fluid service category, flow velocity and direction, for internal liners, etc., shall be specified."
+    }
+   ]
+  },
+  {
+   "id": "X301.1.5",
+   "heading": "Other Design Conditions. Other conditions",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "that may affect the design of the expansion joint, such as use of shrouds, external or internal insulation, limit stops, other constraints, and connections in the body (e.g., drains or bleeds) shall be stated."
+    }
+   ]
+  },
+  {
+   "id": "X301.2",
+   "heading": "Piping Design Requirements",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "X301.2.1 General. Piping layout, anchorage, restraints, guiding, and support shall be designed to avoid imposing motions and forces on the expansion joint other than those for which it is intended. For example, a bellows expansion joint is not normally designed to absorb torsion. Pipe guides, restraints, and anchorage shall conform to the EJMA standards. Anchors and guides shall be provided to withstand expansion joint thrust forces when not self-restrained by tie rods, hinge bars, pins, etc. (See para. X302.1.) Column buckling of the piping (e.g., due to internal fluid pressure) shall also be considered."
+    }
+   ]
+  },
+  {
+   "id": "X301.2.2",
+   "heading": "Design of Anchors",
+   "level": 2,
+   "page": 569,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Main Anchors. Main anchors shall be designed to withstand the forces and moments listed in (b), and pressure thrust, defined as the product of the effective thrust area of the bellows and the maximum pressure to which the joint will be subjected in operation. Consideration shall be given to the increase of pressure thrust loads on anchors due to unrestrained expansion joints during leak testing if supplemental restraints are not used during the test (see para. 345.3.3). For convoluted, omega, or disk type joints, the effective thrust area recommended by the manufacturer shall be used. If this information is unavailable, the area shall be based on the mean diameter of the bellows."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Intermediate Anchors. Anchors shall be capable of withstanding the following forces and moments:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) those required to compress, extend, offset, or rotate the joint by an amount equal to the calculated linear or angular displacement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) static friction of the pipe in moving on its supports between extreme extended and contracted positions (with calculated movement based on the length of pipe between anchor and expansion joint)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) operating and transient dynamic forces caused by the flowing medium"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) other piping forces and moments"
+    }
+   ]
+  },
+  {
+   "id": "X302",
+   "heading": "EXPANSION JOINT MANUFACTURER RESPONSIBILITIES",
+   "level": 1,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The expansion joint manufacturer shall provide the detailed design and fabrication of all elements of the expansion joint in accordance with the requirements of the Code and the engineering design. This includes"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) all piping within the end connections of the assembly supplied by the manufacturer, including pipe, flanges, fittings, connections, bellows, and supports or restraints of piping"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) specifying the need for supports or restraints external to the assembly as required, and of the data for their design"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) determining design conditions for all components supplied with the expansion joint that are not in contact with the flowing medium"
+    }
+   ]
+  },
+  {
+   "id": "X302.1",
+   "heading": "Expansion Joint Design",
+   "level": 2,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design of bellows-type expansion joints shall be based on recognized and accepted analysis methods and design conditions stated in para. X301.1. These joints shall be designed so that permanent deformation of the expansion joint and pressure-restraint hardware will not occur during leak testing. Convoluted-type bellows shall be designed in accordance with the EJMA standards, except as otherwise required or permitted herein. Design of other types of bellows shall be qualified as required by para. 304.7.2."
+    }
+   ]
+  },
+  {
+   "id": "X302.1.1",
+   "heading": "Factors of Safety. The factor of safety on",
+   "level": 2,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "squirm pressure shall be not less than 2.25. The factor of safety on ultimate rupture pressure shall be not less than 3.0."
+    }
+   ]
+  },
+  {
+   "id": "X302.1.2",
+   "heading": "Design Stress Limits. For convoluted type",
+   "level": 2,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "bellows, stresses shall be calculated either by the formulas shown in the EJMA standards or by other methods acceptable to the owner."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The circumferential and meridional membrane stress in the bellows, the tangent end, and reinforcing ring members (including tensile stress in fasteners) due to design pressure shall not exceed the allowable stress values given in Table A-1 (Table A-1C)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Meridional membrane and bending stresses at design pressure shall be of a magnitude that will not result in permanent deformation of the convolutions at test pressure. Correlation with previous test data may be used to satisfy this requirement."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "For an unreinforced bellows, annealed after forming, the meridional membrane plus bending stress in the bellows shall not exceed 1.5 times the allowable stress given in Table A-1 (Table A-1C)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Stresses shall be calculated in restraints (tie rods, hinge bars, pins, etc.) in self-restrained expansion joints and in the attachments of the restraining devices to the pipe or flanges. Direct tension, compression, bearing, and shear stresses shall not exceed the allowable stress limits stated in para. 302.3.1. The summation of general bending stress plus tension or compression stress shall not exceed the stress values listed in Appendix A, Tables A-1 and A-4 (Tables A-1C and A-4C), times the shape factor of the cross section. The shape factor is the ratio of the plastic moment to the yield moment (e.g., 1.5 for a rectangular section). For attachment of restraints to piping, see para. 321.3. Local stresses may be evaluated using the criteria of ASME BPVC, Section VIII, Division 2, Part 5. Compression members shall be evaluated for buckling in accordance with the AISC Manual of Steel Construction, Allowable Stress Design. For self-restrained expansion joints, the restraints shall be designed to withstand the full design pressure thrust. Additional considerations may be required where time-dependent stresses prevail."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Pressure design of pipe sections, fittings, and flanges shall meet the requirements of paras. 303 and 304."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) When the operating metal temperature of the bellows element is in the creep range,1 the design shall be given special consideration and, in addition to meeting the requirements of this Appendix, shall be qualified as required by para. 304.7.2."
+    }
+   ]
+  },
+  {
+   "id": "X302.1.3",
+   "heading": "Fatigue Analysis",
+   "level": 2,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) A fatigue analysis1 that takes into account all design cyclic conditions shall be performed and the calculated design cycle life shall be reported. The method of analysis for convoluted U-shaped bellows shall be in accordance with EJMA standards."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Material design fatigue curves for bellows with seams welded using an autogeneous method are provided in the EJMA standards. The curves are for use only in conjunction with the EJMA stress equations."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Fatigue testing in accordance with Appendix F of the EJMA standards is required to develop fatigue curves for bellows of materials other than those provided for use in conjunction with the EJMA stress equations."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) When applying the fatigue curves from the EJMA standards, a fatigue correction factor, fc = 75%, shall be used."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) An alternate fatigue correction factor, fc, may be used with the permission of the owner."
+    }
+   ]
+  },
+  {
+   "id": "X302.1.4",
+   "heading": "Limitations",
+   "level": 2,
+   "page": 570,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Expansion joint bellows shall not be constructed from lap welded pipe or lap welded tubing."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "1 Consideration shall be given to the detrimental effects of creep– fatigue interaction when the operating metal temperature of the bellows element will be in the creep range. Creep–fatigue interaction may become significant at temperatures above 425°C (800°F) for austenitic stainless steels."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) All pressure containing or pressure thrust restraining materials shall conform to the requirements of Chapter III and Appendix A."
+    }
+   ]
+  },
+  {
+   "id": "X302.2",
+   "heading": "Expansion Joint Manufacture",
+   "level": 2,
+   "page": 571,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Expansion joints shall be produced in accordance with the manufacturer’s specification, which shall include at least the following requirements."
+    }
+   ]
+  },
+  {
+   "id": "X302.2.1",
+   "heading": "Fabrication",
+   "level": 2,
+   "page": 571,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) All welds shall be made by qualified welders or welding operators using welding procedures qualified as required by para. 328.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The longitudinal seam weld in the bellows element shall be a full penetration butt weld. Prior to forming, the thickness of the weld shall be not less than 1.00 nor more than 1.10 times the thickness of the bellows material."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) A full fillet weld may be used as a primary weld to attach a bellows element to an adjoining piping component."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) When bellows are attached directly to an adjoining piping component by welding and the piping component is P-Nos. 4, 5A, 5B, or 5C base metal, the attachment weld shall be heat treated in accordance with para. 331.1, except that the exemptions from heat treatment given in para. 331 shall not be permitted. The holding time shall be based on the thickness of the piping component at the bellows attachment weld location. Examination of the attachment welds shall be performed after heat treatment. This heat treatment may affect bellows pressure capacity, mechanical properties, and corrosion resistance. If the required heat treatment is determined to be detrimental to the bellows’ performance, the bellows shall not be attached directly to the piping component. In that case, the piping component side of the weld joint shall be buttered in accordance with ASME BPVC, Section IX, QW-283 with appropriate filler metal, heat treated in accordance with Table 331.1.1-1, and then welded to the bellows."
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "X302.2.2",
+   "level": 1,
+   "page": 571,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "Examination. The following are minimum quality control requirements:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The longitudinal seam weld in the bellows tube shall be 100% examined prior to forming, either by radiography or, for material thickness ≤2.38 mm (≤0.094 in.) welded in a single pass, by liquid penetrant examination of both the inside and outside surfaces. For the purposes of this Appendix, either examination is acceptable for design with a factor Ej of 1.00 when used within the stated thickness limits."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) After forming, a liquid penetrant examination shall be conducted on all accessible surfaces of the weld, inside and outside. Welds attaching the bellows to the piping, etc., shall be 100% examined by liquid penetrant."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Acceptance criteria for radiography shall be in accordance with Table 341.3.2-1. Acceptance criteria for liquid penetrant examination shall be that cracks, undercutting, and incomplete penetration are not permitted."
+    }
+   ]
+  },
+  {
+   "id": "X302.2.3",
+   "heading": "Leak Test",
+   "level": 2,
+   "page": 571,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Each expansion joint shall receive a hydrostatic, pneumatic, or combination hydrostatic–pneumatic shop pressure test by the manufacturer in accordance with para. 345, except that the test pressure shall be the lesser of that calculated by eq. (24) (para. 345.4.2) or eq. (X1), but not less than 1.5 times the design pressure. ST/S in eq. (24) shall be based on the bellows material. When the bellows’ design temperature is equal to or greater than Tcr as defined in Table 302.3.5-1, General Note (b), ST/S in eq. (24) shall be replaced by SyT/Syt, where SyT is the yield strength at the test temperature and Syt is the yield strength at the bellows’ design temperature. Yield strength values shall be determined in accordance with para. 302.3.2, with the bellows material treated as an unlisted material. The test pressure shall be maintained for not less than 10 min."
+    },
+    {
+     "kind": "equation",
+     "text": "P T = 1.5 P E S t / E (X1)",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "E = modulus of elasticity at design temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Et = modulus of elasticity at test temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "PS = limiting design pressure based on column"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "instability (for convoluted U-shaped bellows,"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "see 4.13.1 and 4.13.2 of the EJMA standards)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "PT = minimum test gage pressure"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Expansion joints designed to resist the pressure thrust shall not be provided with any additional axial restraint during the leak test. Moment restraint simulating piping rigidity may be applied if necessary."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) In addition to examination for leaks and general structural integrity during the pressure test, the expansion joint shall be examined before, during, and after the test to confirm that no unacceptable squirm has occurred. Squirm shall be considered to have occurred if under the internal test pressure an initially symmetrical bellows deforms, resulting in lack of parallelism or uneven spacing of convolutions. Such deformation shall be considered unacceptable when the maximum ratio of bellows pitch under pressure to the pitch before applying pressure exceeds 1.15 for unreinforced bellows or 1.20 for reinforced bellows. Examination for leakage and deformation shall be performed at a pressure not less than two-thirds of the test pressure, after full test pressure has been applied."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Examination for squirm shall be performed at full test pressure. For safety purposes, this may be accomplished by remote viewing (e.g., by optical magnification or video recording) of the changes in convolution spacing with respect to a temporarily mounted dimensional reference. Examination for leakage shall be performed at a pressure not less than two-thirds of test pressure, after application of full test pressure. For a pneumatic test, the precautions of para. 345.5.1 shall be observed."
+    }
+   ]
+  }
+ ]
+}

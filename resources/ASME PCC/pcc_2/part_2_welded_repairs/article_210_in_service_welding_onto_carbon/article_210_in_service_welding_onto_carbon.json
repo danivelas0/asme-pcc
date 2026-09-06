@@ -1,0 +1,667 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 2 - WELDED REPAIRS",
+  "chapter_kind": "article",
+  "chapter_id": "210",
+  "chapter_title": "In-Service Welding Onto Carbon Steel Pressure Components or Pipelines",
+  "parent_article": null,
+  "appendix_class": null,
+  "source_pages": [
+    77,
+    86
+  ],
+  "outline_pages": [
+    77,
+    86
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": "gemini-3.5-flash",
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 114,
+    "figures": 6,
+    "tables": 1,
+    "equations": 1
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 77,
+      "number": "210",
+      "level": 1,
+      "text": "Article 210 In-Service Welding Onto Carbon Steel Pressure Components or Pipelines"
+    },
+    {
+      "type": "section_header",
+      "page": 77,
+      "number": "210-1",
+      "level": 2,
+      "text": "210-1 DESCRIPTION"
+    },
+    {
+      "type": "paragraph",
+      "page": 77,
+      "text": "This Article addresses the requirements and precautions associated with welding onto pressure components or pipelines while the system is still in operation. Inservice pressure components or pipelines include pressure equipment and piping and are defined as systems in which the contents may or may not be pressurized and/or flowing but affect the way the weld cools. This Article is intended to be used in conjunction with Part 2 of this Standard or another applicable construction code or post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 77,
+      "text": "There are two primary concerns when performing inservice welding. The first concern is \"burn-through,\" also referred to as \"blowout.\"A burn-through occurs when the unmelted base material under the weld pool loses the ability to contain the contents of the pressure components or pipeline allowing the contents to be expelled. Welding onto pressure components or pipelines with thin walls [e.g., 4.8 mm (0.188 in.) or less] is possible as long as precautions are taken. Such precautions include controlling the heat input or penetration of the welding process and using smaller diameter electrodes [e.g., 2.4 mm (0.094 in.)] when the wall thickness is less than 6.4 mm (0.250 in.). Safety aspects and contingency planning aspects for an occurrence of burn-through should be planned for in accordance with company practices, industry standards (e.g., API Recommended Practice 2201), or post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 77,
+      "text": "The second concern is hydrogen cracking. Hydrogen cracking occurs when tensile stresses are acting on the weld, hydrogen is present in the weld and, when the weld solidifies, the resultant weld microstructure is crack susceptible. If any of the three conditions is eliminated or reduced below a threshold level, then hydrogen cracking will not occur. Tensile stresses can always be assumed due to the shrinkage of the weld upon cooling. Hydrogen, typically, cannot be eliminated but can be reduced by using proper low hydrogen welding processes such as shielded metal arc welding with EXX18 or EXX15 type electrodes. Crack-susceptiblemicrostructures typically have high microstructure hardness and are controlled by the carbon equivalence of the material and the rate at which the weld cools."
+    },
+    {
+      "type": "paragraph",
+      "page": 77,
+      "text": "The likelihood of developing microstructures susceptible to hydrogen cracking can be high because inservice welds tend to have accelerated cooling rates due to the ability of the pressure components or pipeline contents to pull heat from the weld region. The chance of developing a crack-susceptible microstructure can be reduced by using welding procedures that overcome the cooling effect of the pressure components or pipeline contents or by altering the pressure components or pipeline operating conditions during in-service welding. Such welding procedures include using sufficiently high heat input levels or by using specific weld deposition sequences. The most common in-service welding practices used to reduce hydrogen cracking concerns incorporate both a low-hydrogen welding process and a welding procedure that reduces the susceptibility of forming a crack-susceptible microstructure. The use of preheat is another technique that is commonly used to reduce the susceptibility of forming a crack-susceptible microstructure but it may be difficult to apply to in-service welding applications because of the ability of the pressure components or pipeline contents to cool the pipe wall especially for thin-walled applications. The cooling effect of the pressure components or pipeline contents can interfere with achieving the proper preheating temperature."
+    },
+    {
+      "type": "paragraph",
+      "page": 77,
+      "text": "Successful application of in-service welding procedures requires a balance between the probability of burnthrough and reducing the probability of hydrogen cracking. For example, when welding onto a pipeline less than 6.4 mm (0.250 in.) thick it may be necessary to reduce the welding heat input to lower the probability of burn-through; however, the lower welding heat input could result in a weld microstructure that is susceptible to hydrogen cracking. When the maximum required welding heat input to eliminate the probability of burn-through is lower than the minimum required heat input to protect against hydrogen cracking then alternative precautions need to be taken (e.g., welding procedure that included a temper bead deposition sequence)."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2",
+      "level": 2,
+      "text": "210-2 LIMITATIONS"
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.1",
+      "level": 3,
+      "text": "210-2.1 Additional Requirements"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "Part 1 of this Standard, \"Scope, Organization, and Intent,\" contains additional requirements and limitations. This Article shall be used in conjunction with Part 1 ."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.2",
+      "level": 3,
+      "text": "210-2.2 Piping and Pipeline Modifications"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "This Article is limited to application of in-service welding. Though this Article covers in-service welding aspects, not all aspects of pressure components or pipeline modifications that are performed to modify or expand a piping system (e.g., the hot tapping procedure that may follow the in-service weld) are covered by this Article. This Article should be used in conjunction with another applicable construction code or post-construction code that deals with the specifics of the pressure components or pipeline modification (e.g., for hot tapping, refer to API Recommended Practice 2201)."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.3",
+      "level": 3,
+      "text": "210-2.3 Pressure Components or Pipeline Material"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "This Article shall be limited to in-service welding onto all carbon steel pressure components or pipelines. This Article excludes welding onto stainless steels, alloyed steels (e.g., Cr–Mo), or nonferrous materials."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.4",
+      "level": 3,
+      "text": "210-2.4 Pressure Components or Pipeline Contents"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "Before performing any in-service welding, the owner shall evaluate the effect that in-service welding could have on the contents of the pressure components or pipeline system (e.g., combustion, explosion, and increased susceptibility to corrosion or embrittlement). Inservice welding should only be performed on pressure components or pipelines where the evaluation indicates that there is not a significant risk associated with potential metallurgical degradation or chemical reaction from the in-service welding process and not a significant risk of chemical reaction in the process fluid as a result of potential contact with high metal temperatures."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.5",
+      "level": 3,
+      "text": "210-2.5 Operating Pressure"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "An adjustment in the pressure during in-service welding may not be required from a welding perspective but may be necessary to increase the safety of the welder if a burn-through does occur. Safety aspects and contingency planning aspects for an occurrence of a burnthrough should be planned for in accordance with company practices, industry standards (e.g., API Recommended Practice 2201), or post-construction code."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.6",
+      "level": 3,
+      "text": "210-2.6 Operating Flow"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "An adjustment in flow during in-service welding may increase hydrogen cracking risk (e.g., increase flow) or burn-through risk (e.g., reduce flow). An adjustment in flow should be addressed prior to in-service welding."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-2.7",
+      "level": 3,
+      "text": "210-2.7 Postweld Heat Treatment (PWHT)"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "PWHT is difficult to perform while the pressure components or pipeline system remains in service. If PWHT is required, the owner shall address all additional concerns to assure the welding and subsequent PWHT will be completed in a safe manner. If this cannot be achieved, then an alternative repair method shall be evaluated."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-3",
+      "level": 2,
+      "text": "210-3 DESIGN"
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-3.1",
+      "level": 3,
+      "text": "210-3.1 In-Service Fillet Weld Procedure"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "An in-service fillet weld procedure is defined as a procedure that is used to join additional material onto the inservice pressure components or pipeline to reinforce a damaged area (e.g., full encirclement sleeves and patch plate repairs) or to facilitate a modification (e.g., proprietary full encirclement hot-tap fitting). The fillet weld shall be designed in accordance with an applicable construction code or post-construction code."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-3.2",
+      "level": 3,
+      "text": "210-3.2 In-Service Attachment Weld Procedure"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "An in-service attachment weld procedure is defined as a procedure that is used to make a modification to existing pressure components or pipeline and usually includes a groove weld joint. The attachment weld shall be designed under one of the following two criteria:"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "(a) If the attachment provides adequate reinforcement in accordance with an applicable construction code or post-construction code, no further reinforcement is required."
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "(b) If the attachment does not provide adequate reinforcement in accordance with an applicable construction code or post-construction code, additional reinforcement is required."
+    },
+    {
+      "type": "section_header",
+      "page": 78,
+      "number": "210-3.3",
+      "level": 3,
+      "text": "210-3.3 In-Service Weld Metal Buildup Procedure"
+    },
+    {
+      "type": "paragraph",
+      "page": 78,
+      "text": "An in-service weld metal buildup procedure is defined as a procedure that is used to deposit weld metal onto the surface of the pressure components or pipeline to reinforce a thinned area (e.g., metal loss due to corrosion or erosion). The weld metal buildup shall be designed in accordance with an applicable construction code or post-construction code."
+    },
+    {
+      "type": "section_header",
+      "page": 79,
+      "number": "210-4",
+      "level": 2,
+      "text": "210-4 FABRICATION"
+    },
+    {
+      "type": "section_header",
+      "page": 79,
+      "number": "210-4.1",
+      "level": 3,
+      "text": "210-4.1 Welding Procedure Qualification: Welding"
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "When approved by the welding engineer or welding inspector, a welding procedure qualified to the applicable new construction code or post-construction code may be used for in-service welding applications. However, the welding procedures that are to be used for welding onto in-service pressure components or pipeline shall address the probability of burn-through and hydrogen cracking. When required by the welding engineer or welding inspector, the welding procedure shall be qualified using the set-up outlined in Mandatory Appendix 210-I and the testing in para. 210-4.2. The essential variables for the welding procedure qualification shall be in accordance with an applicable construction code or postconstruction code and should include the in-service welding essential variables listed in para. 210-4.1.1."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "WARNING: Materials that have high carbon equivalent values (e.g., > 0.45) or experience severe weld cooling rates (i.e., high cooling potential) may require special precautions. Such precautions may include but are not limited to temper bead welding sequence or applying a preheat step prior to in-service welding."
+    },
+    {
+      "type": "section_header",
+      "page": 79,
+      "number": "210-4.1.1",
+      "level": 4,
+      "text": "210-4.1.1 In-Service Welding Essential Variables. The"
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "in-service welding essential variables are specific requirements for in-service welding that should be used in addition to the essential variables from an applicable construction code or post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.1 Weld Type. In-service welds shall be grouped into one of the following three types and qualified separately:"
+    },
+    {
+      "type": "list_item",
+      "page": 79,
+      "text": "(a) in-service fillet weld"
+    },
+    {
+      "type": "list_item",
+      "page": 79,
+      "text": "(b) in-service attachment weld"
+    },
+    {
+      "type": "list_item",
+      "page": 79,
+      "text": "(c) in-service weld metal buildup"
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.2 Cooling Potential. The rate at which a weld cools, or cooling potential, is an essential variable [e.g., cooling time from 800°C to 500°C (1,472°F to 932°F) (sec) or cooling rate at 556°C (1,000°F) (°/sec)]. An increase in the cooling potential of the inservice pressure component or pipeline greater than the cooling potential used during the qualification of the welding procedure requires requalification. The cooling potential may be determined by direct measurement, calculation, computer models, or a combination of these methods."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "NOTE: In the procedure qualification, wall thickness is not an essential variable but is directly related to the cooling potential of the pressure components or pipeline, which is an essential variable."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.3 Carbon Equivalence. The in-service welding procedure should be grouped according to carbon equivalence of the material. Carbon equivalence"
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "is specified separately for the in-service pressure components or pipeline and the second base material (e.g., fullencirclement sleeve or attachment material). An inservice welding procedure qualified on a specific carbon equivalent material may also be adequate for lower carbon equivalent materials assuming the cooling potentials are the same. A procedure qualified on lower carbon equivalent material can be used in a repair application on a higher carbon equivalent material provided that the cooling potential of the repair applicationis less than the cooling potential of the qualified procedure and there is no increase in hydrogen cracking susceptibility. The carbon equivalent should be calculated using the following formula with the elements expressed in weight percent amounts:"
+    },
+    {
+      "type": "equation",
+      "page": 79,
+      "text": "= + + + + + + CE C Mn 6 Cr Mo V 5 Ni Cu 15"
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.4 Welding Process. A change in the welding process shall require requalification."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.5 Welding Consumable. An increase in the diffusible hydrogen level of the welding consumable or a change in the electrode type as defined by ASME BPVC, Section IX, Table QW-432, or another applicable construction code or post-construction code, shall require requalification."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.6 Heat Input. The heat input range is determined by the weld procedure qualification andis the range that will produce a weld that will not burn through and has a low likelihood of producing a crack-susceptible microstructure. A change in the heat input range shall require requalification. The heat input should be calculated in accordance with ASME BPVC, Section IX, QW-409.1(a) or QW-409.1(b), or another applicable construction code or post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "(a) An increase in the heat input over the range specified in the in-service procedure qualification or specified in the in-service welding procedure shall be evaluated for burn-through risk. The probability of burn-through should be evaluated experimentally, by computer simulation, or a combination of these methods."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "(b) A decrease in the heat input below the range specified in the in-service procedure qualification or specified in the in-service welding procedure shall require requalification to determine the probability of hydrogen cracking susceptibility. Hydrogen cracking susceptibility should be evaluated using the test outlined in para. 210-4.2."
+    },
+    {
+      "type": "paragraph",
+      "page": 79,
+      "text": "210-4.1.1.7 Welding Current. A changein the range of welding current used in the procedure qualification or specified in the welding procedure shall require requalification."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.1.1.8 Postweld Bakeout. A reduction of the temperature or time of the application of a postweld bakeout shall require requalification. When specified, the minimum soaking temperature and time shall be specified. Any potential effect the postweld bakeout has on the pressure components or pipeline contents shall be evaluated."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.1.1.9 Preheat. A reduction of the temperature or time of application of a preheat requirement shall require requalification. When specified, the minimum soaking temperature and time shall be specified. Any potential effect the preheat requirement has on the pressure components or pipeline contents shall be evaluated."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.1.1.10 Hydrogen Bakeout. A change in the temperature or time of application of the hydrogen bakeout procedure shall require requalification. Any potential effect the hydrogen bakeout requirement has on the pressure components or pipeline contents shall be evaluated."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.1.1.11 Surface Bead Placement. Any change in weld bead position or deposition sequence of the inservice welding procedure shall require requalification."
+    },
+    {
+      "type": "section_header",
+      "page": 80,
+      "number": "210-4.2",
+      "level": 3,
+      "text": "210-4.2 Weld Procedure Qualification: Testing"
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "Welding procedures that are to be used to weld onto inservice pressure components or pipelines shall address the probability of burn-through and hydrogen cracking susceptibility. The probability of burn-through should be evaluated experimentally, by computer simulation, or a combination of these methods. Hydrogen cracking susceptibility should be evaluated by destructive and nondestructive testing. When approved by the welding engineer or welding inspector, a welding procedure qualified to the applicable new construction code or post-construction code may be used for in-service welding applications. When required by the welding engineer or welding inspector, the welding procedure shall be qualified using the set-up outlined in Mandatory Appendix 210-I and testing in para. 210-4.2. The essential variables for"
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "the welding procedure qualification shall be in accordance with an applicable construction code or post-construction code and should include the in-service welding essential variables listed in para. 210-4.1.1."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.2.1 Destructive Test Methods. In-service welding procedure test samples shall be taken from the procedure qualification weld coupon as specified in para. 210-4.2.2. The procedure shall be qualified by successful completion of the tests specified in paras. 210-4.2.1.1 through 210-4.2.1.4 . The number of tests for each in-service welding procedure is given in Table 210-4.2.1-1. Two procedure qualification weld coupons should be fabricated if there is not enough material available for all of the test samples in one procedure qualification. The destructive test specimens shall be machined in accordance with AWS B4.0 or other applicable standard."
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.2.1.1 Macro-Section Test. The macro-section test samples shall be removed and machined using nonthermal methods. The macro-section test sample should be in accordance with ASTM E3 or another equivalent document to give a clear representation of the weld region. Visual examination of the macro-section test samples shall show"
+    },
+    {
+      "type": "list_item",
+      "page": 80,
+      "text": "(a) complete fusion"
+    },
+    {
+      "type": "list_item",
+      "page": 80,
+      "text": "(b) no cracks"
+    },
+    {
+      "type": "list_item",
+      "page": 80,
+      "text": "(c) no undercut exceeding 0.8 mm (0.031 in.) or 10% of the simulated in-service pressure components or pipeline"
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "wall thickness, whichever is smaller"
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "(d) for fillet welding procedures only, the fillet weld leg lengths are at least equal to the leg length specified in the welding procedure or other applicable process control document"
+    },
+    {
+      "type": "paragraph",
+      "page": 80,
+      "text": "210-4.2.1.2 Hardness Test. The hardness test samples shall be tested in accordance with ASTM E384 or another equivalent document. A minimum of five Vickers hardness indents, using a 10-kg load, shall be made in the coarse-grained heat-affected zone of the weld toe in accordance with Figure 210-4.2.1.2-1. The macro-section test samples may be used for the hardness"
+    },
+    {
+      "type": "table",
+      "page": 80,
+      "number": "210-4.2.1-1",
+      "caption": "Table 210-4.2.1-1 Type and Number of Test Specimens Required for an In-Service Welding Procedure Qualification",
+      "structure": "not_reconstructed",
+      "text": "Wall Thickness In-Service Weld Type Tests Face Bend Side Bend Nick- Break Metallography Hardness ≤12.7 mm (0.500 in.) Fillet 4 … 4 2 2 Attachment 4 … 4 2 2 Weld metal buildup 4 … … 2 2 >12.7 mm (0.500 in.) Fillet 4 … 4 2 2 Attachment 4 … 4 2 2 Weld metal buildup 2 2 … 2 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "test samples after the metallographic analysis has been completed."
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "210-4.2.1.3 Nick-Break Test. Nick-break test samples shall be removed and machined using nonthermal methods, and shall be tested according to AWS B4.0 or another equivalent document. Visual inspection of the nick-break test sample fracture surfaces shall show"
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "(a) complete fusion."
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "(b) no single pore exceeds 1.6 mm (0.063 in.) in size, and the combined area of all pores does not exceed 2% of the exposed fracture surface area."
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "(c) no slag inclusion exceeds 0.8 mm (0.031 in.) in depth and 3.2 mm (0.125 in.) or one-half the nominal pipe wall thickness in length, whichever one is smaller. The distance between adjacent slag inclusions shall not be less than 12.7 mm (0.500 in.)."
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "(d) fisheyes, as defined in AWS A3.0, should not be cause for rejection."
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "210-4.2.1.4 Face or Side Bend Test. The bend test samples shall be machined using nonthermal methods, and shall be tested according to AWS B4.0 or another equivalent document. 1 The bend test samples should be bent in a guided-bend test jig or equivalent equipment. For face bends, the bend test sample shall be placed with the face of the weld opposite the mandrel ( Figure 210-4.2.1.4-1) . The weld reinforcement should be removed prior to bending. The remaining weld should not exceed 1.6 mm (0.063 in.). The bend test sample shall be bent until the curvature of the bend test specimen is approximately a U-shape (Figure 210-4.2.1.4-2) . Visual inspection of the bend test specimens shall show"
+    },
+    {
+      "type": "figure",
+      "page": 81,
+      "number": "210-4.2.1.2-1",
+      "caption": "Figure 210-4.2.1.2-1 Heat-Affected Zone Hardness Indent Locations",
+      "image": "figures/figure_210_4_2_1_2_1.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "GENERAL NOTES:"
+    },
+    {
+      "type": "paragraph",
+      "page": 81,
+      "text": "(a) Indents are spaced 0.2 mm (0.008 in.) from fusion line and 0.6 mm (0.024 in.) apart. Initial indent is located 0.6 mm (0.024 in.) from weld toe. (b) The figure is not to scale."
+    },
+    {
+      "type": "footnote",
+      "page": 81,
+      "text": "1 The simulatedin-service pressure components or pipeline nick-break test sample for a fillet or attachment welding procedure can be used for the face bend test sample."
+    },
+    {
+      "type": "figure",
+      "page": 82,
+      "number": "210-4.2.1.4-1",
+      "caption": "Figure 210-4.2.1.4-1 Mandrel Location Relative to the Weld Toe When Doing Face Bend Test for a Typical In-Service Fillet Weld",
+      "image": "figures/figure_210_4_2_1_4_1.png"
+    },
+    {
+      "type": "section_header",
+      "page": 82,
+      "text": "GENERAL NOTES:"
+    },
+    {
+      "type": "paragraph",
+      "page": 82,
+      "text": "(a) The dashed portion of the completed weld needs to be removed prior to testing."
+    },
+    {
+      "type": "paragraph",
+      "page": 82,
+      "text": "(b) The figure is not to scale."
+    },
+    {
+      "type": "figure",
+      "page": 82,
+      "number": "210-4.2.1.4-2",
+      "caption": "Figure 210-4.2.1.4-2 Examples of In-Service Welding Procedure Qualification Face Bend Test Samples",
+      "image": "figures/figure_210_4_2_1_4_2.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "(a) no cracks or other weld flaws exceeding 3.2 mm (0.125 in.) or one-half the nominal pipe wall thickness, whichever is smaller, in length are present in the weld or fusion zone"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "(b) cracks that originate from the edge of the bend test specimen that are less than 6.4 mm (0.250 in.) in length in any direction should not be cause for rejection unless an obvious weld flaw is present"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "210-4.2.2 Sample Location. The locations of the inservice welding procedure test samples for a fillet weld should be taken from equally spaced intervals around the procedure qualification weld coupon as shown in Figure 210-4.2.2-1 . The locations of the inservice welding procedure test samples for an attachment weld should be taken from equal spaced intervals around the procedure qualification weld coupon with samples taken from both the crotch and saddle portions of the weld as shown in Figure 210-4.2.2-2 . The locations of the in-service welding procedure test samples for a weld buildup weld coupon should be taken as shown in Figure 210-4.2.2-3 ."
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-4.3",
+      "level": 3,
+      "text": "210-4.3 Welder Performance Qualification"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "Welders that are to perform in-service welding onto pressure components or pipelines shall demonstrate the ability to deposit welds that produce microstructures that are not crack susceptible and/or avoid burning through the pressure component or pipeline. This may be demonstrated by successfully depositing an inservice weld or by qualifying a welder using the set-up detailedin Mandatory Appendix 210-I and testing requirements outlined in para. 210-4.2."
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-5",
+      "level": 2,
+      "text": "210-5 EXAMINATION"
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-5.1",
+      "level": 3,
+      "text": "210-5.1 NDE Method"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "The in-service weld, made in the field, shall be examined after welding has been completed. The method of examination shall be in accordance with an applicable construction code or post-construction code with the additional ability to locate weld flaws including hydrogen cracking since it is a major concern for in-service welding under the service conditions (e.g., operating temperature). The acceptance criteria for the NDE examination shall be in accordance with an applicable construction code or post-construction code. If welding was done to repair a service induced defect, the NDE method that was used to detect the defect shall be used to verify removal of the defect."
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "When NDE procedures are applied after in-service welding, special procedures may be necessary where the components are operating at temperatures significantly above ambient."
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-5.2",
+      "level": 3,
+      "text": "210-5.2 Examination Time"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "When hydrogen cracking is a concern, in-service welds should be examined 24 hr to 72 hr after welding has been completed."
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-6",
+      "level": 2,
+      "text": "210-6 TESTING"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "Testing should be completed in accordance with an applicable construction code or post-construction code. If hydrotesting of a hot tapping component after installation is contemplated, the user is advised to consider the temperature of the operating component in order to avoid having the test fluid flash to steam."
+    },
+    {
+      "type": "section_header",
+      "page": 83,
+      "number": "210-7",
+      "level": 2,
+      "text": "210-7 REFERENCES <22>"
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "The following is a list of publications referenced in this Article. Unless otherwise specified, the latest edition shall apply."
+    },
+    {
+      "type": "paragraph",
+      "page": 83,
+      "text": "AGA Pipeline Repair Manual, December 31, 1994 Publisher: American Gas Association (AGA), 400 North Capitol Street, NW, Washington, DC 20001 (www.aga.org ) API Recommended Practice 2201, Safe Hot Tapping Practices in the Petroleum and Petrochemical Industries API Recommended Practice 579-1 API 579-1/ASME FFS-1, Fitness-For-Service API Standard 1104, Welding of Pipelines and Related Facilities Publisher: American Petroleum Institute (API), 200 Massachusetts Avenue NW, Suite 1100, Washington, DC 20001-5571 (www.api.org ) ANSI/AWS A3.0, Standard Definitions; Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting, and Thermal Spraying ANSI/AWS B4.0, Standard Methods for Mechanical Testing Welds Publisher: American Welding Society (AWS), 8669 NW 36 Street, No. 130, Miami, FL 33166 (www.aws.org) ANSI/NB-23–2007, National Board Inspection Code Publisher: National Board of Boiler and Pressure Vessel Inspectors (NBBI), 1055 Crupper Avenue, Columbus, OH 43229 (www.nationalboard.org ) ASME B31.1, Pressure Piping ASME B31.3, Process Piping ASME B31.4, Pipeline Transportation Systems for Liquid Hydrocarbons and Other Liquids ASME B31.8, Gas Transmission and Distribution Piping Systems ASME Boiler and Pressure Vessel Code, 2007 Edition, Section IX, Welding and Brazing Qualifications; Article II — Welding Procedure Qualifications; Article III — Welding Performance Qualifications"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "Publisher: The American Society of Mechanical Engineers (ASME), Two Park Avenue, New York, NY 10016-5990"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "(www.asme.org) ASTM E3, Standard Practice for Preparation of Metallographic Specimens ASTM E384, Standard Test Method for Microindentation Hardness of Materials (www.astm.org ) CSA Standard Z662, Oil and Gas Pipeline Systems Publisher: Canadian Standards Association (CSA), 178 Rexdale Boulevard, Toronto, Ontario M9W 1R3,"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "Publisher: American Society for Testing and Materials (ASTM International), 100 Barr Harbor Drive, P.O. Box C700, West Conshohocken, PA 19428-2959"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "Canada ( www.csagroup.org )"
+    },
+    {
+      "type": "figure",
+      "page": 84,
+      "number": "210-4.2.2-1",
+      "caption": "Figure 210-4.2.2-1 Test Sample Locations for In-Service Fillet Welding Procedure Qualification Assuming Equal Spacing Around the Circumference to Obtain All the Required Test Specimens",
+      "image": "figures/figure_210_4_2_2_1.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "GENERAL NOTES:"
+    },
+    {
+      "type": "paragraph",
+      "page": 84,
+      "text": "(a) NB = nick-break test sample; FB = face bend test sample; MS = metallographic test sample. (b) The figure is not to scale."
+    },
+    {
+      "type": "figure",
+      "page": 85,
+      "number": "210-4.2.2-2",
+      "caption": "Figure 210-4.2.2-2 Test Sample Locations for In-Service Attachment Welding Procedure Qualification Assuming Equal Spacing Around the Circumference to Obtain All the Required Test Specimens",
+      "image": "figures/figure_210_4_2_2_2.png"
+    },
+    {
+      "type": "list_item",
+      "page": 85,
+      "text": "(a) NB = nick-break test sample; FB = face bend test sample; MS = metallographic test sample."
+    },
+    {
+      "type": "list_item",
+      "page": 85,
+      "text": "(b) The figure is not to scale."
+    },
+    {
+      "type": "figure",
+      "page": 86,
+      "number": "210-4.2.2-3",
+      "caption": "Figure 210-4.2.2-3 Test Sample Locations for In-Service Weld Metal Buildup Welding Procedure Qualification",
+      "image": "figures/figure_210_4_2_2_3.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 86,
+      "text": "GENERAL NOTES:"
+    },
+    {
+      "type": "paragraph",
+      "page": 86,
+      "text": "(a) SB = side bend test sample; FB = face bend test sample; MS = metallographic test sample."
+    },
+    {
+      "type": "paragraph",
+      "page": 86,
+      "text": "(b) The figure is not to scale."
+    }
+  ]
+}

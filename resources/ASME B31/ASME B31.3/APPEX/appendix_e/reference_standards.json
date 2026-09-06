@@ -1,0 +1,695 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "E",
+ "title": "Reference Standards",
+ "pdf_pages": [
+  463,
+  467
+ ],
+ "introduction": [
+  "Standards incorporated in this Code by reference, and the names and websites of the sponsoring organizations, are shown in this Appendix. It is not practical to refer to a specific edition of each standard throughout the Code text; instead, the specific edition reference dates are shown here. Specific edition reference dates are not provided for ASME codes and standards. For ASME codes and standards, the latest published edition in effect at the time this Code is specified is the specific edition referenced by this Code unless otherwise specified in the engineering design. Subsequent issues and revisions of these referenced standards and any new standards incorporated in the Code by reference will be listed (after review and acceptance by the Code Committee) in revisions of Appendix E.",
+  "A component ordinarily is not marked to indicate the edition date of the standard to which it is manufactured. It is therefore possible that an item taken from inventory was produced in accordance with a superseded edition, or an edition not yet approved by the Code (because it is of later date than that listed and is in use). If compliance with a specific edition is a requirement of the intended service, it usually will be necessary to state the specific requirement in the purchase specification and to maintain identification of the component until it is put in service."
+ ],
+ "general_notes": [
+  "GENERAL NOTE: The issue date shown immediately following the hyphen after the number of the standard (e.g., C207-18 and SP-6-2017) is the effective date of the issue (edition) of the standard. Any additional number shown following the issue date and prefixed by the letter “R” is the latest date of reaffirmation [e.g., B408-06 (R2016)]."
+ ],
+ "publisher_count": 23,
+ "standard_count": 446,
+ "standards": [
+  {
+   "publisher": "AISC Publication",
+   "entries": [
+    "325-05 (Steel Construction Manual, 2006)"
+   ]
+  },
+  {
+   "publisher": "API Recommended Practice",
+   "entries": [
+    "RP 941, 8th Ed., 2016 with Errata 1-2"
+   ]
+  },
+  {
+   "publisher": "API Specifications",
+   "entries": [
+    "5B, 2017 with Errata 1–2 and Addenda 1–3",
+    "5L, 2018ε1",
+    "6D, 2014 with Errata 1–9 and Addenda 1–2",
+    "15LE, 2008",
+    "15LR, 2001"
+   ]
+  },
+  {
+   "publisher": "API Standards",
+   "entries": [
+    "526, 2017 with Errata 1",
+    "570, 2016 with Errata 1 and Addenda 1-2",
+    "579-1, 2016",
+    "594, 2017",
+    "599, 2020",
+    "600, 2021",
+    "602, 2015 with Errata 1",
+    "603, 2018",
+    "608, 2020",
+    "609, 2021",
+    "623, 2021"
+   ]
+  },
+  {
+   "publisher": "ASCE Standard",
+   "entries": [
+    "ASCE/SEI 7-16"
+   ]
+  },
+  {
+   "publisher": "ASME Codes (Use Latest Edition)",
+   "entries": [
+    "ASME Boiler and Pressure Vessel Code",
+    "Section I",
+    "Section II, Part C",
+    "Section II, Part D",
+    "Section III, Division 1, Subsection NH",
+    "Section V",
+    "Section VIII, Division 1",
+    "Section VIII, Division 2",
+    "Section VIII, Division 3",
+    "Section IX"
+   ]
+  },
+  {
+   "publisher": "ASME Standards (Use Latest Edition)",
+   "entries": [
+    "A13.1",
+    "B1.1",
+    "B1.20.1",
+    "B1.20.3",
+    "B1.20.7",
+    "B16.1",
+    "B16.3",
+    "B16.4",
+    "B16.5",
+    "B16.9",
+    "B16.10",
+    "B16.11",
+    "B16.14",
+    "B16.15",
+    "B16.18",
+    "B16.20",
+    "B16.21",
+    "B16.22",
+    "B16.24",
+    "B16.25",
+    "B16.26",
+    "B16.34",
+    "B16.36",
+    "B16.39",
+    "B16.42",
+    "B16.47",
+    "B16.48",
+    "B16.50",
+    "B16.51",
+    "B18.2.1",
+    "B18.2.2",
+    "B31P",
+    "B18.31.2",
+    "B36.10",
+    "B36.19",
+    "B46.1",
+    "BPE",
+    "FFS-1",
+    "PCC-1",
+    "PCC-2",
+    "PTC 19.3 TW"
+   ]
+  },
+  {
+   "publisher": "ASNT Standards",
+   "entries": [
+    "CP-189–2020",
+    "SNT-TC-1A–2016"
+   ]
+  },
+  {
+   "publisher": "ASQ Standards",
+   "entries": [
+    "9001: 2015",
+    "Q9000-2: 1997",
+    "Q9000-3: 1997"
+   ]
+  },
+  {
+   "publisher": "ASTM Specifications",
+   "entries": [
+    "A20-96a",
+    "A36/A36M-19",
+    "A47/A47M-99 (R2018)ε1",
+    "A48/A48M-03 (R2016)",
+    "A53/A53M-07",
+    "A105/A105M-09",
+    "A106/A106M-08",
+    "A126-04",
+    "A134/A134M-18",
+    "A135/A135M-06",
+    "A139/A139M-04",
+    "A179-90a (R2005)",
+    "A181/A181M-06",
+    "A182/A182M-17",
+    "A193/A193M-10a",
+    "A194/A194M-17a",
+    "A197/A197M-00 (R2015)",
+    "A203/A203M-17",
+    "A204/A204M-03 (R2007)",
+    "A210/A210M-19",
+    "A213-09b",
+    "A216/A216M-08",
+    "A217/A217M-08",
+    "A234/A234M-07",
+    "A240/A240M-16a",
+    "A249/A249M-16a",
+    "A263-94a",
+    "A264-94a",
+    "A265-94a",
+    "A268/A268M-05",
+    "A269-08",
+    "A270/A270M-15",
+    "A276/A276M-16a",
+    "A278/A278M-01 (R2015)",
+    "A283/A283M-18",
+    "A285/A285M-17",
+    "A299/A299M-04",
+    "A302/A302M-03 (R2007)",
+    "A307-07b",
+    "A312/A312M-17",
+    "A320/A320M-10",
+    "A333/A333M-05",
+    "A334/A334M-04a",
+    "A335/A335M-06",
+    "A350/A350M-07",
+    "A351/A351M-16",
+    "A352/A352M-06",
+    "A353/A353M-04",
+    "A354-17ε1",
+    "A358/A358M-15",
+    "A369/A369M-06",
+    "A370-11",
+    "A376/A376M-17",
+    "A381/A381M-18",
+    "A387/A387M-06a",
+    "A395/A395M-99 (R2018)",
+    "A403/A403M-16",
+    "A409/A409M-15",
+    "A420/A420M-07",
+    "A426/A426M-08",
+    "A437/A437M-10a",
+    "A451/A451M-06",
+    "A453/A453M-12",
+    "A479/A479M-17",
+    "A487/A487M-93 (R2007)",
+    "A494/A494M-17a",
+    "A508/A508M-18 (R2023)",
+    "A515/A515M-03 (R2007)",
+    "A516/A516M-06",
+    "A524-96 (R2005)",
+    "A536-84 (R2014)",
+    "A537/A537M-08",
+    "A553/A553M-06",
+    "A563/A563M-21aε1",
+    "A571/A571M-01 (R2015)",
+    "A587-96 (R2005)",
+    "A645/A645M-05",
+    "A671/A671M-16",
+    "A672-08",
+    "A675/A675M-03 (R2009)",
+    "A691-98 (R2007)",
+    "A694/A694M-16",
+    "A696-90a (R2012)",
+    "A707/A707M-14",
+    "A723/A723M-18a (R2023)",
+    "A789/A789M-17a",
+    "A790/A790M-17",
+    "A813/A813M-09",
+    "A814/A814M-08",
+    "A815/A815M-10a",
+    "A860/A860M-14",
+    "A928/A928M-11",
+    "A992/A992M-11 (R2015)",
+    "A995/A995M-13",
+    "A1010/A1010M-01 (R2009)",
+    "A1011/A1011M-18a",
+    "A1053/A1053M-11",
+    "B21/B21M-06",
+    "B26/B26M-09",
+    "B32-08",
+    "B42-02ε1",
+    "B43-98 (R2004)",
+    "B61-08",
+    "B62-09",
+    "B68-02/B68M-99 (R2005)",
+    "B75-02/B75M-99 (R2005)",
+    "B88-03/B88M-05",
+    "B96/B96M-11",
+    "B98/B98M-08",
+    "B127-05",
+    "B148-97 (R2009)",
+    "B150/B150M-08",
+    "B152/B152M-06aε1",
+    "B160-05 (R2009)",
+    "B161-05ε1",
+    "B162-99 (R2005)ε1",
+    "B163-11ε2",
+    "B164-03 (R2008)",
+    "B165-05",
+    "B166-19",
+    "B167-11 (R2016)",
+    "B168-11",
+    "B169/B169M-05",
+    "B171/B171M-09",
+    "B187/B187M-06",
+    "B209/B209M-21a",
+    "B210/B210M-19",
+    "B211/B211M-19",
+    "B221-08",
+    "B241/B241M-16",
+    "B247-02a",
+    "B265-15",
+    "B280-08",
+    "B283/B283M-14a",
+    "B333-03 (R2008)",
+    "B335-03 (R2008)",
+    "B336-04b",
+    "B338-17 (R2021)",
+    "B348-13",
+    "B361-08",
+    "B363-19",
+    "B366/B366M-16",
+    "B367-22",
+    "B371/B371M-08",
+    "B381-13",
+    "B407-08a (R2014)",
+    "B408-06 (R2016)",
+    "B409-06 (R2016)",
+    "B423-22",
+    "B424-05",
+    "B425-99 (R2005)",
+    "B435-06",
+    "B443-00 (R2005)",
+    "B444-06",
+    "B446-03 (R2008)",
+    "B462-18",
+    "B463-04",
+    "B464-05",
+    "B466/B466M-07",
+    "B467-88 (R2003)",
+    "B474/B474M-15",
+    "B491/B491M-06",
+    "B493/B493M-14 (R2019)",
+    "B514-05 (R2014)",
+    "B515-95 (R2014)",
+    "B517-05 (R2014)",
+    "B523/B523M-18",
+    "B550/B550M-07 (R2019)",
+    "B551/B551M-12 (R2017)",
+    "B564-15",
+    "B572-06 (R2016)",
+    "B574-10",
+    "B575-10",
+    "B581-02 (R2008)",
+    "B582-07",
+    "B584-08a",
+    "B619-10ε1",
+    "B620-03 (R2008)",
+    "B621-02 (R2006)",
+    "B622-10",
+    "B625-05",
+    "B626-17a",
+    "B637-18",
+    "B649-17",
+    "B658/B658M-11 (R2016)",
+    "B668-05",
+    "B675-02 (R2018)",
+    "B688-18",
+    "B690-18",
+    "B704-03 (R2014)",
+    "B705-05 (R2014)",
+    "B709-04",
+    "B725-22",
+    "B729-05",
+    "B804-02 (R2007)",
+    "B813-10",
+    "B828-02",
+    "B861-19",
+    "B862-14",
+    "C14-07",
+    "C301-04",
+    "C361-08",
+    "C582-09",
+    "C599-91 (R1995)",
+    "D1527-99 (R2005)",
+    "D1600-08",
+    "D1694-95 (R2000)",
+    "D1785-15",
+    "D2235-04",
+    "D2239-12",
+    "D2241-15",
+    "D2282-99ε1",
+    "D2321-08",
+    "D2464-06",
+    "D2466-06",
+    "D2467-06",
+    "D2468-96a",
+    "D2513-09",
+    "D2517-06",
+    "D2564-04ε1",
+    "D2609-02 (R2008)",
+    "D2657-07 (R2023)",
+    "D2662-96a",
+    "D2666-96a",
+    "D2672-96a (R2003)",
+    "D2683-04",
+    "D2737-03",
+    "D2837-08",
+    "D2846/D2846M-19",
+    "D2855-96 (R2002)",
+    "D2992-06",
+    "D2996-01 (R2007)ε1",
+    "D2997-01 (R2007)ε1",
+    "D3000-95a",
+    "D3035-15",
+    "D3139-98 (R2005)",
+    "D3261-03",
+    "D3517-06",
+    "D3754-06",
+    "D3839-08",
+    "D3840-01 (R2005)",
+    "D4024-05",
+    "D4161-01 (R2005)",
+    "D5421-05",
+    "D5685-05",
+    "D6041-18",
+    "E29-22",
+    "E94/E94M-17",
+    "E112-13 (R2021)",
+    "E114-20",
+    "E155-20",
+    "E165/E165M-18",
+    "E186-20",
+    "E213-22",
+    "E272-21",
+    "E280-21",
+    "E310-21",
+    "E446-20",
+    "E709-15",
+    "F336-02 (R2009)",
+    "F437-09",
+    "F438-09",
+    "F439-09",
+    "F441/F441M-15",
+    "F442/F442M-13",
+    "F493-04",
+    "F714-13",
+    "F1055-16a (R2022)",
+    "F1281-03ε1",
+    "F1282-03ε1",
+    "F1290-19",
+    "F1412-09",
+    "F1476-07 (R2013)",
+    "F1498-08",
+    "F1545-15a",
+    "F1548-01 (R2018)",
+    "F1673-04",
+    "F1970-19",
+    "F1974-04",
+    "F2389-17a",
+    "F2620-20aε2",
+    "F2788/F2788M-18",
+    "F3125/F3125M-15a",
+    "F3226/F3226M-19"
+   ]
+  },
+  {
+   "publisher": "AWS Standards",
+   "entries": [
+    "A3.0M/A3.0:2020",
+    "A5.4/A5.4M:2012 (R2022)",
+    "A5.8M/A5.8:2019",
+    "A5.9/A5.9M:2022",
+    "A5.11/A5.11M:2018",
+    "A5.14/A5.14M:2018",
+    "A5.22/A5.22M:2012",
+    "A5.31M/A5.31:2022",
+    "B4.0:2016-AMD1",
+    "B4.0M:2000 (R2010)",
+    "D10.10/D10.10M:1999 (R2009)",
+    "QC1:2016-AMD1"
+   ]
+  },
+  {
+   "publisher": "AWWA Standards",
+   "entries": [
+    "C110/A21.10-12",
+    "C111/A21.11-17",
+    "C115/A21.15-11",
+    "C150/A21.50-14",
+    "C151/A21.51-17",
+    "C200-17",
+    "C207-18",
+    "C208-17",
+    "C228-19",
+    "C300-16",
+    "C301-14",
+    "C302-16",
+    "C500-09",
+    "C606-15",
+    "C900-16",
+    "C950-2013 with Errata"
+   ]
+  },
+  {
+   "publisher": "CEN Technical Report",
+   "entries": [
+    "CEN/TR 14549:2004"
+   ]
+  },
+  {
+   "publisher": "CGA Publication",
+   "entries": [
+    "G-4.1-2018"
+   ]
+  },
+  {
+   "publisher": "CSA Publication",
+   "entries": [
+    "Z245.1-2018"
+   ]
+  },
+  {
+   "publisher": "EI Publications",
+   "entries": [
+    "Guidelines for the Management of",
+    "Flexible Hose Assemblies. 2011",
+    "Guidelines for the Avoidance of",
+    "Vibration Induced Fatigue Failure",
+    "in Process Pipework: Second Edition,",
+    "2008"
+   ]
+  },
+  {
+   "publisher": "EJMA Publication",
+   "entries": [
+    "EJMA Standards, Tenth Edition, 2015"
+   ]
+  },
+  {
+   "publisher": "MSS Standard Practices",
+   "entries": [
+    "SP-6-2017",
+    "SP-9-2018",
+    "SP-25-2018",
+    "SP-42-2013",
+    "SP-43-2019",
+    "SP-44-2019",
+    "SP-45-2020",
+    "SP-51-2021",
+    "SP-53-2021",
+    "SP-55-2011",
+    "SP-58-2018",
+    "SP-65-2019",
+    "SP-68-2021",
+    "SP-70-2011",
+    "SP-71-2018",
+    "SP-72-2010a",
+    "SP-75-2019",
+    "SP-78-2011",
+    "SP-79-2018",
+    "SP-80-2019",
+    "SP-81-2017",
+    "SP-83-2018",
+    "SP-85-2011",
+    "SP-88-2021",
+    "SP-93-2020",
+    "SP-95-2018",
+    "SP-97-2019",
+    "SP-105-2016a",
+    "SP-106-2019",
+    "SP-119-2010",
+    "SP-122-2017",
+    "SP-128-2012",
+    "SP-136-2020"
+   ]
+  },
+  {
+   "publisher": "NACE (AMPP) Standards and Publications",
+   "entries": [
+    "MR0103-2012",
+    "MR0175/ISO 15156-2:2009/Cir.2:2014",
+    "MR0175/ISO 15156-3:2009/Cir.4:2014",
+    "SP0170-2012",
+    "SP0472-2010"
+   ]
+  },
+  {
+   "publisher": "NFPA Specifications",
+   "entries": [
+    "54/Z223.1-2018",
+    "1963-2019"
+   ]
+  },
+  {
+   "publisher": "PFI Standards",
+   "entries": [
+    "ES-7-2013",
+    "ES-24-2018",
+    "ES-48-2015",
+    "ES-50-2020"
+   ]
+  },
+  {
+   "publisher": "PPI Technical Report",
+   "entries": [
+    "TR-21-2001"
+   ]
+  },
+  {
+   "publisher": "SAE Standards",
+   "entries": [
+    "J513-1999 (R2019)",
+    "J514-2012",
+    "J518-1-2013",
+    "J518-2-2017"
+   ]
+  }
+ ],
+ "organizations_note": "Specifications, standards, etc., of the following organizations appear in Appendix E:",
+ "organizations": [
+  {
+   "abbreviation": "AISC",
+   "organization": "American Institute of Steel Construction",
+   "website": "www.aisc.org"
+  },
+  {
+   "abbreviation": "API",
+   "organization": "American Petroleum Institute",
+   "website": "www.api.org"
+  },
+  {
+   "abbreviation": "ASCE",
+   "organization": "American Society of Civil Engineers",
+   "website": "www.asce.org"
+  },
+  {
+   "abbreviation": "ASME",
+   "organization": "The American Society of Mechanical Engineers",
+   "website": "www.asme.org"
+  },
+  {
+   "abbreviation": "ASNT",
+   "organization": "American Society for Nondestructive Testing, Inc.",
+   "website": "www.asnt.org"
+  },
+  {
+   "abbreviation": "ASQ",
+   "organization": "American Society for Quality",
+   "website": "www.asq.org"
+  },
+  {
+   "abbreviation": "ASTM",
+   "organization": "ASTM International",
+   "website": "www.astm.org"
+  },
+  {
+   "abbreviation": "AWS",
+   "organization": "American Welding Society",
+   "website": "www.aws.org"
+  },
+  {
+   "abbreviation": "AWWA",
+   "organization": "American Water Works Association",
+   "website": "www.awwa.org"
+  },
+  {
+   "abbreviation": "CEN",
+   "organization": "European Committee for Standardization",
+   "website": "www.cen.eu"
+  },
+  {
+   "abbreviation": "CGA",
+   "organization": "Compressed Gas Association, Inc.",
+   "website": "www.cganet.com"
+  },
+  {
+   "abbreviation": "CSA",
+   "organization": "Canadian Standards Association",
+   "website": "www.csagroup.org"
+  },
+  {
+   "abbreviation": "EI",
+   "organization": "Energy Institute",
+   "website": "www.energyinst.org"
+  },
+  {
+   "abbreviation": "EJMA",
+   "organization": "Expansion Joint Manufacturers Association, Inc.",
+   "website": "www.ejma.org"
+  },
+  {
+   "abbreviation": "ISO",
+   "organization": "International Organization for Standardization",
+   "website": "www.iso.org"
+  },
+  {
+   "abbreviation": "MSS",
+   "organization": "Manufacturers Standardization Society of the Valve and Fittings Industry, Inc.",
+   "website": "www.msshq.org"
+  },
+  {
+   "abbreviation": "NACE [Note (1)]",
+   "organization": "Association for Materials Protection and Performance (AMPP)",
+   "website": "www.ampp.org"
+  },
+  {
+   "abbreviation": "NFPA",
+   "organization": "National Fire Protection Association",
+   "website": "www.nfpa.org"
+  },
+  {
+   "abbreviation": "PFI",
+   "organization": "Pipe Fabrication Institute",
+   "website": "www.pfi-institute.org"
+  },
+  {
+   "abbreviation": "PPI",
+   "organization": "Plastics Pipe Institute",
+   "website": "www.plasticpipe.org"
+  },
+  {
+   "abbreviation": "SAE",
+   "organization": "SAE International",
+   "website": "www.sae.org"
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 10-100",
+  "title": "Criteria for Establishing Allowable Stress Values for Tables 5A and 5B",
+  "pdf_pages": [
+    1404,
+    1404
+  ],
+  "page_count": 1,
+  "row_count": 2,
+  "notes": [
+    "GENERAL NOTE: When using this stress basis criterion to determine the allowable stresses for a specific material as a function of tem- perature, the derived allowable stress at a higher temperature can never be greater than the derived allowable stress at a lower temperature. NOTE: (1) These higher stress values were established at temperatures where the short-time tensile properties govern, to permit the use of these materials where slightly greater deformation is acceptable. The stress values in this range exceed 662/3% but do not exceed 90% of the yield strength at temperature. These stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. Table Y-2 lists multiplying factors that, when applied to the yield strength values shown in Table Y-1, will give allowable stresses that will result in lower values of permanent strain."
+  ],
+  "columns": [
+    "Product/Material",
+    "Below Room Temperature Tensile Strength",
+    "Below Room Temperature Yield Strength",
+    "Tensile Strength",
+    "Room Temperature and Above Yield Strength",
+    "Room Temperature and Above Stress Rupture",
+    "Creep Rate"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Below Room Temperature",
+    "Room Temperature and Above"
+  ],
+  "rows": [
+    {
+      "product_material": "All wrought or cast ferrous and nonferrous product forms except bolting, and except for austenitic stainless steel, nickel alloy, copper alloy, and cobalt alloy product forms having an Sy/ST ratio less than 0.625",
+      "below_room_temperature_tensile_strength": null,
+      "below_room_temperature_yield_strength": null,
+      "tensile_strength": null,
+      "room_temperature_and_above_yield_strength": null,
+      "room_temperature_and_above_stress_rupture": null,
+      "creep_rate": "1.0 SCavg"
+    },
+    {
+      "product_material": "All wrought or cast austenitic stainless steel, nickel alloy, copper alloy, and cobalt alloy product forms except bolting, having an Sy/ST ratio less than 0.625 [Note (1)]",
+      "below_room_temperature_tensile_strength": null,
+      "below_room_temperature_yield_strength": null,
+      "tensile_strength": null,
+      "room_temperature_and_above_yield_strength": null,
+      "room_temperature_and_above_stress_rupture": null,
+      "creep_rate": "1.0 SCavg"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "II",
+ "table_id": "Table 302.3.3-2",
+ "title": "Acceptance Levels for Castings",
+ "pdf_pages": [
+  50,
+  50
+ ],
+ "columns": [
+  {
+   "key": "material_examined_thickness_t",
+   "header": "Material Examined Thickness, T",
+   "banners": []
+  },
+  {
+   "key": "applicable_standard",
+   "header": "Applicable Standard",
+   "banners": []
+  },
+  {
+   "key": "acceptance_level_or_class",
+   "header": "Acceptance Level (or Class)",
+   "banners": []
+  },
+  {
+   "key": "acceptable_discontinuities",
+   "header": "Acceptable Discontinuities",
+   "banners": []
+  }
+ ],
+ "row_count": 8,
+ "notes": [
+  "GENERAL NOTE: Titles of ASTM standards referenced in this table are as follows: E155 Standard Reference Radiographs for Inspection of Aluminum and Magnesium Castings Standard Reference Radiographs for Heavy-Walled (2 to 41∕2E186 in. (50.8 to 114 mm)) Steel Castings E272 Standard Reference Radiographs for High-Strength CopperBase and Nickel-Copper Alloy Castings Standard Reference Radiographs for Heavy-Walled (41∕2 to 12 E280 in. (114 to 305 mm)) Steel Castings E310 Standard Reference Radiographs for Tin Bronze Castings E446 Standard Reference Radiographs for Steel Castings Up to 2 in. (50.8 mm) in Thickness",
+  "(b) External Pressure Stresses. Stresses due to external pressure shall be considered safe when the wall thickness of the piping component, and its means of stiffening, meet the requirements of para. 304.",
+  "(c) Stresses Due to Sustained Loads, SL. The stresses due to sustained loads, SL, in any component in a piping system (see para. 320), shall not exceed Sh, where Sh is the basic allowable stress provided in Table A-1 (Table A-1C) at the metal temperature for the operating condition being considered.",
+  "(d) Allowable Displacement Stress Range, SA. The computed displacement stress range, SE, in a piping system (see para. 319.4.4) shall not exceed the allowable displacement stress range, SA (see paras. 319.2.3 and 319.3.4), calculated by eq. (1a) (1a) (1.25 0.25 ) S f S S = + A c h"
+ ],
+ "rows": [
+  {
+   "material_examined_thickness_t": "Steel T ≤ 25 mm (1.0 in.)",
+   "applicable_standard": "ASTM E446",
+   "acceptance_level_or_class": 1,
+   "acceptable_discontinuities": "Types A, B, C"
+  },
+  {
+   "material_examined_thickness_t": "Steel T > 25 mm, ≤ 51 mm (2.0 in.)",
+   "applicable_standard": "ASTM E446",
+   "acceptance_level_or_class": 2,
+   "acceptable_discontinuities": "Types A, B, C"
+  },
+  {
+   "material_examined_thickness_t": "Steel T > 51 mm, ≤ 114 mm (4.5 in.)",
+   "applicable_standard": "ASTM E186",
+   "acceptance_level_or_class": 2,
+   "acceptable_discontinuities": "Categories A, B, C"
+  },
+  {
+   "material_examined_thickness_t": "Steel T > 114 mm, ≤ 305 mm (12 in.)",
+   "applicable_standard": "ASTM E280",
+   "acceptance_level_or_class": 2,
+   "acceptable_discontinuities": "Categories A, B, C"
+  },
+  {
+   "material_examined_thickness_t": "Aluminum and",
+   "applicable_standard": "ASTM E155",
+   "acceptance_level_or_class": null,
+   "acceptable_discontinuities": "Shown in reference"
+  },
+  {
+   "material_examined_thickness_t": "magnesium",
+   "applicable_standard": null,
+   "acceptance_level_or_class": null,
+   "acceptable_discontinuities": "radiographs"
+  },
+  {
+   "material_examined_thickness_t": "Copper, Ni–Cu",
+   "applicable_standard": "ASTM E272",
+   "acceptance_level_or_class": 2,
+   "acceptable_discontinuities": "Codes A, Ba, Bb"
+  },
+  {
+   "material_examined_thickness_t": "Bronze",
+   "applicable_standard": "ASTM E310",
+   "acceptance_level_or_class": 2,
+   "acceptable_discontinuities": "Codes A and B"
+  }
+ ]
+}

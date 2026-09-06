@@ -1,0 +1,46 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S302.6.2-1",
+ "title": "Example 2: Sustained Load Condition Listing",
+ "pdf_pages": [
+  553,
+  553
+ ],
+ "columns": [
+  {
+   "key": "sustained_condition",
+   "header": "Sustained Condition"
+  },
+  {
+   "key": "node_50_s_support_status_active_inactive",
+   "header": "Node 50’s Support Status (Active/Inactive)"
+  }
+ ],
+ "row_count": 3,
+ "notes": [
+  "(1) Sustained Condition 1, the ambient condition, includes only pipe weight and insulation weight without fluid contents or internal pressure.",
+  "(2) Sustained Condition 2 reflects the support scenario of the ambient condition, excludes thermal effects, and includes internal pressure, pipe weight, insulation weight, and fluid weight.",
+  "(3) Sustained Condition 3 reflects the support scenario of the operating condition, excludes thermal effects, and includes internal pressure, pipe weight, insulation weight, and fluid weight."
+ ],
+ "rows": [
+  {
+   "sustained_condition": "1: Ambient (as-installed) [Note (1)]",
+   "node_50_s_support_status_active_inactive": "Active"
+  },
+  {
+   "sustained_condition": "2: P1 [Note (2)]",
+   "node_50_s_support_status_active_inactive": "Active"
+  },
+  {
+   "sustained_condition": "3: P1 [Note (3)]",
+   "node_50_s_support_status_active_inactive": "Inactive"
+  }
+ ]
+}

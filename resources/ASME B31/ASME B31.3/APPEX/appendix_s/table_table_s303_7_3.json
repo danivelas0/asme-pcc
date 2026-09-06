@@ -1,0 +1,97 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S303.7-3",
+ "title": "Example 3: Moment Reversal Load Combination Considering Operating Cases 1 and 2, Total Strain Based: Displacement Stress Range [Eq. (1b) Allowable SA = 364 MPa (52.7 ksi): Fails]",
+ "pdf_pages": [
+  560,
+  560
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "global_axis_forces_and_moments_fx_n_lb_unsigned",
+   "header": "Global Axis Forces and Moments [Note (1)] Fx, N (lb) (Unsigned) [Notes (2), (3)]"
+  },
+  {
+   "key": "my_n_m_ft_lb_unsigned",
+   "header": "My, N·m (ft-lb) (Unsigned) [Note (3)]"
+  },
+  {
+   "key": "eq_17_se_mpa_ksi",
+   "header": "Eq. (17), SE, MPa (ksi) [Notes (2), (3)]"
+  }
+ ],
+ "row_count": 9,
+ "notes": [
+  "GENERAL NOTE: The stress due to sustained load used in determining the eq. (1b) allowable displacement stress range, SA, for nodes 20 and 320 is 28.4 MPa (4.12 ksi).",
+  "(1) Force ranges, moment ranges, and displacement stress ranges are averaged from commercial programs’ results, are obtained by analyzing the piping system in both U.S. Customary and SI units, and are directly affected by the stiffness chosen for valves, flanges, other relatively stiff components, and branch connections.",
+  "(2) In accordance with para. 319.4.4, no operating pressure force range is included in the force ranges and displacement stress ranges listed above.",
+  "(3) Signs are not listed for Fx and My listed above since signs are irrelevant following the load combination summation; see paras. 319.2.3(b), 319.3.1(a), 319.4.4, and 302.3.5(d) in determining the greatest displacement stress range, SE."
+ ],
+ "rows": [
+  {
+   "node": "10 and 310 anchor",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": 0,
+   "my_n_m_ft_lb_unsigned": "361 000 (265,000)",
+   "eq_17_se_mpa_ksi": "136 (19.7)"
+  },
+  {
+   "node": "20 and 320 tee",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": 0,
+   "my_n_m_ft_lb_unsigned": "361 000 (265,000)",
+   "eq_17_se_mpa_ksi": "448 (64.7)"
+  },
+  {
+   "node": "30 and 330 tee",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "220 (31.4)"
+  },
+  {
+   "node": "40 and 340 tee",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "220 (31.4)"
+  },
+  {
+   "node": "110 and 210 Y",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "70.4 (10.2)"
+  },
+  {
+   "node": "120 and 220 meter",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "70.4 (10.2)"
+  },
+  {
+   "node": "125 and 225 Y",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "70.4 (10.2)"
+  },
+  {
+   "node": "130 and 230 meter",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "70.4 (10.2)"
+  },
+  {
+   "node": "140 and 240 Y",
+   "global_axis_forces_and_moments_fx_n_lb_unsigned": "188 000 (42,100)",
+   "my_n_m_ft_lb_unsigned": "106 000 (77,600)",
+   "eq_17_se_mpa_ksi": "70.4 (10.2)"
+  }
+ ]
+}

@@ -1,0 +1,941 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "document": "ASME B31.3-2024 body of the Code, Chapters I-X",
+ "pdf_pages": [
+  34,
+  197
+ ],
+ "scope_note": "Chapters I-X only. Publisher front matter (Contents, Foreword, committee roster, Correspondence, Introduction, Summary of Changes, the redesignation list) and the INDEX are not included; neither are running heads, printed folios or edition change markers. The appendices are extracted separately, in APPEX/.",
+ "definitions": {
+  "file": "definitions.json",
+  "entries": 189
+ },
+ "chapter_count": 10,
+ "table_count": 34,
+ "figure_count": 39,
+ "chapters": [
+  {
+   "chapter": "I",
+   "chapter_number": 1,
+   "title": "Scope and Definitions",
+   "pdf_pages": [
+    34,
+    43
+   ],
+   "file": "chapter_01.json",
+   "tables": [
+    {
+     "file": "tables/table_300_4_1.json",
+     "table_id": "Table 300.4-1",
+     "title": "Status of Appendices in ASME B31.3",
+     "rows": 19,
+     "pdf_pages": [
+      43,
+      43
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure 300.1.1-1",
+     "title": "Diagram Illustrating Application of ASME B31.3 Piping at Equipment",
+     "figure_image": "figures/figure_300_1_1_1.png",
+     "pdf_page": 36,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 10,
+   "paragraphs": 66,
+   "equations": 0,
+   "words": 1717
+  },
+  {
+   "chapter": "II",
+   "chapter_number": 2,
+   "title": "Design",
+   "pdf_pages": [
+    44,
+    82
+   ],
+   "file": "chapter_02.json",
+   "tables": [
+    {
+     "file": "tables/table_302_3_3_1.json",
+     "table_id": "Table 302.3.3-1",
+     "title": "Increased Casting Quality Factors, Ec",
+     "rows": 6,
+     "pdf_pages": [
+      49,
+      49
+     ]
+    },
+    {
+     "file": "tables/table_302_3_3_2.json",
+     "table_id": "Table 302.3.3-2",
+     "title": "Acceptance Levels for Castings",
+     "rows": 8,
+     "pdf_pages": [
+      50,
+      50
+     ]
+    },
+    {
+     "file": "tables/table_302_3_4_1.json",
+     "table_id": "Table 302.3.4-1",
+     "title": "Longitudinal Weld Joint Quality Factor, Ej",
+     "rows": 2,
+     "pdf_pages": [
+      51,
+      51
+     ]
+    },
+    {
+     "file": "tables/table_302_3_5_1.json",
+     "table_id": "Table 302.3.5-1",
+     "title": "Weld Joint Strength Reduction Factor, W",
+     "rows": 7,
+     "pdf_pages": [
+      53,
+      53
+     ]
+    },
+    {
+     "file": "tables/table_304_1_1_1.json",
+     "table_id": "Table 304.1.1-1",
+     "title": "Values of Coefficient Y for t < D/6",
+     "rows": 5,
+     "pdf_pages": [
+      56,
+      56
+     ]
+    },
+    {
+     "file": "tables/table_304_4_1_1.json",
+     "table_id": "Table 304.4.1-1",
+     "title": "ASME BPVC References for Closures",
+     "rows": 6,
+     "pdf_pages": [
+      64,
+      64
+     ]
+    },
+    {
+     "file": "tables/table_308_2_1_1.json",
+     "table_id": "Table 308.2.1-1",
+     "title": "Permissible Sizes/Rating Classes for Slip-On Flanges Used as Lapped Flanges",
+     "rows": 2,
+     "pdf_pages": [
+      69,
+      69
+     ]
+    },
+    {
+     "file": "tables/table_314_2_1_1.json",
+     "table_id": "Table 314.2.1-1",
+     "title": "Minimum Schedule of Components With External Threads",
+     "rows": 0,
+     "pdf_pages": [
+      72,
+      72
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure 302.3.5-1",
+     "title": "Stress Range Factor, f",
+     "figure_image": "figures/figure_302_3_5_1.png",
+     "pdf_page": 52,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 304.2.1-1",
+     "title": "Nomenclature for Pipe Bends",
+     "figure_image": "figures/figure_304_2_1_1.png",
+     "pdf_page": 57,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 304.2.3-1",
+     "title": "Nomenclature for Miter Bends",
+     "figure_image": "figures/figure_304_2_3_1.png",
+     "pdf_page": 57,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 304.3.3-1",
+     "title": "Branch Connection Nomenclature",
+     "figure_image": "figures/figure_304_3_3_1.png",
+     "pdf_page": 59,
+     "landscape": true,
+     "sheets": 2,
+     "notes": [
+      "GENERAL NOTE: This Figure illustrates the nomenclature of para. 304.3.3. It does not indicate complete welding details of a preferred method of construction. For typical welding details, see Figures 328.5.4-2 and 328.5.4-4.",
+      "(1) When a reinforcing ring or saddle is added as reinforcement (Example A and Detail for Example A), the value of reinforcement area may be taken in the same manner in which excess wall in run pipe, A2, is considered. Typical acceptable methods of welding are shown in Figure 328.5.4-2, illustrations (c) through (e).",
+      "(2) Width-to-height of reinforcing ring or saddle area A4 shall be reasonably proportioned, preferably on a ratio as close to 4:1 as the available horizontal space within the limits of the reinforcing zone along the run and the outside diameter of the branch will permit, but in no case may the ratio be less than 1:1.",
+      "(3) Reinforcing saddles are limited to use on 90-deg branches (detail for Example A).",
+      "(4) This 60-deg angle is not a limit on the angle of the integral nozzle geometry. The 60-deg angle defines the line that is used to set the height of reinforcement, Tr. The full area below the height of reinforcement can be accounted for in calculating the reinforcement area, A4. A4 is the added metal within the reinforcement zone excluding the excess metal in the run pipe, A2, and the excess metal in the branch pipe, A3."
+     ],
+     "figure_images": [
+      "figures/figure_304_3_3_1.png",
+      "figures/figure_304_3_3_1_sheet_2.png"
+     ]
+    },
+    {
+     "figure_id": "Figure 304.3.4-1",
+     "title": "Extruded Outlet Header Nomenclature",
+     "figure_image": "figures/figure_304_3_4_1.png",
+     "pdf_page": 62,
+     "landscape": false,
+     "sheets": 2,
+     "notes": [
+      "GENERAL NOTE: This Figure illustrates the nomenclature of para. 304.3.4. It does not indicate preferred design or fabrication details."
+     ],
+     "figure_images": [
+      "figures/figure_304_3_4_1.png",
+      "figures/figure_304_3_4_1_sheet_2.png"
+     ]
+    },
+    {
+     "figure_id": "Figure 304.5.3-1",
+     "title": "Blanks",
+     "figure_image": "figures/figure_304_5_3_1.png",
+     "pdf_page": 66,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 319.4.4-1",
+     "title": "Moments in Bends",
+     "figure_image": "figures/figure_319_4_4_1.png",
+     "pdf_page": 77,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 319.4.4-2",
+     "title": "Moments in Branch Connections",
+     "figure_image": "figures/figure_319_4_4_2.png",
+     "pdf_page": 78,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 242,
+   "paragraphs": 816,
+   "equations": 42,
+   "words": 19354
+  },
+  {
+   "chapter": "III",
+   "chapter_number": 3,
+   "title": "Materials",
+   "pdf_pages": [
+    83,
+    94
+   ],
+   "file": "chapter_03.json",
+   "tables": [
+    {
+     "file": "tables/table_323_2_2_1.json",
+     "table_id": "Table 323.2.2-1",
+     "title": "Requirements for Low Temperature Toughness Tests for Metals",
+     "rows": 21,
+     "pdf_pages": [
+      84,
+      84
+     ]
+    },
+    {
+     "file": "tables/table_323_2_2_2.json",
+     "table_id": "Table 323.2.2-2",
+     "title": "Tabular Values for Minimum Temperatures Without Impact Testing for Carbon Steel Materials",
+     "rows": 46,
+     "pdf_pages": [
+      88,
+      88
+     ]
+    },
+    {
+     "file": "tables/table_323_2_2_3.json",
+     "table_id": "Table 323.2.2-3",
+     "title": "Tabular Values for Reduction in Lowest Exemption Temperature for Steels Without Impact Testing",
+     "rows": 36,
+     "pdf_pages": [
+      90,
+      90
+     ]
+    },
+    {
+     "file": "tables/table_323_3_1_1.json",
+     "table_id": "Table 323.3.1-1",
+     "title": "Impact Testing Requirements for Metals",
+     "rows": 10,
+     "pdf_pages": [
+      91,
+      91
+     ]
+    },
+    {
+     "file": "tables/table_323_3_4_1.json",
+     "table_id": "Table 323.3.4-1",
+     "title": "Charpy Impact Test Temperature Reduction",
+     "rows": 0,
+     "pdf_pages": [
+      92,
+      92
+     ]
+    },
+    {
+     "file": "tables/table_323_3_5_1.json",
+     "table_id": "Table 323.3.5-1",
+     "title": "Minimum Required Charpy V-Notch Impact Values",
+     "rows": 9,
+     "pdf_pages": [
+      93,
+      93
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure 323.2.2-1",
+     "title": "Minimum Temperatures Without Impact Testing for Carbon Steel Materials",
+     "figure_image": "figures/figure_323_2_2_1.png",
+     "pdf_page": 86,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "GENERAL NOTE: See Table A-1 (Table A-1C) for the designated curve for a listed material; see Table 323.2.2-2 for tabular values."
+     ]
+    },
+    {
+     "figure_id": "Figure 323.2.2-2",
+     "title": "Reduction in Lowest Exemption Temperature for Steels Without Impact Testing",
+     "figure_image": "figures/figure_323_2_2_2.png",
+     "pdf_page": 87,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 24,
+   "paragraphs": 128,
+   "equations": 0,
+   "words": 3519
+  },
+  {
+   "chapter": "IV",
+   "chapter_number": 4,
+   "title": "Standards for Piping Components",
+   "pdf_pages": [
+    95,
+    98
+   ],
+   "file": "chapter_04.json",
+   "tables": [
+    {
+     "file": "tables/table_326_1_1_1.json",
+     "table_id": "Table 326.1.1-1",
+     "title": "Component Standards",
+     "rows": 96,
+     "pdf_pages": [
+      96,
+      98
+     ]
+    }
+   ],
+   "figures": [],
+   "sections": 9,
+   "paragraphs": 8,
+   "equations": 0,
+   "words": 237
+  },
+  {
+   "chapter": "V",
+   "chapter_number": 5,
+   "title": "Fabrication, Assembly, and Erection",
+   "pdf_pages": [
+    99,
+    117
+   ],
+   "file": "chapter_05.json",
+   "tables": [
+    {
+     "file": "tables/table_330_1_1_1.json",
+     "table_id": "Table 330.1.1-1",
+     "title": "Preheat Temperatures",
+     "rows": 18,
+     "pdf_pages": [
+      109,
+      109
+     ]
+    },
+    {
+     "file": "tables/table_331_1_1_1.json",
+     "table_id": "Table 331.1.1-1",
+     "title": "Postweld Heat Treatment",
+     "rows": 17,
+     "pdf_pages": [
+      110,
+      110
+     ]
+    },
+    {
+     "file": "tables/table_331_1_2_1.json",
+     "table_id": "Table 331.1.2-1",
+     "title": "Alternate Postweld Heat Treatment Requirements for Carbon and Low Alloy Steels, P-Nos. 1 and 3",
+     "rows": 0,
+     "pdf_pages": [
+      111,
+      111
+     ]
+    },
+    {
+     "file": "tables/table_331_1_3_1.json",
+     "table_id": "Table 331.1.3-1",
+     "title": "Exemptions to Mandatory Postweld Heat Treatment",
+     "rows": 20,
+     "pdf_pages": [
+      112,
+      113
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure 328.3.2-1",
+     "title": "Typical Backing Rings and Consumable Inserts",
+     "figure_image": "figures/figure_328_3_2_1.png",
+     "pdf_page": 101,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.4.2-1",
+     "title": "Typical Butt Weld End Preparation",
+     "figure_image": "figures/figure_328_4_2_1.png",
+     "pdf_page": 101,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.4.2-2",
+     "title": "Trimming and Permitted Misalignment",
+     "figure_image": "figures/figure_328_4_2_2.png",
+     "pdf_page": 101,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.4.3-1",
+     "title": "Preparation for Branch Connections",
+     "figure_image": "figures/figure_328_4_3_1.png",
+     "pdf_page": 102,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "Legend: g = root gap per welding specification m = the lesser of 3.2 mm (1⁄8 in.) or 0.5 T b"
+     ]
+    },
+    {
+     "figure_id": "Figure 328.5.2-1",
+     "title": "Fillet and Socket Weld Sizes",
+     "figure_image": "figures/figure_328_5_2_1.png",
+     "pdf_page": 103,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.5.2-2",
+     "title": "Minimum Attachment Weld Dimensions for Double-Welded Slip-On and Socket Welding Flanges",
+     "figure_image": "figures/figure_328_5_2_2.png",
+     "pdf_page": 104,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "Legend: xmin = the lesser of 1.4 T or the thickness of the hub"
+     ]
+    },
+    {
+     "figure_id": "Figure 328.5.2-3",
+     "title": "Minimum Attachment Weld Dimensions for Socket Welding Components Other Than Flanges",
+     "figure_image": "figures/figure_328_5_2_3.png",
+     "pdf_page": 104,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(f) The outer edge of a reinforcing pad or saddle shall be if joints between pieces have strength equivalent to pad or"
+     ]
+    },
+    {
+     "figure_id": "Figure 328.5.4-1",
+     "title": "Typical Welded Branch Connections",
+     "figure_image": "figures/figure_328_5_4_1.png",
+     "pdf_page": 105,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.5.4-2",
+     "title": "Acceptable Details for Branch Attachment Welds",
+     "figure_image": "figures/figure_328_5_4_2.png",
+     "pdf_page": 105,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.5.4-3",
+     "title": "Acceptable Details for Branch Attachments Suitable for 100% Radiography",
+     "figure_image": "figures/figure_328_5_4_3.png",
+     "pdf_page": 105,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure 328.5.4-4",
+     "title": "Acceptable Details for Integrally Reinforced Branch Connections",
+     "figure_image": "figures/figure_328_5_4_4.png",
+     "pdf_page": 106,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(b) Longitudinal Manufacturer’s weld line (if applicable) Note (3) Crotch Heel Note (3) Note (2)",
+      "(d) Longitudinal Crotch Note (1) Manufacturer’s weld Note (2) line (if applicable) Heel Note (3) Note (3)",
+      "(f) Longitudinal"
+     ]
+    },
+    {
+     "figure_id": "Figure 328.5.5-1",
+     "title": "Typical Details for Fabricated Laps",
+     "figure_image": "figures/figure_328_5_5_1.png",
+     "pdf_page": 107,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "Legend: c = sum of allowances defined in para. 304.1.1 r = corner radius of fabricated lap T = nominal wall thickness of pipe"
+     ]
+    },
+    {
+     "figure_id": "Figure 335.3.3-1",
+     "title": "Typical Threaded Joints Using Straight Threads",
+     "figure_image": "figures/figure_335_3_3_1.png",
+     "pdf_page": 116,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "GENERAL NOTE: Threads are ASME B1.1 straight threads."
+     ]
+    }
+   ],
+   "sections": 90,
+   "paragraphs": 211,
+   "equations": 6,
+   "words": 6190
+  },
+  {
+   "chapter": "VI",
+   "chapter_number": 6,
+   "title": "Inspection, Examination, and Testing",
+   "pdf_pages": [
+    118,
+    131
+   ],
+   "file": "chapter_06.json",
+   "tables": [
+    {
+     "file": "tables/table_341_3_2_1.json",
+     "table_id": "Table 341.3.2-1",
+     "title": "Acceptance Criteria for Welds — Visual and Radiographic Examination",
+     "rows": 10,
+     "pdf_pages": [
+      121,
+      121
+     ]
+    },
+    {
+     "file": "tables/table_criterion_value_notes_for_table_341_3_2_1.json",
+     "table_id": "Criterion Value Notes for Table 341.3.2-1",
+     "title": null,
+     "rows": 12,
+     "pdf_pages": [
+      122,
+      122
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure 341.3.2-1",
+     "title": "Typical Weld Imperfections",
+     "figure_image": "figures/figure_341_3_2_1.png",
+     "pdf_page": 120,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 89,
+   "paragraphs": 251,
+   "equations": 2,
+   "words": 7006
+  },
+  {
+   "chapter": "VII",
+   "chapter_number": 7,
+   "title": "Nonmetallic Piping and Piping Lined With Nonmetals",
+   "pdf_pages": [
+    132,
+    153
+   ],
+   "file": "chapter_07.json",
+   "tables": [
+    {
+     "file": "tables/table_a323_2_2_1.json",
+     "table_id": "Table A323.2.2-1",
+     "title": "Requirements for Low Temperature Toughness Tests for Nonmetals",
+     "rows": 2,
+     "pdf_pages": [
+      142,
+      142
+     ]
+    },
+    {
+     "file": "tables/table_a323_4_2_1.json",
+     "table_id": "Table A323.4.2-1",
+     "title": "Recommended Temperature Limits for Reinforced Thermosetting Resin Pipe",
+     "rows": 6,
+     "pdf_pages": [
+      142,
+      142
+     ]
+    },
+    {
+     "file": "tables/table_a323_4_3_1.json",
+     "table_id": "Table A323.4.3-1",
+     "title": "Recommended Temperature Limits for Thermoplastics Used as Linings",
+     "rows": 8,
+     "pdf_pages": [
+      142,
+      142
+     ]
+    },
+    {
+     "file": "tables/table_a326_1_1.json",
+     "table_id": "Table A326.1-1",
+     "title": "Component Standards",
+     "rows": 70,
+     "pdf_pages": [
+      144,
+      145
+     ]
+    },
+    {
+     "file": "tables/table_a341_3_2_1.json",
+     "table_id": "Table A341.3.2-1",
+     "title": "Acceptance Criteria for Bonds",
+     "rows": 6,
+     "pdf_pages": [
+      151,
+      151
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure A328.5.3-1",
+     "title": "Thermoplastic Solvent Cemented Joint",
+     "figure_image": "figures/figure_a328_5_3_1.png",
+     "pdf_page": 147,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure A328.5.4-1",
+     "title": "Thermoplastic Heat Fusion Joints",
+     "figure_image": "figures/figure_a328_5_4_1.png",
+     "pdf_page": 148,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure A328.5.5-1",
+     "title": "Thermoplastic Electrofusion Joints",
+     "figure_image": "figures/figure_a328_5_5_1.png",
+     "pdf_page": 148,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(a) Socket Fusion for Coupling",
+      "(b) Side Wall Fusion for Saddle Fitting"
+     ]
+    },
+    {
+     "figure_id": "Figure A328.5.6-1",
+     "title": "Fully Tapered Thermosetting Adhesive Joint",
+     "figure_image": "figures/figure_a328_5_6_1.png",
+     "pdf_page": 149,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure A328.5.7-1",
+     "title": "Thermosetting Wrapped Joints",
+     "figure_image": "figures/figure_a328_5_7_1.png",
+     "pdf_page": 149,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 250,
+   "paragraphs": 460,
+   "equations": 5,
+   "words": 9461
+  },
+  {
+   "chapter": "VIII",
+   "chapter_number": 8,
+   "title": "Piping for Category M Fluid Service",
+   "pdf_pages": [
+    154,
+    161
+   ],
+   "file": "chapter_08.json",
+   "tables": [],
+   "figures": [],
+   "sections": 190,
+   "paragraphs": 179,
+   "equations": 0,
+   "words": 2658
+  },
+  {
+   "chapter": "IX",
+   "chapter_number": 9,
+   "title": "High Pressure Piping",
+   "pdf_pages": [
+    162,
+    189
+   ],
+   "file": "chapter_09.json",
+   "tables": [
+    {
+     "file": "tables/table_k302_3_3_1.json",
+     "table_id": "Table K302.3.3-1",
+     "title": "Acceptable Severity Levels for Steel Castings",
+     "rows": 3,
+     "pdf_pages": [
+      165,
+      165
+     ]
+    },
+    {
+     "file": "tables/table_k305_1_2_1.json",
+     "table_id": "Table K305.1.2-1",
+     "title": "Required Ultrasonic or Eddy Current Examination of Pipe and Tubing for Longitudinal Defects",
+     "rows": 0,
+     "pdf_pages": [
+      169,
+      169
+     ]
+    },
+    {
+     "file": "tables/table_k323_3_1_1.json",
+     "table_id": "Table K323.3.1-1",
+     "title": "Impact Testing Requirements",
+     "rows": 19,
+     "pdf_pages": [
+      175,
+      175
+     ]
+    },
+    {
+     "file": "tables/table_k323_3_5_1.json",
+     "table_id": "Table K323.3.5-1",
+     "title": "Minimum Required Charpy V-Notch Impact Values",
+     "rows": 12,
+     "pdf_pages": [
+      177,
+      177
+     ]
+    },
+    {
+     "file": "tables/table_k326_1_1_1.json",
+     "table_id": "Table K326.1.1-1",
+     "title": "Component Standards",
+     "rows": 19,
+     "pdf_pages": [
+      178,
+      178
+     ]
+    },
+    {
+     "file": "tables/table_k341_3_2_1.json",
+     "table_id": "Table K341.3.2-1",
+     "title": "Acceptance Criteria for Welds",
+     "rows": 10,
+     "pdf_pages": [
+      184,
+      184
+     ]
+    },
+    {
+     "file": "tables/table_criterion_value_notes_for_table_k341_3_2_1.json",
+     "table_id": "Criterion Value Notes for Table K341.3.2-1",
+     "title": null,
+     "rows": 10,
+     "pdf_pages": [
+      185,
+      185
+     ]
+    }
+   ],
+   "figures": [
+    {
+     "figure_id": "Figure K323.3.3-1",
+     "title": "Example of an Acceptable Impact Test Specimen",
+     "figure_image": "figures/figure_k323_3_3_1.png",
+     "pdf_page": 176,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "GENERAL NOTE: This Figure illustrates how an acceptable transverse Charpy specimen can be obtained from a tubing or component shape too small for a full length standard specimen in accordance with"
+     ]
+    },
+    {
+     "figure_id": "Figure K328.4.3-1",
+     "title": "Pipe Bored for Alignment: Trimming and Permitted Misalignment",
+     "figure_image": "figures/figure_k328_4_3_1.png",
+     "pdf_page": 180,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure K328.5.4-1",
+     "title": "Some Acceptable Welded Branch Connections Suitable for 100% Radiography",
+     "figure_image": "figures/figure_k328_5_4_1.png",
+     "pdf_page": 181,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    }
+   ],
+   "sections": 308,
+   "paragraphs": 607,
+   "equations": 13,
+   "words": 12512
+  },
+  {
+   "chapter": "X",
+   "chapter_number": 10,
+   "title": "High Purity Piping",
+   "pdf_pages": [
+    190,
+    197
+   ],
+   "file": "chapter_10.json",
+   "tables": [],
+   "figures": [
+    {
+     "figure_id": "Figure U304.5.3-1",
+     "title": "Blanks",
+     "figure_image": "figures/figure_u304_5_3_1.png",
+     "pdf_page": 191,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(a) Hygienic Clamp-Type Fitting"
+     ]
+    },
+    {
+     "figure_id": "Figure U328.4.2-1",
+     "title": "Modified Pipe End Preparations",
+     "figure_image": "figures/figure_u328_4_2_1.png",
+     "pdf_page": 193,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(a) Modified “J” Preparation 37½ deg ± 2½ deg 25 deg ± 2½ deg Radius 2.5 mm ≤22.22 mm ( in.) 3 (0.875 in.) 3 Land thickness = Land extension ≥ land thickness 1.5 mm ( in.) 6 Root opening = 0 mm to 0.8 mm (0 in. to in.) 3 Wall thickness = 4.76 mm to 22.22 mm, inclusive (0.188 in. to 0.875 in.)",
+      "(b) Modified Butt Weld Preparation"
+     ]
+    },
+    {
+     "figure_id": "Figure U335.7.1-1",
+     "title": "Face Seal Joints",
+     "figure_image": "figures/figure_u335_7_1_1.png",
+     "pdf_page": 194,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(a) Metal Face Seal",
+      "(b) Nonmetallic Face Seal"
+     ]
+    },
+    {
+     "figure_id": "Figure U335.8-1",
+     "title": "Hygienic Clamp Joint Assembly",
+     "figure_image": "figures/figure_u335_8_1.png",
+     "pdf_page": 194,
+     "landscape": false,
+     "sheets": 1,
+     "notes": []
+    },
+    {
+     "figure_id": "Figure U335.8-2",
+     "title": "Hygienic Clamp Types",
+     "figure_image": "figures/figure_u335_8_2.png",
+     "pdf_page": 195,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(2) Two-Piece",
+      "(3) Three-Piece Double Pin With Double Pin With Wing Nut"
+     ]
+    },
+    {
+     "figure_id": "Figure U335.8-3",
+     "title": "Hygienic Ferrules",
+     "figure_image": "figures/figure_u335_8_3.png",
+     "pdf_page": 195,
+     "landscape": false,
+     "sheets": 1,
+     "notes": [
+      "(1) Type A: O.D. Tube Sizes 1 in. and Above O.D. Tube Sizes 1/4 in. Through 1 in."
+     ]
+    }
+   ],
+   "sections": 87,
+   "paragraphs": 140,
+   "equations": 0,
+   "words": 2390
+  }
+ ]
+}

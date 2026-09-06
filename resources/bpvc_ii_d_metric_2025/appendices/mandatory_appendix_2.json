@@ -1,0 +1,77 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Mandatory Appendix 2",
+  "kind": "Mandatory",
+  "identifier": "2",
+  "title": "Basis for Establishing Design Stress Intensity Values for Tables 2A, 2B, and 4, and Allowable Stress Values for Table 3",
+  "title_as_printed": "BASIS FOR ESTABLISHING DESIGN STRESS INTENSITY VALUES FOR TABLES 2A, 2B, AND 4, AND ALLOWABLE STRESS VALUES FOR TABLE 3",
+  "pdf_pages": [
+    1378,
+    1380
+  ],
+  "section_count": 4,
+  "word_count": 1096,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "2-100",
+      "heading": "DERIVATION OF STRESS INTENSITY VALUES",
+      "paragraphs": [
+        "The values in Tables 2A, 2B, 3, and 4 are established by the Committee only. In the determination of allowable stress values for nonnuclear materials in Table 3, the Committee is guided by successful experience in service, insofar as evidence of satisfactory experience is available. Such evidence is considered equivalent to test data where operating conditions are known with reasonable certainty. In the evaluation of new materials for both nuclear and nonnuclear applications, it is sometimes necessary to be guided to a certain extent by the comparison of test information with available data on successful applications of similar materials. The factors employed to determine design stress intensity values are provided in Tables 2-100(a), 2-100(b), and 2-100(c). Nomenclature for these Tables is as follows: F avg = multiplier applied to average stress for rupture in 100 000 h. At 815°C and below, F a v g = 0.67. Above 815°C, it is determined from the slope of the log time‐to‐rupture versus log stress plot at 100 000 h such that log F a v g = 1/n , but it may not exceed 0.67. R T = ratio of the average temperature dependent trend curve value of tensile strength to the room temperature tensile strength R Y = ratio of the average temperature dependent trend curve value of yield strength to the room temperature yield strength S T = specified minimum tensile strength at room temperature, MPa SY = specified minimum yield strength at room temperature, MPa n = a negative number equal to Δ log time‐to‐rupture divided by Δ log stress at 100 000 h NA = not applicable The maximum design stress intensity shall be the lowest value obtained from the criteria in Tables 2-100(a), 2-100(b), and 2-100(c). The mechanical properties considered, and the factors applied to establish the maximum allowable stresses, are given in 2-110 through 2-130."
+      ]
+    },
+    {
+      "id": "2-110",
+      "heading": "CRITERIA FOR MATERIALS OTHER THAN BOLTING: TABLES 2A AND 2B",
+      "paragraphs": [
+        "The design stress intensity values at any temperature are no larger than the least of the following:",
+        "(a) One‐third of the specified minimum tensile strength at room temperature.",
+        "(b) One‐third of the tensile strength at temperature.",
+        "(c) Two‐thirds of the specified minimum yield strength at room temperature.",
+        "(d) Two‐thirds of the yield strength at temperature, except that for austenitic stainless steels, nickel alloys, copper alloys, and cobalt alloys having an S Y /S T ratio less than 0.625, as indicated in Tables 2A and 2B, this value may be as large as 90% of the yield strength at temperature (but never more than two‐thirds of the specified minimum yield strength). In the application of these criteria, the Committee considers the yield strength at temperature to be S Y RY, and the tensile strength at temperature to be 1.1ST RT. When, in the judgment of the Committee, values have been in use for a sufficient period of time to have demonstrated successful experience in service, even at temperatures at which the behavior of the material is time dependent, such values shall be retained, but shall be identified by a different typeface (normally italics) and a note in the tables that indicates at what temperature the use of such values begins."
+      ]
+    },
+    {
+      "id": "2-120",
+      "heading": "CRITERIA FOR BOLTING MATERIALS IN TABLE 3 FOR USE WITH SECTION III (CLASS 2 AND 3 RULES); SECTION VIII, DIVISION 1; SECTION VIII, DIVISION 2 (PART 4.16 RULES); AND SECTION XII",
+      "paragraphs": [
+        "(a) For materials whose strength has not been enhanced by heat treatment or by strain hardening, the allowable stress value shown at any temperature in Table 3 is the least of the following:",
+        "(1) one‐fourth of the specified minimum tensile strength at room temperature",
+        "(2) one‐fourth of the tensile strength at temperature",
+        "(3) two‐thirds of the specified minimum yield strength at room temperature",
+        "(4) two‐thirds of the yield strength at temperature",
+        "(b) For materials whose strength has been enhanced by heat treatment or by strain hardening, the allowable stress value shown at any temperature in Table 3 is the least of the following, unless these values are lower than the annealed values, in which case the annealed values shall be used:",
+        "(1) one‐fifth of the specified minimum tensile strength at room temperature",
+        "(2) one‐fourth of the tensile strength at temperature",
+        "(3) one‐fourth of the specified minimum yield strength at room temperature",
+        "(4) two‐thirds of the yield strength at temperature",
+        "(c) In the application of these criteria, the Committee considers the yield strength at temperature to be S Y RY, and the tensile strength at temperature to be 1.1S TRT.",
+        "(d) At temperatures in the range where creep and stress rupture strength govern the selection of stresses, the maximum allowable stress value for all materials is established by the Committee not to exceed the lowest of the following:",
+        "(1) 100% of the average stress to produce a creep rate of 0.01%/1 000 h",
+        "(2) 100Favg % of the average stress to cause rupture at the end of 100 000 h",
+        "(3) 80% of the minimum stress to cause rupture at the end of 100 000 h Stress values for high temperatures are based, whenever possible, on representative uniaxial properties of the materials obtained under standard ASTM testing conditions or equivalent. The stress values are based on basic properties of the materials and no consideration is given for corrosive environment, for abnormal temperature and stress conditions, or for other design considerations."
+      ]
+    },
+    {
+      "id": "2-130",
+      "heading": "CRITERIA FOR BOLTING MATERIALS IN TABLE 4 FOR USE WITH SECTION VIII, DIVISION 2, PART 5 AND ANNEX 5.F; AND WITH SECTION III, SUBSECTIONS NB AND WB",
+      "paragraphs": [
+        "The allowable stress or design stress intensity value shown at any temperature in Table 4 is the least of the following:",
+        "(a) For materials whose strength has not been enhanced by heat treatment or strain hardening,",
+        "(1) one-fourth of the specified minimum tensile strength at room temperature;",
+        "(2) one fourth of the tensile strength at temperature;",
+        "(3) two-thirds of the specified minimum yield strength at room temperature;",
+        "(4) two-thirds of the yield strength at temperature.",
+        "(b) For materials whose strength has been enhanced by heat treatment or strain hardening,",
+        "(1) one-third of the specified minimum yield strength at room temperature;",
+        "(2) one-third of the yield strength at temperature. In the application of these criteria, the Committee considers the yield strength at temperature to be S Y RY , and the tensile strength at temperature to be 1.1ST R T. Above Room Temperature Tensile Strength Yield Strength 2/3 S YRY or 0.9S YRY 2/3S Y [Note (1)] 2/3 × 0.85S Y 2/3 × 0.85SY RY or 0.9 × 0.85S Y RY [Note (1)] Above Room Temperature Creep Yield Strength Stress Rupture Rate 2/3S YRY 2/3S Y F a v gS R av g 0.8S Rm i n 1.0S C 2/3S YRY 1/4S Y F a v gS R av g 0.8S Rm i n 1.0S C Room Temperature and Above Room Below Temperature Tensile Tensile Strength Yield Strength Strength Yield Strength 1:1 2/3S Y 2/3 S Y RY 1/4S T 4 S TRT 1/3S Y 1/3S Y RY NA NA"
+      ]
+    }
+  ]
+}

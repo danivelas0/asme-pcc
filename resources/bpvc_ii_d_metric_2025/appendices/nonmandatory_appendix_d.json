@@ -1,0 +1,104 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Nonmandatory Appendix D",
+  "kind": "Nonmandatory",
+  "identifier": "D",
+  "title": "Guidelines for Rounding Minimum Specified Tensile and Yield Strength Values and for Establishing Anchor Points for Tensile and Yield Strength Trend Curves in Tables 1A, 1B, 2A, 2B, 3, 4, 5A, 5B, U, and Y-1",
+  "title_as_printed": "GUIDELINES FOR ROUNDING MINIMUM SPECIFIED TENSILE AND YIELD STRENGTH VALUES AND FOR ESTABLISHING ANCHOR POINTS FOR TENSILE AND YIELD STRENGTH TREND CURVES IN TABLES 1A, 1B, 2A, 2B, 3, 4, 5A, 5B, U, AND Y-1",
+  "pdf_pages": [
+    1431,
+    1432
+  ],
+  "section_count": 11,
+  "word_count": 1062,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "D-100",
+      "heading": "MINIMUM TENSILE STRENGTH AND MINIMUM YIELD STRENGTH COLUMNS",
+      "paragraphs": []
+    },
+    {
+      "id": "D-110",
+      "heading": "DUAL UNIT SPECIFICATIONS",
+      "paragraphs": [
+        "For specifications that contain both U.S. Customary and Metric minimum specified tensile and yield strength values, do the following:",
+        "(a) List the U.S. Customary values from the material specification in the columns for Minimum Tensile Strength, ksi and Minimum Yield Strength, ksi in the U.S. Customary edition tables of Section II, Part D.",
+        "(b) List the Metric values from the material specification in the columns for Minimum Tensile Strength, MPa and Minimum Yield Strength, MPa in the Metric edition tables of Section II, Part D."
+      ]
+    },
+    {
+      "id": "D-120",
+      "heading": "TWO SEPARATE SPECIFICATIONS FOR THE SAME PRODUCT FORM",
+      "paragraphs": [
+        "When two separate specifications exist for the same product form, one in U.S. Customary units and one in Metric units (a common situation for some fastener specifications), do the following:",
+        "(a) List the values from the U.S. Customary edition of the material specification in the columns for Minimum Tensile Strength, ksi and Minimum Yield Strength, ksi in the U.S. Customary edition tables of Section II, Part D.",
+        "(b) List the values from the Metric edition of the material specification in the columns for Minimum Tensile Strength, MPa and Minimum Yield Strength, MPa in the Metric edition tables of Section II, Part D."
+      ]
+    },
+    {
+      "id": "D-130",
+      "heading": "SPECIFICATION EXISTS IN ONLY ONE SET OF UNITS",
+      "paragraphs": [
+        "When a specification exists for only one set of units (common for EN and other non-U.S. specifications for which only Metric editions exist), do the following:",
+        "(a) Specification Exists Only in U.S. Customary Units",
+        "(1) List the U.S. Customary values in the columns for Minimum Tensile Strength, ksi and Minimum Yield Strength, ksi in the U.S. Customary edition tables of Section II, Part D.",
+        "(2) Multiply the U.S. Customary specification values by 6.894757, round to the nearest MPa (i.e., do a soft conversion), and list these rounded values in the columns for Minimum Tensile Strength, MPa and Minimum Yield Strength, MPa in the Metric edition tables of Section II, Part D.",
+        "(b) Specification Exists Only in Metric Units",
+        "(1) List the Metric values in the columns for Minimum Tensile Strength, MPa and Minimum Yield Strength, MPa in the Metric edition tables of Section II, Part D.",
+        "(2) Divide the Metric specification values by 6.894757, round to the nearest 0.5 ksi (i.e., do a soft conversion), and list these rounded values in the columns for Minimum Tensile Strength, ksi and Minimum Yield Strength, ksi in the U.S. Customary edition tables of Section II, Part D."
+      ]
+    },
+    {
+      "id": "D-200",
+      "heading": "SELECTING ANCHOR POINT FOR TENSILE AND YIELD STRENGTH TREND CURVES FOR ALL SITUATIONS IN WHICH THE MINIMUM RT SPECIFIED VALUES IN ONE UNIT SYSTEM ARE NOT PRECISE CONVERSIONS OF THE UNITS IN THE OTHER SYSTEM",
+      "paragraphs": []
+    },
+    {
+      "id": "D-210",
+      "heading": "ONE MATERIAL HAS ONE TREND CURVE RULE",
+      "paragraphs": [
+        "This rule requires that the trend curves in either system of units are precisely congruent with one another. That is, if the Metric and U.S. Customary curves are placed on top of one another, they appear to be only one curve. Thus, a material does not have two trend curves of the same shape, but has one curve. It should be recognized that following the \"one material: one trend curve\" rule will result in certain inconsistencies with the criteria established by Section II, Part D, Mandatory Appendices 1, 2, and 10. The rule was first established when the Section II-D tables were metricated. An example of the inconsistency with Appendix 1 can be seen in the Metric values for Type 347H stainless steel, on pp. 102–105 of the 2010 Edition, 2011 Addenda of Section II, Part D Metric. Inspection of Line No. 1 on these pages, for SA-312 seamless pipe, shows that the values in the Min. Tensile Strength and Min. Yield Strength columns on p. 103 are, respectively, 515 MPa and 205 MPa, as they appear in the SA-312 specification in Section II, Part A. However, the value in the −30 to 40°C and the 65°C columns, 138 MPa, is not equal to either 515/3.5 = 147.14 = 147 MPa or (205 × 2)/3 = 136.67 = 137 MPa. Instead, 138 MPa is obtained from (30 ksi × 6.894757 × 2)/3 = 137.89514 = 138 MPa. In this example, the \"one material: one trend curve\" rule results in a value at two temperatures that is slightly higher than would have been obtained from applying the Appendix 1 criteria to the Metric minimum specified yield strength. For other materials, slightly lower values might result. However, in either example, the values will be identical (within rounding variances) to those of the U.S. Customary values at the same temperatures."
+      ]
+    },
+    {
+      "id": "D-220",
+      "heading": "ANCHORING THE TREND CURVE",
+      "paragraphs": [
+        "When anchoring the yield and tensile strength trend curve, the U.S. Customary tensile and yield strengths are used when the specification is either a dual unit specification or exists only in U.S. Customary units. The Metric trend curve is then anchored to the conversion of the U.S. Customary values — the U.S. Customary values multiplied by 6.894757. Rounding is delayed until the last step (see D-300). However, when the specification exists only in a Metric version, the U.S. Customary trend curves are anchored to the soft conversion from the Metric-specified minimum tensile and yield strengths, in all cases, i.e., the U.S. Customary trend curves are anchored to the Metric-specified minimum tensile and yield strengths divided by 6.894757. Again, rounding is delayed until the last step."
+      ]
+    },
+    {
+      "id": "D-230",
+      "heading": "EQUIVALENT MATERIALS",
+      "paragraphs": [
+        "When a non-ASTM specification that, in the judgment of the Committee, has chemistry and heat treatment requirements so similar to an ASTM specification and grade that is already listed in Section II, Part D, that it is indistinguishable from the ASTM material, the Committee may choose to use the same trend curves for the non- ASTM specification as were used to develop the values for the ASTM material, regardless of any differences between the U.S. Customary minimum specified values and the Metric minimum specified values."
+      ]
+    },
+    {
+      "id": "D-300",
+      "heading": "SIGNIFICANT FIGURES IN THE ALLOWABLE STRESS, TENSILE STRENGTH, AND YIELD STRENGTH TABLES IN SECTION II, PART D AND IN CODE CASES",
+      "paragraphs": []
+    },
+    {
+      "id": "D-310",
+      "heading": "U.S. CUSTOMARY TABLES",
+      "paragraphs": [
+        "When listing allowable stress values in ksi, the last step in the analysis is to round the calculated values to three significant figures for values of 10.0 ksi and greater, and to two significant figures for values less than 10.0 ksi. When listing tensile strength and yield strength values in ksi, the last step in the analysis is to round the calculated values to four significant figures for values of 100.0 ksi and greater, to three significant figures for values less than 100.0 ksi down to and including 10.0 ksi, and to two significant figures for values less than 10.0 ksi.."
+      ]
+    },
+    {
+      "id": "D-320",
+      "heading": "METRIC TABLES",
+      "paragraphs": [
+        "When listing allowable stress, tensile strength, and yield strength values in MPa, the last step in the analysis is to round the calculated values to three significant figures, except that, for values greater than 999 MPa, round the value of the fourth figure to 0 or 5. For example, 1 022 rounds to 1 020, while 1 023 rounds to 1 025 MPa."
+      ]
+    }
+  ]
+}

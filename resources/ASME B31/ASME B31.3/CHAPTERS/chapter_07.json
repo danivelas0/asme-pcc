@@ -1,0 +1,5160 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "VII",
+ "chapter_number": 7,
+ "title": "Nonmetallic Piping and Piping Lined With Nonmetals",
+ "pdf_pages": [
+  132,
+  153
+ ],
+ "section_count": 250,
+ "paragraph_count": 460,
+ "equation_count": 5,
+ "word_count": 9461,
+ "tables": [
+  "Table A323.2.2-1",
+  "Table A323.4.2-1",
+  "Table A323.4.3-1",
+  "Table A326.1-1",
+  "Table A341.3.2-1"
+ ],
+ "figures": [
+  "Figure A328.5.3-1",
+  "Figure A328.5.4-1",
+  "Figure A328.5.5-1",
+  "Figure A328.5.6-1",
+  "Figure A328.5.7-1"
+ ],
+ "preamble": [],
+ "sections": [
+  {
+   "kind": "section",
+   "id": "A300",
+   "heading": "GENERAL STATEMENTS",
+   "page": 132,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Chapter VII pertains to nonmetallic piping and to piping lined with nonmetals."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The organization, content, and paragraph designations of this Chapter correspond to those of the first six Chapters (the base Code). The prefix A is used."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Provisions and requirements of the base Code apply only as stated in this Chapter."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Metallic piping that provides the pressure containment for a nonmetallic lining shall conform to the requirements of Chapters I through VI, and to those in Chapter VII not limited to nonmetals."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) This Chapter makes no provision for piping to be used under severe cyclic conditions."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) With the exceptions stated above, Chapter I applies in its entirety."
+    }
+   ],
+   "sections": []
+  },
+  {
+   "kind": "part",
+   "part": "PART 1",
+   "title": null,
+   "page": 132,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "CONDITIONS AND CRITERIA",
+     "page": 132,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A301",
+     "heading": "DESIGN CONDITIONS",
+     "page": 132,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 301 applies in its entirety, with the exception of paras. 301.2 and 301.3. See below."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A301.2",
+       "heading": "Design Pressure",
+       "page": 132,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 301.2 applies in its entirety, except that references to paras. A302.2.4 and A304 replace references to paras. 302.2.4 and 304, respectively."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A301.3",
+       "heading": "Design Temperature",
+       "page": 132,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 301.3 applies with the following exceptions."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A301.3.1",
+         "heading": "Design Minimum Temperature.",
+         "page": 132,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 301.3.1 applies; but see para. A323.2.2, rather than para. 323.2.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A301.3.2",
+         "heading": "Uninsulated Piping Components.",
+         "page": 132,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 23,
+           "text": "T h e component design temperature shall be the fluid temperature, unless a higher temperature will result from solar radiation or other external heat sources."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A302",
+     "heading": "DESIGN CRITERIA",
+     "page": 132,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A302 states pressure–temperature ratings, stress criteria, design allowances, and minimum design values, together with permissible variations of these factors as applied to the design of piping."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A302.1",
+       "heading": "General",
+       "page": 132,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The designer shall be satisfied as to the adequacy of the nonmetallic material and its manufacture, considering at least the following:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) tensile, compressive, flexural, and shear strength, and modulus of elasticity, at design temperature (long term and short term)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) creep rate at design conditions"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) design stress and its basis"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) ductility and plasticity"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) impact and thermal shock properties"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(f)",
+         "indent": 1,
+         "text": "(f) temperature limits"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(g)",
+         "indent": 1,
+         "text": "(g) transition temperature — melting and vaporization"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(h)",
+         "indent": 1,
+         "text": "(h) porosity and permeability"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(i)",
+         "indent": 1,
+         "text": "(i) testing methods"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(j)",
+         "indent": 1,
+         "text": "(j) methods of making joints and their efficiency"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(k)",
+         "indent": 1,
+         "text": "(k) possibility of deterioration in service"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A302.2",
+       "heading": "Pressure",
+       "page": 132,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 8,
+         "text": "–Temperature Design Criteria"
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A302.2.1",
+         "heading": "Listed Components Having Established Ratings.",
+         "page": 132,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "Paragraph 302.2.1 applies, except that reference to Table A326.1-1 replaces reference to Table 326.1.1-1."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.2.2",
+         "heading": "Listed Components Not Having Specific Ratings.",
+         "page": 132,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "Nonmetallic piping components for which design stresses have been developed in accordance with para. A302.3, but which do not have specific pressure–temperature ratings, shall be rated by rules for pressure design in para. A304, within the range of temperatures for which stresses are shown in Appendix B, modified as applicable by other rules of this Code."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "Piping components that do not have allowable stresses or pressure–temperature ratings shall be qualified for pressure design as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.2.3",
+         "heading": "Unlisted Components.",
+         "page": 132,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Paragraph 302.2.3 applies, except that references to Table A326.1-1 and paras. A304 and A323 replace references to Table 326.1.1-1 and paras. 304 and 323, respectively."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.2.4",
+         "heading": "Allowances for Pressure and Temperature Variations",
+         "page": 133,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Nonmetallic Piping. Allowances for variations of pressure or temperature, or both, above design conditions are not permitted. The most severe conditions of coincident pressure and temperature shall be used to determine the design conditions for a piping system. See paras. 301.2 and 301.3."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Metallic Piping With Nonmetallic Lining. Allowances for pressure and temperature variations provided in para. 302.2.4 are permitted only if the suitability of the lining material for the increased conditions is established through prior successful service experience or tests under comparable conditions."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.2.5",
+         "heading": "Rating at Junction of Different Services.",
+         "page": 133,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "When two services that operate at different pressure– temperature conditions are connected, the valve segregating the two services shall be rated for the more severe service condition."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A302.3",
+       "heading": "Allowable Stresses and Other Design Limits",
+       "page": 133,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A302.3.1",
+         "heading": "General",
+         "page": 133,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Table B-1 (Table B-1C) contains hydrostatic design stresses (HDS). Tables B-2 and B-3 provide listings of specifications that meet the criteria of paras. A302.3.2(b) and A302.3.2(c), respectively. Tables B-4 and B-5 contain allowable pressures. These HDS values, allowable stress criteria, and pressures shall be used in accordance with the Notes to Appendix B, and may be used in design calculations (where the allowable stress S means the appropriate design stress) except as modified by other provisions of this Code. Use of hydrostatic design stresses for calculations other than pressure design has not been verified. The bases for determining allowable stresses and pressures are outlined in para. A302.3.2."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) The stresses and allowable pressures are grouped by materials and listed for stated temperatures. Straight-line interpolation between temperatures is permissible."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.3.2",
+         "heading": "Bases for Allowable Stresses and Pressures1",
+         "page": 133,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Thermoplastics. The method of determining HDS is described in ASTM D2837. HDS values are given in Table B-1 (Table B-1C) for those materials and temperatures for which sufficient data have been compiled to substantiate the determination of stress."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Reinforced Thermosetting Resin (Laminated). The design stress (DS) values for materials listed in Table B-2 shall be one-tenth of the minimum tensile strengths specified in ASTM C582 and are valid only in the temperature range from −29°C (−20°F) through 82°C (180°F)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Reinforced Thermosetting Resin and Reinforced Plastic Mortar (Filament Wound and Centrifugally Cast). The hydrostatic design basis stress (HDBS) values for materials listed in Table B-3 shall be obtained by the procedures in ASTM D2992 and are valid only at 23°C (73°F). HDS shall be obtained by multiplying the HDBS by a service (design) factor2 selected for the application, in accordance with procedures described in ASTM D2992, within the following limits:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) When using the cyclic HDBS, the service (design) factor F shall not exceed 1.0."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) When using the static HDBS, the service (design) factor F shall not exceed 0.5."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Other Materials. Allowable pressures in Tables B-4 and B-5 have been determined conservatively from physical properties of materials conforming to the listed specifications, and have been confirmed by"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "1 Titles of specifications and standards referenced herein are as follows:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM C14. Concrete Sewer, Storm Drain, and Culvert Pipe. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM C301. Method of Testing Vitrified Clay Pipe. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM C582. Contact-Molded Reinforced Thermosetting Plastic (RTP) Laminates for Corrosion Resistant Equipment. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D2321. Practice for Underground Installation of Thermoplastic Pipe for Sewers and Other Gravity-Flow Applications. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D2837. Test Method for Obtaining Hydrostatic Design Basis for Thermoplastic Pipe Materials or Pressure Design Basis for Thermoplastic Pipe Products. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D2992. Practice for Obtaining Hydrostatic or Pressure Design Basis for “Fiberglass” (Glass-Fiber-RTR) Pipe and Fittings. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D3839. Underground Installation of Fiberglass Pipe. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "AWWA C900. Polyvinyl Chloride (PVC) Pressure Pipe and Fabricated Fittings, 4 In. Through 60 In. (100 mm Through 1,500 mm). American Water Works Association."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "AWWA C950. Glass-Fiber-Reinforced Thermosetting Resin Pressure Pipe. American Water Works Association."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "2 The service (design) factor, F, should be selected by the designer after evaluating fully the service conditions and the engineering properties of the specific material under consideration. Aside from the limits in paras. A302.3.2(c)(1) and A302.3.2(c)(2), it is not the intent of this Code to specify service (design) factors. extensive experience. Use of other materials shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.3.3",
+         "heading": "Limits of Calculated Stresses Due to Sustained Loads1",
+         "page": 134,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Internal Pressure Stresses. Limits of stress due to internal pressure are covered in para. A304."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) External Pressure Stresses. Stresses due to uniform external pressure shall be considered safe when the wall thickness of the component and its means of stiffening have been qualified as required by para. A304.7.2."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) External Loading Stresses. Design of piping under external loading shall be based on the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) Thermoplastic Piping. ASTM D2321 or AWWA C900."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) Reinforced Thermosetting Resin (RTR) and Reinforced Plastic Mortar (RPM) Piping. ASTM D3839 or Appendix A of AWWA C950."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) Strain and possible buckling shall be considered when determining the maximum allowable deflection in (1) or (2) above, but in no case shall the allowable diametral deflection exceed 5% of the pipe inside diameter."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(4)",
+           "indent": 2,
+           "text": "(4) Nonmetallic piping not covered in (1) or (2) above shall be subjected to a crushing or three-edge bearing test in accordance with ASTM C14 or C301; the allowable load shall be 25% of the minimum value obtained."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A302.3.4",
+         "heading": "Limits of Calculated Stresses Due to Occasional Loads",
+         "page": 134,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Operation"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) For other than RTR and RPM piping, the sum of stresses in any component in a piping system due to sustained loads, such as pressure and weight, and of the stresses produced by occasional loads, such as wind or earthquake, shall not exceed the limits in the applicable part of para. A302.3.3."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) For RTR and RPM piping, the sum of stresses due to operating loads plus stresses due to occasional loads may be as much as 1.33 times the limits in the applicable part of para. A302.3.3."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) Wind and earthquake forces need not be considered as acting concurrently."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Test. Stresses due to test conditions are not subject to the limitations in para. A302.3.3. It is not necessary to consider other occasional loads, such as wind and earthquake, as occurring concurrently with test loads."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A302.4",
+       "heading": "Allowances",
+       "page": 134,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 302.4 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 2",
+   "title": null,
+   "page": 134,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PRESSURE DESIGN OF PIPING COMPONENTS",
+     "page": 134,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A303",
+     "heading": "GENERAL",
+     "page": 134,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 303 applies, except that references to Table A326.1-1 and para. A302.2.1 replace references to Table 326.1.1-1 and para. 302.2.1. For nonmetallic components, reference to para. A304 replaces reference to para. 304."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A304",
+     "heading": "PRESSURE DESIGN OF PIPING COMPONENTS",
+     "page": 134,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A304.1",
+       "heading": "Straight Pipe",
+       "page": 134,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A304.1.1",
+         "heading": "General",
+         "page": 134,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) The required thickness of straight sections of pipe shall be determined by eq. (25)."
+          },
+          {
+           "kind": "equation",
+           "text": "t m = t + c (25)",
+           "indent": 9
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 2,
+           "text": "The minimum thickness T for the pipe selected, considering manufacturer’s minus tolerance, shall be not less than tm."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) The following nomenclature is used in the equations for pressure design of straight pipe:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 2,
+           "text": "c = the sum of mechanical allowances (thread or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "groove depth) plus corrosion and erosion allow-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "ance. For threaded components, the nominal"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "thread depth (dimension h of ASME B1.20.1 or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "equivalent) shall apply. For machined surfaces"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "or grooves where the tolerance is not specified,"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "the tolerance shall be assumed to be 0.5 mm (0.02"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "in.) in addition to the specified depth of the cut."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "D = outside diameter of pipe"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "F = service (design) factor. See para. A302.3.2(c)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "P = internal design gage pressure"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 2,
+           "text": "S = design stress from applicable table in Appendix B"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "T = pipe wall thickness (measured or minimum in"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "accordance with the purchase specification)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 2,
+           "text": "t = pressure design thickness, as calculated in accor-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "dance with para. A304.1.2 for internal pressure or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "as determined in accordance with para. A304.1.3"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "for external pressure"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "tm = minimum required thickness, including mechan-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "ical, corrosion, and erosion allowances"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.1.2",
+         "heading": "Straight Nonmetallic Pipe Under Internal Pressure.",
+         "page": 134,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 5,
+           "text": "The internal pressure design thickness, t, shall be not less than that calculated by one of the following equations, using stress values listed in or derived from the appropriate table in Appendix B:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Thermoplastic Pipe [see para. A302.3.2(a)]"
+          },
+          {
+           "kind": "equation",
+           "text": "PD t = [ Table B-1(Table B-1C) ] (26a) 2 S + P",
+           "indent": 4
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) RTR (Laminated) Pipe [see para. A302.3.2(b)]3"
+          },
+          {
+           "kind": "equation",
+           "text": "PD t = (Table B-2) (26b) 2 S + P",
+           "indent": 6
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) RTR (Filament Wound) and RPM (Centrifugally Cast) Pipe [see para. A302.3.2(c)]3"
+          },
+          {
+           "kind": "equation",
+           "text": "PD t = (Table B-3) (26c) 2 SF + P",
+           "indent": 6
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.1.3",
+         "heading": "Straight Pipe Under External Pressure",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Nonmetallic Pipe. The external pressure design thickness, t, shall be qualified as required by para. A304.7.2."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Metallic Pipe Lined With Nonmetals"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) The external pressure design thickness, t, for the base (outer) material shall be determined in accordance with para. 304.1.3."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) The external pressure design thickness, t, for the lining material shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A304.2",
+       "heading": "Curved and Mitered Segments of Pipe",
+       "page": 135,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A304.2.1",
+         "heading": "Pipe Bends.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "The minimum required thickness, tm, of a bend, after bending, shall be determined as for straight pipe in accordance with para. A304.1."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.2.2",
+         "heading": "Elbows.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "Manufactured elbows not in accordance with para. A303 shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.2.3",
+         "heading": "Miter Bends.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "Miter bends shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A304.3",
+       "heading": "Branch Connections",
+       "page": 135,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A304.3.1",
+         "heading": "General.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "A pipe having a branch connection is weakened by the opening made in it and, unless the wall thickness of the pipe is sufficiently in excess of that required to sustain the pressure, it is necessary to provide added reinforcement. The amount of reinforcement shall be qualified as required by para. A304.7.2 except as provided in para. A304.3.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.3.2",
+         "heading": "Branch Connections Using Fittings.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 22,
+           "text": "It may be assumed without calculation that a branch connection has adequate strength to sustain the internal and external pressure that will be applied to it if it utilizes a fitting (a tee, lateral, or cross) in accordance with para. A303."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "3 The internal design pressure thickness, t, shall not include any thickness of the pipe wall reinforced with less than 20% by weight of reinforcing fibers."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.3.3",
+         "heading": "Additional Design Considerations.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 21,
+           "text": "The requirements of paras. A304.3.1 and A304.3.2 are intended to assure satisfactory performance of a branch connection subjected only to internal or external pressure. The designer shall also consider paras. 304.3.5(a), 304.3.5(c), and 304.3.5(d)."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A304.4",
+       "heading": "Closures",
+       "page": 135,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Closures not in accordance with para. A303 shall be qualified as required by para. A304.7.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A304.5",
+       "heading": "Pressure Design of Nonmetallic Flanges",
+       "page": 135,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A304.5.1",
+         "heading": "General",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Flanges not in accordance with (b), (d), or para. A303 shall be qualified as required by para. A304.7.2."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Flanges for use with flat ring gaskets may be designed in accordance with ASME BPVC, Section VIII, Division 1, Appendix 2, except that the allowable stresses and temperature limits of this Code shall govern. Nomenclature shall be as defined in ASME BPVC, except for the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "P = design gage pressure"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "Sa = bolt design stress at atmospheric temperature4"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "Sb = bolt design stress at design temperature4"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "Sf = allowable stress for flange material from"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 3,
+           "text": "Table B-1 (Table B-1C), Table B-2, or Table B-3"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) The rules in (b) above are not applicable to a flanged joint having a gasket that extends outside the bolts (usually to the outside diameter of the flange)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) For flanges that make solid contact outside the bolts, ASME BPVC, Section VIII, Division 1, Appendix Y should be used."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.5.2",
+         "heading": "Blind Flanges.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 13,
+           "text": "Blind flanges not in accordance with para. A303 may be designed in accordance with para. 304.5.2, except that allowable stress, S, shall be taken from tables in Appendix B. Otherwise, they shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A304.6",
+       "heading": "Reducers",
+       "page": 135,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Reducers not in accordance with para. A303 shall be qualified as required by para. A304.7.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A304.7",
+       "heading": "Pressure Design of Other Components",
+       "page": 135,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A304.7.1",
+         "heading": "Listed Components.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Other pressure containing components, manufactured in accordance with standards in Table A326.1-1 but not covered elsewhere in para. A304, may be utilized in accordance with para. A303."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.7.2",
+         "heading": "Unlisted Components.",
+         "page": 135,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Pressure design of unlisted components and joints, to which the rules elsewhere in para. A304 do not apply, shall be based on"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "4 Bolt design stresses shall not exceed those in Table A-4 (Table A-4C). calculations consistent with the design criteria of this Code. Calculations shall be substantiated by one or both of the means stated in (a) and (b) below, considering applicable ambient and dynamic effects in paras. 301.4 through 301.11."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) extensive, successful service experience under comparable design conditions with similarly proportioned components made of the same or like material"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) performance test under design conditions including applicable dynamic and creep effects, continued for a time period sufficient to determine the acceptability of the component or joint for its design life"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "For (a) or (b) above, the designer may interpolate between sizes, wall thicknesses, and pressure classes, and may determine analogies among related materials."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A304.7.3",
+         "heading": "Nonmetallic Components With Metallic Pressure Parts.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 7,
+           "text": "Components not covered by standards in Table A326.1-1, in which both nonmetallic and metallic parts contain the pressure, shall be evaluated by applicable requirements of para. 304.7.2 as well as those of para. A304.7.2."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 3",
+   "title": null,
+   "page": 136,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR PIPING",
+     "page": 136,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "COMPONENTS",
+     "page": 136,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A305",
+     "heading": "PIPE",
+     "page": 136,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Listed pipe may be used in Normal Fluid Service, subject to the limitations of the pressure-containing material and para. A323.4. Unlisted pipe may be used only in accordance with para. A302.2.3."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A306",
+     "heading": "FITTINGS, BENDS, MITERS, LAPS, AND BRANCH CONNECTIONS",
+     "page": 136,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "General. Fittings, bends, miters, laps, and branch connections may be used in accordance with paras. A306.1 through A306.5. Pipe and other materials used in such components shall be suitable for the manufacturing process and the fluid service."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A306.1",
+       "heading": "Pipe Fittings",
+       "page": 136,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A306.1.1",
+         "heading": "Listed Fittings.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 12,
+           "text": "Listed fittings may be used in Normal Fluid Service subject to limitations on materials."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A306.1.2",
+         "heading": "Unlisted Fittings.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 14,
+           "text": "Unlisted fittings may be used only in accordance with para. A302.2.3."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A306.2",
+       "heading": "Pipe Bends",
+       "page": 136,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A306.2.1",
+         "heading": "General.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "A bend made in accordance with para. A332 and verified for pressure design in accordance with para. A304.2.1 shall be suitable for the same service as the pipe from which it is made."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A306.2.2",
+         "heading": "Corrugated and Other Bends.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 18,
+           "text": "Bends of other designs (such as creased or corrugated) shall be qualified for pressure design as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A306.3",
+       "heading": "Miter Bends",
+       "page": 136,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Except as specified in para. 306.3.2, a miter bend that conforms to para. A304.2.3 may be used in Normal Fluid Service."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A306.4",
+       "heading": "Fabricated or Flared Laps",
+       "page": 136,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The following requirements do not apply to fittings conforming to para. A306.1."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A306.4.1",
+         "heading": "Fabricated Laps",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) The requirements in paras. 306.4.1(a) and 306.4.1(b) shall be met."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Lap material shall be suitable for the service conditions. Pressure design shall be qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A306.4.2",
+         "heading": "Flared Laps.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "Flared laps shall not be used in nonmetallic piping."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A306.5",
+       "heading": "Fabricated Branch Connections",
+       "page": 136,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The following requirements do not apply to fittings conforming to para. A306.1."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A306.5.1",
+         "heading": "General.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "A fabricated branch connection made by bonding the branch pipe directly to the header pipe, with or without added reinforcement as stated in para. 328.5.4, and shown in Figure 328.5.4-1, may be used in Normal Fluid Service, provided that pressure design is qualified as required by para. A304.7.2."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A306.5.2",
+         "heading": "Specific Requirements.",
+         "page": 136,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Fabricated branch connections shall be made as specified in para. A328.5."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A307",
+     "heading": "VALVES AND SPECIALTY COMPONENTS",
+     "page": 136,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 307 applies in its entirety, except that in para. 307.1.2 references to paras. A302.2.3 and A304.7.2 replace references to paras. 302.2.3 and 304.7.2, respectively."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A308",
+     "heading": "FLANGES, BLANKS, FLANGE FACINGS, AND GASKETS",
+     "page": 136,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A308.1",
+       "heading": "General",
+       "page": 136,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 308.1 applies, except that in para. 308.1.2 reference to para. A302.2.3 replaces reference to para. 302.2.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A308.2",
+       "heading": "Nonmetallic Flanges",
+       "page": 137,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A308.2.1",
+         "heading": "General",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Flanges shall be adequate, with suitable facing, gasketing, and bolting, to develop the full rating of the joint and to withstand expected external loadings."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) The designer should consult the manufacturer for ratings of flanges."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A308.2.2",
+         "heading": "Threaded Flanges.",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 15,
+           "text": "Threaded flanges are subject to the requirements for threaded joints in para. A314."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A308.3",
+       "heading": "Flange Facings",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 308.3 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A308.4",
+       "heading": "Limitations on Gaskets",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See also Appendix F, para. F308.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A308.4.1",
+         "heading": "Lining Used as Facing or Gasket.",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 22,
+           "text": "Lining material extended over the flange face and used as a gasket shall conform to para. 308.4."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A309",
+     "heading": "BOLTING",
+     "page": 137,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Bolting includes bolts, bolt studs, studs, cap screws, nuts, and washers. See Appendix F, para. F309."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A309.1",
+       "heading": "General",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 309.1 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A309.2",
+       "heading": "Specific Bolting",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Any bolting that meets the requirements of para. 309.1 may be used with any combination of flange materials and flange facings. Joint assembly shall conform to the requirements of para. A335.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A309.3",
+       "heading": "Tapped Holes in Nonmetallic Components",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Tapped holes for pressure-retaining bolting in piping components may be used provided pressure design is qualified as required by para. A304.7.2."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 4",
+   "title": null,
+   "page": 137,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR PIPING",
+     "page": 137,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "JOINTS",
+     "page": 137,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A310",
+     "heading": "GENERAL",
+     "page": 137,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 310 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A311",
+     "heading": "BONDED JOINTS IN PLASTICS",
+     "page": 137,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A311.1",
+       "heading": "General",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Bonding shall be in accordance with para. A328 and examination shall be in accordance with para. A341.4.1 for use in Normal Fluid Service, subject to the limitations of the material."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A311.2",
+       "heading": "Specific Requirements",
+       "page": 137,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A311.2.1",
+         "heading": "Fillet Bonds.",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "A fillet bond may be used only in conjunction with a qualified hot gas welding procedure for bonding (see para. A328.5.2)."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A311.2.2",
+         "heading": "Seal Bonds.",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "A seal bond may be used only to prevent leakage of a threaded joint and only if it has been demonstrated that there will be no deleterious effect on the materials bonded."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A311.2.3",
+         "heading": "Joints Limited to Category D Fluid Service.",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Joints that have been examined in accordance with para. 341.4.2 may be used only for Category D Fluid Service."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A312",
+     "heading": "FLANGED JOINTS",
+     "page": 137,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The designer should consult the manufacturer for ratings of flanged joints in nonmetallic piping and in piping lined with nonmetals."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A313",
+     "heading": "EXPANDED JOINTS",
+     "page": 137,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 313 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A314",
+     "heading": "THREADED JOINTS",
+     "page": 137,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A314.1",
+       "heading": "General",
+       "page": 137,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "A threaded joint is suitable for use in Normal Fluid Service, subject to the limitations of the material and requirements elsewhere in para. A314. A joint conforming to para. 314.1(d) shall not be used."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A314.2",
+       "heading": "Specific Requirements",
+       "page": 137,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A314.2.1",
+         "heading": "Thermoplastic Piping",
+         "page": 137,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Polyethylene (PE) pipe and tubing shall not be joined by threaded joints."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Threaded joints in other thermoplastic piping shall conform to all of the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) The pipe wall shall be at least as thick as Schedule 80 as defined in ASTM D1785."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) Threads shall be NPT, and shall conform to ASME B1.20.1 or ASTM F1498."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) Threads shall conform to applicable standards in Table A326.1-1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(4)",
+           "indent": 2,
+           "text": "(4) A suitable thread sealant shall be used."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A314.2.2",
+         "heading": "Reinforced Thermosetting Resin Piping.",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Threaded joints in reinforced thermosetting resin (RTR) piping shall conform to the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) External threads shall be factory cut or molded on special thick-walled pipe ends."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Matching internal threads shall be factory cut or molded in the fittings."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Threading of plain ends of RTR pipe is not permitted, except where such threads are limited to the function of a mechanical lock to matching internal threads factory cut or molded in the bottom portions of fittings with deep sockets."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Factory cut or molded threaded nipples, couplings, or adapters, bonded to plain-end RTR pipe and fittings, may be used where it is necessary to provide connections to threaded metallic piping."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A314.2.3",
+         "heading": "Reinforced Plastic Mortar Piping.",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 20,
+           "text": "Threaded joints are not permitted in reinforced plastic mortar (RPM) piping."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A315",
+     "heading": "TUBING JOINTS",
+     "page": 138,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 315 applies in its entirety, subject to material limitations, exclusion of para. 315.2(b) regarding severe cyclic conditions, and replacement of references to Table 326.1.1-1 and para. 304.7.2 with references to Table A326.1-1 and para. A304.7.2, respectively."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A316",
+     "heading": "CAULKED JOINTS",
+     "page": 138,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 316 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A318",
+     "heading": "SPECIAL JOINTS",
+     "page": 138,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Special joints are those not covered elsewhere in Chapter VII, Part 4, such as bell type and packed gland type joints."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A318.1",
+       "heading": "General",
+       "page": 138,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 318.1 applies in its entirety, except that, in para. 318.1.2, reference to para. A304.7.2 replaces reference to para. 304.7.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A318.2",
+       "heading": "Specific Requirements",
+       "page": 138,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 318.2 applies with the exception of para. 318.2.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A318.3",
+       "heading": "Piping Lined With Nonmetals",
+       "page": 138,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A318.3.1",
+         "heading": "Welding of Metallic Piping",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) General. Joints made in accordance with the rules in para. A329.1 may be used in Normal Fluid Service, subject to material limitations."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Specific Requirements. Welds shall be limited to those that do not affect the serviceability of the lining."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A318.3.2",
+         "heading": "Flared Linings",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) General. Flared ends of linings made in accordance with the rules in para. A329.2 may be used in Normal Fluid Service, subject to material limitations."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Specific Requirements. Flaring shall be limited to applications that do not affect the serviceability of the lining."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A318.4",
+       "heading": "Flexible Elastomeric Sealed Joints",
+       "page": 138,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Flexible elastomeric seals conforming to the following may be used in Normal Fluid Service, subject to material limitations:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Seals for joints in thermoplastic piping shall conform to ASTM D3139."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Seals for joints in RTR and RPM piping shall conform to ASTM D4161."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 5",
+   "title": null,
+   "page": 138,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLEXIBILITY AND SUPPORT",
+     "page": 138,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A319",
+     "heading": "FLEXIBILITY OF NONMETALLIC PIPING AND PIPING LINED WITH NONMETALS",
+     "page": 138,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "For nonmetallic piping, paras. A319.1 through A319.7 apply. For piping lined with nonmetals, para. 319 applies in its entirety."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A319.1",
+       "heading": "Requirements",
+       "page": 138,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A319.1.1",
+         "heading": "Basic Requirements.",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 14,
+           "text": "Piping systems shall be designed to prevent thermal expansion or contraction, pressure expansion, or movement of piping supports and terminals from causing"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) failure of piping or supports from overstrain or fatigue"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) leakage at joints"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) detrimental stresses or distortion in piping or in connected equipment (e.g., pumps), resulting from excessive thrusts and moments in the piping"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.1.2",
+         "heading": "Specific Requirements",
+         "page": 138,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) In para. A319, guidance, concepts, and data are given to assist the designer in assuring adequate flexibility in piping systems. No specific stress-limiting criteria or methods of stress analysis are presented, since stress– strain behavior of most nonmetals differs considerably from that of metals covered by para. 319 and is less well defined for mathematical analysis."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Piping systems should be designed and laid out so that flexural stresses resulting from displacement due to expansion, contraction, and other movement are minimized. This concept requires special attention to supports, terminals, and other restraints, as well as to the techniques outlined in para. A319.7. See also para. A319.2.2(b)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Further information on design of thermoplastic piping can be found in PPI Technical Report TR-21."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A319.2",
+       "heading": "Concepts",
+       "page": 139,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A319.2.1",
+         "heading": "Displacement Strains.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 15,
+           "text": "The concepts of strain imposed by restraint of thermal expansion or contraction, and by external movement, described in para. 319.2.1, apply in principle to nonmetals. Nevertheless, the assumption that stresses throughout the piping systems can be predicted from these strains because of fully elastic behavior of the piping materials is not always valid."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) In thermoplastics piping, displacement strains are not likely to produce immediate failure but may result in detrimental distortion. Progressive deformation may occur upon repeated thermal cycling or on prolonged exposure to elevated temperature."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) In brittle piping (e.g., porcelain and glass) and some RTR and RPM piping, the materials show rigid behavior and develop high displacement stresses up to the point of sudden breakage due to overstrain."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) RTR and RPM piping are assumed to display linear elastic behavior, having displacement stresses proportional to displacement strains."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.2.2",
+         "heading": "Displacement Stresses",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Elastic Behavior. The assumption that displacement strains will produce proportional stress over a sufficiently wide range to justify an elastic stress analysis is not always valid for nonmetals. RTR and RPM piping shall be designed for linear elastic behavior, having displacement stresses proportional to displacement strains. In brittle piping, strains initially will produce relatively large elastic stresses. The total displacement strain must be kept small, however, since overstrain results in failure rather than plastic deformation. In thermoplastic piping, strains generally will produce stresses of the overstrained (plastic) type, even at relatively low values of total displacement strain. If a method of flexibility analysis that assumes elastic behavior is selected for thermoplastic piping, the designer shall demonstrate its validity for the piping system under consideration and shall establish safe limits for computed stresses."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Overstrained Behavior. Stresses cannot be considered proportional to displacement strains throughout a piping system in which an excessive amount of strain may occur in localized portions of the piping [an unbalanced system; see para. 319.2.2(b)] or in which elastic behavior of the piping material cannot be assumed. Overstrain shall be minimized by system layout and excessive displacements shall be minimized by special joints or expansion devices (see para. A319.7)."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.2.3",
+         "heading": "Cold Spring.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "Cold spring is the intentional deformation of piping during assembly to produce a desired initial displacement or reaction. Cold spring may be beneficial in serving to balance the magnitude of the reaction under initial and extreme displacement conditions. When cold spring is properly applied, there is less likelihood of overstrain during initial operation. There is also less deviation from as-installed dimensions during initial operation, so that hangers will not be displaced as far from their original settings. No credit for cold spring is permitted in stress range calculations, or in calculating thrusts and moments."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A319.3",
+       "heading": "Properties for Flexibility Analysis",
+       "page": 139,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A319.3.1",
+         "heading": "Thermal Expansion Data.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Appendix C lists coefficients of thermal expansion for several nonmetals. More precise values in some instances may be obtainable from manufacturers of components. If these values are to be used in stress analysis, the thermal displacements shall be determined as stated in para. 319.3.1."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.3.2",
+         "heading": "Modulus of Elasticity.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Appendix C lists representative data on the tensile modulus of elasticity, E, for several nonmetals as obtained under typical laboratory rate of strain (loading) conditions. More precise values of the short-term and working estimates of effective moduli of elasticity for given conditions of loading and temperature may be obtainable from the manufacturer. For materials and temperatures not listed, refer to ASTM or PPI documents, or to manufacturer’s data."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Because of their viscoelasticity, the effective moduli of thermoplastics under actual conditions of use will depend on both the specific course of the strain (or load) with time and the specific characteristics of the thermoplastic."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) The modulus may also vary with the orientation of the specimen. Because the reinforcement plays a significant role in developing the physical properties for RTR and RPM piping, the modulus may vary with the type and orientation of the reinforcement."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.3.3",
+         "heading": "Poisson",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "’s Ratio. Poisson’s ratio varies widely depending upon material and temperature. For that reason, simplified formulas used in stress analysis for metals may not be valid for nonmetals. For RTR and RPM piping, Poisson’s ratio varies with the orientation of the reinforcement."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.3.4",
+         "heading": "Dimensions.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 12,
+           "text": "Nominal thicknesses and outside diameters of pipe and fittings shall be used in flexibility calculations."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A319.4",
+       "heading": "Analysis",
+       "page": 139,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A319.4.1",
+         "heading": "Formal Analysis Not Required.",
+         "page": 139,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 20,
+           "text": "No formal analysis is required for a piping system that"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) duplicates, or replaces without significant change, a system operating with a successful service record"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) can readily be judged adequate by comparison with previously analyzed systems, or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) is laid out with a conservative margin of inherent flexibility, or employs joining methods or expansion joint devices, or a combination of these methods, in accordance with manufacturers’ instructions"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A319.4.2",
+         "heading": "Formal Analysis Requirements.",
+         "page": 140,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "For a piping system that does not meet the above criteria, the designer shall demonstrate adequate flexibility by simplified, approximate, or comprehensive stress analysis, using a method that can be shown to be valid for the specific case. If substantially elastic behavior can be demonstrated for the piping system [see para. A319.2.2(a)], methods outlined in para. 319.4 may be applicable."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A319.5",
+       "heading": "Reactions",
+       "page": 140,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 319.5 may be applicable if a formal stress analysis can be shown to be valid for the specific case."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A319.6",
+       "heading": "Movements",
+       "page": 140,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Special attention shall be given to movement (displacement or rotation) of piping with respect to supports and points of close clearance. Movements of the run pipe at the junction of a small branch connection shall be considered in determining the need for flexibility in the branch pipe."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A319.7",
+       "heading": "Means of Increasing Flexibility",
+       "page": 140,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Piping layout often provides adequate inherent flexibility through changes in direction, wherein displacements produce chiefly bending and torsional strains of low magnitude. The amount of tension or compression strain (which can produce larger reactions) usually is small."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Where piping lacks inherent flexibility or is unbalanced, additional flexibility shall be provided by one or more of the following means: bends, loops, or offsets; swivel or flexible joints; corrugated, bellows, or slip-joint expansion joints; or other devices permitting angular, rotational, or axial movement. Suitable anchors, ties, or other devices shall be provided as necessary to resist end forces produced by fluid pressure, frictional resistance to movement, and other causes."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A321",
+     "heading": "PIPING SUPPORT",
+     "page": 140,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 321 applies in its entirety."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A321.5",
+       "heading": "Supports for Nonmetallic Piping",
+       "page": 140,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A321.5.1",
+         "heading": "General.",
+         "page": 140,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "In addition to other applicable requirements of para. 321, supports, guides, and anchors shall be selected and applied to comply with the principles and requirements of para. A319 and the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Piping shall be supported, guided, and anchored in such a manner as to prevent damage to the piping. Point loads and narrow areas of contact between piping and supports shall be avoided. Suitable padding, compatible with the piping material, shall be placed between piping and supports where damage to piping may occur. Local stresses at points of support, including clamping forces, shall be considered."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Valves and equipment that would transmit excessive loads, e.g., weight, operation, to the piping shall be independently supported to prevent such loads."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Consideration shall be given to mechanical guarding in traffic areas."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Manufacturers’ recommendations for support shall be considered."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A321.5.2",
+         "heading": "Supports for Thermoplastic, RTR, and RPM Piping.",
+         "page": 140,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Supports shall be spaced to avoid excessive sag or deformation at the design temperature and within the design life of the piping system."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Decreases in the modulus of elasticity with increasing temperature and creep of material with time shall be considered when applicable."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) The thermal expansion of the piping system shall be considered in the design and location of supports."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Where axial restraint is required, positive stops, such as shear collars, shall be provided as axial restraint. Frictional forces from clamping pressure shall not be considered as an anchor mechanism unless the support/anchor is specifically recommended for this purpose by the manufacturer."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A321.5.3",
+         "heading": "Supports for Brittle Piping.",
+         "page": 140,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 18,
+           "text": "Brittle piping, such as glass, shall be well supported but free of hindrance to expansion or other movement. Not more than one anchor shall be provided in any straight run without an expansion joint."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A321.6",
+       "heading": "Supports for Piping Lined With Nonmetals",
+       "page": 140,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A321.6.1",
+         "heading": "General.",
+         "page": 140,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "In addition to other applicable requirements of para. 321, supports, guides, and anchors shall be selected and applied to prevent damage to the nonmetal liner within the piping."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 6",
+   "title": null,
+   "page": 140,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "SYSTEMS",
+     "page": 140,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A322",
+     "heading": "SPECIFIC PIPING SYSTEMS",
+     "page": 140,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A322.3",
+       "heading": "Instrument Piping",
+       "page": 140,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 322.3 applies in its entirety, except that references to paras. A301 and A302.2.4 replace references to paras. 301 and 302.2.4, respectively."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A322.6",
+       "heading": "Pressure-Relieving Systems",
+       "page": 140,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 322.6 applies in its entirety, except for para. 322.6.3. See para. A322.6.3."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A322.6.3",
+         "heading": "Overpressure Protection.",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Paragraph 322.6.3 applies, except that maximum relieving pressure shall be in accordance with para. A302.2.4."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 7",
+   "title": null,
+   "page": 141,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "MATERIALS",
+     "page": 141,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A323",
+     "heading": "GENERAL REQUIREMENTS",
+     "page": 141,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A323.1",
+       "heading": "Materials and Specifications",
+       "page": 141,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.1 applies except for para. 323.1.4. See para. A323.1.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A323.1.4",
+         "heading": "Reclaimed Materials.",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Reclaimed piping components may be used, provided they are properly identified as conforming to a listed or published specification (see para. 323.1.1) and otherwise meet the requirements of this Code. The user shall verify that components are suitable for the intended service. Sufficient cleaning, examination, and testing shall be performed to determine the minimum available wall thickness and freedom from any of the following to an extent that would be unacceptable in the intended service:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) imperfections"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) reduction of mechanical properties, or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) absorption of deleterious substances"
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A323.2",
+       "heading": "Temperature Limitations",
+       "page": 141,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The designer shall verify that materials that meet other requirements of the Code are suitable for service throughout the operating temperature range. Also see the Notes for Table B-1 (Table B-1C) through Table B-5 in Appendix B."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A323.2.1",
+         "heading": "Upper Temperature Limits, Listed Materials",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Except as provided in (b) below, a listed material shall not be used at a design temperature higher than the maximum for which a stress value or rating is shown, or higher than the maximum recommended temperature in Table A323.4.2-1 for RTR materials and in Table A323.4.3-1 for thermoplastics used as linings."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) A listed material may be used at a temperature higher than the maximum stated in (a) above if there is no prohibition in Appendix B or elsewhere in the Code, and if the designer verifies the serviceability of the material in accordance with para. 323.2.4."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A323.2.2",
+         "heading": "Lower Temperature Limits, Listed Materials",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Materials for use at design minimum temperatures below certain limits usually require testing to determine that they have suitable toughness for use in Code piping. Table A323.2.2-1 sets forth those requirements."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) When materials are qualified for use at temperatures below the minimum temperature listed in Appendix B, the allowable stresses or pressures shall not exceed the values for the lowest temperatures shown."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) See also the recommended limits in Table A323.4.2-1 for reinforced thermosetting resin pipe and in Table A323.4.3-1 for thermoplastics used as linings."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A323.2.3",
+         "heading": "Temperature Limits, Unlisted Materials.",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 323.2.3 applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A323.2.4",
+         "heading": "Verification of Serviceability.",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 20,
+           "text": "When an unlisted material is to be used, or when a listed material is to be used above or below the limits in Appendix B, Table A323.4.2-1, or Table A323.4.3-1, the designer shall comply with the requirements of para. 323.2.4."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A323.4",
+       "heading": "Fluid Service Requirements for Nonmetallic Materials",
+       "page": 141,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A323.4.1",
+         "heading": "General",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Nonmetallic materials shall be safeguarded against excessive temperature, shock, vibration, pulsation, and mechanical abuse in all fluid services."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Requirements in para. A323.4 apply to pressure-containing parts. They do not apply to materials used for supports, gaskets, or packing. See also Appendix F, para. FA323.4."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A323.4.2",
+         "heading": "Specific Requirements",
+         "page": 141,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Thermoplastics"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) They shall not be used in flammable fluid service above ground, unless all of the following are met:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(-a)",
+           "indent": 3,
+           "text": "(-a) The size of the piping does not exceed DN 25 (NPS 1)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(-b)",
+           "indent": 3,
+           "text": "(-b) Owner’s approval is obtained."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(-c)",
+           "indent": 3,
+           "text": "(-c) Safeguarding in accordance with Appendix G is provided."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(-d)",
+           "indent": 3,
+           "text": "(-d) The precautions of Appendix F, paras. F323.1(a) through F323.1(c) are considered."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) They shall be safeguarded when used in other than Category D Fluid Service."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) PVC and CPVC shall not be used in compressed air or other compressed gas service."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Reinforced Plastic Mortars (RPM) Piping. This piping shall be safeguarded when used in other than Category D Fluid Service."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Reinforced Thermosetting Resins (RTR) Piping. This piping shall be safeguarded when used in toxic or flammable fluid services. Table A323.4.2-1 gives the recommended temperature limits for reinforced thermosetting resins."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Borosilicate Glass and Porcelain"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) They shall be safeguarded when used in toxic or flammable fluid services."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) They shall be safeguarded against large, rapid temperature changes in fluid services."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A323.4.3",
+         "heading": "Piping Lined With Nonmetals",
+         "page": 142,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Metallic Piping Lined With Nonmetals. Fluid service requirements for the base (outer) material in para. 323.4 govern except as stated in (d) below."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Nonmetallic Piping Lined With Nonmetals. Fluid service requirements for the base (outer) material in para. A323.4.2 govern, except as stated in (d) below."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Nonmetallic Lining Materials. The lining may be any material that, in the judgment of the user, is suitable for the intended service and for the method of manufacture and assembly of the piping. Fluid service requirements in para. A323.4.2 do not apply to materials used as linings."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Properties of both the base and lining materials, and of any bond between them, shall be considered in establishing temperature limitations. Table A323.4.3-1 gives recommended temperature limits for thermoplastic materials used as linings."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A323.5",
+       "heading": "Deterioration of Materials in Service",
+       "page": 142,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.5 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A325",
+     "heading": "MATERIALS",
+     "page": 142,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 9,
+       "text": "— MISCELLANEOUS"
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 325 applies in its entirety. NOTE: (1) See para. A326.4 for definitions of materials."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 8",
+   "title": null,
+   "page": 143,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "STANDARDS FOR PIPING COMPONENTS",
+     "page": 143,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A326",
+     "heading": "DIMENSIONS AND RATINGS OF COMPONENTS",
+     "page": 143,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A326.1",
+       "heading": "Requirements",
+       "page": 143,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 326 applies in its entirety except that references to Table A326.1-1 and Appendix B replace references to Table 326.1.1-1 and Appendix A, respectively."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A326.4",
+       "heading": "Abbreviations in Table A326.1-1 and Appendix B",
+       "page": 143,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The abbreviations tabulated below are used in this Chapter to replace lengthy phrases in the text, in the titles of standards in Table A326.1-1, and in the Specification Index for Appendix B. Those marked with an asterisk (*) are in accordance with ASTM D1600, Standard Terminology for Abbreviated Terms Relating to Plastics. Those items marked with a dagger (†) are in accordance with ASTM F412, Standard Terminology Relating to Plastic Piping Systems."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Abbreviation"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "Term ABS*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Acrylonitrile-butadiene-styrene plastics BPS"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Bonding Procedure Specification CPVC*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Chlorinated poly(vinyl chloride) plastics DR†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Dimension ratio DS"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Design stress E-CTFE*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Ethylene-chlorotrifluoroethylene ETFE*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Ethylene-tetrafluoroethylene copolymer FEP*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Perfluoro (ethylene-propylene) copolymer HDBS"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Hydrostatic Design Basis Stress HDS†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Hydrostatic Design Stress PB*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Polybutylene-1 PE*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Polyethylene PEX"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Cross-linked polyethylene PFA*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Perfluoro (alkoxyalkane) PP*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Polypropylene PQR"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Procedure Qualification Record PR†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Pressure rating PTFE*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Polytetrafluoroethylene PVC*†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Poly(vinyl chloride) PVDC*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Poly(vinylidene chloride) PVDF*"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Poly(vinylidene fluoride) RPM"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Reinforced plastic mortar RTP"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Reinforced thermosetting plastic RTR"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Reinforced thermosetting resin SDR†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Standard dimension ratios SIDR†"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Standard inside diameter dimension ratio WPS"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Welding Procedure Specification"
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 9",
+   "title": null,
+   "page": 143,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FABRICATION, ASSEMBLY, AND ERECTION",
+     "page": 143,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A327",
+     "heading": "GENERAL",
+     "page": 143,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Piping materials and components are prepared for assembly and erection by one or more of the fabrication processes in paras. A328, A329, A332, and A334. When any of these processes is used in assembly and erection, requirements are the same as for fabrication."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A328",
+     "heading": "BONDING OF PLASTICS",
+     "page": 143,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A328 applies only to joints in thermoplastic, RTR, and RPM piping. Bonding shall conform to paras. A328.1 through A328.7 and the applicable requirements of para. A311."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A328.1",
+       "heading": "Bonding Responsibility",
+       "page": 143,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Each employer responsible for bonding operations shall conduct the required performance qualification tests to qualify bonding procedure specifications (BPS) and bonders or bonding operators, except as provided in paras. A328.2.2 and A328.2.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A328.2",
+       "heading": "Bonding Qualifications",
+       "page": 143,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A328.2.1",
+         "heading": "Qualification Requirements",
+         "page": 143,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Qualification of the BPS to be used, and of the performance of bonders and bonding operators, is required. To qualify a BPS, all tests and examinations specified therein and in para. A328.2.5 shall be completed successfully."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) In addition to the procedure for making the bonds, the BPS shall specify at least the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) all materials and supplies (including storage requirements)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) tools and fixtures (including proper care and handling)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) environmental requirements (e.g., temperature, humidity, and methods of measurement)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(4)",
+           "indent": 2,
+           "text": "(4) joint preparation"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(5)",
+           "indent": 2,
+           "text": "(5) dimensional requirements and tolerances"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(6)",
+           "indent": 2,
+           "text": "(6) cure time (see para. FA328.2.1)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(7)",
+           "indent": 2,
+           "text": "(7) protection of work"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(8)",
+           "indent": 2,
+           "text": "(8) tests and examinations other than those required by para. A328.2.5"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(9)",
+           "indent": 2,
+           "text": "(9) acceptance criteria for the completed test assembly"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.2.2",
+         "heading": "Procedure Qualification by Others.",
+         "page": 143,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 21,
+           "text": "Subject to the specific approval of the Inspector, a BPS qualified by others may be used provided that"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) the Inspector verifies that the proposed qualified BPS has been prepared and executed by a responsible recognized organization with expertise in the field of bonding"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) by signature, the employer accepts responsibility for both the BPS and procedure qualification record (PQR)"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) the employer has at least one bonder who has satisfactorily passed a performance qualification test using the proposed qualified BPS"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.2.3",
+         "heading": "Performance Qualification by Others.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Without the Inspector’s specific approval, an employer shall not accept a performance qualification test made by a bonder or bonding operator for another employer. If approval is given, it is limited to work on piping using the same or equivalent BPS. An employer accepting such performance qualification tests shall obtain a copy of the performance qualification test record from the previous employer, showing the name of the employer by whom the bonder or bonding operator was qualified, the date of such qualification, and the date the bonder or bonding operator last bonded pressure piping under such performance qualification."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.2.4",
+         "heading": "Qualification Records.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "The employer shall maintain a self-certified record of the BPS used and the bonders or bonding operators employed by the organization, showing the dates and results of BPS qualifications and bonding performance qualification. These records shall be available to the Inspector for review upon request."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.2.5",
+         "heading": "Qualification Tests.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 15,
+           "text": "Tests, as specified in para. A328.2.1(a), shall be performed to qualify each BPS and the performance of each bonder and bonding operator. Test assemblies shall conform to (a) below and the test method shall be in accordance with either (b) or (c)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Test Assembly. The assembly shall be fabricated in one pipe size in accordance with the BPS and shall contain at least one of each different type of joint identified in the BPS. More than one test assembly may be prepared if necessary to accommodate all of the joint types or to assure that at least one of each joint type is loaded in both circumferential and longitudinal directions. The size of pipe and fittings in the assembly shall be as follows:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) When the largest size to be qualified is DN 100 (NPS 4) or smaller, the test assembly shall be the largest size qualified."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) When the largest size to be qualified is greater than DN 100 (NPS 4), the size of the test assembly shall be between 25% and 100% of the largest piping size qualified, but shall be a minimum of DN 100 (NPS 4)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Burst Test Method. The test assembly shall be subjected to a burst test in accordance with the applicable sections of ASTM D1599.5 The time to burst in this standard may be extended. The test is successful if failure initiates outside of any bonded joint."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Hydrostatic Test Method. The test assembly shall be subjected to hydrostatic pressure of at least PT for not less than 1 hr with no leakage or separation of joints."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) For thermoplastics, PT shall be determined in accordance with eq. (27)"
+          },
+          {
+           "kind": "equation",
+           "text": "T S i + S y jjj S H zzz − (27) P T = 0.80 − k D − T {",
+           "indent": 7
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "where"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "D = outside diameter of pipe"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "SH = mean long-term hydrostatic strength (LTHS) at"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "the test temperature, in accordance with ASTM"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "D2837 or from the applicable component stan-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "dard or manufacturer’s data"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "SS = mean short-term burst stress at the test tempera-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "ture, in accordance with ASTM D15995 or from"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "the applicable component standard or manufac-"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "turer’s data"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "T = nominal thickness of pipe"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 1,
+           "text": "(2) For RTR (laminated and filament-wound) and RPM, PT shall be 3 times the manufacturer’s allowable pressure for the components being joined."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 1,
+           "text": "(3) The test shall be conducted so that the joint is loaded in both the circumferential and longitudinal directions."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.2.6",
+         "heading": "Performance Requalification.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "Renewal of a bonding performance qualification is required when"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) a bonder or bonding operator has not used the specific bonding process for a period of 6 months or more, or"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) there is specific reason to question the individual’s ability to make bonds that meet the BPS"
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A328.3",
+       "heading": "Bonding Materials and Equipment",
+       "page": 146,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A328.3.1",
+         "heading": "Materials.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "Bonding materials that have deteriorated by exposure to air or prolonged storage, or will not spread smoothly, shall not be used in making joints."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.3.2",
+         "heading": "Equipment.",
+         "page": 146,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 12,
+           "text": "Fixtures and tools used in making joints shall be in such condition as to perform their functions satisfactorily."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "5 Titles of referenced standards and specifications are listed in Table A326.1-1, except the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D1599. Test Method for Resistance to Short-Time Hydraulic Pressure of Plastic Pipe, Tubing, and Fittings. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D2657. Practice for Heat Fusion Joining of Polyolefin Pipe and Fittings. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM D2855. Practice for Making Solvent-Cemented Joints with PVC Pipe and Fittings. ASTM International."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "ASTM F1290. Practice for Electrofusion Joining Polyolefin Pipe and Fittings. ASTM International."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A328.4",
+       "heading": "Preparation for Bonding",
+       "page": 147,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Preparation shall be defined in the BPS and shall specify such requirements as"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) cutting"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) cleaning"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) preheat"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) end preparation"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) fit-up"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A328.5",
+       "heading": "Bonding Requirements",
+       "page": 147,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A328.5.1",
+         "heading": "General",
+         "page": 147,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Production joints shall be made only in accordance with a written bonding procedure specification (BPS) that has been qualified in accordance with para. A328.2. Manufacturers of piping materials, bonding materials, and bonding equipment should be consulted in the preparation of the BPS."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Production joints shall be made only by qualified bonders or bonding operators who have appropriate training or experience in the use of the applicable BPS and have satisfactorily passed a performance qualification test that was performed in accordance with a qualified BPS."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Each qualified bonder and bonding operator shall be assigned an identification symbol. Unless otherwise specified in the engineering design, each pressure-containing bond or adjacent area shall be stenciled or otherwise suitably marked with the identification symbol of the bonder or bonding operator. Identification stamping shall not be used and any marking paint or ink shall not be detrimental to the piping material. In lieu of marking the bond, appropriate records may be filed."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Qualification in one BPS does not qualify a bonder or bonding operator for any other bonding procedure."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(e)",
+           "indent": 1,
+           "text": "(e) Longitudinal joints are not covered in para. A328."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.2",
+         "heading": "Hot Gas Welded Joints in Thermoplastic Piping5",
+         "page": 147,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Preparation. Surfaces to be hot gas welded together shall be cleaned of any foreign material. For butt welds, the joining edges should be beveled at 20 deg to 40 deg with 1 mm (1∕32 in.) root face and root gap."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Procedure. Joints shall be made in accordance with the qualified BPS."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Branch Connections. A fabricated branch connection shall be made by inserting the branch pipe in the hole in the run pipe. Dimensions of the joint shall conform to Figure 328.4.3-1, illustration (c). The hole in the run pipe shall be beveled at 45 deg. Alternatively, a fabricated branch connection shall be made using a manufactured full reinforcement saddle with integral socket."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.3",
+         "heading": "Solvent Cemented Joints in Thermoplastic Piping5",
+         "page": 147,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Preparation. Thermoplastic pipe and fitting surfaces shall be prepared in accordance with ASTM D2855 or ASME NM.1, para. 5-3.5 for PVC, ASTM F493 or ASME NM.1, para. 5-3.5 for CPVC, or ASTM D2235 for ABS. A dry fit test of each joint is required before solvent cementing. The pipe shall enter the fitting socket between one-third and two-thirds of the full socket depth when assembled by hand."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Procedure. Joints shall be made in accordance with the qualified BPS. ASTM D2855 or ASME NM.1, para. 5-3.5 may be utilized as a suitable basis for development of such a procedure. Solvent cements for PVC, CPVC, and ABS shall conform to ASTM D2564, ASTM D2846, and ASTM D2235, respectively. Application of cement to both surfaces to be joined and assembly of these surfaces shall produce a continuous bond between them with visual evidence of cement at least flush with the outer end of the fitting bore around the entire joint perimeter. See Figure A328.5.3-1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Branch Connections. A fabricated branch connection shall be made using a manufactured full reinforcement saddle with integral branch socket. The reinforcement saddle shall be solvent cemented to the run pipe over its entire contact surface."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.4",
+         "heading": "Heat Fusion Joints in Thermoplastic Piping5",
+         "page": 147,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Preparation. Surfaces to be heat fused together shall be cleaned of all foreign material."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Procedure. Joints shall be made in accordance with the qualified fusing procedure specification (FPS). Procedure 1, Socket Fusion, Procedure 2, Butt Fusion, and Procedure 3, Saddle Fusion, in both ASTM F2620 and ASTM D2657, provide a suitable basis for development of such a procedure. Uniform heating of both surfaces to be joined and assembly of these surfaces shall produce a continuous homogeneous bond between them and shall produce a small fillet of fused material at the outer limits of the joint. See Figure A328.5.4-1"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "Socket Joint for typical heat fusion joints. Fixtures shall be used to align components when joints are made."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Branch Connections. A fabricated branch connection is permitted only where molded fittings are unavailable."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.5",
+         "heading": "Electrofusion Joints in Thermoplastic Piping5",
+         "page": 148,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Preparation. Surfaces to be heat fused together shall be cleaned of all foreign material."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Procedure. Joints shall be made in accordance with the qualified FPS. The general procedures in ASTM F1290, Technique 1, Socket Type, and Technique 2, Saddle Type, provide a suitable basis for the development of such a procedure. See Figure A328.5.5-1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 1,
+           "text": "A manufacturer-supplied manufacturer qualified electrofusion procedure specification (MEFPS) qualified in accordance with ASTM F1055 may be used for electrofusion fittings supplied by the same manufacturer without further qualification."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 6,
+           "text": "Saddle Joint"
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.6",
+         "heading": "Adhesive Joints in RTR and RPM Piping",
+         "page": 148,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Procedure. Joints shall be made in accordance with the qualified BPS. Application of adhesive to the surfaces to be joined and assembly of these surfaces shall produce a continuous bond between them and shall seal over all cuts to protect the reinforcement from the service fluid. See Figure A328.5.6-1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Branch Connections. A fabricated branch connection shall be made using a manufactured full reinforcement saddle having a socket or integral length of branch pipe suitable for a nozzle or coupling. The hole in the run pipe shall be made with a hole saw; the cut edges of the hole shall be sealed with adhesive at the time the saddle is bonded to the run pipe."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A328.5.7",
+         "heading": "Butt-and-Wrapped Joints in RTR and RPM Piping5",
+         "page": 148,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Procedure. Joints shall be made in accordance with the qualified BPS. Application of plies of reinforcement saturated with catalyzed resin to the surfaces to be joined shall produce a continuous structure with them."
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Saddle"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "tapping tee"
+          },
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Joint Cuts shall be sealed to protect the reinforcement from the service fluid. See Figure A328.5.7-1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Branch Connections. For a fabricated branch connection made by inserting the branch pipe into a hole in the run pipe, the hole shall be made with a hole saw."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A328.6",
+       "heading": "Bonding Repair",
+       "page": 149,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Defective material, joints, and other workmanship that fails to meet the requirements of this Code and of the engineering design shall be repaired or replaced. See also para. 341.3.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A328.7",
+       "heading": "Seal Bonds",
+       "page": 149,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "If threaded joints are to be seal bonded in accordance with para. A311.2.2, the work shall be done by qualified bonders and all exposed threads shall be covered by the seal bond."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A329",
+     "heading": "FABRICATION OF PIPING LINED WITH NONMETALS",
+     "page": 149,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A329.1",
+       "heading": "Welding of Metallic Piping",
+       "page": 149,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A329.1.1",
+         "heading": "General",
+         "page": 149,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Paragraph A329.1 applies only to welding subassemblies of metallic piping that have previously been lined with nonmetals."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Welding that conforms to para. A329.1 may be used in accordance with para. A318.3.1."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A329.1.2",
+         "heading": "Specific Welding Requirements.",
+         "page": 149,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 21,
+           "text": "Welding shall conform to the requirements of para. 328 and the following additional requirements:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Modifications made in preparation for welding to suit manufacturer’s recommendations shall be specified in the engineering design."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Welding shall be performed so as to maintain the continuity of the lining and its serviceability."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) If a lining has been damaged, it shall be repaired or replaced."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(d)",
+           "indent": 1,
+           "text": "(d) Qualification to one WPS for a specific lining material does not qualify a welder or welding operator for any other welding procedure involving different lining materials."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A329.2",
+       "heading": "Flaring of Nonmetallic Linings",
+       "page": 149,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A329.2.1",
+         "heading": "General",
+         "page": 149,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Paragraph A329.2 applies only to the flaring of linings in pipe that has previously been lined with nonmetals."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Flaring that conforms to para. A329.2 may be used in accordance with para. A318.3.2."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Flaring shall be performed only in accordance with a written flaring procedure specification, and only by qualified operators who have appropriate training or experience in the use of the applicable flaring procedure specification."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A332",
+     "heading": "BENDING AND FORMING",
+     "page": 149,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A332.1",
+       "heading": "General",
+       "page": 149,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 332.1 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A332.2",
+       "heading": "Bending",
+       "page": 149,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 332.2 applies, except para. 332.2.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A332.3",
+       "heading": "Forming",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 332.3 applies, except for heat treatment."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A334",
+     "heading": "JOINING NONPLASTIC PIPING",
+     "page": 150,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A334.1",
+       "heading": "Borosilicate Glass Piping",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Short unflanged pieces used to correct for differences between fabrication drawings and field dimensions may be cut to length and finished in the field."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A334.2",
+       "heading": "Repair of Defects",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Defective material, joints, and other workmanship in nonplastic piping that fail to meet the requirements of para. A334 or of the engineering design shall be repaired or replaced."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Completed repairs and replacements shall be examined, subject to the same limitations on imperfections as the original work."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A335",
+     "heading": "ASSEMBLY AND ERECTION",
+     "page": 150,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A335.1",
+       "heading": "Alignment",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.1 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A335.2",
+       "heading": "Flanged and Mechanical Joints",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.2 applies in its entirety."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A335.2.5",
+         "heading": "Nonmetallic Bolted Joints",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Bolted joints in nonmetallic piping may be assembled with any combination of flange material and flange facings, except that the following apply when other than flat face flanges and full face gaskets are used:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) consideration shall be given to the strength of the flanges, and to sustained loads, displacement strains, and occasional loads described in paras. A302.3.3 and A302.3.4"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) an appropriate bolt-up sequence shall be specified"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Appropriate limits shall be specified for bolt-up torque, and those limits shall not be exceeded."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Flat washers shall be used under bolt heads and nuts."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A335.2.6",
+         "heading": "Metallic Piping Lined With Nonmetals.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 23,
+           "text": "In assembling mechanical joints in metallic piping lined with nonmetals, consideration shall be given to means for maintaining electrical continuity between pipe sections, where static sparking could cause ignition of flammable vapors. See Appendix F, para. FA323.4(a)."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A335.3",
+       "heading": "Threaded Joints",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.3 applies except for para. 335.3.2. See para. A335.3.2."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A335.3.2",
+         "heading": "Joints for Seal Bonding.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "A threaded joint to be seal bonded shall be made up without thread compound. A joint containing thread compound that leaks during leak testing may be seal bonded in accordance with para. A328.6, provided all compound is removed from exposed threads."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A335.3.4",
+         "heading": "Tools, Nonmetallic Piping.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "Either strap wrenches or other full circumference wrenches shall be used to tighten threaded pipe joints. Tools and other devices used to hold or apply forces to the pipe shall be such that the pipe surface is not scored or deeply scratched."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A335.3.5",
+         "heading": "RTR and RPM Piping.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "In assembling threaded joints in RTR and RPM piping, where threads may be exposed to fluids that can attack the reinforcing material, threads shall be coated with sufficient resin to cover the threads and completely fill the clearance between the pipe and the fitting."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A335.4",
+       "heading": "Tubing Joints",
+       "page": 150,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A335.4.1",
+         "heading": "Flared Joints in Thermoplastic Tubing.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 23,
+           "text": "In addition to preparation in accordance with para. 335.4.1, the end of the tubing shall be cut perpendicular to the tube centerline, preferably with a tubing cutter specially made for thermoplastic tubing. No cuts, scratches, dirt, or surface damage to either inside or outside diameter are permitted on the pipe end to be flared."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A335.4.2",
+         "heading": "Flareless and Compression Tubing Joints.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 335.4.2 applies."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A335.5",
+       "heading": "Caulked Joints",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.5 applies."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A335.6",
+       "heading": "Special Joints",
+       "page": 150,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.6 applies, except that expanded joints are not permitted."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A335.6.3",
+         "heading": "Flexible Elastomeric Sealed Joints.",
+         "page": 150,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Assembly of flexible elastomeric sealed joints shall be in accordance with the manufacturer’s recommendations and the following:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Seal and bearing surfaces shall be free from injurious imperfections."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Any lubricant used to facilitate joint assembly shall be compatible with the joint components and the intended service."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Proper joint clearances and piping restraints (if not integral in the joint design) shall be provided to prevent joint separation when expansion can occur due to thermal and/or pressure effects."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A335.8",
+       "heading": "Assembly of Brittle Piping",
+       "page": 151,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A335.8.1",
+         "heading": "General.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "Care shall be used to avoid scratching of brittle nonmetallic piping in handling and supporting. Any scratched or chipped components shall be replaced. Care shall be used in handling glasslined and cement-lined metal pipe because the lining can be injured or broken by blows that do not dent or break the pipe."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A335.8.2",
+         "heading": "Borosilicate Glass Piping.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "In addition to the precaution in para. A335.8.1, borosilicate glass piping components shall be protected from weld spatter. Any component so damaged shall be replaced. Flanges and cushion inserts shall be carefully fitted and aligned to pipe, fittings, and valve ends. Gaskets shall be as recommended for the joint. Installation and torquing of bolts shall be in accordance with the manufacturer’s recommendations."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A335.9",
+       "heading": "Cleaning of Piping",
+       "page": 151,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See Appendix F, para. F335.9."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 10",
+   "title": null,
+   "page": 151,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "INSPECTION, EXAMINATION, AND TESTING",
+     "page": 151,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A340",
+     "heading": "INSPECTION",
+     "page": 151,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 340 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A341",
+     "heading": "EXAMINATION",
+     "page": 151,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A341.1",
+       "heading": "General",
+       "page": 151,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 341.1 applies."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A341.2",
+       "heading": "Responsibility for Examination",
+       "page": 151,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 341.2 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A341.3",
+       "heading": "Examination Requirements",
+       "page": 151,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A341.3.1",
+         "heading": "Responsibility for Examination.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 341.3.1 applies, except for paras. 341.3.1(a) and 341.3.1(b), which apply only for metals."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A341.3.2",
+         "heading": "Acceptance Criteria.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Acceptance criteria shall be as stated in the engineering design, and shall at least meet the applicable requirements for bonds in Table A341.3.2-1 and requirements elsewhere in the Code."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A341.3.3",
+         "heading": "Defective Components and Workmanship.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 341.3.3 applies in its entirety."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A341.3.4",
+         "heading": "Progressive Sampling for Examination.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 341.3.4 applies in its entirety."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A341.4",
+       "heading": "Extent of Required Examination",
+       "page": 151,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A341.4.1",
+         "heading": "Examination Normally Required.",
+         "page": 151,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 20,
+           "text": "Piping in Normal Fluid Service shall be examined to the extent specified herein or to any greater extent specified in the engineering design. Acceptance criteria are as stated in para. A341.3.2 unless otherwise specified."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Visual Examination. At least the following shall be examined in accordance with para. 344.2:"
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(1)",
+           "indent": 2,
+           "text": "(1) materials and components in accordance with para. 341.4.1(a)(1)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(2)",
+           "indent": 2,
+           "text": "(2) at least 5% of fabrication. For bonds, each type of bond made by each bonder and bonding operator shall be represented."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(3)",
+           "indent": 2,
+           "text": "(3) 100% of fabrication for bonds other than circumferential, except those in components made in accordance with a listed specification."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(4)",
+           "indent": 2,
+           "text": "(4) assembly and erection of piping in accordance with paras. 341.4.1(a)(4), 341.4.1(a)(5), and 341.4.1(a)(6)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Other Examination. At least 5% of all fused or bonded joints within each designated lot shall be examined by in-process examination in accordance with para. 344.7. The joints to be examined shall include the work of each bonder and bonding operator."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Certifications and Records. Paragraph 341.4.1(c) applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A341.4.2",
+         "heading": "Examination",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "— Category D Fluid Service. Piping and piping elements for Category D Fluid Service as designated in the engineering design shall be visually examined to the extent necessary to satisfy the examiner that components, materials, and workmanship conform to the requirements of this Code and the engineering design."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A341.5",
+       "heading": "Supplementary Examination",
+       "page": 152,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A341.5.1",
+         "heading": "General.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 9,
+           "text": "Any applicable method of examination described in para. 344 may be specified by the engineering design to supplement the examination required by para. A341.4. The extent of supplementary examination to be performed and any acceptance criteria that differ from those in para. A341.3.2 shall be specified in the engineering design."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A341.5.2",
+         "heading": "Examinations to Resolve Uncertainty.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 341.5.3 applies."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A342",
+     "heading": "EXAMINATION PERSONNEL",
+     "page": 152,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 342 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A343",
+     "heading": "EXAMINATION PROCEDURES",
+     "page": 152,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 343 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "A344",
+     "heading": "EXAMINATION METHODS",
+     "page": 152,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A344.1",
+       "heading": "General",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 344.1 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A344.2",
+       "heading": "Visual Examination",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 344.2 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A344.5",
+       "heading": "Radiographic Examination",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Radiographic examination may be used in accordance with para. 344.1.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A344.6",
+       "heading": "Ultrasonic Examination",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Ultrasonic examination may be used in accordance with para. 344.1.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A344.7",
+       "heading": "In-Process Examination",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 344.7 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A345",
+     "heading": "TESTING",
+     "page": 152,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "A345.1",
+       "heading": "Required Leak Test",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Prior to initial operation, each piping system shall be tested to ensure tightness. The test shall be a hydrostatic leak test in accordance with para. A345.4, except as provided herein."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Paragraphs 345.1(a) and 345.1(b) apply."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A345.2",
+       "heading": "General Requirements for Leak Test",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Requirements in para. A345.2 apply to more than one type of leak test."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A345.2.1",
+         "heading": "Limitations on Pressure.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "Paragraphs 345.2.1(b) and 345.2.1(c) apply."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A345.2.2",
+         "heading": "Other Test Requirements",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Paragraph 345.2.2(a) applies."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) The possibility of brittle fracture shall be considered when conducting leak tests on brittle materials or at low temperature."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Paragraphs 345.2.3 through 345.2.7 apply."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A345.3",
+       "heading": "Preparation for Leak Test",
+       "page": 152,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 345.3 applies in its entirety, considering bonds in place of welds, and excluding expansion joints."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A345.4",
+       "heading": "Hydrostatic Leak Test",
+       "page": 152,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A345.4.1",
+         "heading": "Test Fluid.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "Paragraph 345.4.1 applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A345.4.2",
+         "heading": "Test Pressure",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Nonmetallic Piping. Except as provided in para. A345.4.3, the hydrostatic test pressure at any point in a nonmetallic piping system shall be not less than 1.5 times the design pressure, but shall not exceed 1.5 times the maximum rated pressure of the lowest-rated component in the system."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Thermoplastic Piping. For piping systems in which the design temperature is above the test temperature, para. 345.4.2(b) applies, except that S and ST shall be from Table B-1 (Table B-1C) instead of Table A-1 (Table A-1C)."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Metallic Piping With Nonmetallic Lining. Paragraph 345.4.2 applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A345.4.3",
+         "heading": "Hydrostatic Test of Piping With Vessels as a System.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 4,
+           "text": "Paragraph 345.4.3 applies."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A345.5",
+       "heading": "Pneumatic Leak Test",
+       "page": 152,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "A345.5.1",
+         "heading": "Precautions.",
+         "page": 152,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "In addition to the requirements of para. 345.5.1, a pneumatic test of nonmetallic piping is permitted only with the owner’s approval, and precautions in Appendix F, para. FA323.4 should be considered."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "A345.5.2",
+         "heading": "Other Requirements",
+         "page": 153,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Paragraphs 345.5.2 through 345.5.5 apply."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) PVC and CPVC piping shall not be pneumatically tested."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "A345.6",
+       "heading": "Hydrostatic",
+       "page": 153,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "–Pneumatic Leak Test"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "If a combined hydrostatic–pneumatic leak test is used, the requirements of para. A345.5 shall be met, and the pressure in the liquid-filled part of the piping shall not exceed the values calculated in accordance with para. A345.4.2 or para. 345.4.2, as applicable."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A345.7",
+       "heading": "Initial Service Leak Test",
+       "page": 153,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 345.7 applies in its entirety for Category D Fluid Service only."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "A345.8",
+       "heading": "Sensitive Leak Test",
+       "page": 153,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 345.8 applies."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "A346",
+     "heading": "RECORDS",
+     "page": 153,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 346 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  }
+ ]
+}

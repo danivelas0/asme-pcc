@@ -1,0 +1,2133 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "J",
+ "title": "Nomenclature",
+ "document": "Nomenclature",
+ "pdf_pages": [
+  487,
+  502
+ ],
+ "entry_count": 211,
+ "notes": [
+  "GENERAL NOTE: For Code reference to this Appendix, see para. 300.3.",
+  "NOTE: (1) Note that the use of these units is not required by the Code. They represent sets of consistent units (except where otherwise stated) that may be used in computations, if stress values in ksi and MPa are multiplied by 1,000 for use in equations that also involve pressure in psi and kPa values."
+ ],
+ "entries": [
+  {
+   "symbol": "A",
+   "definition": "Factor for determining minimum value of R1",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "304.2.3",
+   "table_fig_app": null,
+   "equation": "(5)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "A1",
+   "definition": "Area required for branch reinforcement",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(6) (6a) (9) (9a)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "A2",
+   "definition": "Area available for branch reinforcement in run pipe",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(6a) (7) (9a) (10)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "A3",
+   "definition": "Area available for branch reinforcement in branch pipe",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(6a) (8) (9a) (11)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "A4",
+   "definition": "Area available for branch reinforcement in pad or connection",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(6a) (9a) (12)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "Af",
+   "definition": "Conveyed fluid cross-sectional area considering nominal pipe thickness less allowances",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23d)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "Ap",
+   "definition": "Pipe cross-sectional area considering nominal pipe thickness less allowances",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23d)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "Ap",
+   "definition": "Cross-sectional area of pipe",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "a",
+   "definition": "Rupture life exponent",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "V303.1.4 V304",
+   "table_fig_app": null,
+   "equation": "(V3)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "C",
+   "definition": "Cold spring factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.5.1",
+   "table_fig_app": null,
+   "equation": "(21)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "C",
+   "definition": "Material constant used in computing Larson-Miller parameter",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "V303.1.3 V303.1.4",
+   "table_fig_app": null,
+   "equation": "(V2) (V3)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "C1",
+   "definition": "Estimated self-spring or relaxation factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.5.1",
+   "table_fig_app": null,
+   "equation": "(22)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "Cx",
+   "definition": "Size of fillet weld, socket welds other than flanges",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": null,
+   "table_fig_app": "328.5.2-3",
+   "equation": null,
+   "pdf_page": 487
+  },
+  {
+   "symbol": "CF",
+   "definition": "Welded joint fatigue curve coefficient",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": "W302.1-1 W302.1-2 W302.1-3",
+   "equation": "(W1) (W9)",
+   "pdf_page": 487
+  },
+  {
+   "symbol": "c",
+   "definition": "Sum of mechanical allowances (thread or groove depth) plus corrosion and erosion allowances",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "302.4 304.1.1 304.1.2 304.2.3 304.3.3 304.3.4 304.4.1 304.5.2 304.5.3 A304.1.1 K302.3.5 K302.4 K304.1.1 K304.5.2 K304.5.3 K304.8.3 S301.2 V303.1.1 V304",
+   "table_fig_app": "304.3.3-1 304.3.4-1 328.5.5-1 H301-1",
+   "equation": "(2) (3b) (4a) (4b) (4c) (7) (8) (10) (11) (12) (13) (14) (15) (25) (33) (36) (37)",
+   "pdf_page": 488
+  },
+  {
+   "symbol": "ci",
+   "definition": "Sum of internal allowances",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "K304.1.1 K304.1.2",
+   "table_fig_app": null,
+   "equation": "(34b) (35a) (35b)",
+   "pdf_page": 488
+  },
+  {
+   "symbol": "co",
+   "definition": "Sum of external allowances",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "K304.1.1 K304.1.2",
+   "table_fig_app": null,
+   "equation": "(34a) (35a) (35b)",
+   "pdf_page": 488
+  },
+  {
+   "symbol": "D",
+   "definition": "Outside diameter of pipe as listed in tables of standards and specifications or as measured",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.1.1 304.1.2 304.1.3 304.2.1 304.2.3 319.4.1 A304.1.1 A304.1.2 A328.2.5 K304.1.1 K304.1.2 K304.1.3 K304.8.3 S301.2 V304",
+   "table_fig_app": "304.1.1-1 304.2.3-1 341.3.2-1 K305.1.2-1 Notes for Tables A-1 and A-1C",
+   "equation": "(3a) (3c) (3d) (3e) (5) (16) (26a) (26b) (26c) (27) (34a) (35a) (37)",
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Db",
+   "definition": "Outside diameter of branch pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.1 304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1",
+   "equation": null,
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Dh",
+   "definition": "Outside diameter of run pipe (or header pipe)",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.1 304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1",
+   "equation": null,
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Ds",
+   "definition": "Outside diameter of reinforcing saddle",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3",
+   "table_fig_app": "304.3.3-1",
+   "equation": null,
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Dx",
+   "definition": "Distance from node to node (for stress analysis)",
+   "units_si": "m",
+   "units_us_customary": "ft",
+   "paragraph": null,
+   "table_fig_app": "S301.3-2 S303.3-1",
+   "equation": null,
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Dy",
+   "definition": "Distance from node to node (for stress analysis)",
+   "units_si": "m",
+   "units_us_customary": "ft",
+   "paragraph": null,
+   "table_fig_app": "S301.3-2 S303.3-1",
+   "equation": null,
+   "pdf_page": 488
+  },
+  {
+   "symbol": "Dz",
+   "definition": "Distance from node to node (for stress analysis)",
+   "units_si": "m",
+   "units_us_customary": "ft",
+   "paragraph": null,
+   "table_fig_app": "S301.3-2 S303.3-1",
+   "equation": null,
+   "pdf_page": 489
+  },
+  {
+   "symbol": "d",
+   "definition": "Inside diameter of pipe (note differences in definition between paras. 304.1.1 and K304.1.1)",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.1.1 304.1.2 K304.1.1 K304.1.2",
+   "table_fig_app": "K305.1.2-1",
+   "equation": "(3b) (34b) (35b)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "d",
+   "definition": "Pipe inside diameter considering nominal pipe thickness less allowances",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23d)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "d1",
+   "definition": "Effective length removed from pipe at branch",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3",
+   "table_fig_app": "304.3.3-1 App. H",
+   "equation": "(6) (7)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "d2",
+   "definition": "Half-width of reinforcement zone",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(7) (10)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "db",
+   "definition": "Inside diameter of branch pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": null,
+   "table_fig_app": "304.3.4-1",
+   "equation": null,
+   "pdf_page": 489
+  },
+  {
+   "symbol": "dg",
+   "definition": "Inside or pitch diameter of gasket",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.5.3",
+   "table_fig_app": "304.5.3-1 U304.5.3-1",
+   "equation": "(15)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "dh",
+   "definition": "Inside diameter of header pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": null,
+   "table_fig_app": "304.3.4-1",
+   "equation": null,
+   "pdf_page": 489
+  },
+  {
+   "symbol": "dt",
+   "definition": "Fatigue damage due to thermal stress with constant amplitude",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1 W305.1",
+   "table_fig_app": null,
+   "equation": "(W2) (W5)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "dw",
+   "definition": "Fatigue damage due to wave stress with variable amplitude",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": null,
+   "table_fig_app": null,
+   "equation": "(W5) (W8)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "dx",
+   "definition": "Design inside diameter of extruded outlet",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": "(9) (10)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "E",
+   "definition": "Quality factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.1 304.1.1 304.1.2 304.2.3 304.3.3 304.4.1 304.5.1 304.5.2 304.5.3 K304.5.3 S301.1 S301.2 S303.1 V304",
+   "table_fig_app": "Notes for Tables A-1 and A-1C App. H",
+   "equation": "(3a) (3b) (3c) (4a) (4b) (4c) (15)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "E",
+   "definition": "Modulus of elasticity (at specified condition)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "A319.3.2 W302.1 X302.2.3",
+   "table_fig_app": "App. C",
+   "equation": "(X1)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "Ea",
+   "definition": "Reference modulus of elasticity at 21°C (70°F)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "319.3.2 319.4.1 319.4.4 319.5.1",
+   "table_fig_app": null,
+   "equation": "(21) (22)",
+   "pdf_page": 489
+  },
+  {
+   "symbol": "Ec",
+   "definition": "Casting quality factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.1 302.3.3 302.3.5 302.3.6 305.2.3 306.1.4 V303.1.1",
+   "table_fig_app": "302.3.3-1 Table A-2",
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "ECSA",
+   "definition": "Modulus of elasticity of carbon steel at ambient temperature of 21°C (70°F)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Ej",
+   "definition": "Joint quality factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.1 302.3.4 302.3.5 305.2.3 306.1.4 321.1.3 341.4.1 341.5.1 K302.3.4 K305.1.1 K306.1.1 V303.1.1 X302.2.2",
+   "table_fig_app": "302.3.4-1 Notes for Tables A-1 and A-1C Table A-3",
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Em",
+   "definition": "Modulus of elasticity at maximum or minimum temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "319.3.2 319.5 319.5.1",
+   "table_fig_app": null,
+   "equation": "(21) (22)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Et",
+   "definition": "Modulus of elasticity at test temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "X302.2.3",
+   "table_fig_app": null,
+   "equation": "(X1)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "F",
+   "definition": "Service (design) factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "A302.3.2 A304.1.1 A304.1.2",
+   "table_fig_app": null,
+   "equation": "(26c)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Fa",
+   "definition": "Axial force range between any two conditions being evaluated",
+   "units_si": "N",
+   "units_us_customary": "lbf",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Fa",
+   "definition": "Sustained longitudinal force",
+   "units_si": "N",
+   "units_us_customary": "lb",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23d)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Favg",
+   "definition": "Multiplier applied to the average stress for rupture in 100 000 h",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.2",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Fx",
+   "definition": "Force along the x-axis",
+   "units_si": "N",
+   "units_us_customary": "lb",
+   "paragraph": null,
+   "table_fig_app": "S301.5-2 S302.5-1 S302.6.3-1 S303.7-1 S303.7-2 S303.7-3",
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "Fy",
+   "definition": "Force along the y-axis",
+   "units_si": "N",
+   "units_us_customary": "lb",
+   "paragraph": null,
+   "table_fig_app": "S301.5-2 S302.5-1 S302.6.3-1",
+   "equation": null,
+   "pdf_page": 490
+  },
+  {
+   "symbol": "f",
+   "definition": "Stress range factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.5 S301.1 S301.7 S303.1",
+   "table_fig_app": "302.3.5-1",
+   "equation": "(1a) (1b) (1c)",
+   "pdf_page": 490
+  },
+  {
+   "symbol": "fE",
+   "definition": "Environment correction factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1",
+   "table_fig_app": "W302.1-3 W302.1-4",
+   "equation": "(W1) (W9)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "fI",
+   "definition": "Fatigue improvement factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1 W302.2",
+   "table_fig_app": "W302.1-3",
+   "equation": "(W1) (W9)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "fM,k",
+   "definition": "Fatigue factor for stress ratio",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": "(W1) (W9)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "fm",
+   "definition": "Maximum value of stress range factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.5",
+   "table_fig_app": null,
+   "equation": "(1c)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "ft",
+   "definition": "Temperature correction factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": "(W1) (W9)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "g",
+   "definition": "Root gap for welding",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "K328.4.3",
+   "table_fig_app": "328.4.3-1 K328.5.4-1",
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "h",
+   "definition": "Nominal thread depth",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "K304.1.1",
+   "table_fig_app": "304.1.1-1",
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "h",
+   "definition": "Weibull stress range shape distribution parameter",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2 W302.3",
+   "table_fig_app": "W301-1",
+   "equation": "(W3) (W4) (W8)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "hF",
+   "definition": "Through-wall dimension (height) of a flaw drawn normal to the inside pressure- retaining surface of the component",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "R307",
+   "table_fig_app": "R307-1 R308-1 R308-2",
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "hx",
+   "definition": "Height of extruded outlet",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "Ia",
+   "definition": "Sustained longitudinal index",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "320.1 320.2 323.2.2",
+   "table_fig_app": null,
+   "equation": "(23d)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "Ii",
+   "definition": "Sustained in-plane moment index",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "320.1 320.2 323.2.2",
+   "table_fig_app": null,
+   "equation": "(23b)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "Io",
+   "definition": "Sustained out-plane moment index",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "320.1 320.2 323.2.2",
+   "table_fig_app": null,
+   "equation": "(23b)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "It",
+   "definition": "Sustained torsional moment index",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "320.1 320.2 323.2.2",
+   "table_fig_app": null,
+   "equation": "(23c)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "i",
+   "definition": "Stress intensification factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.3.6",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "i",
+   "definition": "Service condition",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "V303.1.1 V303.1.4 V303.2 V304",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 491
+  },
+  {
+   "symbol": "ia",
+   "definition": "Axial force stress intensification factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "ii",
+   "definition": "In-plane stress intensification factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.4.4 320.2 S301.7",
+   "table_fig_app": null,
+   "equation": "(18) (23b)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "io",
+   "definition": "Out-plane stress intensification factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.4.4 320.2",
+   "table_fig_app": null,
+   "equation": "(18) (23b)",
+   "pdf_page": 491
+  },
+  {
+   "symbol": "it",
+   "definition": "Torsional stress intensification factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "K",
+   "definition": "Factor determined by ratio of branch diameter to run diameter",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": "(9)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "K1",
+   "definition": "Constant in empirical flexibility equation",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.4.1",
+   "table_fig_app": null,
+   "equation": "(16)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Kut",
+   "definition": "Hydrostatic test pressure upper limit factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "K302.3.2",
+   "table_fig_app": null,
+   "equation": "(31a)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "k",
+   "definition": "Flexibility factor",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "319.3.6",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 492
+  },
+  {
+   "symbol": "k",
+   "definition": "Fatigue strength thickness exponent",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": "W302.1-1 W302.1-2 W302.1-3",
+   "equation": "(W1) (W9)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "L",
+   "definition": "Developed length of piping between anchors (the running centerline length between stiffened sections of pipe)",
+   "units_si": "m",
+   "units_us_customary": "ft",
+   "paragraph": "304.1.3 319.4.1 K304.2.4",
+   "table_fig_app": null,
+   "equation": "(16)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "L4",
+   "definition": "Height of reinforcement zone outside run pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3",
+   "table_fig_app": "304.3.3-1 App. H",
+   "equation": "(8)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "L5",
+   "definition": "Height of reinforcement zone for extruded outlet",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": "(11)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Ld",
+   "definition": "Piping cycle design life",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": null,
+   "equation": "(W7)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Lw",
+   "definition": "Design storm period of occurrence",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": null,
+   "equation": "(W6)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "LMP",
+   "definition": "Larson-Miller parameter, used to estimate design life",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "V303.1.3 V303.1.4 V304",
+   "table_fig_app": null,
+   "equation": "(V2) (V3)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "lF",
+   "definition": "Length of a flaw drawn parallel to the inside pressure-retaining surface of the component",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "R307",
+   "table_fig_app": "R307-1 R308-1 R308-2",
+   "equation": null,
+   "pdf_page": 492
+  },
+  {
+   "symbol": "M",
+   "definition": "Length of full thickness pipe adjacent to miter bend",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.2.3",
+   "table_fig_app": "304.2.3-1",
+   "equation": null,
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mi",
+   "definition": "In-plane moment range between any two conditions being evaluated",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": "319.4.4",
+   "table_fig_app": "319.4.4-1 319.4.4-2",
+   "equation": "(18)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mi",
+   "definition": "In-plane bending moment for the sustained condition being evaluated",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23b)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mo",
+   "definition": "Out-plane moment range between any two conditions being evaluated",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": "319.4.4",
+   "table_fig_app": "319.4.4-1 319.4.4-2",
+   "equation": "(18)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mo",
+   "definition": "Out-plane bending moment for the sustained condition being evaluated",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23b)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mt",
+   "definition": "Sustained torsional moment",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23c)",
+   "pdf_page": 492
+  },
+  {
+   "symbol": "Mt",
+   "definition": "Torsional moment range between any two conditions being evaluated",
+   "units_si": "N-mm",
+   "units_us_customary": "in.-lbf",
+   "paragraph": "319.4.4",
+   "table_fig_app": "319.4.4-1 319.4.4-2",
+   "equation": null,
+   "pdf_page": 492
+  },
+  {
+   "symbol": "My",
+   "definition": "Moment along the y-axis",
+   "units_si": "N-m",
+   "units_us_customary": "ft-lb",
+   "paragraph": null,
+   "table_fig_app": "S303.7-1 S303.7-2 S303.7-3",
+   "equation": null,
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Mz",
+   "definition": "Moment along the z-axis",
+   "units_si": "N-m",
+   "units_us_customary": "ft-lb",
+   "paragraph": null,
+   "table_fig_app": "S301.5-2",
+   "equation": null,
+   "pdf_page": 493
+  },
+  {
+   "symbol": "m",
+   "definition": "Misfit of branch pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "328.4.3 K328.4.3",
+   "table_fig_app": "328.4.3-1 K328.5.4-1",
+   "equation": null,
+   "pdf_page": 493
+  },
+  {
+   "symbol": "m",
+   "definition": "Welded joint fatigue curve exponent",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": "W301-1 W302.1-1 W302.1-2 W302.1-3",
+   "equation": "(W1) (W8) (W9)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "N",
+   "definition": "Equivalent number of full displacement cycles",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "300.2 302.3.5 K304.8.1",
+   "table_fig_app": "302.3.5-1",
+   "equation": "(1c) (1d)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Nd",
+   "definition": "Design number of pipe stress cycles",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": null,
+   "table_fig_app": null,
+   "equation": "(W7) (W8)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "NE",
+   "definition": "Number of cycles of maximum computed displacement stress range",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.5",
+   "table_fig_app": null,
+   "equation": "(1d)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Ni",
+   "definition": "Number of cycles associated with displacement stress range, Si (i = 1, 2, …)",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.5",
+   "table_fig_app": null,
+   "equation": "(1d)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Ni",
+   "definition": "Number of cycles for loading condition i",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": "(W2)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Nti",
+   "definition": "Allowable number of cycles for loading condition i",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.1",
+   "table_fig_app": "W302.1-3",
+   "equation": "(W1) (W2)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "Nw",
+   "definition": "Design storm wave height associated cycles",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "W302.2",
+   "table_fig_app": null,
+   "equation": "(W4) (W6) (W8)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "n",
+   "definition": "Slope of log time to rupture versus log stress plot at 100 000 h",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.2",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 493
+  },
+  {
+   "symbol": "P",
+   "definition": "Internal design gage pressure",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "304.1.1 304.1.2 304.2.1 304.4.1 304.5.1 304.5.2 304.5.3 345.4.2 A304.1.1 A304.1.2 A304.5.1 H302 K304.1.2 K304.7.2 K304.8.3 K345.4.2 S301.2",
+   "table_fig_app": null,
+   "equation": "(3a) (3b) (3c) (15) (24) (26a) (26b) (26c) (34a) (34b) (35a) (35b) (37) (38)",
+   "pdf_page": 493
+  },
+  {
+   "symbol": "PD",
+   "definition": "Maximum operating pressure at operating temperature for the condition being analyzed",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "F312.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Pa2",
+   "definition": "See ASME BPVC, Section VIII, Division 1, UG-28",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "304.1.3",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "PI",
+   "definition": "Gage pressure during service condition i",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "V303.1.1 V303.2",
+   "table_fig_app": null,
+   "equation": "(V1)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Pj",
+   "definition": "Piping internal gage pressure for the condition being considered; the as-installed and operating conditions are subscripted as j = 1, 2, 3, …",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "320.2 S300.1 S301 S302 S303",
+   "table_fig_app": "S301.1-1 S301.3.-1 S302.1-1 S302.6.2-1",
+   "equation": "(23d)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Pm",
+   "definition": "Maximum allowable internal pressure for miter bends",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "304.2.3",
+   "table_fig_app": null,
+   "equation": "(4a) (4b) (4c)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Pmax",
+   "definition": "Maximum allowable gage pressure for continuous operation of component at maximum design temperature",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "V303.1.1 V304",
+   "table_fig_app": null,
+   "equation": "(V1)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "PR",
+   "definition": "Flange pressure rating at design temperature",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "F312.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "PS",
+   "definition": "Limiting design pressure based on column instability, for convoluted U-shaped bellows",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "X302.2.3",
+   "table_fig_app": null,
+   "equation": "(X1)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "PT",
+   "definition": "Minimum test gage pressure",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "345.4.2 A382.2.5 K345.4.2 X302.2.3",
+   "table_fig_app": null,
+   "equation": "(24) (27) (38) (X1)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "q",
+   "definition": "Temporary symbol for D/t",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "H302",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "q",
+   "definition": "Weibull stress range scale distribution factor",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": null,
+   "table_fig_app": null,
+   "equation": "(W3) (W4)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "R",
+   "definition": "Range of reaction forces or moments in flexibility analysis",
+   "units_si": "N or N- mm",
+   "units_us_customary": "lbf or in.-lbf",
+   "paragraph": "319.5.1",
+   "table_fig_app": null,
+   "equation": "(21)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "R1",
+   "definition": "Effective radius of miter bend",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.2.3",
+   "table_fig_app": "304.2.3-1",
+   "equation": "(4b) (5)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "R1",
+   "definition": "Bend radius of welding elbow or pipe bend",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.2.1",
+   "table_fig_app": "304.2.1-1",
+   "equation": "(3d) (3e)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Ra",
+   "definition": "Estimated instantaneous reaction force or moment at installation temperature",
+   "units_si": "N or N- mm",
+   "units_us_customary": "lbf or in.-lbf",
+   "paragraph": "319.5.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Ra",
+   "definition": "Roughness average",
+   "units_si": "μm",
+   "units_us_customary": "μin.",
+   "paragraph": "K302.3.3",
+   "table_fig_app": "302.3.3-1 341.3.2-1 K341.3.2-1",
+   "equation": null,
+   "pdf_page": 494
+  },
+  {
+   "symbol": "Rm",
+   "definition": "Estimated instantaneous maximum reaction force or moment at maximum or minimum metal temperature",
+   "units_si": "N or N- mm",
+   "units_us_customary": "lbf or in.-lbf",
+   "paragraph": "319.5.1",
+   "table_fig_app": null,
+   "equation": "(21)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "RT",
+   "definition": "Ratio of the average temperature-dependent trend curve value of tensile strength to the room temperature tensile strength",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.2 K302.3.2",
+   "table_fig_app": null,
+   "equation": "(31d)",
+   "pdf_page": 494
+  },
+  {
+   "symbol": "RY",
+   "definition": "Ratio of the average temperature-dependent trend curve value of yield strength to the room temperature yield strength",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.2 K302.3.2",
+   "table_fig_app": null,
+   "equation": "(31c)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "r",
+   "definition": "Corner radius of lap joint stub end or fabricated lap",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "308.2.1",
+   "table_fig_app": "328.5.5-1",
+   "equation": null,
+   "pdf_page": 495
+  },
+  {
+   "symbol": "r2",
+   "definition": "Mean radius of pipe using nominal wall thickness, T",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.2.3 319.4.4",
+   "table_fig_app": "304.2.3-1",
+   "equation": "(4a) (4b) (4c)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "ri",
+   "definition": "Ratio of lesser computed displacement stress range, Si, to maximum computed stress range, SE (i = 1, 2, …)",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "302.3.5",
+   "table_fig_app": null,
+   "equation": "(1d)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "rx",
+   "definition": "External contour radius of extruded outlet",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": "(12)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "S",
+   "definition": "Basic allowable stress for metals",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "300.2 302.3.1 302.3.5 304.1.1 304.1.2 304.1.3 304.2.1 304.2.3 304.3.3 304.4.1 304.5.1 304.5.2 304.5.3 304.7.2 345.4.2 H300 S301.2 V304",
+   "table_fig_app": "A-1 A-1C",
+   "equation": "(3a) (3b) (3c) (4a) (4b) (4c) (15) (24)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "S",
+   "definition": "Bolt design stress",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "300.2 302.3.1",
+   "table_fig_app": "A-4 A-4C",
+   "equation": null,
+   "pdf_page": 495
+  },
+  {
+   "symbol": "S",
+   "definition": "Design stress for nonmetals",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "A302.3.1 A304.1.1 A304.1.2 A304.5.2 A345.4.2",
+   "table_fig_app": "B-1 B-1C",
+   "equation": "(26a) (26b) (26c)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "S",
+   "definition": "Allowable stress for metals",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "K302.3.2 K304.1.2 K304.5.3 K304.7.2 K345.4.2",
+   "table_fig_app": "K-1 K-1C",
+   "equation": "(31a) (31b) (34a) (34b) (35a) (35b) (38)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "S",
+   "definition": "Stress intensity",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "K304.8.3",
+   "table_fig_app": null,
+   "equation": "(37)",
+   "pdf_page": 495
+  },
+  {
+   "symbol": "SA",
+   "definition": "Allowable displacement stress range",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "300.2 302.3.5 319.2.3 319.3.4 319.4.1 319.4.4 K302.3.5 S301.7 S303.8",
+   "table_fig_app": "S301.7-1 S303.7-1 S303.7-2 S303.7-3",
+   "equation": "(1a) (1b) (16) (32)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sa",
+   "definition": "Bolt design stress at atmospheric temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "304.5.1 A304.5.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sa",
+   "definition": "Axial stress range due to displacement strains",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sa",
+   "definition": "Stress due to sustained longitudinal force",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23a) (23d)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Saw",
+   "definition": "Allowable maximum probable stress range during Nw wave cycles",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.2 W305.3.2",
+   "table_fig_app": null,
+   "equation": "(W4) (W8)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sb",
+   "definition": "Bolt design stress at design temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "304.5.1 A304.5.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sb",
+   "definition": "Bending stress range due to displacement strains",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17) (18)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sb",
+   "definition": "Stress due to sustained bending moments",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23a) (23b)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sc",
+   "definition": "Basic allowable stress at minimum metal temperature expected during the displacement cycle under analysis",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.5 K302.3.5 S301.7",
+   "table_fig_app": null,
+   "equation": "(1a) (1b) (32)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "Sd",
+   "definition": "Allowable stress from Table A-1 (Table A-1C) for the material at design temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "V303.1.1 V304",
+   "table_fig_app": null,
+   "equation": "(V1)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "SE",
+   "definition": "Computed displacement stress range",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "300.2 302.3.5 319.2.3 319.4.4 319.5.1 K302.3.5 S301.7 S303.7",
+   "table_fig_app": "S301.7-1 S303.7-1 S303.7-2 S303.7-3",
+   "equation": "(17) (22)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "SEi",
+   "definition": "Computed displacement stress range for condition i corresponding to cycles Ni",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.1",
+   "table_fig_app": "W302.1-1 W302.1-2",
+   "equation": "(W1)",
+   "pdf_page": 496
+  },
+  {
+   "symbol": "SEi, max",
+   "definition": "Computed maximum displacement stress for condition i corresponding to stress range SEi and cycles Ni",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 496
+  },
+  {
+   "symbol": "SEi, min",
+   "definition": "Computed minimum displacement stress for condition i corresponding to stress range SEi and cycles Ni",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 496
+  },
+  {
+   "symbol": "SEW",
+   "definition": "Computed maximum stress range due to wave motion",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.2 W305.1",
+   "table_fig_app": null,
+   "equation": "(W3)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "SF",
+   "definition": "Separation distance between the outer extent of a flaw and the nearest surface",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "R307",
+   "table_fig_app": "R307-1",
+   "equation": null,
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Sf",
+   "definition": "Allowable stress for flange material or pipe",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "304.5.1 A304.5.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 497
+  },
+  {
+   "symbol": "SH",
+   "definition": "Mean long-term hydrostatic strength (LTHS)",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "A328.2.5",
+   "table_fig_app": null,
+   "equation": "(27)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Sh",
+   "definition": "Basic allowable stress at maximum metal temperature expected during the displacement cycle under analysis",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.5 319.5.1 K302.3.5 S301.6 S301.7",
+   "table_fig_app": "S301.6-1 S302.6.3-1",
+   "equation": "(1a) (1b) (22) (32)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Si",
+   "definition": "A computed displacement stress range smaller than SE (i = 1, 2, …)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.5",
+   "table_fig_app": null,
+   "equation": "(1d)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Si",
+   "definition": "Equivalent stress during service condition, i (the higher of Spi and SL)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "V303.1.1 V303.1.2 V304",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 497
+  },
+  {
+   "symbol": "SL",
+   "definition": "Stress due to sustained loads",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.5 302.3.6 320.1 320.2 K302.3.5 K302.3.6 S301.3 S301.6 S301.7 S302.6.1 S302.6.3 S303.6 V303.1.1 V303.1.4 V304",
+   "table_fig_app": "S301.6-1 S302.6.3-1 S303.7-3",
+   "equation": "(1b) (23a)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Spi",
+   "definition": "Equivalent stress for pressure during service condition, i",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "V303.1.1 V304",
+   "table_fig_app": null,
+   "equation": "(V1)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "SS",
+   "definition": "Mean short-term burst stress",
+   "units_si": "kPa",
+   "units_us_customary": "psi",
+   "paragraph": "A328.2.5",
+   "table_fig_app": null,
+   "equation": "(27)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "ST",
+   "definition": "Specified minimum tensile strength at room temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.2 K302.3.2",
+   "table_fig_app": null,
+   "equation": "(31d)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "ST",
+   "definition": "Allowable stress at test temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "345.4.2 A345.4.2 K345.4.2",
+   "table_fig_app": null,
+   "equation": "(24) (38)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "St",
+   "definition": "Torsional stress range due to displacement strains",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(17)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "St",
+   "definition": "Stress due to sustained torsional moment",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(23a) (23c)",
+   "pdf_page": 497
+  },
+  {
+   "symbol": "Sut",
+   "definition": "Tensile strength at temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "K302.3.2",
+   "table_fig_app": null,
+   "equation": "(31b) (31d)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "SY",
+   "definition": "Specified minimum yield strength at room temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.3.2 K302.3.2 K328.2.1",
+   "table_fig_app": null,
+   "equation": "(31c)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Sy",
+   "definition": "Yield strength (ASME BPVC)",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "302.2.4",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Syi",
+   "definition": "Yield strength of the component under consideration for condition i",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "SyT",
+   "definition": "Yield strength at test temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "X302.2.3",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Syt",
+   "definition": "Yield strength at temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "K302.3.1 K302.3.2 K304.7.2 K304.8.3 K345.2.1",
+   "table_fig_app": null,
+   "equation": "(31a) (31b) (31c)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Syt",
+   "definition": "Yield strength at bellows design temperature",
+   "units_si": "MPa",
+   "units_us_customary": "ksi",
+   "paragraph": "X302.2.3",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "T",
+   "definition": "Pipe wall thickness (measured or minimum in accordance with purchase specification)",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.1.1 304.2.3 306.4.2 A304.1.1 K304.1.1 K304.1.2 K304.8.3 S301.2 S301.7",
+   "table_fig_app": "302.3.3-2 304.2.3-1 323.3.1-1 K323.3.1-1",
+   "equation": "(4a) (4b) (4c) (35a) (35b) (37)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "T1",
+   "definition": "Maximum temperature (for stress analysis)",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": "S301.7 S302.5",
+   "table_fig_app": "S301.3-1",
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "T2",
+   "definition": "Minimum temperature (for stress analysis)",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": "S301.7 S302.5",
+   "table_fig_app": "S301.3-1",
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "T2",
+   "definition": "Minimum thickness of fabricated lap",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": null,
+   "table_fig_app": "328.5.5-1",
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Tb",
+   "definition": "Branch pipe wall thickness (measured or minimum in accordance with purchase specification)",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(8) (11) (12)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Tcr",
+   "definition": "Critical temperature",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": 300.2,
+   "table_fig_app": "302.3.5-1",
+   "equation": null,
+   "pdf_page": 498
+  },
+  {
+   "symbol": "TE",
+   "definition": "Effective temperature for service condition, i [temperature corresponding to Si, Table A-1 (Table A-1C)]",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": "V303.1.2 V303.1.3 V304",
+   "table_fig_app": null,
+   "equation": "(V2)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "TE",
+   "definition": "Effective component thickness at weld joint",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "W302.1",
+   "table_fig_app": "W302.1-1 W302.1-2",
+   "equation": "(W1) (W9)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Th",
+   "definition": "Header pipe wall thickness (measured or minimum in accordance with purchase specification)",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.1 304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(7) (10)",
+   "pdf_page": 498
+  },
+  {
+   "symbol": "Ti",
+   "definition": "Temperature of the component for the coincident operating pressure–temperature condition, i, under consideration",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": "V303.1.4 V303.2",
+   "table_fig_app": "302.3.5-1",
+   "equation": "(V3)",
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tj",
+   "definition": "Pipe metal temperature for the condition being considered; the as-installed and operating conditions are subscripted as j = 1, 2, 3, …",
+   "units_si": "°C",
+   "units_us_customary": "°F",
+   "paragraph": "S300.1 S301 S302 S303",
+   "table_fig_app": "S301.1-1 S301.3-1 S302.1-1",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tr",
+   "definition": "Minimum thickness of reinforcing ring or saddle made from pipe (nominal thickness if made from plate) and for integral branch connections the height of the largest 60-deg right triangle lying completely within the area of integral reinforcement",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3 H304 H312 H314",
+   "table_fig_app": "304.3.3-1",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Ts",
+   "definition": "Effective branch wall thickness",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tx",
+   "definition": "Corroded finished thickness of extruded outlet",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.4",
+   "table_fig_app": "304.3.4-1",
+   "equation": "(12)",
+   "pdf_page": 499
+  },
+  {
+   "symbol": "T",
+   "definition": "Nominal wall thickness of pipe",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "A328.2.5 S301.2 V304",
+   "table_fig_app": "323.2.2-1 328.5.2-2 328.5.2-3 328.5.5-1 K302.3.3-1",
+   "equation": "(27)",
+   "pdf_page": 499
+  },
+  {
+   "symbol": "T",
+   "definition": "Component nominal thickness at welded joint",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "W302.1",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tb",
+   "definition": "Nominal branch pipe wall thickness",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "319.4.4 328.5.4 331.1.3",
+   "table_fig_app": "304.3.3-1 328.5.4-2 328.5.4-4 App. H",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Th",
+   "definition": "Nominal header pipe wall thickness",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "319.4.4 328.5.4 331.1.3",
+   "table_fig_app": "304.3.3-1 328.5.4-2",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tm",
+   "definition": "Nominal thickness of branch weld for integrally reinforced branch connection fittings [see para. 328.5.4(c) for further details]",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "328.5.4(c) 331.1.3",
+   "table_fig_app": "328.5.4-4",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tr",
+   "definition": "Nominal thickness of reinforcing ring or saddle",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "328.5.4 331.1.3 H302",
+   "table_fig_app": "328.5.4-2",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "Tw",
+   "definition": "Nominal wall thickness, thinner of components joined by butt weld",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "344.6.2 R304 R307 R308",
+   "table_fig_app": "341.3.2-1 K341.3.2-1 R307-1 R308-1 R308-2",
+   "equation": null,
+   "pdf_page": 499
+  },
+  {
+   "symbol": "t",
+   "definition": "Pressure design thickness",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.1.1 304.1.2 304.1.3 304.2.1 304.3.3 304.4.1 304.5.2 A304.1.1 A304.1.2 A304.1.3 K304.1.1 K304.1.2 K304.1.3 K304.5.2 S301.2",
+   "table_fig_app": "304.1.1-1 Notes for Tables A-1 and A-1C",
+   "equation": "(2) (3a) (3b) (3c) (13) (14) (25) (26a) (26b) (26c) (33) (34a) (34b) (36)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "tb",
+   "definition": "Pressure design thickness of branch",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(8) (11)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "tc",
+   "definition": "Throat thickness of cover fillet weld",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "328.5.4 331.1.3",
+   "table_fig_app": "328.5.4-2 328.5.4-4 App. H",
+   "equation": null,
+   "pdf_page": 500
+  },
+  {
+   "symbol": "th",
+   "definition": "Pressure design thickness of header",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.3.3 304.3.4",
+   "table_fig_app": "304.3.3-1 304.3.4-1 App. H",
+   "equation": "(6) (7) (9) (10)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "ti",
+   "definition": "Total duration of service condition, i, at pressure, Pi, and temperature, Ti",
+   "units_si": "h",
+   "units_us_customary": "hr",
+   "paragraph": "V303.2 V304",
+   "table_fig_app": null,
+   "equation": "(V4)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "tm",
+   "definition": "Minimum required thickness, including mechanical, corrosion, and erosion allowances",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "304.1.1 304.2.1 304.4.1 304.5.2 304.5.3 328.4.2 A304.1.1 A304.2.1 K304.1.1 K304.2.1 K304.5.2 K328.4.2 S301.2",
+   "table_fig_app": "304.5.3-1 328.3.2-1 328.4.2-2 K341.3.2-1 U304.5.3-1",
+   "equation": "(2) (13) (14) (15) (25) (33) (36)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "tmin",
+   "definition": "For branch, the smaller of Tb or Tr",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "328.5.4",
+   "table_fig_app": "328.5.4-2",
+   "equation": null,
+   "pdf_page": 500
+  },
+  {
+   "symbol": "tri",
+   "definition": "Rupture life of a component subjected to repeated service conditions, i, and stress, Si",
+   "units_si": "h",
+   "units_us_customary": "hr",
+   "paragraph": "V303.1.4 V303.2 V304",
+   "table_fig_app": null,
+   "equation": "(V3) (V4)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "U",
+   "definition": "Straight line distance between anchors",
+   "units_si": "m",
+   "units_us_customary": "ft",
+   "paragraph": "319.4.1",
+   "table_fig_app": null,
+   "equation": "(16)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "u",
+   "definition": "Creep-rupture usage factor, summed up from individual usage factors, ti/tri",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "V303.2 V303.3 V304",
+   "table_fig_app": null,
+   "equation": "(V4)",
+   "pdf_page": 500
+  },
+  {
+   "symbol": "Va",
+   "definition": "Average zero-crossing frequency",
+   "units_si": "Hz",
+   "units_us_customary": "Hz",
+   "paragraph": "W302.2 W302.3",
+   "table_fig_app": null,
+   "equation": "(W6) (W7)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "W",
+   "definition": "Weld joint strength reduction factor",
+   "units_si": null,
+   "units_us_customary": ". .",
+   "paragraph": "302.2.2 302.3.5 304.1.1 304.1.2 304.2.1 304.2.3 304.3.3 304.4.1 304.5.1 304.5.2 304.5.3 V303.1.1 V304",
+   "table_fig_app": "302.3.5-1 App. H",
+   "equation": "(3a) (3b) (3c) (4a) (4b) (4c) (15)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "X1",
+   "definition": "Ring reinforcement area",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "H304",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "X2",
+   "definition": "Fillet weld reinforcement area",
+   "units_si": "mm2",
+   "units_us_customary": "in.2",
+   "paragraph": "H304",
+   "table_fig_app": null,
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "xmin",
+   "definition": "Size of fillet weld to slip-on or socket welding flange",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": null,
+   "table_fig_app": "328.5.2-2",
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "Y",
+   "definition": "Coefficient for effective stressed diameter",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "304.1.1 304.1.2 S301.2 V304",
+   "table_fig_app": "304.1.1-1",
+   "equation": "(3a) (3b) (3c)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "Y+",
+   "definition": "Single acting support — a pipe support that provides support to the piping system in only the vertically upward direction",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": "S300.1 S302 S302.1 S302.6.2",
+   "table_fig_app": "S302.5-1 S302.6.3-1",
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "y",
+   "definition": "Resultant of total displacement",
+   "units_si": "mm",
+   "units_us_customary": "in.",
+   "paragraph": "319.4.1",
+   "table_fig_app": null,
+   "equation": "(16)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "Z",
+   "definition": "Section modulus of pipe",
+   "units_si": "mm3",
+   "units_us_customary": "in.3",
+   "paragraph": "319.4.4",
+   "table_fig_app": null,
+   "equation": "(18)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "Z",
+   "definition": "Sustained section modulus of pipe",
+   "units_si": "mm3",
+   "units_us_customary": "in.3",
+   "paragraph": 320.2,
+   "table_fig_app": null,
+   "equation": "(21b) (23c)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "α",
+   "definition": "Angle of change in direction at miter joint",
+   "units_si": "deg",
+   "units_us_customary": "deg",
+   "paragraph": "304.2.3 306.3.2 306.3.3 M306.3",
+   "table_fig_app": "304.2.3-1",
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "β",
+   "definition": "Smaller angle between axes of branch and run",
+   "units_si": "deg",
+   "units_us_customary": "deg",
+   "paragraph": "304.3.1 304.3.3",
+   "table_fig_app": "304.3.3-1",
+   "equation": "(6) (8)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "Γ",
+   "definition": "Gamma function",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": null,
+   "table_fig_app": "W301-1",
+   "equation": "(W8)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "γ",
+   "definition": "Span of the pipe bend",
+   "units_si": "deg",
+   "units_us_customary": "deg",
+   "paragraph": "304.2.1",
+   "table_fig_app": "304.2.1-1",
+   "equation": null,
+   "pdf_page": 501
+  },
+  {
+   "symbol": "θ",
+   "definition": "Angle of miter cut",
+   "units_si": "deg",
+   "units_us_customary": "deg",
+   "paragraph": "304.2.3",
+   "table_fig_app": "304.2.3-1",
+   "equation": "(4a) (4c) (5)",
+   "pdf_page": 501
+  },
+  {
+   "symbol": "σ",
+   "definition": "Standard deviation",
+   "units_si": null,
+   "units_us_customary": null,
+   "paragraph": null,
+   "table_fig_app": "W302.1-1 W302.1-2",
+   "equation": null,
+   "pdf_page": 502
+  }
+ ]
+}

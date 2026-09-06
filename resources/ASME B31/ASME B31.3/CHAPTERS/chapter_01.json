@@ -1,0 +1,519 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "I",
+ "chapter_number": 1,
+ "title": "Scope and Definitions",
+ "pdf_pages": [
+  34,
+  43
+ ],
+ "section_count": 10,
+ "paragraph_count": 66,
+ "equation_count": 0,
+ "word_count": 1717,
+ "tables": [
+  "Table 300.4-1"
+ ],
+ "figures": [
+  "Figure 300.1.1-1"
+ ],
+ "preamble": [],
+ "sections": [
+  {
+   "kind": "section",
+   "id": "300",
+   "heading": "GENERAL STATEMENTS",
+   "page": 34,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Identification This Process Piping Code is a Section of The American Society of Mechanical Engineers Code for Pressure Piping, ASME B31, an American National Standard. It is published as a separate document for convenience of Code users."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Responsibilities"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) Owner. The owner of a piping installation shall have overall responsibility for compliance with this Code, and for establishing the requirements for design and construction that will govern the entire fluid handling or process installation of which the piping is a part. The owner is also responsible for designating piping in Category D, Category M, High Pressure, and High Purity Fluid Services, and for determining if a specific Quality System is to be employed. [See (d)(4) through (d)(7) and Appendix Q.] Where applicable, the owner shall consider requirements imposed by the authority having jurisdiction regarding the piping installation. The owner may designate a representative to carry out selected responsibilities required by this Code, but the owner retains ultimate responsibility for the actions of the representative."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) Designer. The designer is responsible to the owner for assurance that the engineering design of piping complies with the requirements of this Code and with any additional requirements established by the owner."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) Manufacturer, Fabricator, and Erector. The manufacturer, fabricator, and erector of piping are responsible for providing materials, components, and workmanship in compliance with the requirements of this Code and of the engineering design."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) Owner’s Inspector. The owner’s Inspector (see para. 340) is responsible to the owner for ensuring that the requirements of this Code for inspection, examination, and testing are met. If a Quality System is specified by the owner to be employed, the owner’s Inspector is responsible for verifying that it is implemented."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Intent of the Code"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) It is the intent of this Code to set forth engineering requirements deemed necessary for safe design and construction of piping installations."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) This Code is not intended to apply to the operation, examination, inspection, testing, maintenance, or repair of piping that has been placed in service. See para. F300.1 for examples of standards that may apply in these situations. The provisions of this Code may optionally be applied for those purposes, although other considerations may also be necessary."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) The Code generally specifies a simplified approach for many of its requirements. A designer may choose to use a more rigorous analysis to develop design, materials, fabrication, assembly, erection, examination, and testing requirements. When the designer decides to take this approach, the designer shall provide to the owner details and calculations demonstrating that the proposed design, materials, fabrication, assembly, erection, examination, and testing requirements are consistent with the criteria of this Code, including the design criteria described in para. 302. These details shall be adequate for the owner to verify the validity of the approach. The approach may be implemented following approval by the owner. The details and calculations shall be documented in the engineering design."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) Piping elements shall conform to the specifications and standards listed in this Code or, if not prohibited by this Code, shall be qualified for use as set forth in applicable Chapters of this Code."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) The engineering design shall specify any unusual requirements for a particular service. Where service requirements necessitate measures beyond those required by this Code, such measures shall be specified by the engineering design. Where so specified, the Code requires that they be accomplished."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) Compatibility of materials with the service and hazards from instability of contained fluids are not within the scope of this Code. See para. F323."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Determining Code Requirements"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) Code requirements for design and construction include fluid service requirements, which affect selection and application of materials, components, and joints. Fluid service requirements include prohibitions, limitations, and conditions, such as temperature limits or a requirement for safeguarding (see Appendix G). Code requirements for a piping system are the most restrictive of those that apply to any of its elements."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) For metallic piping not designated by the owner as Category M, High Pressure, or High Purity Fluid Service (see para. 300.2 and Appendix M), Code requirements are found in Chapters I through VI (the base Code) and fluid service requirements are found in"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(-a)",
+     "indent": 3,
+     "text": "(-a) Chapter III for materials"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(-b)",
+     "indent": 3,
+     "text": "(-b) Chapter II, Part 3, for components"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(-c)",
+     "indent": 3,
+     "text": "(-c) Chapter II, Part 4, for joints"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) For nonmetallic piping and piping lined with nonmetals, all requirements are found in Chapter VII. Paragraph designations begin with “A.”"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) For piping in a fluid service designated as Category M, all requirements are found in Chapter VIII. Paragraph designations begin with “M.”"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) For piping in a fluid service designated as Category D, piping elements restricted to Category D Fluid Service in Chapters I through VII, as well as elements suitable for other fluid services, may be used."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) For piping designated as High Pressure Fluid Service, all requirements are found in Chapter IX. These rules apply only when specified by the owner. Paragraph designations begin with “K.”"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(7)",
+     "indent": 2,
+     "text": "(7) For piping designated as High Purity Fluid Service, all requirements are found in Chapter X. Paragraph designations begin with “U.”"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(8)",
+     "indent": 2,
+     "text": "(8) Requirements for Normal Fluid Service in Chapters I through VI are applicable under severe cyclic conditions unless alternative requirements for severe cyclic conditions are stated."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(9)",
+     "indent": 2,
+     "text": "(9) Requirements for Normal Fluid Service in Chapters I through VI are applicable for Elevated Temperature Fluid Service unless alternative requirements for Elevated Temperature Fluid Service are invoked."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) Appendices. Appendices of this Code contain Code requirements, supplementary guidance, or other information. See para. 300.4 for a description of the status of each Appendix."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) Code Cases. ASME issues Code Cases that are applicable to this Code. The Code Cases"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) modify the requirements of this Code"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) are applicable from the issue date until the Cases are annulled"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) may be used only when approved by the owner. When so approved, the Code Cases shall be specified in the engineering design and become requirements of this Code."
+    }
+   ],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "300.1",
+     "heading": "Scope",
+     "page": 35,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Rules for the Process Piping Code Section B31.31 have been developed considering piping typically found in petroleum refineries; onshore and offshore petroleum and natural gas production facilities; chemical, pharmaceutical, textile, paper, ore processing, semiconductor, and cryogenic plants; food and beverage processing facilities; and related processing plants and terminals."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "1 B31 references here and elsewhere in this Code are to the ASME B31 Code for Pressure Piping and its various Sections, which are identified and briefly described in the Introduction."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "300.1.1",
+       "heading": "Content and Coverage",
+       "page": 35,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) This Code prescribes requirements for materials and components, design, fabrication, assembly, erection, examination, inspection, and testing of piping."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) This Code applies to piping for all fluids, including"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) raw, intermediate, and finished chemicals"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) petroleum products"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) gas, steam, air, and water"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(4)",
+         "indent": 2,
+         "text": "(4) fluidized solids"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(5)",
+         "indent": 2,
+         "text": "(5) refrigerants"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(6)",
+         "indent": 2,
+         "text": "(6) cryogenic fluids"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) See Figure 300.1.1-1 for a diagram illustrating the application of B31.3 piping at equipment. The joint connecting piping to equipment is within the scope of B31.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "300.1.2",
+       "heading": "Packaged Equipment Piping.",
+       "page": 35,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "Also included within the scope of this Code is piping that interconnects pieces or stages within a packaged equipment assembly."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "300.1.3",
+       "heading": "Exclusions.",
+       "page": 35,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "This Code excludes the following:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) piping systems designed for internal gage pressures at or above zero but less than 105 kPa (15 psi), provided the fluid handled is nonflammable, nontoxic, and not damaging to human tissues as defined in 300.2, and its design temperature is from −29°C (−20°F) through 186°C (366°F)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) power boilers in accordance with ASME BPVC,2 Section I and boiler external piping that is required to conform to ASME B31.1"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) tubes, tube headers, crossovers, and manifolds of fired heaters that are internal to the heater enclosure"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) pressure vessels, heat exchangers, pumps, compressors, and other fluid handling or processing equipment, including internal piping and connections for external piping"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "300.1.4",
+       "heading": "Units of Measure.",
+       "page": 35,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "This Code states values in both SI and U.S. Customary units. Within the text, the U.S. Customary units are shown in parentheses or in separate tables. The values stated in each system are not exact equivalents; therefore, each system of units should be used independently of the other."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "When separate equations are provided for SI and U.S. Customary units, those equations shall be executed using variables in the units associated with the specific equation."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "2 ASME BPVC references here and elsewhere in this Code are to the ASME Boiler and Pressure Vessel Code and its various Sections as follows:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section I, Rules for Construction of Power Boilers"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section II, Materials, Parts C and D"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section III, Rules for Construction of Nuclear Facility Components, Division 1, Subsection NH"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section V, Nondestructive Examination"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section VIII, Rules for Construction of Pressure Vessels, Divisions 1, 2, and 3"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Section IX, Welding, Brazing, and Fusing Qualifications GENERAL NOTE: The means by which piping is attached to equipment is within the scope of the applicable piping code. The results obtained from execution of these equations may be converted to other units."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "When necessary to convert from one system of units to another, conversion should be made by rounding the values to the number of significant digits of implied precision in the starting value but not less than four significant digits for use in calculations."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "300.1.5",
+       "heading": "Rounding.",
+       "page": 36,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "The rules described in this paragraph apply unless otherwise specified in the Code or the engineering design. For purposes of determining conformance with specified limits in this Code, an observed value"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "3 ASTM E29. Standard Practice for Using Significant Digits in Test Data to Determine Conformance with Specifications. ASTM International. the digits dropped are exactly a 5 or a 5 followed only by zeros, choose that ending in an even digit."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) expressed as a fractional inch shall meet the Code requirement when the measured value is within 1∕64 in. of the requirement."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See Appendix F, para. F300.1.5."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "300.2",
+     "heading": "Definitions",
+     "page": 36,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Some of the terms relating to piping are defined below. For welding, brazing, and soldering terms not shown here, definitions in accordance with AWS Standard A3.04 apply."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "4 AWS A3.0M/A3.0. Standard Welding Terms and Definitions, Including Terms for Adhesive Bonding, Brazing, Soldering, Thermal Cutting and Thermal Spraying. American Welding Society."
+      }
+     ],
+     "sections": [],
+     "definitions_file": "definitions.json",
+     "definition_note": "The defined terms of para. 300.2 are extracted separately, one entry per term, in definitions.json."
+    },
+    {
+     "kind": "section",
+     "id": "300.3",
+     "heading": "Nomenclature",
+     "page": 43,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Dimensional and mathematical symbols used in this Code are listed in Appendix J, with definitions and location references to each. Uppercase and lowercase English letters are listed alphabetically, followed by Greek letters."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "300.4",
+     "heading": "Status of Appendices",
+     "page": 43,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Table 300.4-1 indicates for each Appendix of this Code whether it contains Code requirements, guidance, or supplemental information. See the first page of each Appendix for details."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  }
+ ]
+}

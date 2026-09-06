@@ -1,0 +1,1022 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "III",
+ "chapter_number": 3,
+ "title": "Materials",
+ "pdf_pages": [
+  83,
+  94
+ ],
+ "section_count": 24,
+ "paragraph_count": 128,
+ "equation_count": 0,
+ "word_count": 3519,
+ "tables": [
+  "Table 323.2.2-1",
+  "Table 323.2.2-2",
+  "Table 323.2.2-3",
+  "Table 323.3.1-1",
+  "Table 323.3.4-1",
+  "Table 323.3.5-1"
+ ],
+ "figures": [
+  "Figure 323.2.2-1",
+  "Figure 323.2.2-2"
+ ],
+ "preamble": [],
+ "sections": [
+  {
+   "kind": "section",
+   "id": "323",
+   "heading": "GENERAL REQUIREMENTS",
+   "page": 83,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Chapter III states limitations and required qualifications for materials based on their inherent properties. Their use in piping is also subject to requirements and limitations in other parts of this Code [see para. 300(d)]. See also para. 321.1.4 for support materials, and Appendix F, para. F323, for precautionary considerations."
+    }
+   ],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "323.1",
+     "heading": "Materials and Specifications",
+     "page": 83,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "323.1.1",
+       "heading": "Listed Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "Any material used in pressure-containing piping components shall conform to a listed specification except as provided in para. 323.1.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.1.2",
+       "heading": "Unlisted Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "Unlisted materials may be used provided they conform to a published specification covering chemistry, physical and mechanical properties, method and process of manufacture, heat treatment, and quality control, and otherwise meet the requirements of this Code. See also ASME BPVC, Section II, Part D, Appendix 5. Allowable stresses shall be determined in accordance with the applicable allowable stress basis of this Code or a more conservative basis."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.1.3",
+       "heading": "Unknown Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "Materials of unknown specification shall not be used for pressure-containing piping components."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.1.4",
+       "heading": "Reclaimed Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "Reclaimed pipe and other piping components may be used, provided they are properly identified as conforming to a listed or published specification (para. 323.1.1 or para. 323.1.2) and otherwise meet the requirements of this Code. Sufficient cleaning and inspection shall be made to determine minimum wall thickness and freedom from imperfections that would be unacceptable in the intended service."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "323.2",
+     "heading": "Temperature Limitations",
+     "page": 83,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The designer shall verify that materials that meet other requirements of the Code are suitable for service throughout the operating temperature range."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "323.2.1",
+       "heading": "Upper Temperature Limits, Listed Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 0,
+         "text": "A listed material may be used at a temperature above the maximum for which a stress value or rating is shown, only if"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) there is no prohibition in Appendix A or elsewhere in the Code"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) the designer verifies the serviceability of the material in accordance with para. 323.2.4"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.2.2",
+       "heading": "Lower Temperature Limits, Listed Materials.",
+       "page": 83,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 0,
+         "text": "Listed materials shall be tested as described in Table 323.2.2-1 except as exempted by (d) through (j). See Appendix F, para. F323.2.2."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) The allowable stress or component rating at any temperature colder than the minimum shown in Table A-1 (Table A-1C) or Figure 323.2.2-1 shall not exceed the stress value or rating at the minimum temperature in Table A-1 (Table A-1C), or the component standard."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) The stress ratio is used in Figure 323.2.2-2 to determine the allowable reduction in the impact test exemption temperature. The stress ratio is defined as the maximum of the following:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) circumferential pressure stress for the condition under consideration (based on minimum pipe wall thickness less allowances) divided by the basic allowable stress at the condition under consideration."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) for piping components with pressure ratings, the pressure for the condition under consideration divided by the pressure rating at the condition under consideration."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) combined stress due to pressure, dead loads, live loads, and displacement strain for the condition under consideration divided by the basic allowable stress at the condition under consideration. In calculating this combined stress, the forces and moments in the piping system for these combined sustained loads and displacement strains shall be calculated using nominal dimensions, and the stresses shall be calculated using eqs. (23a) through (23d) with all of the stress indices taken as 1.0 (Ia = Ii = Io = It = 1.0) and using section properties based on the nominal dimensions less corrosion, erosion, and mechanical allowances. Also see Appendix F, para. F323.2.2."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Minimum impact test exemption temperature reduction may be used only when all of the following apply:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) The piping is not in Elevated Temperature Fluid Service."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Local stresses caused by shock loading, thermal bowing, and differential expansion between dissimilar metals (e.g., austenitic welded to ferritic) are less than 10% of the basic allowable stresses at the condition under consideration."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) The piping is safeguarded from maintenance loads, e.g., using a valve wheel wrench on a small bore valve."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Impact testing of the base metal is not required if the design minimum temperature is warmer than or equal to the temperature listed in the Min. Temp. column of Table A-1 (Table A-1C), except as provided in Table 323.2.2-1, Box A-4(a) for austenitic stainless steel base material. In some cases, welds will require either impact testing or testing as described in Table 323.2.2-1, Box B-6 even when the base metal is not required to be tested. See (f) for steels or Table 323.2.2-1, Box A-6(b) for other materials."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) For carbon steels with a letter designation in the Min. Temp. column of Table A-1 (Table A-1C), the minimum temperature is defined by the applicable curve and Notes in Figure 323.2.2-1. If a design minimum temperature–thickness combination is on or above the curve, impact testing exemption requirements described in (d) apply."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(f)",
+         "indent": 1,
+         "text": "(f) For steel materials, impact testing of welds, including those made in manufacturing (e.g., for seam welded pipe and welded tees), is required if either base material is required to be impact tested or if the design minimum temperature is colder than −29°C (−20°F), except for manufacturing welds in austenitic stainless steel base materials having a carbon content not exceeding 0.10% and supplied in the solution heat treated condition or as provided in Table 323.2.2-1, Boxes A-3(b) and A-4(b). For impact testing of production welds, see Table 323.2.2-1, Note (2)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(g)",
+         "indent": 1,
+         "text": "(g) For steels, impact testing is not required for material (including welds) if the stress ratio as defined in (b) is 0.3 or less, the design minimum temperature is warmer than or equal to −104°C (−155°F), and when (c) applies."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(h)",
+         "indent": 1,
+         "text": "(h) For carbon, low alloy, and intermediate alloy steel materials (including welds) that have not been qualified by impact testing, the minimum temperature from Table A-1 (Table A-1C), or Figure 323.2.2-1 may be reduced to a temperature no colder than −48°C (−55°F) by the temperature reduction provided in Figure 323.2.2-2 when (c) applies. For carbon, low alloy, and intermediate alloy steel welds that require impact testing in accordance with Table 323.2.2-1, Box A-3(b), the temperature reduction from Figure 323.2.2-2 shall be applied to −29°C (−20°F)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(i)",
+         "indent": 1,
+         "text": "(i) For carbon, low alloy, and intermediate alloy steel materials (including welds) that have been qualified by impact testing, the permitted design minimum temperature may be reduced to a temperature no colder than −104°C (−155°F) by the temperature reduction from Figure 323.2.2-2 when (c) applies."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(j)",
+         "indent": 1,
+         "text": "(j) Impact testing is not required for the following combinations of weld metals and design minimum temperatures:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) for austenitic stainless steel base materials having a carbon content not exceeding 0.10%, welded without filler metal, at design minimum temperatures of −104°C (−155°F) and warmer"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) for austenitic weld metal"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(-a)",
+         "indent": 3,
+         "text": "(-a) having a carbon content not exceeding 0.10%, and produced with filler metals conforming to AWS A5.4, A5.9, A5.11, A5.14, or A5.221 at design minimum temperatures of −104°C (−155°F) and warmer, or"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(-b)",
+         "indent": 3,
+         "text": "(-b) having a carbon content exceeding 0.10%, and produced with filler metals conforming to AWS A5.4, A5.9, A5.11, A5.14, or A5.221 at design minimum temperatures of −48°C (−55°F) and warmer"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.2.3",
+       "heading": "Temperature Limits, Unlisted Materials.",
+       "page": 85,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "An unlisted material, acceptable under para. 323.1.2, shall be qualified for service at all temperatures within a stated range, from design minimum temperature to design maximum temperature, in accordance with para. 323.2.4."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.2.4",
+       "heading": "Verification of Serviceability",
+       "page": 85,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) When an unlisted material is to be used, or when a listed material is to be used above the highest temperature for which stress values appear in Appendix A, the designer is responsible for demonstrating the validity of the allowable stresses and other limits used in design and of the approach taken in using the material, including the derivation of stress data and the establishment of temperature limits."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Data for the development of design limits shall be obtained from a sound scientific program carried out in accordance with recognized technology for both the"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "1 Titles of referenced standards are as follows:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "AWS A5.4/A5.4M. Specification for Stainless Steel Electrodes for Shielded Metal Arc Welding. American Welding Society."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "AWS A5.9/A5.9M. Specification for Bare Stainless Steel Welding Electrodes and Rods. American Welding Society."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "A5.11/A5.11M. Specification for Nickel and Nickel-Alloy Welding Electrodes for Shielded Metal Arc Welding. American Welding Society."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "A5.14/A5.14M. Specification for Nickel and Nickel-Alloy Bare Welding Electrodes and Rods. American Welding Society."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "A5.22/A5.22M. Specification for Stainless Steel Flux Cored and Metal Cored Welding Electrodes and Rods. American Welding Society. (1) For blind flanges and blanks made from materials with a letter designation in the Min. Temp. column of Table A-1 (Table A-1C), T shall be 1∕4 of"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "the total thickness, where the total thickness is the thickness of the blind flange or blank including the thickness of the facing(s), if applicable. (2) Any carbon steel material may be used to a minimum temperature of −29°C (−20°F) for Category D Fluid Service. (3) X and L grades of API 5L PSL1, 290 and stronger grades of CSA Z245.1, and ASTM A381 materials may be used in accordance with Curve B if"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "normalized or quenched and tempered. (4) The following materials may be used in accordance with Curve D if normalized:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 2,
+         "text": "(a) ASTM A516 plate, all grades"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 2,
+         "text": "(b) ASTM A671 pipe made from A516 plate, all grades"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 2,
+         "text": "(c) ASTM A672 pipe made from A516 plate, all grades (5) A welding procedure for the manufacture of pipe or components shall include impact testing of welds and HAZ for any design minimum"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "temperature below −29°C (−20°F), except as provided in Table 323.2.2-1, A-3(b). (6) Impact testing in accordance with para. 323.3 is required for any design minimum temperature below −48°C (−55°F), except as permitted by"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Note (3) in Table 323.2.2-1."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 3,
+         "text": "Stress Ratio"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 21,
+         "text": "Temperature Reduction, 8C (8F) GENERAL NOTES: (a) See Table 323.2.2-3 for tabular values. (b) See para. 323.2.2(b) to determine stress ratio. material and the intended service conditions. Factors to be considered include"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) applicability and reliability of the data, especially for extremes of the temperature range"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) resistance of the material to deleterious effects of the fluid service and of the environment throughout the temperature range"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) determination of allowable stresses in accordance with para. 302.3"
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "323.3",
+     "heading": "Impact Testing Methods and Acceptance Criteria",
+     "page": 89,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "323.3.1",
+       "heading": "General.",
+       "page": 89,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "When impact testing is required by Table 323.2.2-1, provisions elsewhere in this Code, or the engineering design, it shall be done in accordance with Table 323.3.1-1 using the testing methods and acceptance criteria described in paras. 323.3.2 through 323.3.5."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.3.2",
+       "heading": "Procedure.",
+       "page": 89,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "Impact testing of each product form of material for any specification (including welds in the components) shall be done using procedures and apparatus in accordance with ASTM A370. For material forms that are represented by the ASTM specifications listed below, impact tests shall be conducted in conformance with those requirements as well. When conflicts exist between the specific requirements of this Code and the requirements of those specifications, the requirements of this Code shall take precedence."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 3,
+         "text": "Product Form"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "ASTM Spec. No. Pipe"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A333 Tube"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A334 Fittings"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A420 Forgings"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A350 Castings"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A352 Bolting"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A320 Plate"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "A20 GENERAL NOTE: Titles of referenced standards not listed in the Specifications Index for Appendix A are A20 General Requirements for Steel Plates for Pressure Vessels and A370 Test Methods and Definitions for Mechanical Testing of Steel Products."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.3.3",
+       "heading": "Test Specimens.",
+       "page": 89,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 12,
+         "text": "Each set of impact test specimens shall consist of three specimen bars. All impact tests shall be made using standard 10 mm (0.394 in.) square cross section Charpy V-notch specimen bars, except when the material shape or thickness does not permit. Charpy impact tests may be performed on specimens of full material thickness, which may be machined to remove surface irregularities. Alternatively, such material may be reduced in thickness to produce the largest possible Charpy subsize specimen. See Table 323.3.4-1."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.3.4",
+       "heading": "Test Temperatures.",
+       "page": 89,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "For all Charpy impact tests, the test temperature criteria in (a) or (b) shall be observed. The test specimens, as well as the handling tongs, shall be cooled for a sufficient length of time to reach the test temperature."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) For Materials of Thickness Equal to or Greater Than 10 mm (0.394 in.). Where the largest attainable Charpy V-notch specimen has a width along the notch of at least 8 mm (0.315 in.), the Charpy test using such a specimen shall be conducted at a temperature not higher than the design minimum temperature. Where the largest possible test specimen has a width along the notch less than 8 mm, the test shall be conducted at a temperature lower than the design minimum temperature by the amount shown in Table 323.3.4-1 for that specimen width."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) For Materials With Thickness Less Than 10 mm (0.394 in.). Where the largest attainable Charpy V-notch specimen has a width along the notch of at least 80% of the material thickness, the Charpy test of such a specimen shall be conducted at a temperature not higher than the design minimum temperature. Where the largest possible test specimen has a width along the notch of less than 80% of the material thickness, the test shall be conducted at a temperature lower than the design minimum temperature by an amount equal to the difference (referring to Table 323.3.4-1) between the temperature reduction corresponding to the actual material thickness and the temperature reduction corresponding to the Charpy specimen width actually tested."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.3.5",
+       "heading": "Acceptance Criteria",
+       "page": 91,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Minimum Energy Requirements. Except for bolting materials, the applicable minimum energy requirement for carbon and low alloy steels with specified minimum tensile strengths less than 656 MPa (95 ksi) shall be those shown in Table 323.3.5-1."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Lateral Expansion Requirements. Other carbon and low alloy steels having specified minimum tensile strengths equal to or greater than 656 MPa (95 ksi), all bolting materials, and all high alloy steels (P-Nos. 6, 7, 8, 10H, and 10I) shall have a lateral expansion opposite the notch of not less than 0.38 mm (0.015 in.) for all specimen sizes. The lateral expansion is the increase in width of the broken impact specimen over that of the unbroken specimen measured on the compression side, parallel to the line constituting the bottom of the V-notch (see ASTM A370)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Weld Impact Test Requirements. Where two base metals having different required impact test acceptance criteria are joined by welding, the impact test acceptance criteria shall conform to the requirements of the base material having a specified minimum tensile strength most closely matching the specified minimum tensile strength of the weld metal. 9"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.354"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "0"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "0 8"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.315"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "0"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "0 7.5 (3∕4 size bar)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.295"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "3"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "5 7"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.276"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "4"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "8 6.7 (2∕3 size bar)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.264"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "6"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "10 6"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.236"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "8"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "15 5 (1∕2 size bar)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.197"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 19,
+         "text": "11"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "20 4"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.157"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 19,
+         "text": "17"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "30 3.3 (1∕3 size bar)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.130"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 19,
+         "text": "19"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "35 3"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.118"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 19,
+         "text": "22"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "40 2.5 (1∕4 size bar)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "0.098"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 19,
+         "text": "28"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "50 GENERAL NOTE: These temperature reduction criteria do not apply when Table 323.3.5-1 specifies lateral expansion for minimum required values. NOTE: (1) Straight-line interpolation for intermediate values is permitted."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Retests"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) For Absorbed Energy Criteria. When the average value of the three specimens equals or exceeds the minimum value permitted for a single specimen and the value for more than one specimen is below the required average value, or when the value for one specimen is below the minimum value permitted for a single specimen, a retest of three additional specimens shall be made. The value for each of these retest specimens shall equal or exceed the required average value."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) For Lateral Expansion Criterion. If the value of lateral expansion for one specimen in a group of three is below 0.38 mm (0.015 in.) but not below 0.25 mm (0.010 in.), and if the average value for three specimens equals or exceeds 0.38 mm (0.015 in.), a retest of three additional specimens may be made, each of which shall equal or exceed the specified minimum value of 0.38 mm (0.015 in.). In the case of heat treated materials, if the required values are not obtained in the retest or if the values in the initial test are below the minimum allowed for retest, the material may be reheat treated and retested. After reheat treatment, a set of three specimens shall be made. For acceptance, the lateral expansion of each of the specimens shall equal or exceed the specified minimum value of 0.38 mm (0.015 in.)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) For Erratic Test Results. When an erratic result is caused by a defective specimen or there is uncertainty in the test procedure, a retest will be allowed."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "323.4",
+     "heading": "Fluid Service Requirements for Materials",
+     "page": 92,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "323.4.1",
+       "heading": "General.",
+       "page": 92,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "Requirements in para. 323.4 apply to pressure-containing parts. They do not apply to materials used for supports, gaskets, packing, or bolting. See also Appendix F, para. F323.4."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.4.2",
+       "heading": "Specific Requirements",
+       "page": 92,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Ductile Iron. Ductile iron shall not be used for pressure containing parts at temperatures below −29°C (−20°F) (except austenitic ductile iron) or above 343°C (650°F). Austenitic ductile iron conforming to ASTM A571 may be used at temperatures below −29°C (−20°F) down to the temperature of the impact test conducted in accordance with that specification but not below −196°C (−320°F)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Valves having bodies and bonnets or covers made of materials conforming to ASTM A395 and meeting the requirements of ASME B16.42 and additional requirements of ASME B16.34 Standard Class, API 594, API 599, or API 609 may be used within the pressure–temperature ratings given in ASME B16.42."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Welding shall not be performed in the fabrication or repair of ductile iron components nor in assembly of such components in a piping system."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Other Cast Irons. The following shall not be used under severe cyclic conditions. If safeguarding is provided against excessive heat and thermal shock and mechanical shock and abuse, they may be used in other services subject to the following requirements:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) Gray iron shall not be used above ground within process unit limits in hydrocarbon or other flammable fluid service at temperatures above 149°C (300°F) nor at gage pressures above 1 035 kPa (150 psi). In other locations the pressure limit shall be 2 760 kPa (400 psi)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Malleable iron shall not be used in any fluid service at temperatures below −29°C (−20°F) or above 343°C (650°F) and shall not be used in flammable fluid service at temperatures above 149°C (300°F) nor at gage pressures above 2 760 kPa (400 psi)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) High silicon iron (14.5% Si) shall not be used in flammable fluid service. The manufacturer should be consulted for pressure–temperature ratings and for precautionary measures when using this material."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Other Materials"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) If welding or thermal cutting is performed on aluminum castings, the stress values in Appendix A and component ratings listed in Table 326.1.1-1 are not applicable. It is the designer’s responsibility to establish such stresses and ratings consistent with the requirements of this Code."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Lead and tin and their alloys shall not be used in flammable fluid services."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "323.4.3",
+       "heading": "Cladding and Lining Materials.",
+       "page": 93,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "Materials with metallic cladding or metallic lining may be used in accordance with the following provisions:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) If piping components are made from integrally clad plate conforming to"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) ASTM A263, Corrosion-Resisting Chromium Steel Clad Plate, Sheet, and Strip"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) ASTM A264, Stainless Chromium-Nickel Steel Clad Plate, Sheet, and Strip"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) ASTM A265, Nickel and Nickel-Base Alloy Clad Plate, Sheet, and Strip then pressure design in accordance with rules in para. 304 may be based upon the total thickness of base metal and cladding after any allowance for corrosion has been deducted, provided that both the base metal and the cladding metal are acceptable for Code use under para. 323.1, and provided that the clad plate has been shear tested and meets all shear test requirements of the applicable ASTM specification. The allowable stress for each material (base and cladding) shall be taken from Appendix A, or determined in accordance with the rules in para. 302.3, provided, however, that the allowable stress used for the cladding portion of the design thickness shall never be greater than the allowable stress used for the base portion."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) For all other metallic clad or lined piping components, the base metal shall be an acceptable Code material as defined in para. 323.1 and the thickness used in pressure design in accordance with para. 304 shall not include the thickness of the cladding or lining. The allowable stress used shall be that for the base metal at the design temperature. For such components, the cladding or lining may be any material that, in the judgment of the user, is suitable for the intended service and for the method of manufacture and assembly of the piping component."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Except for components designed in accordance with provisions of (a), fluid service requirements for materials stated in this Code shall not restrict their use as cladding or lining in pipe or other components. Fluid service requirements for the outer material (including those for components and joints) shall govern, except that temperature limitations of both inner and outer materials, and of any bond between them, shall be considered."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Fabrication by welding of clad or lined piping components and the inspection and testing of such components shall be done in accordance with applicable provisions of ASME BPVC, Section VIII, Division 1, UCL-30 through UCL-52, or the provisions of Chapters V and VI of this Code, whichever are more stringent."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "323.5",
+     "heading": "Deterioration of Materials in Service",
+     "page": 94,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Selection of material to resist deterioration in service is not within the scope of this Code. See para. 300(c)(6). Recommendations based on experience are presented for guidance in Appendix F, para. F323."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "325",
+   "heading": "MATERIALS",
+   "page": 94,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "— MISCELLANEOUS"
+    }
+   ],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "325.1",
+     "heading": "Joining and Auxiliary Materials",
+     "page": 94,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "When selecting materials such as adhesives, cements, solvents, solders, brazing materials, packing, and O-rings for making or sealing joints, the designer shall consider their suitability for the fluid service. (Consideration should also be given to the possible effects of the joining or auxiliary materials on the fluid handled.)"
+      }
+     ],
+     "sections": []
+    }
+   ]
+  }
+ ]
+}

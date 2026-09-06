@@ -1,0 +1,2957 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "VIII",
+ "chapter_number": 8,
+ "title": "Piping for Category M Fluid Service",
+ "pdf_pages": [
+  154,
+  161
+ ],
+ "section_count": 190,
+ "paragraph_count": 179,
+ "equation_count": 0,
+ "word_count": 2658,
+ "tables": [],
+ "figures": [],
+ "preamble": [],
+ "sections": [
+  {
+   "kind": "section",
+   "id": "M300",
+   "heading": "GENERAL STATEMENTS",
+   "page": 154,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Chapter VIII pertains to piping designated by the owner as being in Category M Fluid Service. See para. 300(b)(1) and Appendix M."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The organization, content, and paragraph designations of this Chapter correspond to those of the base Code (Chapters I through VI) and Chapter VII. The prefix M is used."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Provisions and requirements of the base Code and Chapter VII apply only as stated in this Chapter."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Consideration shall be given to the possible need for engineered safeguards as described in Appendix G, para. G300.3, in addition to the inherent safeguards described in paras. G300.1 and G300.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) This Chapter makes no provision for piping to be used under severe cyclic conditions. If it is not feasible to eliminate the severe cyclic conditions, the engineering design shall specify any necessary provisions in accordance with para. 300(c)(5)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) Chapter I applies in its entirety."
+    }
+   ],
+   "sections": []
+  },
+  {
+   "kind": "part",
+   "part": "PART 1",
+   "title": null,
+   "page": 154,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "CONDITIONS AND CRITERIA",
+     "page": 154,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M301",
+     "heading": "DESIGN CONDITIONS",
+     "page": 154,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 301 applies in its entirety, with the exceptions of paras. 301.3 and 301.5. See paras. M301.3 and M301.5."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M301.3",
+       "heading": "Design Temperature, Metallic Piping",
+       "page": 154,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Use of any temperature other than the fluid temperature as the design temperature shall be substantiated by heat transfer calculations confirmed by tests or by experimental measurements."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M301.5",
+       "heading": "Dynamic Effects",
+       "page": 154,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 301.5 applies with the exception of paras. 301.5.1 and 301.5.4. See paras. M301.5.1 and M301.5.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M301.5.1",
+         "heading": "Impact.",
+         "page": 154,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "Design, layout, and operation of piping shall be conducted so as to minimize impact and shock loads. In the event that such loadings are unavoidable, para. 301.5.1 applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M301.5.4",
+         "heading": "Vibration.",
+         "page": 154,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "Suitable dynamic analysis, such as computer simulation, shall be made where necessary to avoid or minimize conditions that lead to detrimental vibration, pulsation, or resonance effects in the piping."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M302",
+     "heading": "DESIGN CRITERIA",
+     "page": 154,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M302.1",
+       "heading": "General",
+       "page": 154,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph M302 pertains to pressure–temperature ratings, stress criteria, design allowances, and minimum design values, together with permissible variations of these factors as applied to piping design. Paragraph 302 applies in its entirety, with the exception of para. 302.2.4. See para. M302.2.4."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M302.2.4",
+       "heading": "Allowance for Pressure and Temperature Variations, Metallic Piping.",
+       "page": 154,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "Use of allowances in para. 302.2.4 is not permitted."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 2",
+   "title": null,
+   "page": 154,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PRESSURE DESIGN OF METALLIC PIPING",
+     "page": 154,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "COMPONENTS",
+     "page": 154,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M303",
+     "heading": "GENERAL",
+     "page": 154,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 303 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M304",
+     "heading": "PRESSURE DESIGN OF METALLIC COMPONENTS",
+     "page": 154,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 304 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 3",
+   "title": null,
+   "page": 154,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR METALLIC",
+     "page": 154,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PIPING COMPONENTS",
+     "page": 154,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M305",
+     "heading": "PIPE",
+     "page": 154,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M305.1",
+       "heading": "General",
+       "page": 154,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Listed pipe may be used in accordance with para. M305.2. Unlisted pipe may be used only as provided in para. 302.2.3."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M305.2",
+       "heading": "Specific Requirements for Metallic Pipe",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Pipe listed in para. 305.2.2 shall not be used. The provision for severe cyclic conditions in para. 305.2.3 does not apply [see para. M300(e)]."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M306",
+     "heading": "METALLIC FITTINGS, BENDS, MITERS, LAPS, AND BRANCH CONNECTIONS",
+     "page": 155,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "General. Fittings, bends, miters, laps, and branch connections may be used in accordance with paras. M306.1 through M306.6. Pipe and other materials used in such components shall be suitable for the manufacturing process and the fluid service."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M306.1",
+       "heading": "Pipe Fittings",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 306.1 applies in its entirety, with the exception of paras. 306.1.3 and 306.1.4. See para. M306.1.3."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M306.1.3",
+         "heading": "Specific Fittings",
+         "page": 155,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Proprietary welding branch outlet fittings that have been design proof tested successfully as prescribed in ASME B16.9, MSS SP-97, or ASME BPVC, Section VIII, Division 1, UG-101 may be used within their established ratings."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Fittings conforming to MSS SP-43 and MSS SP-119 shall not be used."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) Proprietary “Type C” lap-joint stub-end butt-welding fittings shall not be used."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M306.2",
+       "heading": "Pipe Bends",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 306.2 applies, except that bends designed as creased or corrugated shall not be used."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M306.3",
+       "heading": "Miter Bends",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "A miter bend shall conform to para. 306.3.1 and shall not make a change in direction at a single joint (angle α in Figure 304.2.3-1) greater than 22.5 deg. Paragraph 306.3.3 does not apply [see para. M300(e)]."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M306.4",
+       "heading": "Fabricated or Flared Laps",
+       "page": 155,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M306.4.1",
+         "heading": "General.",
+         "page": 155,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 10,
+           "text": "The following requirements do not apply to fittings conforming to para. M306.1, nor to laps integrally forged on pipe ends. Paragraph 306.4.1 applies."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M306.4.2",
+         "heading": "Flared Laps.",
+         "page": 155,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 12,
+           "text": "Flared laps shall not be used."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M306.5",
+       "heading": "Fabricated Branch Connections",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The following requirements do not apply to fittings conforming to para. M306.1. Paragraph 306.5.1 applies, with the following exceptions:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Of the methods listed in para. 304.3.1(a), the one in para. 304.3.1(a)(3) may be used only if those in paras. 304.3.1(a)(1) and 304.3.1(a)(2) are unavailable."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Of the branch connections described in paras. 304.3.2(b) and 304.3.2(c), those having threaded outlets are permitted only in accordance with para. M314 and those having socket welding outlets are permitted only in accordance with para. M311.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M306.6",
+       "heading": "Closures",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The following requirements do not apply to blind flanges or to fittings conforming to para. M306.1. Of the closures described in para. 304.4, flat closures in accordance with ASME BPVC, Section VIII, Division 1, UG-34 and UW-13, and conical closures without transition knuckles [UG-32(g) and UG-33(f)], may be used only if others are not available. The requirements in M306.5 apply to openings in closures [see also para. 304.4.2(b)]."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M307",
+     "heading": "METALLIC VALVES AND SPECIALTY COMPONENTS",
+     "page": 155,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The following requirements for valves shall also be met as applicable by other pressure-containing piping components, e.g., traps, strainers, and separators. See also Appendix F, paras. F301.4 and F307."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M307.1",
+       "heading": "General",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 307.1 applies, subject to the requirements in para. M307.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M307.2",
+       "heading": "Specific Requirements",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Paragraphs 307.2.2 and 307.2.3 apply."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Valves having threaded bonnet joints (other than union joints) shall not be used."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Only metallic valves conforming to the following requirements may be used:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) Special consideration shall be given to valve design to prevent stem leakage to the environment."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Bonnet or cover plate closures and body joints shall be flanged, secured by at least four bolts with gasketing conforming to para. 308.4; or proprietary, attached by bolts, lugs, or other substantial means, and having a gasket design that increases gasket compression as fluid pressure increases; or secured with a full penetration weld made in accordance with para. M311; or secured by a straight thread sufficient for mechanical strength, a metal-to-metal seat, and a seal weld made in accordance with para. M311, all acting in series."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M308",
+     "heading": "FLANGES, BLANKS, FLANGE FACINGS, AND GASKETS",
+     "page": 155,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 308.1 applies in its entirety."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M308.2",
+       "heading": "Specific Requirements for Metallic Flanges",
+       "page": 155,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 308.2.4 does not apply [see para. M300(e)]. The following shall not be used:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) single-welded slip-on flanges"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) expanded-joint flanges"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) slip-on flanges used as lapped flanges unless the requirements in para. 308.2.1(c) are met"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) threaded metallic flanges, except those employing lens rings or similar gaskets and those used in lined pipe where the liner extends over the gasket face"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M308.3",
+       "heading": "Flange Facings",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 308.3 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M308.4",
+       "heading": "Gaskets",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 308.4 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M308.5",
+       "heading": "Blanks",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "All blanks shall be marked with material, rating, and size."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M309",
+     "heading": "BOLTING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 309 applies, except for para. 309.2.4 [see para. M300(e)]."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 4",
+   "title": null,
+   "page": 156,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR METALLIC",
+     "page": 156,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PIPING JOINTS",
+     "page": 156,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M310",
+     "heading": "METALLIC PIPING, GENERAL",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 310 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M311",
+     "heading": "WELDED JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Welded joints may be made in any metal for which it is possible to qualify welding procedures, welders, and welding operators in accordance with para. M328."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M311.1",
+       "heading": "General",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 311.1 applies with the following exceptions:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Split backing rings shall not be used."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Socket welded joints greater than DN 50 (NPS 2) are not permitted."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Examination shall be in accordance with para. M341.4."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M311.2",
+       "heading": "Specific Requirements",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraphs 311.2.1(a); 311.2.2(a), 311.2.2(b), and 311.2.2(d); 311.2.3; and 311.2.4 apply."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M312",
+     "heading": "FLANGED JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 312 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M313",
+     "heading": "EXPANDED JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Expanded joints shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M314",
+     "heading": "THREADED JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M314.1",
+       "heading": "General",
+       "page": 156,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraphs 314.1(a), 314.1(b), and 314.1(c) apply."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M314.2",
+       "heading": "Specific Requirements",
+       "page": 156,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M314.2.1",
+         "heading": "Taper-Threaded Joints.",
+         "page": 156,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Paragraph 314.2.1 applies except that only components suitable for Normal Fluid Service in sizes 8 ≤ DN ≤ 25 (1∕4 ≤ NPS ≤ 1) are permitted (see Table 314.2.1-1). Sizes smaller than DN 20 (NPS 3∕4) shall be safeguarded (see Appendix G)."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M314.2.2",
+         "heading": "Straight-Threaded Joints.",
+         "page": 156,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "Paragraph 314.2.2 applies. In addition, components shall have adequate mechanical strength and the joint shall have a confined seating surface not subject to relative rotation as or after the joint is tightened. [See Figure 335.3.3-1, illustrations (b) and (c) for acceptable designs.]"
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M315",
+     "heading": "TUBING JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 315 applies, except for para. 315.2(b)."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M316",
+     "heading": "CAULKED JOINTS",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Caulked joints shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M317",
+     "heading": "SOLDERED AND BRAZED JOINTS",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Soldered, brazed, and braze welded joints shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M318",
+     "heading": "SPECIAL JOINTS IN METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 318 applies, with the exception that adhesive joints and bell type joints shall not be used."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 5",
+   "title": null,
+   "page": 156,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLEXIBILITY AND SUPPORT OF METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M319",
+     "heading": "FLEXIBILITY OF METALLIC PIPING",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 319 applies, with the exception that the simplified rules in para. 319.4.1(c) do not apply."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M320",
+     "heading": "ANALYSIS OF SUSTAINED LOADS",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 320 applies."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M321",
+     "heading": "PIPING SUPPORT",
+     "page": 156,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 321 applies, except that supporting elements welded to the piping shall be of listed material."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 6",
+   "title": null,
+   "page": 157,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "SYSTEMS",
+     "page": 157,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M322",
+     "heading": "SPECIFIC PIPING SYSTEMS",
+     "page": 157,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M322.3",
+       "heading": "Instrument Piping",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 322.3 applies, with the exception that for signal tubing in contact with process fluids and process temperature–pressure conditions"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) tubing shall be not larger than 16 mm (5∕8 in.) O.D. and shall be suitable for the service"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) an accessible block valve shall be provided to isolate the tubing from the pipeline"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) joining methods shall conform to the requirements of para. M315"
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M322.6",
+       "heading": "Pressure-Relieving Systems",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 322.6 applies, except for para. 322.6.3. See para. M322.6.3."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M322.6.3",
+         "heading": "Overpressure Protection",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": "(a)",
+           "indent": 1,
+           "text": "(a) Paragraph 322.6.3(a) applies."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(b)",
+           "indent": 1,
+           "text": "(b) Relief set pressure shall be in accordance with ASME BPVC, Section VIII, Division 1."
+          },
+          {
+           "kind": "paragraph",
+           "marker": "(c)",
+           "indent": 1,
+           "text": "(c) The maximum relieving pressure shall be in accordance with Section VIII, Division 1."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 7",
+   "title": null,
+   "page": 157,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "METALLIC MATERIALS",
+     "page": 157,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M323",
+     "heading": "GENERAL REQUIREMENTS",
+     "page": 157,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M323.1",
+       "heading": "Materials and Specifications",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.1.1 applies. See paras. M323.1.2, M323.1.3, and M323.1.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M323.1.2",
+         "heading": "Unlisted Materials.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Paragraph 323.1.2 applies, with the additional requirement that the designer shall fully document the determination of allowable stresses as part of the engineering design."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M323.1.3",
+         "heading": "Unknown Materials.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 15,
+           "text": "Materials of unknown specification shall not be used."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M323.1.4",
+         "heading": "Reclaimed Metallic Materials.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 20,
+           "text": "Reclaimed materials may be used when the material certification records are available for the specific materials employed, and the designer is assured that the material is sound and free from harmful defects."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M323.2",
+       "heading": "Temperature Limitations",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.2 applies with the exception that, in regard to lower temperature limits, the relaxation of minimum temperature limits stated in Notes (3) and (6) of Table 323.2.2-1 and in paras. 323.2.2(h) and 323.2.2(i) is not permitted."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M323.3",
+       "heading": "Impact Testing Methods and Acceptance Criteria",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.3 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M323.4",
+       "heading": "Fluid Service Requirements for Metallic Materials",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.4.1 applies."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M323.4.2",
+         "heading": "Specific Requirements.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 16,
+           "text": "Paragraph 323.4.2 applies, except that cast irons other than ductile iron shall not be used for pressure-containing parts, and lead and tin shall be used only as linings."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M323.4.3",
+         "heading": "Metallic Cladding and Lining Materials.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 23,
+           "text": "In addition to the requirements of para. 323.4.3, where materials covered in paras. 323.4.2(c)(2) and 323.4.3 are used as cladding or lining in which the cladding or lining also serves as a gasket or as part of the flange facing, consideration shall be given to the design of the flanged joint to prevent leakage to the environment."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M323.5",
+       "heading": "Deterioration of Materials in Service",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 323.5 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M325",
+     "heading": "MATERIALS",
+     "page": 157,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 9,
+       "text": "— MISCELLANEOUS"
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M325.1",
+       "heading": "Joining and Auxiliary Materials",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "In applying para. 325, materials such as solvents, brazes, and solders shall not be used. Nonmetallic materials used as gaskets and packing materials shall be suitable for the fluid service."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 8",
+   "title": null,
+   "page": 157,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "STANDARDS FOR PIPING COMPONENTS",
+     "page": 157,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M326",
+     "heading": "DIMENSIONS AND RATINGS OF COMPONENTS",
+     "page": 157,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 326.1.3 applies."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M326.1",
+       "heading": "Dimensional Requirements",
+       "page": 157,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M326.1.1",
+         "heading": "Listed Piping Components.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Except for prohibitions and restrictions stated elsewhere in Chapter VIII, components made in accordance with standards and specifications listed in Table 326.1.1-1 may be used in Category M service."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M326.1.2",
+         "heading": "Unlisted Piping Components.",
+         "page": 157,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph 326.1.2 applies, except that dimensions of unlisted components shall be governed by requirements in paras. 303 and 304."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M326.2",
+       "heading": "Ratings of Components",
+       "page": 157,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 326.2 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M326.3",
+       "heading": "Reference Documents",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 326.3 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 9",
+   "title": null,
+   "page": 158,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FABRICATION, ASSEMBLY, AND ERECTION OF",
+     "page": 158,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "METALLIC PIPING",
+     "page": 158,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M327",
+     "heading": "GENERAL",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Metallic piping materials and components are prepared for assembly and erection by one or more of the fabrication processes in paras. M328, M330, M331, and M332. When any of these processes is used in assembly and erection, requirements are the same as for fabrication."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M328",
+     "heading": "WELDING OF METALS",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Welding shall be in accordance with paras. M311.1 and 328, except see para. M328.3."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M328.3",
+       "heading": "Welding Materials",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 328.3 applies in its entirety, except that split backing rings shall not be used, and removable backing rings and consumable inserts may be used only where their suitability has been demonstrated by procedure qualification."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M330",
+     "heading": "PREHEATING OF METALS",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 330 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M331",
+     "heading": "HEAT TREATMENT OF METALS",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 331 applies in its entirety, with the exception that no requirements less stringent than those of Table 331.1.2-1 or Table 331.1.3-1 for PWHT shall be specified."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M332",
+     "heading": "BENDING AND FORMING OF METALS",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 332 applies in its entirety, except that bending that conforms to para. 332.2.3 is not permitted."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M335",
+     "heading": "ASSEMBLY AND ERECTION OF METALLIC PIPING",
+     "page": 158,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M335.1",
+       "heading": "General",
+       "page": 158,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M335.1.1",
+         "heading": "Alignment.",
+         "page": 158,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 11,
+           "text": "In addition to the requirements of para. 335.1, any bending or forming required for alignment and fit-up shall be heat treated if required by para. 332.4."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M335.2",
+       "heading": "Flanged Joints",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 335.2 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M335.3",
+       "heading": "Threaded Joints",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraphs 335.3.1 and 335.3.2 apply. See paras. M335.3.3 and M335.3.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M335.3.3",
+         "heading": "Straight-Threaded Joints.",
+         "page": 158,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 18,
+           "text": "The requirements of para. 335.3.3 are subject to the limitations in para. M322."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M335.3.4",
+         "heading": "Condition of Threads.",
+         "page": 158,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 17,
+           "text": "Taper-threaded components and threaded ends permitted under para. M314.2.1 shall be examined before assembly for cleanliness and continuity of threads and shall be rejected if not in conformance with ASME B1.20.1 or other applicable standards."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M335.4",
+       "heading": "Tubing Joints",
+       "page": 158,
+       "paragraphs": [],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "M335.4.1",
+         "heading": "Flared Tubing Joints.",
+         "page": 158,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 15,
+           "text": "The requirements of para. 335.4.1 apply; however, see para. M322 for limitations associated with specific piping systems."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "M335.4.2",
+         "heading": "Flareless and Compression Tubing Joints.",
+         "page": 158,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "The requirements of para. 335.4.2 apply; however, see para. M322 for limitations associated with specific piping systems."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "M335.6",
+       "heading": "Special Joints",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Special joints shall be in accordance with paras. M318 and 335.6.1."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M335.9",
+       "heading": "Cleaning of Piping",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See Appendix F, para. F335.9."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "M335.10",
+       "heading": "Identification of Piping",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See Appendix F, para. F335.10."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 10",
+   "title": null,
+   "page": 158,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "INSPECTION, EXAMINATION, TESTING, AND",
+     "page": 158,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "RECORDS OF METALLIC PIPING",
+     "page": 158,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M340",
+     "heading": "INSPECTION",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 340 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M341",
+     "heading": "EXAMINATION",
+     "page": 158,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraphs 341.1, 341.2, 341.3, and 341.5 apply in their entirety. See para. M341.4."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "M341.4",
+       "heading": "Extent of Required Examination",
+       "page": 158,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 341.4.1 applies with the following exceptions:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Visual Examination"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) 100% of all fabrication, as defined in para. 300.2, shall be examined."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) 100% of all threaded, bolted, and other mechanical joints shall be examined."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Other Examination. The radiography/ultrasonic examination requirements of para. 341.4.1(b)(1) apply, except that 100% of circumferential butt and miter groove welds and of fabricated lap and branch connection welds comparable to those shown in Figure 328.5.4-3 and Figure 328.5.5-1, illustration (d) shall be examined."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "M342",
+     "heading": "EXAMINATION PERSONNEL",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 342 applies."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M343",
+     "heading": "EXAMINATION PROCEDURES",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 343 applies."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M344",
+     "heading": "EXAMINATION METHODS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 344 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M345",
+     "heading": "TESTING",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 345 applies, except that"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(a)",
+       "indent": 1,
+       "text": "(a) a sensitive leak test in accordance with para. 345.8 shall be included in the required leak test (see para. 345.1)"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(b)",
+       "indent": 1,
+       "text": "(b) the initial service leak test (see para. 345.7) does not apply"
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "M346",
+     "heading": "RECORDS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 346 applies in its entirety."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": null,
+       "heading": "PARTS 11 THROUGH 20",
+       "page": 159,
+       "paragraphs": [],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": null,
+       "heading": "CORRESPONDING TO CHAPTER VII",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "See para. M300(b)."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA300",
+     "heading": "GENERAL STATEMENTS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraphs MA300 through MA346 apply to nonmetallic piping and piping lined with nonmetals, based on Chapter VII. Paragraph A300(d) applies."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 11",
+   "title": null,
+   "page": 159,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "CONDITIONS AND CRITERIA",
+     "page": 159,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA301",
+     "heading": "DESIGN CONDITIONS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A301 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA302",
+     "heading": "DESIGN CRITERIA",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraphs A302.1 and A302.4 apply. See paras. MA302.2 and MA302.3."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA302.2",
+       "heading": "Pressure",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "–Temperature Design Criteria"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph A302.2 applies, with the exception of para. A302.2.4. See para. MA302.2.4."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "MA302.2.4",
+         "heading": "Allowances for Pressure and Temperature Variation.",
+         "page": 159,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 7,
+           "text": "Paragraph A302.2.4(a) applies to both nonmetallic piping and to metallic piping with nonmetallic lining."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      },
+      {
+       "kind": "section",
+       "id": "MA302.3",
+       "heading": "Allowable Stresses and Other Design Limits",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph A302.3 applies."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA302.4",
+       "heading": "Allowances",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph 302.4 applies in its entirety."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 12",
+   "title": null,
+   "page": 159,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PRESSURE DESIGN OF NONMETALLIC PIPING",
+     "page": 159,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "COMPONENTS",
+     "page": 159,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA303",
+     "heading": "GENERAL",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A303 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA304",
+     "heading": "PRESSURE DESIGN OF NONMETALLIC COMPONENTS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A304 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 13",
+   "title": null,
+   "page": 159,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR",
+     "page": 159,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC PIPING COMPONENTS",
+     "page": 159,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA305",
+     "heading": "PIPE",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A305 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA306",
+     "heading": "NONMETALLIC FITTINGS, BENDS, MITERS, LAPS, AND BRANCH CONNECTIONS",
+     "page": 159,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraphs A306.1 and A306.2 apply. See para. MA306.3."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA306.3",
+       "heading": "Miter Bends",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Miter bends not designated as fittings conforming to para. A306.1 shall not be used."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA306.4",
+       "heading": "Fabricated Laps",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Fabricated laps shall not be used."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA306.5",
+       "heading": "Fabricated Branch Connections",
+       "page": 159,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Nonmetallic fabricated branch connections shall not be used."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA307",
+     "heading": "VALVES AND SPECIALTY COMPONENTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A307 applies, except that nonmetallic valves and specialty components shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA308",
+     "heading": "FLANGES, BLANKS, FLANGE FACINGS, AND GASKETS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraphs A308.1, 308.3, and A308.4 apply in their entirety. See para. MA308.2."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA308.2",
+       "heading": "Nonmetallic Flanges",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Threaded nonmetallic flanges shall not be used."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA309",
+     "heading": "BOLTING",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A309 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 14",
+   "title": null,
+   "page": 160,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLUID SERVICE REQUIREMENTS FOR",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC PIPING JOINTS",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA310",
+     "heading": "GENERAL",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 310 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA311",
+     "heading": "BONDED JOINTS",
+     "page": 160,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA311.1",
+       "heading": "General",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph A311.1 applies in its entirety."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA311.2",
+       "heading": "Specific Requirements",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Hot gas welded, heat fusion, solvent cemented, and adhesive bonded joints are not permitted except in linings."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA312",
+     "heading": "FLANGED JOINTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 312 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA313",
+     "heading": "EXPANDED JOINTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Expanded joints shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA314",
+     "heading": "THREADED JOINTS",
+     "page": 160,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA314.1",
+       "heading": "General",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Threaded joints shall not be used."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA315",
+     "heading": "TUBING JOINTS IN NONMETALLIC PIPING",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A315 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA316",
+     "heading": "CAULKED JOINTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Caulked joints shall not be used."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA318",
+     "heading": "SPECIAL JOINTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A318 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 15",
+   "title": null,
+   "page": 160,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FLEXIBILITY AND SUPPORT OF NONMETALLIC",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "PIPING",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA319",
+     "heading": "PIPING FLEXIBILITY",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A319 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA321",
+     "heading": "PIPING SUPPORT",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A321 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 16",
+   "title": null,
+   "page": 160,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC AND NONMETALLIC-LINED",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "SYSTEMS",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA322",
+     "heading": "SPECIFIC PIPING SYSTEMS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A322 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 17",
+   "title": null,
+   "page": 160,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC MATERIALS",
+     "page": 160,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA323",
+     "heading": "GENERAL REQUIREMENTS",
+     "page": 160,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A323.1 applies with the additional requirement described in para. MA323.1.2. Paragraph A323.2 applies in its entirety. See para. MA323.4."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA323.1.2",
+       "heading": "Unlisted Materials.",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "Paragraph 323.1.2 applies with the additional requirement that the designer shall fully document the determination of allowable stresses as part of the engineering design."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA323.4",
+       "heading": "Fluid Service Requirements for Nonmetallic Materials",
+       "page": 160,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph A323.4.1 applies. See paras. MA323.4.2 and MA323.4.3."
+        }
+       ],
+       "sections": [
+        {
+         "kind": "section",
+         "id": "MA323.4.2",
+         "heading": "Specific Requirements.",
+         "page": 160,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 19,
+           "text": "Paragraph A323.4.2 applies, except that materials listed under paras. A323.4.2(a), A323.4.2(b), and A323.4.2(d) may be used only as linings. Thermoplastics may be used as gaskets in accordance with paras. M325.1 and MA323.4.3."
+          }
+         ],
+         "sections": []
+        },
+        {
+         "kind": "section",
+         "id": "MA323.4.3",
+         "heading": "Nonmetallic Lining Materials.",
+         "page": 160,
+         "paragraphs": [
+          {
+           "kind": "paragraph",
+           "marker": null,
+           "indent": 0,
+           "text": "Paragraph A323.4.3 applies with the additional requirement that where a material in para. A323.4.2 is used as a lining that also serves as a gasket or as part of the flange facing, consideration shall be given to design of the flanged joint to prevent leakage to the environment."
+          }
+         ],
+         "sections": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 18",
+   "title": null,
+   "page": 161,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "STANDARDS FOR NONMETALLIC AND",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC-LINED PIPING COMPONENTS",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA326",
+     "heading": "DIMENSIONS AND RATINGS OF COMPONENTS",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A326 applies in its entirety. Table A326.1-1 applies, except for components and systems prohibited or restricted elsewhere in this Chapter."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 19",
+   "title": null,
+   "page": 161,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "FABRICATION, ASSEMBLY, AND ERECTION OF",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC AND NONMETALLIC-LINED PIPING",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA327",
+     "heading": "GENERAL",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A327 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA328",
+     "heading": "BONDING OF PLASTICS",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A328 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA329",
+     "heading": "FABRICATION OF PIPING LINED WITH NONMETALS",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A329 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA332",
+     "heading": "BENDING AND FORMING",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A332 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA334",
+     "heading": "JOINING NONPLASTIC PIPING",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A334 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA335",
+     "heading": "ASSEMBLY AND ERECTION",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A335 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "part",
+   "part": "PART 20",
+   "title": null,
+   "page": 161,
+   "sections": [
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "INSPECTION, EXAMINATION, TESTING, AND",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "RECORDS OF NONMETALLIC AND",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": null,
+     "heading": "NONMETALLIC-LINED PIPING",
+     "page": 161,
+     "paragraphs": [],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA340",
+     "heading": "INSPECTION",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 340 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA341",
+     "heading": "EXAMINATION",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A341 applies in its entirety."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "MA341.1",
+       "heading": "General",
+       "page": 161,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraphs 341.1, 341.2, A341.3, and A341.5 apply in their entirety. See para. MA341.4."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "MA341.4",
+       "heading": "Extent of Required Examination",
+       "page": 161,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "Paragraph A341.4.1 applies, except as follows:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Visual Examination"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) All fabrication shall be visually examined."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) All bolted and other mechanical joints shall be examined."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "MA342",
+     "heading": "EXAMINATION PERSONNEL",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 342 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA343",
+     "heading": "EXAMINATION PROCEDURES",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 343 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA344",
+     "heading": "EXAMINATION METHODS",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A344 applies in its entirety."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA345",
+     "heading": "TESTING",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph A345 applies except that"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(a)",
+       "indent": 1,
+       "text": "(a) a sensitive leak test in accordance with para. 345.8 shall be included in the required leak test (see para. A345.1)"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(b)",
+       "indent": 1,
+       "text": "(b) the initial service leak test (see para. A345.7) does not apply"
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "MA346",
+     "heading": "RECORDS",
+     "page": 161,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Paragraph 346 applies in its entirety."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  }
+ ]
+}

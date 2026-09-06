@@ -1,0 +1,55 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Mandatory Appendix 6",
+  "kind": "Mandatory",
+  "identifier": "6",
+  "title": "Basis for Establishing Stress Values in Tables 6A, 6B, 6C, and 6D",
+  "title_as_printed": "BASIS FOR ESTABLISHING STRESS VALUES IN TABLES 6A, 6B, 6C, AND 6D",
+  "pdf_pages": [
+    1398,
+    1399
+  ],
+  "section_count": 3,
+  "word_count": 708,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "6-100",
+      "heading": "DERIVATION OF ALLOWABLE STRESS VALUES",
+      "paragraphs": [
+        "The values in Tables 6A, 6B, 6C, and 6D are established by the Committee only. In the determination of allowable stress values for materials, the Committee is guided by successful experience in service, insofar as evidence of satisfactory performance is available. Such evidence is considered equivalent to test data where operating conditions are known with reasonable certainty. In the evaluation of new materials, the Committee is guided to a certain extent by the comparison of test information with available data on successful applications of similar materials. The factors employed to determine the allowable stress values are provided in Tables 6-100(a), 6-100(b), and 6-100(c). Nomenclature for these tables is as follows: RT = ratio of the average temperature-dependent trend curve value of tensile strength to the room temperature tensile strength RY = ratio of the average temperature-dependent yield curve value of yield strength to the room temperature yield strength ST = specified minimum tensile strength at room temperature, MPa SY = specified minimum yield strength at room temperature, MPa The maximum allowable stress shall be the lowest value obtained from the criteria in Tables 6-100(a), 6-100(b), and 6-100(c). The maximum use temperature for materials is limited to below the time-dependent regime. Allowable stresses are listed for temperatures up to 275°C. If a material reaches the time-dependent regime below 275°C, no allowable stress values are listed for that material above the cross-over temperature. The mechanical properties considered and the factors applied to establish the maximum allowable stresses are given below."
+      ]
+    },
+    {
+      "id": "6-110",
+      "heading": "RULES FOR ESTABLISHING STRESS VALUES IN TABLES 6A AND 6B",
+      "paragraphs": [
+        "(a) At any temperature below the creep range, the allowable stresses are established at no higher than the lowest of the following:",
+        "(1) one-fifth of the specified minimum tensile strength at room temperature",
+        "(2) one-fifth of the tensile strength at temperature",
+        "(3) two-thirds of the specified minimum yield strength at room temperature",
+        "(4) two-thirds of the yield strength at temperature",
+        "(b) For bolting materials, the basis for setting stresses is the same as for all other materials with the exception that (1) and (2) above are replaced by",
+        "(1) one-fourth of the specified minimum tensile strength at room temperature",
+        "(2) one-fourth of the tensile strength at temperature The following limitation also applies to bolting materials: At temperatures below the creep range, the stresses for materials whose strength has been enhanced by heat treatment or by strain hardening shall not exceed the lesser of 20% of the specified minimum tensile strength at room temperature or 25% of the specified minimum yield strength at room temperature unless these values are lower than the annealed values, in which case the annealed values shall be used. In the application of these criteria, the Committee considers the yield strength at temperature to be SY R Y , and the tensile strength at temperature to be 1.1ST R T ."
+      ]
+    },
+    {
+      "id": "6-120",
+      "heading": "RULES FOR ESTABLISHING STRESS VALUES IN TABLES 6C AND 6D",
+      "paragraphs": [
+        "At any temperature below the creep range, the allowable stresses are established at no higher than the lowest of the following:",
+        "(a) one-fourth of the specified minimum tensile strength at room temperature",
+        "(b) one-fourth of the tensile strength at temperature",
+        "(c) two-thirds of the specified minimum yield strength at room temperature",
+        "(d) two-thirds of the yield strength at temperature Two sets of allowable stress values are provided in Table 6D for austenitic stainless steels. The higher values should be used only where slightly greater deformation is not in itself objectionable. The higher alternative allowable stresses are identified by a Note. These stresses exceed two‐thirds for austenitic stainless steel materials but do not exceed 90% of the minimum yield strength at temperature. These higher stresses are not recommended for the design of flanges and other strain-sensitive applications. In the application of these criteria, the Committee considers the yield strength at temperature to be S Y R Y and the tensile strength at temperature to be 1.1ST R T. Above Room Temperature Tensile Strength Yield Strength 2/3 S Y RY 2/3S Y 2/3 × 0.85 S Y 2/3 × 0.85 S YRY 2/3 S Y RY 2/3S Y Above Room Temperature Tensile Strength Yield Strength 2/3 S Y RY 2/3S Y 2/3 × 0.85 S YRY 2/3 × 0.85 S Y Above Room Temperature Tensile Strength Yield Strength 2/3S Y 0.9 S Y RY [Note (1)] 2/3 × 0.85 S Y 0.9 × 0.85 S YRY [Note (1)]"
+      ]
+    }
+  ]
+}

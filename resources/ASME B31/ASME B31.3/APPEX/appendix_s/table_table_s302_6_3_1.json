@@ -1,0 +1,97 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S302.6.3-1",
+ "title": "Example 2: Sustained Forces, Moments, and Stresses for Sustained Condition 3 With Node 50’s Y+ Support Inactive [Allowable Sh = 127 MPa (18.4 ksi): Fails]",
+ "pdf_pages": [
+  554,
+  554
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "axial_force_structural_only_n_lb_signed",
+   "header": "Axial Force, (Structural Only), N (lb) (Signed) [Notes (1)–(3)]"
+  },
+  {
+   "key": "bending_moment_n_m_ft_lb_unsigned",
+   "header": "Bending Moment, N·m (ft-lb) (Unsigned) [Note (1)]"
+  },
+  {
+   "key": "sustained_stress_sl_mpa_ksi",
+   "header": "Sustained Stress, SL, MPa (ksi) [Notes (1)–(3)]"
+  }
+ ],
+ "row_count": 9,
+ "notes": [
+  "GENERAL NOTE: No support is provided at the node 50 Y+ restraint for Sustained Condition 3; see Table S302.6.2-1 and para. S302.6.3. The stress due to sustained loads, SL, at node 50 Y+ when active is 76.3 MPa (11.0 ksi) for Sustained Condition 2.",
+  "(1) Forces, moments, and stresses are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units. The magnitude of loads and stresses for nodes 10 through 40 are the same for nodes 110 through 140, though the loads may differ in sign.",
+  "(2) The sustained longitudinal force indices, Ia, are defaulted to 1.0 for all piping components in the absence of more applicable data in accordance with para. 320.2.",
+  "(3) Both the sustained axial forces listed above and sustained axial pressure force, +370 000 N (+83,000 lb), are summed in accordance with para. 320 to calculate the stresses due to sustained loads, SL. The piping system is in normal fluid service. The fluid is minimum required wall thickness for both the branch gaseous, is considered to add no weight and to be neither a and header is 4.34 mm (0.171 in.), considering a corrosive nor an erosive hazard, i.e., there is no corrosion 12.5% mill tolerance; therefore, selection of the standard allowance. The line is not insulated. The ambient (as wall thickness of 9.52 mm (0.375 in.) is acceptable. -installed) temperature is 4°C (40°F). The reference"
+ ],
+ "rows": [
+  {
+   "node": "10 anchor",
+   "axial_force_structural_only_n_lb_signed": "+9 000 (+2,000)",
+   "bending_moment_n_m_ft_lb_unsigned": "25 400 (18,800)",
+   "sustained_stress_sl_mpa_ksi": "77.5 (11.3)"
+  },
+  {
+   "node": "20 support",
+   "axial_force_structural_only_n_lb_signed": "+9 000 (+2,000)",
+   "bending_moment_n_m_ft_lb_unsigned": "39 600 (29,200)",
+   "sustained_stress_sl_mpa_ksi": "95.6 (13.9)"
+  },
+  {
+   "node": "30 near",
+   "axial_force_structural_only_n_lb_signed": "+9 000 (+2,000)",
+   "bending_moment_n_m_ft_lb_unsigned": "4 500 (3,300)",
+   "sustained_stress_sl_mpa_ksi": "55.9 (8.14)"
+  },
+  {
+   "node": "30 mid",
+   "axial_force_structural_only_n_lb_signed": "+32 000 (+7,200)",
+   "bending_moment_n_m_ft_lb_unsigned": "9 700 (7,150)",
+   "sustained_stress_sl_mpa_ksi": "67.1 (9.77)"
+  },
+  {
+   "node": "30 far",
+   "axial_force_structural_only_n_lb_signed": "+35 000 (+7,850)",
+   "bending_moment_n_m_ft_lb_unsigned": "12 200 (9,000)",
+   "sustained_stress_sl_mpa_ksi": "73.2 (10.6)"
+  },
+  {
+   "node": "40 near",
+   "axial_force_structural_only_n_lb_signed": "+23 100 (+5,200)",
+   "bending_moment_n_m_ft_lb_unsigned": "31 400 (23,200)",
+   "sustained_stress_sl_mpa_ksi": "124 (18.0)"
+  },
+  {
+   "node": "40 mid",
+   "axial_force_structural_only_n_lb_signed": "+22 500 (+5,050)",
+   "bending_moment_n_m_ft_lb_unsigned": "31 200 (23,000)",
+   "sustained_stress_sl_mpa_ksi": "123 (17.9)"
+  },
+  {
+   "node": "40 far",
+   "axial_force_structural_only_n_lb_signed": "+9 000 (+2,000)",
+   "bending_moment_n_m_ft_lb_unsigned": "23 600 (17,500)",
+   "sustained_stress_sl_mpa_ksi": "106 (15.3)"
+  },
+  {
+   "node": "50 Y+",
+   "axial_force_structural_only_n_lb_signed": "−9 000 (−2,000)",
+   "bending_moment_n_m_ft_lb_unsigned": "64 900 (47,800)",
+   "sustained_stress_sl_mpa_ksi": "128 (18.6)"
+  }
+ ]
+}

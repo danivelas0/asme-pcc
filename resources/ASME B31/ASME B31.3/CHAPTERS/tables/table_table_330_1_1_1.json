@@ -1,0 +1,233 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "V",
+ "table_id": "Table 330.1.1-1",
+ "title": "Preheat Temperatures",
+ "pdf_pages": [
+  109,
+  109
+ ],
+ "columns": [
+  {
+   "key": "base_metal_p_no",
+   "header": "Base Metal P-No. [Note (1)]",
+   "banners": []
+  },
+  {
+   "key": "base_metal_group",
+   "header": "Base Metal Group",
+   "banners": []
+  },
+  {
+   "key": "greater_material_thickness_mm",
+   "header": "mm",
+   "banners": [
+    "Greater Material Thickness"
+   ]
+  },
+  {
+   "key": "greater_material_thickness_in",
+   "header": "in.",
+   "banners": [
+    "Greater Material Thickness"
+   ]
+  },
+  {
+   "key": "additional_limits",
+   "header": "Additional Limits [Note (2)]",
+   "banners": []
+  },
+  {
+   "key": "required_minimum_temperature_deg_c",
+   "header": "°C",
+   "banners": [
+    "Required Minimum Temperature"
+   ]
+  },
+  {
+   "key": "required_minimum_temperature_deg_f",
+   "header": "°F",
+   "banners": [
+    "Required Minimum Temperature"
+   ]
+  }
+ ],
+ "row_count": 18,
+ "notes": [
+  "(1) P-Nos. and Group Nos. from ASME BPVC, Section IX, Table QW/QB-422.",
+  "(2) SMTS = Specified Minimum Tensile Strength.",
+  "(3) Composition may be based on ladle or product analysis or in accordance with specification limits.",
+  "(4) Maximum interpass temperature 315°C (600°F).",
+  "(5) Maintain interpass temperature between 150°C and 230°C (300°F and 450°F)."
+ ],
+ "rows": [
+  {
+   "base_metal_p_no": 1,
+   "base_metal_group": "Carbon steel",
+   "greater_material_thickness_mm": "≤25",
+   "greater_material_thickness_in": "≤1.0",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 10,
+   "required_minimum_temperature_deg_f": 50
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": ">25",
+   "greater_material_thickness_in": ">1.0",
+   "additional_limits": "%C ≤ 0.30 [Note (3)]",
+   "required_minimum_temperature_deg_c": 10,
+   "required_minimum_temperature_deg_f": 50
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": ">25",
+   "greater_material_thickness_in": ">1.0",
+   "additional_limits": "%C > 0.30 [Note (3)]",
+   "required_minimum_temperature_deg_c": 95,
+   "required_minimum_temperature_deg_f": 200
+  },
+  {
+   "base_metal_p_no": 3,
+   "base_metal_group": "Alloy steel, Cr ≤ 1∕2%",
+   "greater_material_thickness_mm": "≤13",
+   "greater_material_thickness_in": "≤0.5",
+   "additional_limits": "SMTS ≤ 450 MPa (65 ksi)",
+   "required_minimum_temperature_deg_c": 10,
+   "required_minimum_temperature_deg_f": 50
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": ">13",
+   "greater_material_thickness_in": ">0.5",
+   "additional_limits": "SMTS ≤ 450 MPa (65 ksi)",
+   "required_minimum_temperature_deg_c": 95,
+   "required_minimum_temperature_deg_f": 200
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "SMTS > 450 MPa (65 ksi)",
+   "required_minimum_temperature_deg_c": 95,
+   "required_minimum_temperature_deg_f": 200
+  },
+  {
+   "base_metal_p_no": 4,
+   "base_metal_group": "Alloy steel, 1∕2% < Cr ≤ 2%",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 120,
+   "required_minimum_temperature_deg_f": 250
+  },
+  {
+   "base_metal_p_no": "5A",
+   "base_metal_group": "Alloy steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "SMTS ≤ 414 MPa (60 ksi)",
+   "required_minimum_temperature_deg_c": 150,
+   "required_minimum_temperature_deg_f": 300
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "SMTS > 414 MPa (60 ksi)",
+   "required_minimum_temperature_deg_c": 200,
+   "required_minimum_temperature_deg_f": 400
+  },
+  {
+   "base_metal_p_no": "5B",
+   "base_metal_group": "Alloy steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "SMTS ≤ 414 MPa (60 ksi)",
+   "required_minimum_temperature_deg_c": 150,
+   "required_minimum_temperature_deg_f": 300
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "SMTS > 414 MPa (60 ksi)",
+   "required_minimum_temperature_deg_c": 200,
+   "required_minimum_temperature_deg_f": 400
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": null,
+   "greater_material_thickness_mm": ">13",
+   "greater_material_thickness_in": ">0.5",
+   "additional_limits": "%Cr > 6.0 [Note (3)]",
+   "required_minimum_temperature_deg_c": 200,
+   "required_minimum_temperature_deg_f": 400
+  },
+  {
+   "base_metal_p_no": 6,
+   "base_metal_group": "Martensitic stainless steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": "200 [Note (4)]",
+   "required_minimum_temperature_deg_f": "400 [Note (4)]"
+  },
+  {
+   "base_metal_p_no": "9A",
+   "base_metal_group": "Nickel alloy steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 120,
+   "required_minimum_temperature_deg_f": 250
+  },
+  {
+   "base_metal_p_no": "9B",
+   "base_metal_group": "Nickel alloy steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 150,
+   "required_minimum_temperature_deg_f": 300
+  },
+  {
+   "base_metal_p_no": "10I",
+   "base_metal_group": "27Cr steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": "150 [Note (5)]",
+   "required_minimum_temperature_deg_f": "300 [Note (5)]"
+  },
+  {
+   "base_metal_p_no": "15E",
+   "base_metal_group": "9Cr–1Mo–V CSEF steel",
+   "greater_material_thickness_mm": "All",
+   "greater_material_thickness_in": "All",
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 200,
+   "required_minimum_temperature_deg_f": 400
+  },
+  {
+   "base_metal_p_no": null,
+   "base_metal_group": "All other materials",
+   "greater_material_thickness_mm": null,
+   "greater_material_thickness_in": null,
+   "additional_limits": "None",
+   "required_minimum_temperature_deg_c": 10,
+   "required_minimum_temperature_deg_f": 50
+  }
+ ]
+}

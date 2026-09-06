@@ -1,0 +1,253 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "II",
+ "table_id": "Table 302.3.5-1",
+ "title": "Weld Joint Strength Reduction Factor, W",
+ "pdf_pages": [
+  53,
+  53
+ ],
+ "columns": [
+  {
+   "key": "steel_group",
+   "header": "Steel Group",
+   "banners": []
+  },
+  {
+   "key": "le_427_le_800",
+   "header": "≤427 (≤800)",
+   "banners": []
+  },
+  {
+   "key": "454_850",
+   "header": "454 (850)",
+   "banners": []
+  },
+  {
+   "key": "482_900",
+   "header": "482 (900)",
+   "banners": []
+  },
+  {
+   "key": "510_950",
+   "header": "510 (950)",
+   "banners": []
+  },
+  {
+   "key": "538_1_000",
+   "header": "538 (1,000)",
+   "banners": []
+  },
+  {
+   "key": "component_temperature_ti_deg_c_deg_f_566_1_050",
+   "header": "566 (1,050)",
+   "banners": [
+    "Component Temperature, Ti, °C (°F)"
+   ]
+  },
+  {
+   "key": "component_temperature_ti_deg_c_deg_f_593_1_100",
+   "header": "593 (1,100)",
+   "banners": [
+    "Component Temperature, Ti, °C (°F)"
+   ]
+  },
+  {
+   "key": "component_temperature_ti_deg_c_deg_f_621_1_150",
+   "header": "621 (1,150)",
+   "banners": [
+    "Component Temperature, Ti, °C (°F)"
+   ]
+  },
+  {
+   "key": "component_temperature_ti_deg_c_deg_f_649_1_200",
+   "header": "649 (1,200)",
+   "banners": [
+    "Component Temperature, Ti, °C (°F)"
+   ]
+  },
+  {
+   "key": "component_temperature_ti_deg_c_deg_f_677_1_250",
+   "header": "677 (1,250)",
+   "banners": [
+    "Component Temperature, Ti, °C (°F)"
+   ]
+  },
+  {
+   "key": "704_1_300",
+   "header": "704 (1,300)",
+   "banners": []
+  },
+  {
+   "key": "732_1_350",
+   "header": "732 (1,350)",
+   "banners": []
+  },
+  {
+   "key": "760_1_400",
+   "header": "760 (1,400)",
+   "banners": []
+  },
+  {
+   "key": "788_1_450",
+   "header": "788 (1,450)",
+   "banners": []
+  },
+  {
+   "key": "816_1_500",
+   "header": "816 (1,500)",
+   "banners": []
+  }
+ ],
+ "row_count": 7,
+ "notes": [
+  "(a) Weld joint strength reduction factors at temperatures above the upper temperature limit listed in Appendix A for the base metal or outside of the applicable range in Table 302.3.5-1 are the responsibility of the designer. At temperatures below those where weld joint strength reduction factors are tabulated, a value of 1.0 shall be used for the factor W where required; however, the additional rules of this table and Notes do not apply.",
+  "(b) Tcr = temperature 25°C (50°F) below the temperature identifying the start of time-dependent properties listed under \"NOTES - TIME-DEPENDENT PROPERTIES\" (Txx) in the Notes to ASME BPVC, Section II, Part D, Tables 1A and 1B for the base metals joined by welding. For materials not listed in Section II, Part D, Tcr shall be the temperature where the creep rate or stress rupture criteria in paras. 302.3.2(d)(4) through 302.3.2(d)(7) governs the basic allowable stress value of the metals joined by welding. When the base metals differ, the lower value of Tcr shall be used for the weld joint.",
+  "(c) Ti = temperature, °C (°F), of the component for the coincident operating pressure–temperature condition, i, under consideration.",
+  "(d) CAUTIONARY NOTE: There are many factors that may affect the life of a welded joint at elevated temperature and all of those factors cannot be addressed in a table of weld joint strength reduction factors. For example, fabrication issues such as the deviation from a true circular form in pipe (e.g., \"peaking\" at longitudinal weld seams) or offset at the weld joint can cause an increase in stress that may result in reduced service life and control of these deviations is recommended.",
+  "(e) The weld joint strength reduction factor, W, may be determined using linear interpolation for intermediate temperature values.",
+  "(1) The Cr–Mo steels include 1∕2Cr–1∕2Mo, 1Cr–1∕2Mo, 11∕4Cr–1∕2Mo–Si, 21∕4Cr–1Mo, 3Cr–1Mo, 5Cr–1∕2Mo, and 9Cr–1Mo. Longitudinal and spiral (helical seam) welds shall be normalized, normalized and tempered, or subjected to proper subcritical postweld heat treatment (PWHT) for the alloy. Required examination is in accordance with para. 341.4.4 or para. 305.2.4.",
+  "(2) Longitudinal and spiral (helical seam) seam fusion welded piping components are not permitted for C–1∕2Mo steel above 454°C (850°F).",
+  "(3) The required carbon content of the weld filler metal shall be ≥0.05 C wt. %. See para. 341.4.4(b) for examination requirements. The basicity index of SAW flux shall be ≥1.0.",
+  "(4) The CSEF (Creep Strength Enhanced Ferritic) steels include 21∕4Cr–1.6W–V–Cb, 9Cr–1Mo–V, 9Cr–1Mo–1W–Cb, 9Cr–2W, and 12Cr–2W.",
+  "(5) N + T = Normalizing + Tempering PWHT.",
+  "(6) Autogenous welds without filler metal in austenitic stainless steel (grade 3xx) and austenitic nickel alloys UNS Nos. N066xx and N088xx. A solution anneal after welding is required for use of the factors in the Table. See para. 341.4.3(b) for examination requirements.",
+  "(7) Alternatively, the 100,000 hr Stress Rupture Factors listed in ASME BPVC, Section III, Division 1, Subsection NH, Tables I-14.10 A-xx, B-xx, and C-xx may be used as the weld joint strength reduction factor for the materials and welding consumables specified.",
+  "(8) Certain heats of the austenitic stainless steels, particularly for those grades whose creep strength is enhanced by the precipitation of temper-resistant carbides and carbonitrides, can suffer from an embrittlement condition in the weld heat-affected zone that can lead to premature failure of welded components operating at elevated temperatures. A solution annealing heat treatment of the weld area mitigates this susceptibility.",
+  "(9) For materials other than carbon steel, CrMo, CSEF, and the austenitic alloys listed in Table 302.3.5-1, W shall be as follows: For Ti ≤ Tcr, W = 1.0. For SI units, for Tcr < Ti ≤ 816°C, W = 1 − 0.00164(Ti − Tcr). For U.S. Customary units, for Tcr < Ti ≤ 1,500°F, W = 1 − 0.000909(Ti − Tcr). If Ti exceeds the upper temperature for which an allowable stress value is listed in Appendix A for the base metal, the value for W is the responsibility of the designer."
+ ],
+ "rows": [
+  {
+   "steel_group": "Carbon Steel",
+   "le_427_le_800": 1,
+   "454_850": 1,
+   "482_900": 1,
+   "510_950": 1,
+   "538_1_000": 1,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 1,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 1,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": null,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": null,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": null,
+   "704_1_300": null,
+   "732_1_350": null,
+   "760_1_400": null,
+   "788_1_450": null,
+   "816_1_500": null
+  },
+  {
+   "steel_group": "CrMo [Notes (1)–(3)]",
+   "le_427_le_800": 1,
+   "454_850": 0.95,
+   "482_900": 0.91,
+   "510_950": 0.86,
+   "538_1_000": 0.82,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 0.77,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 0.73,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": 0.68,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": 0.64,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": null,
+   "704_1_300": null,
+   "732_1_350": null,
+   "760_1_400": null,
+   "788_1_450": null,
+   "816_1_500": null
+  },
+  {
+   "steel_group": "CSEF (N + T) [Notes (3)–(5)]",
+   "le_427_le_800": null,
+   "454_850": null,
+   "482_900": null,
+   "510_950": 1,
+   "538_1_000": 0.95,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 0.91,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 0.86,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": 0.82,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": 0.77,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": null,
+   "704_1_300": null,
+   "732_1_350": null,
+   "760_1_400": null,
+   "788_1_450": null,
+   "816_1_500": null
+  },
+  {
+   "steel_group": "CSEF [Notes (3), (4)] (Subcritical PWHT)",
+   "le_427_le_800": null,
+   "454_850": null,
+   "482_900": 1,
+   "510_950": 0.5,
+   "538_1_000": 0.5,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 0.5,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 0.5,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": 0.5,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": 0.5,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": null,
+   "704_1_300": null,
+   "732_1_350": null,
+   "760_1_400": null,
+   "788_1_450": null,
+   "816_1_500": null
+  },
+  {
+   "steel_group": "Autogenous welds in austenitic stainless grade 3xx, and N088xx and N066xx nickel alloys [Note (6)]",
+   "le_427_le_800": null,
+   "454_850": null,
+   "482_900": null,
+   "510_950": 1,
+   "538_1_000": 1,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 1,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 1,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": 1,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": 1,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": 1,
+   "704_1_300": 1,
+   "732_1_350": 1,
+   "760_1_400": 1,
+   "788_1_450": 1,
+   "816_1_500": 1
+  },
+  {
+   "steel_group": "Austenitic stainless grade 3xx and N088xx nickel alloys [Notes (7), (8)]",
+   "le_427_le_800": null,
+   "454_850": null,
+   "482_900": null,
+   "510_950": 1,
+   "538_1_000": 0.95,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": 0.91,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": 0.86,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": 0.82,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": 0.77,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": 0.73,
+   "704_1_300": 0.68,
+   "732_1_350": 0.64,
+   "760_1_400": 0.59,
+   "788_1_450": 0.55,
+   "816_1_500": 0.5
+  },
+  {
+   "steel_group": "Other materials [Note (9)]",
+   "le_427_le_800": null,
+   "454_850": null,
+   "482_900": null,
+   "510_950": null,
+   "538_1_000": null,
+   "component_temperature_ti_deg_c_deg_f_566_1_050": null,
+   "component_temperature_ti_deg_c_deg_f_593_1_100": null,
+   "component_temperature_ti_deg_c_deg_f_621_1_150": null,
+   "component_temperature_ti_deg_c_deg_f_649_1_200": null,
+   "component_temperature_ti_deg_c_deg_f_677_1_250": null,
+   "704_1_300": null,
+   "732_1_350": null,
+   "760_1_400": null,
+   "788_1_450": null,
+   "816_1_500": null
+  }
+ ]
+}

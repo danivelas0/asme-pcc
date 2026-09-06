@@ -1,0 +1,53 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Mandatory Appendix 10",
+  "kind": "Mandatory",
+  "identifier": "10",
+  "title": "Basis for Establishing Maximum Allowable Stress Values for Tables 5A and 5B",
+  "title_as_printed": "BASIS FOR ESTABLISHING MAXIMUM ALLOWABLE STRESS VALUES FOR TABLES 5A AND 5B",
+  "pdf_pages": [
+    1403,
+    1404
+  ],
+  "section_count": 3,
+  "word_count": 711,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "10-100",
+      "heading": "DERIVATION OF ALLOWABLE STRESS VALUES",
+      "paragraphs": [
+        "The values in Tables 5A and 5B are established by the Committee only. In the determination of allowable stress values, the Committee is guided by successful experience in service, insofar as evidence of satisfactory performance is available. Such evidence is considered equivalent to test data where operating conditions are known with reasonable certainty. In the evaluation of new materials, it is sometimes necessary to be guided by the comparison of test information with available data on successful applications of similar materials. The factors employed to determine the maximum allowable stress values are provided in Table 10-100. Nomenclature for this Table is as follows: F avg = multiplier applied to average stress for rupture in 100 000 h. At 815°C and below, F avg = 0.67. Above 815°C, it is determined from the slope of the log time‐to‐rupture versus log stress plot at 100 000 h such that log [F a v g ] = 1/n , but F a v g may not exceed 0.67. NA = not applicable n = a negative number equal to Δ log time‐ to‐rupture divided by Δ log stress at 100 000 h R y = ratio of the average temperature dependent trend curve value of yield strength to the room temperature yield strength S Cavg = average stress to produce a creep rate of 0.01%/1 000 h SR avg = average stress to cause rupture at the end of 100 000 h SR m in = minimum stress to cause rupture at the end of 100 000 h ST = specified minimum tensile strength at room temperature S y = specified minimum yield strength at room temperature"
+      ]
+    },
+    {
+      "id": "10-110",
+      "heading": "CRITERIA FOR MATERIALS OTHER THAN BOLTING",
+      "paragraphs": [
+        "The maximum allowable stress values at any temperature shall be the lowest value obtained from the criteria in Table 10-100. The mechanical properties considered and the factors applied to establish the maximum allowable stresses are as given below.",
+        "(a) At temperatures below the range where creep and stress rupture strength govern the selection of stresses, the maximum allowable stress value is the lowest of the following:",
+        "(1) the specified minimum tensile strength at room temperature divided by 2.4",
+        "(2) the specified minimum yield strength divided by 1.5",
+        "(3) the yield strength at temperature divided by 1.5, except for austenitic stainless steels, nickel alloys, copper alloys, and cobalt alloys",
+        "(4) for austenitic stainless steels, nickel alloys, copper alloys, and cobalt alloys having an S y /S T ratio less than 0.625, higher stress values are established at temperatures where the short-time tensile properties govern, to permit use of these alloys where slightly greater deformation is acceptable. The stress values in this range exceed 662/3%, but do not exceed 90%, of the yield strength at temperature, but never exceed two-thirds of the specified room-temperature minimum yield strength. These higher stress values are not recommended for the flanges of gasketed joints or other applications where slight amounts of distortion can cause leakage or malfunction. Table Y-2 lists multiplying factors that, when applied to the yield strength values shown in Table Y-1, will give allowable stresses that will result in lower levels of permanent strain. In the application of these criteria, the Committee considers the yield strength at temperature to be R ySy.",
+        "(b) At temperatures in the range where creep and stress rupture govern the selection of stresses, the maximum allowable stress value for all materials is established by the Committee not to exceed the lowest of the following:",
+        "(1) 100% of the average stress to produce a creep rate of 0.01%/1 000 h",
+        "(2) 100F avg % of the average stress to cause rupture at the end of 100 000 h",
+        "(3) 80% of the minimum stress to cause rupture at the end of 100 000 h Stress values for high temperature are based, whenever possible, on representative uniaxial properties of the materials obtained under standard testing conditions. The stress values are based on basic properties of the material and no consideration is given for corrosive environment, for abnormal temperature and stress conditions, or for other design considerations."
+      ]
+    },
+    {
+      "id": "10-120",
+      "heading": "CRITERIA FOR BOLTING MATERIALS",
+      "paragraphs": [
+        "The criteria for bolting materials listed in Tables 3 and 4 are to be found in Mandatory Appendix 2. Room Temperature and Above Yield Strength Stress Rupture Creep Rate 1.0 S C a v g 1.0 S C a v g"
+      ]
+    }
+  ]
+}

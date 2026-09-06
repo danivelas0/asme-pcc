@@ -1,0 +1,181 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 5 - EXAMINATION AND TESTING",
+  "chapter_kind": "appendix",
+  "chapter_id": "501-II",
+  "chapter_title": "Stored Energy Calculations for Pneumatic Pressure Test",
+  "parent_article": "501",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    306,
+    306
+  ],
+  "outline_pages": [
+    306,
+    306
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 29,
+    "figures": 0,
+    "tables": 0,
+    "equations": 6
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 306,
+      "number": "501-II",
+      "level": 1,
+      "text": "Mandatory Appendix 501-II Stored Energy Calculations for Pneumatic Pressure Test"
+    },
+    {
+      "type": "section_header",
+      "page": 306,
+      "text": "501-II-1 GENERAL"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "The stored energy of the equipment or piping system should be calculated and converted to equivalent kilograms (pounds) of TNT (Trinitrotoluene) using the"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "following equations: Ä Ç ÅÅ Å Å ÅÅÅ É Ö ÑÑ Ñ Ñ ÑÑÑ = [ ] × × [ ] E k P V P P 1/( 1) 1 ( / ) at a at ( 1)/ k k (II-1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "E = stored energy, J (ft-lb)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "k = ratio of specific heat for the test fluid"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "Pa = absolute atmospheric pressure, 101 kPa (14.7"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "psia) Pat = absolute test pressure, Pa (psia)"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "V = total volume under test pressure, m 3 (ft3 )"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "When using air or nitrogen as the test medium ( k = 1.4), this equation becomes"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "Ä Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ E P V P P = × × 2.5 1 ( / ) at a at 0.286 (II-2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "and"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "TNT = (kg) E 4 266 920 (II-3)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "E = stored energy, J"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "Pa = absolute atmospheric pressure, 101 000 Pa Pat = absolute test pressure, Pa"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "V = total volume under test pressure, m 3"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "For U.S. Customary units using air or nitrogen as the test medium ( k = 1.4), this equation becomes Ä"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ E P V P P = × × 360 1 ( / ) at a at 0.286 (II-4)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "and"
+    },
+    {
+      "type": "equation",
+      "page": 306,
+      "text": "= E TNT 1,488,617 (lb) (II-5)"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "E = stored energy, ft-lb"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "Pa = absolute atmospheric pressure, 14.7 psia"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "Pat = absolute test pressure, psia"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "V = total volume under test pressure, ft3"
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "When calculating the stored energy for a vessel, the total volume shall be considered. When calculating the stored energy of a piping system, a maximum volume based on a length of of 8 pipe diameters may be considered for any single failure analyzed."
+    },
+    {
+      "type": "paragraph",
+      "page": 306,
+      "text": "See also paras. 501-6.2(e) and 501-6.2(f) ."
+    }
+  ]
+}

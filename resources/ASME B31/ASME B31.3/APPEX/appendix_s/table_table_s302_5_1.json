@@ -1,0 +1,60 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S302.5-1",
+ "title": "Example 2: Results for Operating Case: Reactions on Support and Anchors",
+ "pdf_pages": [
+  553,
+  553
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "fx_n_lb_signed",
+   "header": "Fx, N (lb) (Signed) [Note (2)]"
+  },
+  {
+   "key": "global_axis_forces_and_moments",
+   "header": "Global Axis Forces and Moments [Note Fy, N (lb) (Signed) [Note (2)]"
+  },
+  {
+   "key": "1_mz_n_m_ft_lb_signed",
+   "header": "(1)] Mz, N·m (ft-lb) (Signed) [Note (2)]"
+  }
+ ],
+ "row_count": 3,
+ "notes": [
+  "(1) Reactions are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units.",
+  "(2) Reactions are signed based on their directions relative to the selected coordinate system’s positive directions. Reactions Fx and Mz are positive in sign for anchor 110.",
+  "(3) No support is provided at the node 50 Y+ restraint for the operating case. Sustained Condition 2’s support load at node 50 Y+ is 26 300 N (5,900 lb); see Table S302.6.2-1 and para. S302.6.3. the support structure at either node 20 or 120 is over-"
+ ],
+ "rows": [
+  {
+   "node": "10 anchor",
+   "fx_n_lb_signed": "−24 400 (−5,500)",
+   "global_axis_forces_and_moments": "−20 200 (−4,500)",
+   "1_mz_n_m_ft_lb_signed": "−51 700 (−38,100)"
+  },
+  {
+   "node": "20 support",
+   "fx_n_lb_signed": null,
+   "global_axis_forces_and_moments": "−49 000 (−11,000)",
+   "1_mz_n_m_ft_lb_signed": null
+  },
+  {
+   "node": "50 Y+",
+   "fx_n_lb_signed": null,
+   "global_axis_forces_and_moments": "0 [Note (3)]",
+   "1_mz_n_m_ft_lb_signed": null
+  }
+ ]
+}

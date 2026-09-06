@@ -1,0 +1,553 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "N",
+ "title": "Application of ASME B31.3 Internationally",
+ "document": "Appendix N prose",
+ "pdf_pages": [
+  538,
+  541
+ ],
+ "section_count": 16,
+ "paragraph_count": 68,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "N300",
+   "heading": "INTRODUCTION",
+   "level": 1,
+   "page": 538,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This Code is an internationally recognized code for pressure piping. This Appendix provides guidance and direction on how to implement the use of ASME B31.3 in countries and jurisdictions globally."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Standards and publications described in this Appendix may be used as part of the engineering design where determined appropriate by contracting parties and when in compliance with local regulations."
+    }
+   ]
+  },
+  {
+   "id": "N301",
+   "heading": "EUROPEAN PRESSURE EQUIPMENT DIRECTIVE",
+   "level": 1,
+   "page": 538,
+   "paragraphs": []
+  },
+  {
+   "id": "N301.1",
+   "heading": "General",
+   "level": 2,
+   "page": 538,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The European Pressure Equipment Directive 2014/68/ EU (PED) is mandatory throughout all Member States of the European Union (EU) and the rest of the European Economic Area (EEA). The PED became effective May 15, 2014. The PED contains essential safety requirements (ESRs) that are mandatory before a manufacturer can declare conformity with the PED and place its product on the market anywhere in the European Community. Note that the definition of the term “manufacturer” in this context differs from para. 300(b)(3). See para. N301.4.2(c)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Some articles of the PED and its ESRs are either not satisfied or are not addressed by this Code. In addition, some aspects of this Code differ from the PED."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Examples where ESRs are not fully satisfied by this Code are as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) scope and responsibilities"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) hazard and risk analysis"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) conformity assessment procedures"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) traceability procedures for materials"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) material certification and documentation"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) third party involvement for permanent joining procedures and personnel qualification and personnel performing nondestructive examination"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(g)",
+     "indent": 1,
+     "text": "(g) marking and labeling"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(h)",
+     "indent": 1,
+     "text": "(h) operating instructions"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(i)",
+     "indent": 1,
+     "text": "(i) records and certification"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The intent of this paragraph is to make Code users more familiar with the key requirements of the PED and major gaps between the PED and this Code, when designing piping systems in accordance with this Code. These subjects are in general focused on the ESRs of the PED for piping, as defined under PED, Article 2, point 3. Some relevant PED Articles are also referenced where applicable. It should be emphasized that the sole intent of this paragraph is to provide guidance. Application of this paragraph cannot be considered a legally accepted substitute for the PED or its content, since this paragraph provides no authoritative interpretation to the PED or any of the national regulations thereof."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Application of para. N301 strictly pertains to piping subject to one of the PED categories (I to IV) as defined under PED Article 14, point 2 and PED, Annex II [see para. N301.3(a)]. Piping pertaining to Article 4, point 3 of the PED [“Sound Engineering Practice of a Member State” (SEP)] is not subject to the ESRs and therefore application of para. N301 is not mandatory but can be used at the discretion of the user."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This paragraph makes extensive use of the research that was documented in CEN/TR 14549.1 Much of the following will direct readers to this report. CEN/TR 14549 was based on the former Pressure Equipment Directive 97/23/EC, which was annulled on July 18, 2016, and replaced by the current PED (2014/68/EU). Since the current PED is largely the same as the former one, the comparison on key subjects still applies, unless stated otherwise. The technical report also makes frequent reference to Appendices F and G, as they cover a lot of similarities. See, for example, Tables D.2 and D.3 from CEN/TR 14549."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Another document that is used is the “Guidelines Related to the Pressure Equipment Directive 2014/68/ EU (PED)” (hereafter called Guidelines). This is an official document published by the EU that provides insight on high-level topics in a question-and-answer format. Although these guidelines cannot be considered a legally binding interpretation, it represents the unanimous opinion of the Member States, unless otherwise specified in the respective text."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "It should be noted that this paragraph is not intended to become an exhaustive, all-inclusive list that, if all items listed are covered and check-marked, proves compliance with the PED for piping systems that are designed to this Code. For that purpose, reference is made to CEN/TR"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "1 CEN/TR 14549. Guide to the use of ISO 15649 and ANSI/ASME B31.3 for piping in Europe in compliance with the Pressure Equipment Directive. European Committee for Standardization. 14549. This paragraph bears a lot of similarities with Annex A of CEN/TR 14549, which briefly provides a checklist of major actions arising from the PED. This paragraph, however, cannot be considered a substitute for the PED or an approach to become Annex ZA, typically used under harmonized EN standards such as EN 13480-3.2 It is the responsibility of the manufacturer of piping systems, as defined under PED, Article 17, point 4, to assume and declare overall responsibility for compliance of piping systems with the requirements laid down in the PED. It is therefore strongly suggested that Code users familiarize themselves with the PED."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Although this paragraph is focused on piping, the scope of the PED also covers pressure accessories like valves and instruments. Such items of pressure equipment, when covered by the rules of this Code, are also covered by the same rules in the PED applicable for piping. Therefore, the same approach and set of rules may be used for pressure accessories. Specific guidance for classification of pressure accessories is provided in para. N301.3(b)."
+    }
+   ]
+  },
+  {
+   "id": "N301.2",
+   "heading": "Organization of This Paragraph",
+   "level": 2,
+   "page": 539,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Paragraph N301 is written in such a way that, where applicable, it covers the same subjects as Chapters I through VI (the base Code) of this Code, and in the same order, except for paras. N301.1 through N301.3. Within each paragraph of N301, subjects covered are generally related to the paragraph’s title. Subjects not covered by any of the chapters of this Code, but relevant to piping systems governed by the PED, are covered in para. N301.3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Paragraph N301 is not written to cover the entire scope of the PED. PED, Annexes II and III are not discussed as they do not affect the design and construction of piping systems but are focused on conformity assessment procedures that relate to categories I, II, and III. When a piping system under consideration falls in either of these three categories, the manufacturer is obliged to use any of the applicable conformity assessment procedures from PED, Article 14. PED, Annexes IV through VI are also not covered as they do not affect design and construction of piping systems. PED, Annex IV may be useful in defining a format for an EU declaration of conformity [see para. N301.8.1(d)]."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Although the PED sets legally binding requirements, the following sections in para. N301 will not further use that verbiage since the sections are not formally a Code requirement but provide guidance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The full text of the PED can be found at https:// eur-lex.europa.eu/legal-content/EN/TXT/ ?uri=celex%3A32014L0068. The full text of the Guidelines can be found at https://ec.europa.eu/docsroom/ documents/33402. Guidance on the content of a particular"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "2 EN 13480-3. Metallic industrial piping — Part 3: Design and calculation. European Committee for Standardization. material appraisal (PMA) can be found in PE 03-28, https://ec.europa.eu/docsroom/documents/10642."
+    }
+   ]
+  },
+  {
+   "id": "N301.3",
+   "heading": "Classification, Categorization, and Responsibilities",
+   "level": 2,
+   "page": 539,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Categorization of piping in the PED is based on"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the pipe nominal diameter (DN). Useful references in this subject are Guidelines B-02 and B-28."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the fluid group, which relates to a level of hazard. The relation with Regulation (EC) No. 1272/2008 (PED, Article 13, point 1), the “Classification and Labelling of Chemicals” may be important as it defines whether a fluid is classified as Group 1 or Group 2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the fluid state [PED, Article 4, point 1(c)]. The vapor pressure at design temperature of the fluid under consideration plays a key role. Useful references related to mixtures are Guidelines B-26 through B-28, B-30, and B-35."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) the maximum allowable pressure, PS (PED, Article 2, point 8). The value of PS, under the PED, is often considered equal to the design pressure (see para. 301.2). See also Guideline H-07."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Valves, instruments, filters, and expansion joints (Guidelines A-08 and A-09) are typically classified as pressure accessories. Refer to PED, Article 2, point 5. Pressure safety devices are classified as safety accessories and are always classified as category IV (with the exception provided under PED, Annex II, point 2, i.e., when such devices are designed for specific equipment). The ESRs apply to both pressure and safety accessories when they fall under category I or higher. Classification of such accessories is laid down in PED, Annex II, point 3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The manufacturer is under an obligation to identify potential hazards and risks related to piping. Appropriate measures are required during design and construction of piping by the manufacturer. Where residual hazards exist, or potential misuse is foreseen, the manufacturer is required to instruct the user about those hazards and risks through safety information and adequate instructions for use. Refer to PED, Annex I (ESR), preliminary observation 3, and PED, Annex I (ESR), points 1.1 through 1.3. Also see Appendix G and CEN/TR 764-6.3"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) In contrast to this Code, which specifies overall responsibility for compliance with this Code by the owner [see para. 300(b)(1)], CE-marking (Conformité Européenne) (PED, Article 2, point 31), and compliance with the PED assigns all responsibilities to the manufacturer. See para. N301.4.2(c) for the PED definition of manufacturer."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "3 CEN/TR 764-6. Pressure equipment — Part 6: Structure and content of operating instructions. European Committee for Standardization."
+    }
+   ]
+  },
+  {
+   "id": "N301.4",
+   "heading": "Scope and Definitions",
+   "level": 2,
+   "page": 540,
+   "paragraphs": []
+  },
+  {
+   "id": "N301.4.1",
+   "heading": "Scope",
+   "level": 2,
+   "page": 540,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The PED applies to new pressure equipment only. Repairs and most modifications are not covered by the PED. Refer to Guidelines A-03 and A-04 for more information."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The PED may apply to second-hand pressure equipment when it is imported to the EEA. See Guidelines J-01 and J-02."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The PED applies to pressure equipment, including piping, for which the internal gage pressure is greater than 50 kPa (7 psi). The ESRs apply to piping in category I or higher. Therefore, there may be instances of piping systems designed for internal gage pressures less than 50 kPa (7 psi) with hazardous fluids that fall outside the scope of the PED but inside the scope of this Code."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Piping designed under the scope of this Code may fall under certain exceptions of the PED and therefore be outside the scope of the PED. This is outlined in PED, Article 1, point 2. An example includes, but is not limited to, piping systems in assemblies that also fall under the Machinery Directive 2006/42/EC, that are classified no higher than category I. As such, they may not have to comply with the PED, but they still require CE marking in some cases. See Guideline A-26."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) Piping designed for an internal gage pressure greater than 50 kPa (7 psi) can be defined under PED, Article 4, point 3. Fulfilling the ESRs is not required for piping subject to SEP. CE-marking is prohibited in those cases. The only requirements that are mandatory are to design and manufacture in accordance with the sound engineering practice of a Member State, to accompany the piping with instructions for adequate use, and to apply markings to permit identification. See Guidelines B-18, I-01, I-09, I-12, I-17, and I-19."
+    }
+   ]
+  },
+  {
+   "id": "N301.4.2",
+   "heading": "Definitions",
+   "level": 2,
+   "page": 540,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The definition of piping is provided in PED, Article 2, point 3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) For assessment of piping systems, the PED does not give any guidance on what is considered a piping system. This Code provides a definition for piping system in para. 300.2 as “interconnected piping subject to the same set or sets of design conditions.” This may simplify the conformity assessment procedure since there is often only one design condition to consider. For information, EN 13480-14 defines that a piping system “can be regarded as one single system provided it conveys substances having the same properties and it is as a whole designed for the same allowable pressure.”"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The manufacturer as defined in PED, Article 2, points 18 and 22 differs from the definition in para. 300(b)(3). The manufacturer may or may not be"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "4 EN 13480-1. Metallic industrial piping — Part 1: General. European Committee for Standardization. the owner. The manufacturer may also be an importer, authorized representative, or distributor. Whenever para. N301 refers to “manufacturer,” it refers to the definition of manufacturer in the PED. Also see PED, Article 17, point 4 and CEN/TR 14549, para. 4.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Main pressure-bearing parts are defined under Guideline G-06."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) PED, Annex I (ESR), point 7.1.1 defines the symbols for certain mechanical properties, which are different from those in this Code."
+    }
+   ]
+  },
+  {
+   "id": "N301.5",
+   "heading": "Design",
+   "level": 2,
+   "page": 540,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Draining and venting of piping systems, although usually covered from an assembly point of view, is required under PED, Annex I (ESR), point 2.5."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) One general aspect that is not specifically addressed in the base Code but is referenced in Appendix F, para. F323 and Appendix G is related to provisions to ensure safe handling, operation, filling, and discharge; and safeguarding, respectively. Since Appendices F and G are guidance appendices (see Table 300.4-1), they contain no requirements and may be easily overlooked. Refer to CEN/TR 14549, Annex D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The PED requires that piping be designed to protect it against its allowable limits. These allowable limits are related to pressure, temperature, and level. Refer to PED, Annex I (ESR), point 2.10 and Guidelines A-43 and E-06."
+    }
+   ]
+  },
+  {
+   "id": "N301.5.1",
+   "heading": "Allowable Stresses and Other Stress Limits",
+   "level": 2,
+   "page": 540,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The joint efficiency factor described under PED, Annex I (ESR), point 7.2 applies as a reference to welded joints but does not define the type of weld or joint. It does not specify in a way that ASME B31.3 does for castings (see Table 302.3.3-1), seam type (see Table 302.3.4-1), or elevated temperature applications (see Table 302.3.5-1). Further guidance is provided under CEN/TR 14549, para. 6.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Structural stability requires consideration. Refer to PED, Annex I (ESR), point 2.2.3(c)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The requirements from PED, Annex I (ESR), point 7.1 for allowable stresses are different from para. 302.3. For many materials, the allowable stresses in Table A-1 (Table A-1C) are more conservative and may be used without adjustment. In some cases, the PED may require more conservative values for allowable stresses, i.e., lower than those in Table A-1 (Table A-1C). Refer to Guideline G-14 and CEN/TR 14549, para. 6.1."
+    }
+   ]
+  },
+  {
+   "id": "N301.6",
+   "heading": "Materials",
+   "level": 2,
+   "page": 540,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Materials for pressure parts are required to meet PED, Annex I (ESR), point 4. With specific reference to point 4.1(a), due care should be exercised in selecting materials that may undergo a brittle-type fracture. More stringent impact testing acceptance criteria than in this Code may be required as defined under PED, Annex I (ESR), point 7.5. Refer to Guidelines F-19, G-13, G-17, G-18, G-22, and G-28."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) With reference to PED, Annex I (ESR), point 4.2, for materials that do not comply with a harmonized standard (refer to Guideline G-01), either a PMA or European Approvals for Materials is allowed. At the time of publishing, there are no European Approvals for Materials published for any of the materials from Table A-1 (Table A-1C). A PMA is a commonly used method. It is the obligation of the manufacturer to provide a PMA. A PMA requires approval by a notified body for category III. Refer to EN 764-4,5 Guidelines G-21 and I-13, and CEN/TR 14549, para. 5."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Specific requirements for documents and certificates of main pressure-bearing parts are in PED, Annex I (ESR), para. 4.3."
+    }
+   ]
+  },
+  {
+   "id": "N301.7",
+   "heading": "Fabrication, Assembly, and Erection",
+   "level": 2,
+   "page": 541,
+   "paragraphs": []
+  },
+  {
+   "id": "N301.7.1",
+   "heading": "Permanent Joining (e.g., Welding and",
+   "level": 2,
+   "page": 541,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Brazing). Operating procedures and personnel for permanent joining, such as welding, brazing, or soldering, require approval by a competent third party for categories II through IV. Examinations and tests for these approvals have to meet the specific requirements in the last sentence of PED, Annex I (ESR), para. 3.1.2. Guideline F-12, Note 3 mentions a potential difference that may arise between the requirements of the ESRs and the requirements of ASME BPVC, Section IX. Refer to Guidelines F-05, F-06, F-08, F-10 through F-12, and F-15 and CEN/TR 14549, para. 7.1."
+    }
+   ]
+  },
+  {
+   "id": "N301.8",
+   "heading": "Inspection, Examination, and Testing",
+   "level": 2,
+   "page": 541,
+   "paragraphs": []
+  },
+  {
+   "id": "N301.8.1",
+   "heading": "Inspection",
+   "level": 2,
+   "page": 541,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) It is the obligation of the manufacturer to affix CE-marking to piping pertaining to category I or higher. Other relevant details that are required on the nameplate or a label are in PED, Annex I (ESR), para. 3.3. Refer to Guidelines H-09, H-12, H-17, and I-08 and CEN/TR 14549, para. 7.3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) For piping in category III, personnel performing nondestructive examinations require approval by a third-party organization [as defined in PED, Annex I (ESR), point 3.1.3]. Refer to Guideline F-06 and CEN/ TR 14549, para. 8.1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "5 EN 764-4. Pressure equipment — Part 4: Establishment of technical delivery conditions for metallic materials. European Committee for Standardization."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Conformity assessment on piping subject to category II or higher requires the involvement of a notified body (as defined in PED, Annexes II and III). More guidance on third-party involvement for the various conformity assessment procedures can be found in CEN/TR 13480-7.6"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Piping needs to undergo a final inspection to assess visually and, by examination of the accompanying documents, compliance with the requirements of the PED. Refer to PED, Annex I (ESR), point 3.2.1 and Guideline F-02. This differs from the requirements in para. 340."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) Although CEN/TR 13480-7 was written for the European harmonized piping standard EN 13480, it may be useful in identifying the required inspection and testing activities for the various conformity assessment procedures."
+    }
+   ]
+  },
+  {
+   "id": "N301.8.2",
+   "heading": "Records",
+   "level": 2,
+   "page": 541,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The manufacturer is required to establish and maintain suitable procedures for traceability of materials [PED, Annex I (ESR), 3.1.5] and material specifications [PED, Annex I (ESR), 4.3]. For piping pertaining to category II or category III, a certificate of specific product control is required (i.e., certificate 3.1 or certificate 3.2 as defined in EN 102047). Refer to Guidelines G-04 through G-06, G-08, and G-10 and CEN/TR 14549, para. 7.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) As far as relevant, the manufacturer is required to provide instructions to the user related to installation, operating, and maintenance, as outlined under PED, Annex I (ESR), para. 3.4. Refer to Guidelines H-03 and I-21."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The manufacturer has to establish the technical documentation as laid down in the applicable conformity assessment procedure in PED, Annex III. Manufacturers are required to keep this file for a minimum of 10 yr after pressure equipment or assemblies have been placed on the market, as outlined in PED, Article 6, point 3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) The manufacturer is required to draw up an EU declaration of conformity as defined under PED, Article 6, point 2. The format of an EU declaration of conformity, as outlined in PED, Annex IV, is mandatory (see PED, Article 17, point 2)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "6 CEN/TR 13480-7. Metallic industrial piping — Part 7: Guidance on the use of conformity assessment procedures. European Committee for Standardization."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "7 EN 10204. Metallic products — Types of inspection documents. European Committee for Standardization."
+    }
+   ]
+  }
+ ]
+}

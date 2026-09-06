@@ -1,0 +1,146 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 5 - EXAMINATION AND TESTING",
+  "chapter_kind": "appendix",
+  "chapter_id": "501-IV",
+  "chapter_title": "Risk Evaluation Considerations for Pneumatic Pressure Test",
+  "parent_article": "501",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    309,
+    310
+  ],
+  "outline_pages": [
+    309,
+    310
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 22,
+    "figures": 0,
+    "tables": 0,
+    "equations": 2
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 309,
+      "number": "501-IV",
+      "level": 1,
+      "text": "Mandatory Appendix 501-IV Risk Evaluation Considerations for Pneumatic Pressure Test"
+    },
+    {
+      "type": "section_header",
+      "page": 309,
+      "text": "501-IV-1 INTRODUCTION"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "When considering the risk analysis factors listed in para. 501-6.2(f), it should be remembered that risk is a two-dimensional combination of probability (or likelihood) and consequence. Risk is the measure of the potential for harm or loss (i.e., hazard) that reflects the likelihood (or frequency) and severity of an adverse effect to health, property, or the environment. If probability and consequence are defined quantitatively (i.e., numerical values are assigned), risk is the product."
+    },
+    {
+      "type": "equation",
+      "page": 309,
+      "text": "risk probability consequence = × (IV-1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "In a qualitative assessment, a matrix is typically used to combine probability and consequence. Consideration should be given to the level of risk that is acceptable when performing pneumatic tests. Reference API RP 580 for use of risk assessment in determining the acceptable levels of risk associated with pneumatic testing."
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "In reviewing eq. (IV-1), it is clear that even though the consequence may be significant, if the probability is very low the risk may become acceptable. For example, the consequence of an airliner crashing is significant in that it will most likely result in serious injury or death to the passengers along with major damage to or total loss of the aircraft. However, the probability of an airliner crashing is very low; thus, the public accepts the risk associated with airline travel."
+    },
+    {
+      "type": "section_header",
+      "page": 309,
+      "text": "501-IV-2 PNEUMATIC TEST RISK CONSIDERATIONS"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "Risk considerations can be applied to pneumatic testing also. Examples may include"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "(a) a new austenitic stainless steel piping system that has been hydrostatically tested during shop fabrication, with the exception of four final field assembly circumferential butt welds. The piping system has a total volume that results in an energy level greater than 271 000 000 J (200,000,000 ft-lb); however, it is not feasible to separate the piping system into smaller sections for testing, nor is it feasible to install blast barriers. By performing volumetric examination such as UT or RT and determining the field welds are free of rejectable indications, the risk associated with a full pneumatic pressure test of this system may be deemed acceptable."
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "(b) an existing carbon steel vessel with an MDMT rating of −45°C (−50°F) into which a new nozzle had been installed following all requirements of the original construction code. The vessel has a total volume that results in an energy level greater than 271 000 000 J (200,000,000 ft-lb); however, it is still desirable to perform a pressure test to check the integrity of the weld and obtain the other benefits of pressure testing. It is not feasible to install blast barriers. By performing volumetric examination such as UT on the nozzle attachment weld and determining the weld is free of rejectable indications, along with verification by inspection that the vessel is in a like-new condition, the risk associated with a full pneumatic pressure test of this vessel may be deemed acceptable."
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "(c) When considering the volume of piping to complete stored energy calculations, the use of 8 pipe diameters may not be sufficient."
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "(1) brittle failure or failure along the length of a poor longitudinal weld seam, where the actual opening may be instantaneous and the release of energy larger than that as calculated by 8 pipe diameters"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "(2) installations where the pipe or pipeline is not restrained and can become a projectile; see Table 501-III-2-1"
+    },
+    {
+      "type": "section_header",
+      "page": 309,
+      "text": "501-IV-3 PIPING SYSTEM VOLUME CONSIDERATIONS"
+    },
+    {
+      "type": "paragraph",
+      "page": 309,
+      "text": "A schematic illustration of the pipeline rupture leading to burst explosion is shown in Figure 501-IV-3-1. The volume of gas that should be included within the stored energy calculation is not just the volume contained within the pipe length that has ruptured, but should include a section of each end of pipe that is starting to depressurize, given as d in Figure 501-IV-3-1 . The distance d can be calculated by considering the speed that information about the loss of containment can travel down the pipe. When the rupture occurs, the shock wave of the rupture travels down the pipe at the speed of sound of the compressed gas. The shock wave for this type of explosion has a typical signature shape with a steep rise time. The exact rise time would vary for each incident, but will be less than the measured rise time within a deflagration explosion (which has a shallower profile initially) and is consequently less than 10 ms."
+    },
+    {
+      "type": "paragraph",
+      "page": 310,
+      "text": "The basis for total piping volume vary and are summarized below: (a) Baker Model — 8 pipe diameters1"
+    },
+    {
+      "type": "list_item",
+      "page": 310,
+      "text": "(b) TNT Model 11 m of pipe"
+    },
+    {
+      "type": "list_item",
+      "page": 310,
+      "text": "(c) Major Refining Operator 18 m of pipe"
+    },
+    {
+      "type": "caption",
+      "page": 310,
+      "text": "Figure 501-IV-3-1 A Schematic Diagram of a Pipeline Burst, Showing the Flow of Gas Within the Pipes"
+    },
+    {
+      "type": "equation",
+      "page": 310,
+      "text": "d d"
+    },
+    {
+      "type": "paragraph",
+      "page": 310,
+      "text": "GENERAL NOTE: The distance, d , represents the length of intact pipe from which gas can contribute to the initial stored energy calculation of the burst explosion."
+    },
+    {
+      "type": "footnote",
+      "page": 310,
+      "text": "1 Geng and Kelly.\"Evaluation of Blast Loads from Pipe Ruptures.\" Paper presented at the 51st ASME PVP Conference, Honolulu, HI, July 2017."
+    }
+  ]
+}

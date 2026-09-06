@@ -1,0 +1,91 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "VII",
+ "table_id": "Table A341.3.2-1",
+ "title": "Acceptance Criteria for Bonds",
+ "pdf_pages": [
+  151,
+  151
+ ],
+ "columns": [
+  {
+   "key": "type_of_imperfection",
+   "header": "Type of Imperfection",
+   "banners": []
+  },
+  {
+   "key": "hot_gas_welded_joint",
+   "header": "Hot Gas Welded Joint",
+   "banners": []
+  },
+  {
+   "key": "thermoplastic_material_solvent_cemented_joint",
+   "header": "Thermoplastic Material Solvent Cemented Joint",
+   "banners": []
+  },
+  {
+   "key": "heat_fusion_joint",
+   "header": "Heat Fusion Joint",
+   "banners": []
+  },
+  {
+   "key": "rtr_and_rpm_materials_adhesive_cemented_joint",
+   "header": "RTR and RPM Materials [Note (1)] — Adhesive Cemented Joint",
+   "banners": []
+  }
+ ],
+ "row_count": 6,
+ "notes": [
+  "NOTE: (1) RTR = reinforced thermosetting resin; RPM = reinforced plastic mortar."
+ ],
+ "rows": [
+  {
+   "type_of_imperfection": "Cracks",
+   "hot_gas_welded_joint": "None permitted",
+   "thermoplastic_material_solvent_cemented_joint": "Not applicable",
+   "heat_fusion_joint": "None permitted",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "None permitted"
+  },
+  {
+   "type_of_imperfection": "Unfilled areas in joint",
+   "hot_gas_welded_joint": "None permitted",
+   "thermoplastic_material_solvent_cemented_joint": "None permitted",
+   "heat_fusion_joint": "None permitted",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "None permitted"
+  },
+  {
+   "type_of_imperfection": "Unbonded areas in joint",
+   "hot_gas_welded_joint": "None permitted",
+   "thermoplastic_material_solvent_cemented_joint": "None permitted",
+   "heat_fusion_joint": "None permitted",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "None permitted"
+  },
+  {
+   "type_of_imperfection": "Inclusions of charred material",
+   "hot_gas_welded_joint": "None permitted",
+   "thermoplastic_material_solvent_cemented_joint": "Not applicable",
+   "heat_fusion_joint": "None permitted",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "None permitted"
+  },
+  {
+   "type_of_imperfection": "Unfused filler material inclusions",
+   "hot_gas_welded_joint": "None permitted",
+   "thermoplastic_material_solvent_cemented_joint": "Not applicable",
+   "heat_fusion_joint": "Not applicable",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "None permitted"
+  },
+  {
+   "type_of_imperfection": "Protrusion of material into pipe bore, % of pipe wall thickness",
+   "hot_gas_welded_joint": "Not applicable",
+   "thermoplastic_material_solvent_cemented_joint": "Cement, 50%",
+   "heat_fusion_joint": "Fused material, 25%",
+   "rtr_and_rpm_materials_adhesive_cemented_joint": "Adhesive, 25%"
+  }
+ ]
+}

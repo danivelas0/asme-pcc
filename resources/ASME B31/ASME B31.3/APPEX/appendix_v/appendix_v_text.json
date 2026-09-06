@@ -1,0 +1,738 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "V",
+ "title": "Allowable Variations in Elevated Temperature Service",
+ "document": "Appendix V prose",
+ "pdf_pages": [
+  561,
+  563
+ ],
+ "section_count": 12,
+ "paragraph_count": 107,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "V300",
+   "heading": "APPLICATION",
+   "level": 1,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) This Appendix covers application of the Linear Life Fraction Rule, which provides a method for evaluating variations at elevated temperatures above design conditions where material creep properties [see para. V302(c)] control the allowable stress at the temperature of the variation. This Appendix is a Code requirement only when specified by the owner in accordance with the last sentence of para. 302.2.4(f)(1)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Life Fraction analysis addresses only the gross strength of piping components; it does not consider local stress effects. It is the designer’s responsibility to provide construction details suitable for elevated temperature design."
+    }
+   ]
+  },
+  {
+   "id": "V300.1",
+   "heading": "Definitions",
+   "level": 2,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "duration:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) the extent of any service condition, hours"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) the cumulative extent of all repetitions of a given service condition during service life, hours excursion: any condition under which pressure, temperature, or both exceed the design conditions. operating condition: any condition of pressure and temperature under which the design conditions are not exceeded. service condition: any operating condition or excursion. service life: the life assigned to a piping system for design purposes, hours."
+    }
+   ]
+  },
+  {
+   "id": "V301",
+   "heading": "DESIGN BASIS",
+   "level": 1,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Life Fraction analysis shall be performed in accordance with one of the following design basis options selected by the owner:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) All service conditions in the creep range and their durations are included."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) To simplify the analysis, less severe service conditions need not be individually evaluated if their durations are included with the duration of a more severe service condition."
+    }
+   ]
+  },
+  {
+   "id": "V302",
+   "heading": "CRITERIA",
+   "level": 1,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) All of the criteria in para. 302.2.4 shall be met."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Only carbon steels, low and intermediate alloy steels, austenitic stainless steels, and high nickel alloys are included."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Service conditions are considered only in the calculation of the usage factors in accordance with para. V303 when the allowable stress at the temperature of those conditions in Table A-1 (Table A-1C) is based on the creep criteria stated in para. 302.3.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Creep–fatigue interaction effects shall be considered when the number of cycles exceeds 100."
+    }
+   ]
+  },
+  {
+   "id": "V303",
+   "heading": "PROCEDURE",
+   "level": 1,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The cumulative effect of all service conditions during the service life of the piping is determined by the Linear Life Fraction Rule in accordance with the following procedure."
+    }
+   ]
+  },
+  {
+   "id": "V303.1",
+   "heading": "Calculations for Each Service Condition i",
+   "level": 2,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following steps shall be repeated for each service condition considered."
+    }
+   ]
+  },
+  {
+   "id": "V303.1.1",
+   "heading": "Equivalent Stress for Pressure",
+   "level": 2,
+   "page": 561,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Using eq. (V1), compute a pressure-based equivalent stress, Spi"
+    },
+    {
+     "kind": "equation",
+     "text": "S pi = S P P d i / max (V1)",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Pi = gage pressure, kPa (psig), during service condi-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "tion i"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Pmax = maximum allowable gage pressure, kPa (psig),"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "for continuous operation of pipe or component"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "at design temperature, considering allowances,"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "c, and mill tolerance, but without considering"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "weld joint strength reduction factor, W; weld"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "joint quality factors, Ej; or casting quality"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "factor, Ec"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Sd = allowable stress, MPa (ksi), at design tempera-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "ture, °C (°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Spi = pressure-based equivalent stress, MPa (ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Compute the maximum stress due to sustained loads, SL, during service condition i, in accordance with para. 302.3.5(c)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The equivalent stress, Si, for use in para. V303.1.2 is the greater of the values calculated in (a) and (b), divided by their respective weld joint strength reduction factor, W, in accordance with para. 302.3.5(e)."
+    }
+   ]
+  },
+  {
+   "id": "V303.1.2",
+   "heading": "Effective Temperature. From Table A-1",
+   "level": 2,
+   "page": 562,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "(Table A-1C), find the temperature corresponding to a basic allowable stress equal to the equivalent stress, Si, using linear interpolation if necessary. This temperature, TE, is the effective temperature for service condition i."
+    }
+   ]
+  },
+  {
+   "id": "V303.1.3",
+   "heading": "Larson–Miller Parameter. Compute the LMP",
+   "level": 2,
+   "page": 562,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "for the basic design life for service condition i, using eq. (V2) (SI Units)"
+    },
+    {
+     "kind": "equation",
+     "text": "LMP = ( C + 5)( T E + 273) (V2)",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "(U.S. Customary Units)"
+    },
+    {
+     "kind": "equation",
+     "text": "LMP = ( C + 5)( T E + 460) (V2)",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "C = Larson-Miller constant"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "x = 30 for 9Cr–1Mo–V"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "x = 20 for carbon, low, and intermediate alloy steels,"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "except 9Cr–1Mo–V"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "x = 15 for austenitic stainless steel and high nickel"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "alloys"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "TE = effective temperature, °C (°F); see para. V303.1.2"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "V303.1.4 Rupture Life. Compute the rupture life, tri, h, using eq. (V3)"
+    },
+    {
+     "kind": "equation",
+     "text": "t 10 a (V3) ri =",
+     "indent": 10
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where (SI Units)"
+    },
+    {
+     "kind": "equation",
+     "text": "LMP a = − C T i + 273",
+     "indent": 9
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "(U.S. Customary Units)"
+    },
+    {
+     "kind": "equation",
+     "text": "LMP a = − C T i + 460",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "and"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Ti = temperature, °C (°F), of the component for the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "coincident operating pressure–temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "condition i under consideration"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "tri = allowable rupture life, h, associated with a given"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "service condition i and stress, Si"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "LMP and C are as defined in para. V303.1.3."
+    }
+   ]
+  },
+  {
+   "id": "V303.2",
+   "heading": "Determine Creep-Rupture Usage Factor",
+   "level": 2,
+   "page": 562,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The usage factor, u, is the summation of individual usage factors, ti /tri, for all service conditions considered in para. V303.1. See eq. (V4)."
+    },
+    {
+     "kind": "equation",
+     "text": "u = ( / t t i ri ) (V4)",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "i = as a subscript, 1 for the prevalent operating condi-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "tion; i = 2, 3, etc., for each of the other service"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "conditions considered"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "ti = total duration, h, associated with any service"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "condition, i, at pressure, Pi, and temperature, Ti"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "tri = as defined in para. V303.1.4"
+    }
+   ]
+  },
+  {
+   "id": "V303.3",
+   "heading": "Evaluation",
+   "level": 2,
+   "page": 562,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The calculated value of u indicates the nominal amount of creep-rupture life expended during the service life of the piping system. If u ≤ 1.0, the usage factor is acceptable including excursions. If u > 1.0, the designer shall either increase the design conditions (selecting piping system components of a higher allowable working pressure if necessary) or reduce the number and/or severity of excursions until the usage factor is acceptable."
+    }
+   ]
+  },
+  {
+   "id": "V304",
+   "heading": "EXAMPLE",
+   "level": 1,
+   "page": 562,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following example illustrates the application of the procedure in para. V303:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Pipe material: ASTM A691, Gr. 21∕4CR Cl. 32 pipe"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Pipe size: NPS 30 (30 in. O.D.)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Nominal pipe wall thickness: 0.85 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Corrosion allowance: 0.0625 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Mill tolerance: 0.01 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Design pressure: 250 psig"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Design temperature: 1,025°F"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Allowable stress at 1,025°F: 6.85 ksi"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Allowable stress at 1,050°F: 5.7 ksi"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Total service life: 175,200 hr"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Three service conditions are considered."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Normal operation is 157,200 hr at design conditions of 250 psig, 1,025°F."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Excursion 1 condition is up to 16,000 hr at excursion condition of 250 psig, 1,050°F. [This is a 20% reduction in allowable stress (6.85 ksi to 5.7 ksi), and, with the owner’s approval, it complies with the criteria of para. 302.2.4. As a simplification, and in accordance with para. V301(b), this 16,000-hr total includes less severe excursions.]"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Excursion 2 condition is up to 2,000 hr at excursion condition of 330 psig, 1,025°F. [This is a 32% variation above the design pressure, and, with the owner’s approval, it complies with the criteria of para. 302.2.4. As a simplification, and in accordance with para. V301(b), this 2,000hr total includes less severe excursions.]"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Compute pressure-based equivalent stress, Spi, from eq. (V1)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Table A-1C, Sd = 6.85 ksi at 1,025°F"
+    },
+    {
+     "kind": "equation",
+     "text": "− 2( T − c − mill tol.) × SEW P max = − D − 2( T − c − mill tol.) × Y",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Letting S = Sd and, in accordance with the definition of Pmax in para. V303.1.1, E = 1 and W = 1, and for all the service temperatures Y = 0.7,"
+    },
+    {
+     "kind": "equation",
+     "text": "P max = 368 psi",
+     "indent": 9
+    },
+    {
+     "kind": "equation",
+     "text": "S p 1 = 6.85(250/368) = 4.65 ksi S p 2 = 6.85(250/368) = 4.65 ksi S p 3 = 6.85(330/368) = 6.14 ksi",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "NOTE: In eq. (V1), design pressure could be used in this example for Pmax, as this will always be conservative. Here the actual Pmax of the piping system is used."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The stress due to sustained loads, SL, for each condition i, calculated in accordance with para. 320.2, is"
+    },
+    {
+     "kind": "equation",
+     "text": "S L 1 = 3.0 ksi S L 2 = 3.0 ksi S L 3 = 3.7 ksi",
+     "indent": 9
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "For pipe with a longitudinal weld (E = 1), W is 0.8, 0.77, and 1.0 for Sp1, Sp2, and Sp3, respectively. Note that condition 3 is short term, so W = 1. Also note that with the owner’s approval, and in accordance with para. 302.3.5(f)(2), W may be larger than the W factors listed in Table 302.3.5-1. The designer chooses not to apply W for girth welds, so W is 1.00 for SL1, SL2, and SL3. The equivalent stress, Si, is the greater of Spi/W and SLi/W. Therefore, Si is as follows:"
+    },
+    {
+     "kind": "equation",
+     "text": "S 1 = MAX ( S p 1 / W, S L 1 / W ) = MAX (4.65/0.8, 3.0/1.0 ) = MAX (5.81, 3.00) = 5.81 ksi",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "S 2 = MAX ( S p 2 / W, S L 2 / W ) = MAX (4.65/0.77, 3.0/1.0 ) = MAX (6.04, 3.00) = 6.04 ksi",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "S 3 = MAX ( S p 3 / W, S L 3 / W ) = MAX (6.14/1.0, 3.7/1.0 ) = MAX (6.14, 3.70) = 6.14 ksi",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Table A-1C, find the temperature, TE, corresponding to each Si."
+    },
+    {
+     "kind": "equation",
+     "text": "T E 1 = 1,048 F ° T E 2 = 1,043 F ° T E 3 = 1,040 F °",
+     "indent": 9
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Compute the LMP for each condition i using eq. (V2)."
+    },
+    {
+     "kind": "equation",
+     "text": "LMP = (20 + 5)(1,048 + 460) = 37,700 LMP = (20 + 5)(1,043 + 460) = 37,575 LMP = (20 + 5)(1,040 + 460) = 37,500",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Compute the rupture life, tri, using eq. (V3)."
+    },
+    {
+     "kind": "equation",
+     "text": "a = 37,700/(1,025 + 460) − 20 = 5.39 t 10 5.39 245,471 hr r1 = =",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "a = 37,575/(1,050 + 460) − 20 = 4.88 t 10 4.88 75,858 hr r 2 = =",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "a = 37,500/(1,025 + 460) − 20 = 5.25 t 10 5.25 177,828 hr r 3 = =",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Compute the usage factor, u, the summation of ti/tri, for all service conditions using eq. (V4)."
+    },
+    {
+     "kind": "equation",
+     "text": "t t 1 / r 1 = 157,200/245,471 = 0.640 t 2 / t r 2 = 16,000/75,858 = 0.211 t 3 / t r 3 = 2,000/177,828 = 0.011",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "u = 0.640 + 0.211 + 0.011 = 0.862 < 1.0",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Therefore, the excursion is acceptable."
+    }
+   ]
+  }
+ ]
+}

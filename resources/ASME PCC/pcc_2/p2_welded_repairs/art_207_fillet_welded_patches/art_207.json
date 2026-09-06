@@ -1,0 +1,717 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 2 - WELDED REPAIRS",
+  "chapter_kind": "article",
+  "chapter_id": "207",
+  "chapter_title": "Fillet Welded Patches With Reinforcing Plug Welds",
+  "parent_article": null,
+  "appendix_class": null,
+  "source_pages": [
+    62,
+    67
+  ],
+  "outline_pages": [
+    62,
+    67
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 131,
+    "figures": 6,
+    "tables": 0,
+    "equations": 12
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 62,
+      "number": "207",
+      "level": 1,
+      "text": "Article 207 Fillet Welded Patches With Reinforcing Plug Welds"
+    },
+    {
+      "type": "section_header",
+      "page": 62,
+      "number": "207-1",
+      "level": 2,
+      "text": "207-1 DESCRIPTION"
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(a) This repair method describes the selection criteria, application limitations, design, fabrication, examination, and testing of fillet welded surface patches with reinforcing plug welds to pressure-retaining components. Similar fillet welded surface patch repair methods without reinforcing plug welds are provided in another Article of this Standard."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(b) This repair method consists of fitting a repair plate to closely match the original component's exterior or interior surface. The repair plate is sized to cover the areas exhibiting damage, both at the time of repair and that anticipated for the repair's design life."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(c) The repair method is typically applied to pressureretaining shells that have suffered local wall thinning (including through-wall) due to erosion, corrosion, and other local damage mechanisms."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(d) This repair method is applicable to cylindrical, spherical, flat, and conical shells as well as other pressure components."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(e) This repair method is generally suitable for service temperatures above the nil-ductility temperature of the materials of construction up to a maximum design temperature of 345°C (650°F). Use of this repair method for lower temperatures requires evaluation of notch toughness, nonductile fracture and other applicable low temperature effects. Use of this repair method for higher temperatures requires evaluation of thermal fatigue, creep, and other applicable high temperature effects."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(f) Figure 207-1-1 shows a typical application on a vessel with a nearby structural discontinuity (in this case a nozzle). The plan view on top shows two of many possible repair patch configurations, which are generally rectilinear in shape with rounded corners. The bottom sectional view shows the curvature matching aspect of each repair plate."
+    },
+    {
+      "type": "section_header",
+      "page": 62,
+      "number": "207-2",
+      "level": 2,
+      "text": "207-2 LIMITATIONS"
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(a) Part 1 of this Standard, \"Scope, Organization, and Intent\" contains additional requirements and limitations. This Article shall be used in conjunction with Part 1 ."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(b) This repair method is not limited by the component size. However, a sleeve type repair may be more suitable for those applications where axisymmetric behavior is important."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(c) This repair method shall not be used for lethal service applications or where the damage mechanism, the extent of damage, or likely future damage cannot be characterized. This repair method may be used in certain cases on areas with local crack-like flaws provided"
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(1) the growth has stopped, been arrested, or can be accurately predicted for all propagation modes, and (2) the effect of the flaw is evaluated using detailed analyses."
+    },
+    {
+      "type": "section_header",
+      "page": 62,
+      "number": "207-3",
+      "level": 2,
+      "text": "207-3 DESIGN"
+    },
+    {
+      "type": "section_header",
+      "page": 62,
+      "number": "207-3.1",
+      "level": 3,
+      "text": "207-3.1 General <22>"
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(a) The design approach for this repair method is based in part on standard pressure component design calculations, such as those in the ASME BPVC, Section VIII, Division 1. The application limitations imposed in section 207-2 apply to the governing load case resulting from internal pressure where the resultant stress is membrane stress. However, if the component to be repaired is subject to bending, torsion, wind loads, or to fatigue, the design shall include evaluation of these conditions using appropriate methods of analysis. In all cases, an engineering analysis shall be performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(b) In general, the patch material and welding filler metal should be the same or very similar (e.g., compositional, physical, and mechanical properties) to that of the pressure component's original construction. Repair material selection shall consider, as a minimum, characteristics such as chemistry, weldability, physical properties (e.g., coefficient of thermal expansion), mechanical properties (e.g., strength, ductility, notch toughness), and compatibility with the process medium."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(c) The thickness of the patch plate is dependent on material mechanical properties and the calculated attachment weld sizes. As good practice, the nominal thickness of the patch plate should be no more than 1.5 times the nominal thickness of the component being reinforced."
+    },
+    {
+      "type": "paragraph",
+      "page": 62,
+      "text": "(d) The size (length and width) of the patch plate is governed by the requirement that all attachment welds be located on sound base metal completely encompassing the damaged area(s) (see Figure 207-1-1 ). The repair"
+    },
+    {
+      "type": "figure",
+      "page": 63,
+      "number": "207-1-1",
+      "caption": "Figure 207-1-1 Typical Shell Repair Near Discontinuity",
+      "image": "fig/fig_207_1_1.png"
+    },
+    {
+      "type": "figure",
+      "page": 63,
+      "image": "fig/art_207_diagram_3.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "plate shall also be large enough to encompass any additional area(s) anticipated to experience similar or related damage during the life of the repair. The patch plate, including reinforcing plug welds, should overlap sound base metal by at least 25 mm (1 in.)."
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(e) This repair method is generally used on the outside surface of components subject to internal pressure. For applications under external pressure, a separate analysis to evaluate buckling and other instability considerations shall be performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(f) In assessing the applicability and service life of this repair method, consideration shall be given to material compatibility, future operating conditions, thermal and shrinkage effects of welding, the introduction of crevices and structural discontinuities, thermal transients and temperature differentials between the patch plate and the component, and other application limits such as examination and testing constraints. If the damage to be patched is, or is expected to be, through-wall, the effects of fluids (e.g., entrapment, concentration, corrosion, etc.) that may accumulate between the vessel and the patch plate shall be assessed. If this repair method is to be implemented during component operation, additional precautions may need to be taken for personnel safety."
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(g) The design may consider the combined strength of the patch plate and the underlying shell, taking into account the strength of the fillet weld and plug weld joints, including joint efficiency. Consideration may also be given to excess thickness available adjacent to the damaged shell using applicable code area replacement rules for nozzles. No credit shall be taken for material required for future corrosion allowance."
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(h) Adding a second reinforcement pad to repair a first reinforcement pad is not prohibited; however, an additional analysis should be performed to ensure the double patch plate is adequate for the intended pressure and service."
+    },
+    {
+      "type": "section_header",
+      "page": 64,
+      "number": "207-3.2",
+      "level": 3,
+      "text": "207-3.2 Internal Pressure Loads"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(a) For cylindrical components subject tointernal pressure loads, applied forces on the repair patch shall be determined as follows:"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(1) Circumferential Load. Unit forces in hoop direction:"
+    },
+    {
+      "type": "figure",
+      "page": 64,
+      "image": "fig/art_207_picture_24.png"
+    },
+    {
+      "type": "figure",
+      "page": 64,
+      "image": "fig/art_207_diagram_25.png"
+    },
+    {
+      "type": "equation",
+      "page": 64,
+      "text": "F = PD 2 CP m (1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "Dm = diameter at mid-wall of component, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FCP = circumferential force due to internal pressure, N/mm (lb/in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "P = internal design pressure, MPa (psi)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(2) Longitudinal Load. Unit forces in longitudinal direction:"
+    },
+    {
+      "type": "figure",
+      "page": 64,
+      "image": "fig/art_207_diagram_10.png"
+    },
+    {
+      "type": "equation",
+      "page": 64,
+      "text": "F = PD 4 LP m (2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FLP = longitudinal force due to internal pressure, N/ mm (lb/in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "(b) If other loads are applicable (such as bending, torsion, wind, etc.), they shall be determined and added to the pressure load such that"
+    },
+    {
+      "type": "equation",
+      "page": 64,
+      "text": "F F F C CP CO = +"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "and"
+    },
+    {
+      "type": "equation",
+      "page": 64,
+      "text": "F F F L LP LO = +"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FC = total circumferential force from all loads, N/mm (lb/in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FCO = circumferential force due to other applicable loads, N/mm (lb/in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FL = total longitudinal force from allloads,N/mm (lb/ in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 64,
+      "text": "FLO = longitudinal force due to other applicable loads, N/mm (lb/in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(c) Appropriate alternative force calculations for spherical, torispherical, or ellipsoidal pressure components shall be used when applicable."
+    },
+    {
+      "type": "section_header",
+      "page": 65,
+      "number": "207-3.3",
+      "level": 3,
+      "text": "207-3.3 Structural Discontinuity Evaluation"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(a) For stresses near a nozzle or other structural discontinuity to be insignificant, the minimum distance between the fillet welded patch plate and the existing discontinuity should be"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "L R t min = 2( ) m 1/2 (3)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "L min = plate setback distance (see Figure 207-1-1 ), mm (in.) Rm = radius at mid-wall of component, mm (in.) t = wall thickness of component, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "The factor of 2 applies the setback distance ( Rmt ) 1∕2 to both the existing nozzle (or other similar structural discontinuity) and the patch plate."
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "This proximity limit also applies to the distance between adjacent fillet welded patch plates, in those applications where more than one is employed on a given component."
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(b) In those applications where the patch plate is to attach to existing nozzle reinforcement pads, the patch plate may be contoured to match the reinforcement pad perimeter and welded thereto with a full penetration joint."
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(c) In those applications where the damaged shell is within L min of a nozzle or other structural discontinuity, the patch plate should be designed as a reinforcement pad extending 360 deg around the nozzle/opening, and welded thereto with a full penetration joint. Alternatively, additional detailed analysis shall be performed to evaluate local stresses."
+    },
+    {
+      "type": "section_header",
+      "page": 65,
+      "number": "207-3.4",
+      "level": 3,
+      "text": "207-3.4 Allowable Load on Perimeter Fillet Weld"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(a) The perimeter weld shall be sized such that the allowable load on the weld exceeds the longitudinal and circumferential loads. w min"
+    },
+    {
+      "type": "figure",
+      "page": 65,
+      "image": "fig/art_207_picture_29.png"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "F w ES A a = min (4)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "E = weld joint efficiency factor (0.55) FA = allowable force on fillet welds, N/mm (lb/in.); FA > FC and FL"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "Sa = allowable base metal stress, MPa (psi)1 w min = minimum weld leg dimension, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "NOTE: The maximum design fillet weld size shall not exceed the thickness of the thinner material being joined nor 40 mm (1.5 in.)."
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(b) Alternatively, the perimeter weld edge preparation may be beveled to increase the weld's effective throat thickness. In no case shall the effective throat exceed the thickness of the repair plate or the original component thickness."
+    },
+    {
+      "type": "section_header",
+      "page": 65,
+      "number": "207-3.5",
+      "level": 3,
+      "text": "207-3.5 Allowable Loads on Plug Welds"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(a) Plug/slot welds may be designed to take up to 30% of the patch plate load. The allowable working load on a circular plug weld in either shear or tension shall be determined by"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(SI Units)"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "F S d = 0.63 ( 6) P a 2 (5)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(U.S. Customary Units)"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "F S d = 0.63 ( 1/4) P a 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "And the allowable working load on a slot weld shall be determined by"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(SI Units)"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "F S W L = [ 0.8 ( 6)( 6) 0.86 R ] s a 2 (6)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(U.S. Customary Units)"
+    },
+    {
+      "type": "equation",
+      "page": 65,
+      "text": "F S W L = [ 0.8 ( 1/4)( 1/4) 0.86 R ] s a 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "d = the bottom diameter of the hole in which the weld is made, mm (in.) FP = total allowable working load on the plug weld, N (lb) Fs = total allowable working load on the slot weld, N (lb) L = the bottom length of the slot in which the weld is made, mm (in.) R = the radius of the slot ends in which the weld is made ( R = W /2), mm (in.) W = the bottom width of the slot in which the weld is made, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 65,
+      "text": "(b) Plug welds are required in all cases to minimize stress at the root of the perimeter fillet welds and address load path eccentricity considerations in the perimeter welds. Plug weld holes should have a diameter not less than T + 6mm ( 1 ∕ 4 in.) and not more than 2 T + 6 mm ( 1 ∕ 4 in.). Plug welds shall be set back from the edge of the patch"
+    },
+    {
+      "type": "footnote",
+      "page": 65,
+      "text": "1 Compatible weld metal shall be of equal or greater strength."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "plate by not less than 2 T nor more than 4 T . Plug welds should be spaced to carry their proportion of the load, but their pitch (center-to-center spacing) should not be less than 3 d ."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(c) Plug weld holes should be completely filled with weld metal when the thickness of the patch plate ( T ) is 8 mm ( 5 ∕ 16 in.) or less; for patch plates where T > 8 mm ( 5 ∕ 16 in.), the holes should be filled to a depth of at least 1 ∕ 2 T or 5 ∕ 16 of the hole diameter, whichever is larger, but in no case less than 8 mm ( 5 ∕ 16 in.)."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(d) For plug welds smaller than 19 mm ( 3 ∕4 in.) diameter, slotted or obround plug welds may be used to minimize weld quality difficulties arising from accessibility and electrode manipulation constraints. Slot welds should have a width not less than T + 6 mm ( 1 ∕ 4 in.) nor greater than 2 T + 6 mm (1 ∕ 4 in.), and a length not more than 3 T + 6 mm (1 ∕ 4 in.). The long axis of slot welds shall be oriented perpendicular to the adjacent fillet welded edge. Set-back and spacing shall meet the requirements of (b)."
+    },
+    {
+      "type": "section_header",
+      "page": 66,
+      "number": "207-3.6",
+      "level": 3,
+      "text": "207-3.6 Cold Forming Limits"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(a) Carbon and low alloy steel patch plates fabricated by cold forming shall not exceed 5% extreme fiber elongation. The extreme fiber elongation shall be determined as follows:"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(1) For double curvature"
+    },
+    {
+      "type": "equation",
+      "page": 66,
+      "text": "i k jjjjj y { zzzzz T R R R 75 1 5% f f o (7)"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "Rf = final centerline radius of patch plate, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "Ro = original centerline radius of patch plate (equals"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "infinity for flat plate), mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "T = thickness of the patch plate, mm (in.)"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(2) For single curvature"
+    },
+    {
+      "type": "equation",
+      "page": 66,
+      "text": "i k jjjjj y { zzzzz T R R R 50 1 5% f f o (8)"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(b) Patches cold formed beyond these limits may be used provided they receive appropriate postforming stress relief prior to installation."
+    },
+    {
+      "type": "section_header",
+      "page": 66,
+      "text": "<22> 207-4 FABRICATION"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(a) Plate edges may be cut to shape and size by mechanical means such as machining, shearing, grinding, or by thermal means such as flame or arc cutting. If thermal means are used, a minimum of 1.5 mm ( 1 ∕ 16 in.) additional material shall be removed by grinding or machining. If the repair plate is greater than 25 mm (1 in.) thick, and the fillet weld size is less than the plate thickness, the weld prep edges shall be examined by magnetic particle (MT) or liquid penetrant (PT) methods to check for laminations."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "Laminations shall be cause for rejection unless repaired or found acceptable by fitness-for-service analysis in accordance with API 579-1/ASME FFS-1."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(b) Plug or slot weld holes may be fabricated by punching, drilling, machining, or flame/arc cutting. The ends of slot welds, if used, shall have a radius, R , equal to one-half the slot's width, W . If thermal means are used, a minimum of 1.5 mm (1 ∕ 16 in.) additional material shall be removed by grinding or machining. If the repair plate is greater than 25 mm (1 in.) thick, and the plug/slot weld size is less than the plate thickness, the weld prep edges shall be examined by magnetic particle (MT) or liquid penetrant (PT) methods to check for laminations. Laminations shall be dispositioned as specified in (a) above."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(c) The patch plate may be formed to the required shape by any process that will not unduly impair the mechanical properties of the patch plate material. Where required due to repair plate size or access/interference considerations, split sections may be used when joined by full penetration welds."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(d) Parts to be fillet welded shall be fit as tightly as practical to the surface to be welded and in no event shall be separated by more than 5 mm ( 3 ∕ 16 in.). If the separation at the faying edge of the plate is 1.5 mm ( 1 ∕ 16 in.) or greater, the size of the perimeter fillet weld shall be increased by the amount of the separation."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(e) Welding procedures, welders, and welding operators shall be qualified in accordance with the current requirements of the applicable construction code or postconstruction code. If not otherwise specified, ASME BPVC, Section IX may be used for procedure and performance qualification. Guidance for preheat and/or postweld heat treatment, and for in-service welding, as applicable, shall be taken from the applicable construction code or post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(f) Field repair activities should conform to the following sequence:"
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(1) Paint, scale, rust, liquids, and other foreign material shall be removed from the weld zone and an area not less than 40 mm (1 1 ∕ 2 in.) on either side of the weldment."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(2) In those areas that will be covered by the new patch plate, existing shell seam or girth welds shall be ground flush with the vessel or pipe O.D. and shall be examined by the MT or PT method."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(3) The wall thickness of the pressure-containing component that requires reinforcement should be ultrasonically examined. The patch should cover the entire area that requires reinforcing."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(4) The new patch plate may be placed in position using any suitable method."
+    },
+    {
+      "type": "paragraph",
+      "page": 66,
+      "text": "(5) Any seams within the patch itself, should be made first. The perimeter fillet weld may then be completed. Clamps or wedges may be used to ensure proper joint alignment and fit-up."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(g) Exposed metal surfaces shall be recoated, if applicable, after completion of all examination and testing."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(h) To preclude gas pressure buildup between the patch plate and the pressure component boundary, provisions for venting during the final closure weld or, if applicable, postweld heat treatment, may be necessary. If the patch plate is designed for through-wall defects but applied to the pressure boundary before being breached, the vent should be sealed after completion of welding and, if applicable, postweld heat treatment."
+    },
+    {
+      "type": "section_header",
+      "page": 67,
+      "number": "207-5",
+      "level": 2,
+      "text": "207-5 EXAMINATION"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(a) Patch plate attachment welds shall be examined in accordance with the applicable construction code or postconstruction code by either the MT or PT methods. If not otherwise specified by the applicable construction code or post-construction code, NDE shall be performed using procedures written and qualified in accordance with ASME BPVC, Section V."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(b) If lifting lugs are used and left in place, their attachment welds shall be examined by MT or PT methods. At all locations where temporary lifting lugs, welded clamps, and/or wedges are removed after patch plate installation, the removal areas shall be examined by MT or PT methods."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(c) Welds joining sections of patch plates made of separate pieces should be surface contoured and volumetrically examined by either radiographic or ultrasonic examination methods to the extent possible. If not practicable, multilayer PT or MT examinations should be performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(d) If postweld heat treatment is required, the examination shall be performed after application of PWHT."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(e) The examination acceptance criteria of the applicable construction code or post-construction code shall apply."
+    },
+    {
+      "type": "section_header",
+      "page": 67,
+      "number": "207-6",
+      "level": 2,
+      "text": "207-6 TESTING"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(a) Testing shall be performed in accordance with the applicable post-construction code."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(b) The pressure component and installed patch plate(s) should be leak tested in accordance with the applicable post-construction code. Special safety precautions should be taken when pneumatic leak testing is performed."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(c) If permitted by the applicable post-construction code, nondestructive examination may be performed as an alternative to leak testing. Also, an initial service inspection may be performed of all weld joints after the pressure component has returned to normal operating pressure and temperature."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "(d) Testing and inspections should be performed prior to reapplication of coating, insulation, or jacketing, as applicable."
+    },
+    {
+      "type": "section_header",
+      "page": 67,
+      "number": "207-7",
+      "level": 2,
+      "text": "207-7 REFERENCES <22>"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "The following is a list of publications referenced in this Article. Unless otherwise specified, the latest edition shall apply."
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "API 579-1 /ASME FFS-1, Fitness-for-Service, June 5, 2007 Publisher: American Petroleum Institute (API), 200 Massachusetts Avenue NW, Suite 1100, Washington, DC 20001-5571 (www.api.org )"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "ASME Boiler and Pressure Vessel Code, Section V — Nondestructive Examination"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "ASME Boiler and Pressure Vessel Code, Section VIII, Division 1 — Rules for Construction of Pressure Vessels ASME Boiler and Pressure Vessel Code, Section IX, Welding, Brazing, and Fusing Qualifications"
+    },
+    {
+      "type": "paragraph",
+      "page": 67,
+      "text": "Publisher: The American Society of Mechanical Engineers (ASME), Two Park Avenue, New York, NY 10016-5990 (www.asme.org)"
+    }
+  ]
+}

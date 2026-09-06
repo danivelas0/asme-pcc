@@ -1,0 +1,95 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S301.7-1",
+ "title": "Example 1: Displacement Stress Range [Allowable, Eq. (1a), SA = 205.2 MPa (29.75 ksi)]",
+ "pdf_pages": [
+  550,
+  550
+ ],
+ "columns": [
+  {
+   "key": "node_number",
+   "header": "Node Number"
+  },
+  {
+   "key": "axial_force_range_n_lb_unsigned",
+   "header": "Axial Force Range, N (lb) (Unsigned) [Notes (1), (2)]"
+  },
+  {
+   "key": "in_plane_bending_moment_range_n_m_ft_lb_unsigned",
+   "header": "In-Plane Bending Moment Range, N·m (ft-lb) (Unsigned) [Note (1)]"
+  },
+  {
+   "key": "displacement_stress_range_se_from_eq_17_mpa_ksi",
+   "header": "Displacement Stress Range, SE, From Eq. (17), MPa (ksi) [Notes (1), (2)]"
+  }
+ ],
+ "row_count": 9,
+ "notes": [
+  "(1) All ranges listed above are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units.",
+  "(2) Axial force ranges do not have their sign retained, do not include axial pressure force ranges, and are included in the displacement stress range, SE, in accordance with para. 319.4.4."
+ ],
+ "rows": [
+  {
+   "node_number": 10,
+   "axial_force_range_n_lb_unsigned": "26 400 (5,940)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "4 840 (3,570)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "6.43 (0.93)"
+  },
+  {
+   "node_number": 20,
+   "axial_force_range_n_lb_unsigned": "26 400 (5,940)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "9 740 (7,190)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "10.7 (1.55)"
+  },
+  {
+   "node_number": "30 near",
+   "axial_force_range_n_lb_unsigned": "26 400 (5,940)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "59 400 (43,800)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "137 (19.9)"
+  },
+  {
+   "node_number": "30 mid",
+   "axial_force_range_n_lb_unsigned": "32 200 (7,200)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "63 400 (46,800)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "147 (21.3)"
+  },
+  {
+   "node_number": "30 far",
+   "axial_force_range_n_lb_unsigned": "20 400 (4,580)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "55 700 (41,100)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "128 (18.6)"
+  },
+  {
+   "node_number": "40 near",
+   "axial_force_range_n_lb_unsigned": "20 400 (4,580)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "72 900 (53,900)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "168 (24.4)"
+  },
+  {
+   "node_number": "40 mid",
+   "axial_force_range_n_lb_unsigned": "33 200 (7,420)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "80 800 (59,600)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "187 (27.1)"
+  },
+  {
+   "node_number": "40 far",
+   "axial_force_range_n_lb_unsigned": "26 400 (5,940)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "76 700 (56,600)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "177 (25.7)"
+  },
+  {
+   "node_number": 50,
+   "axial_force_range_n_lb_unsigned": "26 400 (5,940)",
+   "in_plane_bending_moment_range_n_m_ft_lb_unsigned": "97 000 (71,500)",
+   "displacement_stress_range_se_from_eq_17_mpa_ksi": "86.4 (12.4)"
+  }
+ ]
+}

@@ -1,0 +1,2155 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "V",
+ "chapter_number": 5,
+ "title": "Fabrication, Assembly, and Erection",
+ "pdf_pages": [
+  99,
+  117
+ ],
+ "section_count": 90,
+ "paragraph_count": 211,
+ "equation_count": 6,
+ "word_count": 6190,
+ "tables": [
+  "Table 330.1.1-1",
+  "Table 331.1.1-1",
+  "Table 331.1.2-1",
+  "Table 331.1.3-1"
+ ],
+ "figures": [
+  "Figure 328.3.2-1",
+  "Figure 328.4.2-1",
+  "Figure 328.4.2-2",
+  "Figure 328.4.3-1",
+  "Figure 328.5.2-1",
+  "Figure 328.5.2-2",
+  "Figure 328.5.2-3",
+  "Figure 328.5.4-1",
+  "Figure 328.5.4-2",
+  "Figure 328.5.4-3",
+  "Figure 328.5.4-4",
+  "Figure 328.5.5-1",
+  "Figure 335.3.3-1"
+ ],
+ "preamble": [],
+ "sections": [
+  {
+   "kind": "section",
+   "id": "327",
+   "heading": "GENERAL",
+   "page": 99,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Metallic piping materials and components are prepared for assembly and erection by one or more of the fabrication processes covered in paras. 328 and 330 through 333. When any of these processes is used in assembly or erection, requirements are the same as for fabrication."
+    }
+   ],
+   "sections": []
+  },
+  {
+   "kind": "section",
+   "id": "328",
+   "heading": "WELDING AND BRAZING",
+   "page": 99,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Welding and brazing shall conform to the requirements of this Chapter and the applicable requirements of para. 311.2."
+    }
+   ],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "328.1",
+     "heading": "Responsibility",
+     "page": 99,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Each employer is responsible for"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(a)",
+       "indent": 1,
+       "text": "(a) the welding and brazing performed by personnel of its organization"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(b)",
+       "indent": 1,
+       "text": "(b) conducting the qualification tests required to qualify the welding or brazing procedure specifications used by personnel in its organization, except as provided in paras. 328.2.1 and 328.2.2"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(c)",
+       "indent": 1,
+       "text": "(c) conducting the qualification tests required to qualify the welders, brazers, and operators, except as provided in para. 328.2.3"
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "328.2",
+     "heading": "Welding and Brazing Qualification",
+     "page": 99,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Welding and brazing procedure specifications (WPSs and BPSs) to be followed in production welding shall be prepared and qualified, and welders, brazers, and operators shall be qualified as required by ASME BPVC, Section IX except as modified by para. 333 for brazing of Category D Fluid Service piping and by the following subparagraphs."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "328.2.1",
+       "heading": "Standard Welding Procedure Specifications.",
+       "page": 99,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 0,
+         "text": "Standard welding procedure specifications published by the American Welding Society and listed in ASME BPVC, Section IX, Appendix E are permitted for Code construction within the limitations established by ASME BPVC, Section IX, Article V."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.2.2",
+       "heading": "Procedure Qualification by Others.",
+       "page": 99,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "In order to avoid duplication of effort and subject to the approval of the owner, WPSs and BPSs qualified by a technically competent group or agency may be used provided the following are met:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) The procedures meet the requirements of ASME BPVC, Section IX and any additional qualification requirements of this Code."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) The employer has qualified at least one welder, brazer, or operator following each WPS or BPS."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) The employer’s business name shall be shown on each WPS and BPS, and on each qualification record. In addition, qualification records shall be signed and dated by the employer, thereby accepting responsibility for the qualifications performed by others."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.2.3",
+       "heading": "Performance Qualification by Others.",
+       "page": 99,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "In order to avoid duplication of effort and subject to the approval of the owner, an employer may accept the performance qualification of a welder, brazer, or operator made by a previous employer. This acceptance is limited to performance qualifications that were made on pipe or tube test coupons. The new employer shall have the WPS or BPS that was followed during qualification or an equivalent WPS or BPS that is within the limits of the essential variables set forth in ASME BPVC, Section IX. An employer accepting such qualification tests shall obtain a copy of the performance qualification test record from the previous employer. The record shall show the name of the employer by whom the welder, brazer, or operator was qualified and the date of that qualification. Evidence shall also be provided that the welder, brazer, or operator has maintained qualification in accordance with QW-322 and QB-322 of ASME BPVC, Section IX, except that this evidence may be provided by an employer responsible for the individual’s welding or brazing performance even if not the original qualifying employer. The new employer’s business name shall be shown on the qualification record, and it shall be signed and dated by the employer, thereby accepting responsibility for the qualifications performed by others."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.2.4",
+       "heading": "Qualification Records.",
+       "page": 99,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "The employer shall maintain copies of the procedure and performance qualification records specified by ASME BPVC, Section IX that shall be available to the Inspector at the location where welding is being done."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "328.3",
+     "heading": "Welding Materials",
+     "page": 99,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "328.3.1",
+       "heading": "Electrodes and Filler Metal.",
+       "page": 99,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "Welding electrodes and filler metal, including consumable inserts, shall conform to the requirements of ASME BPVC, Section II, Part C. An electrode or filler metal not conforming to the above may be used provided the WPS and the welders who will follow the WPS have been qualified as required by ASME BPVC, Section IX. Unless otherwise specified by the Designer, welding electrodes and filler metals used shall produce weld metal that complies with the following:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) The nominal tensile strength of the weld metal shall equal or exceed the minimum specified tensile strength of the base metals being joined, or the weaker of the two if base metals of two different strengths are being joined."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) The nominal chemical analysis of the weld metal shall be similar to the nominal chemical analysis of the major alloying elements of the base metal (e.g., 21∕4% Cr, 1% Mo steels should be joined using 21∕4% Cr, 1% Mo filler metals)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) If base metals of different chemical analysis are being joined, the nominal chemical analysis of the weld metal shall be similar to either base metal or an intermediate composition, except as specified below for austenitic steels joined to ferritic steels."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) When austenitic steels are joined to ferritic steels, the weld metal shall have a predominantly austenitic microstructure."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) For nonferrous metals, the weld metal shall be that recommended by the manufacturer of the nonferrous base metal or by industry associations for that metal."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.3.2",
+       "heading": "Weld Backing Material.",
+       "page": 100,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "When backing rings are used, they shall conform to the following:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Ferrous Metal Backing Rings. These shall be of weldable quality. Sulfur content shall not exceed 0.05%."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) If two abutting surfaces are to be welded to a third member used as a backing ring and one or two of the three members are ferritic and the other member or members are austenitic, the satisfactory use of such materials shall be demonstrated by welding procedure qualified as required by para. 328.2."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Backing rings may be of the continuous machined or split-band type. Some commonly used types are shown in Figure 328.3.2-1."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Nonferrous and Nonmetallic Backing Rings. Backing rings of nonferrous or nonmetallic material may be used, provided the designer approves their use and the welding procedure using them is qualified as required by para. 328.2."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.3.3",
+       "heading": "Consumable Inserts.",
+       "page": 100,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "Consumable inserts may be used, provided they are of the same nominal composition as the filler metal, will not cause detrimental alloying of the weld metal, and the welding procedure using them is qualified as required by para. 328.2. Some commonly used types are shown in Figure 328.3.2-1."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "328.4",
+     "heading": "Preparation for Welding",
+     "page": 100,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "328.4.1",
+       "heading": "Cleaning.",
+       "page": 100,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "Internal and external surfaces to be thermally cut or welded shall be clean and free from paint, oil, rust, scale, and other material that would be detrimental to either the weld or the base metal when heat is applied."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.4.2",
+       "heading": "End Preparation",
+       "page": 100,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) General"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) End preparation is acceptable only if the surface is reasonably smooth and true, and slag from oxygen or arc cutting is cleaned from thermally cut surfaces. Discoloration remaining on a thermally cut surface is not considered detrimental oxidation."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) End preparation for groove welds specified in ASME B16.25, or any other that meets the WPS, is acceptable. [For convenience, the basic bevel angles of ASME B16.25 and some additional J-bevel angles are shown in Figure 328.4.2-1, illustrations (a) and (b).]"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Circumferential Welds"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) If component ends are trimmed as shown in Figure 328.3.2-1, illustration (a) or illustration (b) to fit backing rings or consumable inserts, or as shown in Figure 328.4.2-2, illustration (a) or illustration (b) to correct internal misalignment, such trimming shall not reduce the finished wall thickness below the required minimum wall thickness, tm."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Component ends may be bored to allow for a completely recessed backing ring, provided the remaining net thickness of the finished ends is not less than tm."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) It is permissible to size pipe ends of the same nominal size to improve alignment if wall thickness requirements are maintained."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(4)",
+         "indent": 2,
+         "text": "(4) Where necessary, weld metal may be deposited inside or outside of the component to permit alignment or provide for machining to ensure satisfactory seating of rings or inserts."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(5)",
+         "indent": 2,
+         "text": "(5) When a girth or miter groove weld joins components of unequal wall thickness and one is more than 11∕2 times the thickness of the other, end preparation and geometry shall be in accordance with acceptable designs for unequal wall thickness in ASME B16.25."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(6)",
+         "indent": 2,
+         "text": "(6) Butt-weld fittings manufactured in accordance with ASME B16.9 may be trimmed to produce an angular joint offset in their connections to pipe or to other butt-weld fittings without being subject to design qualifications in accordance with para. 304.7.2, provided the total angular offset produced between the two jointed parts does not exceed 3 deg. NOTE: (1) Refer to ASME B16.25 for detailed dimensional information on welding ends."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.4.3",
+       "heading": "Alignment",
+       "page": 102,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Circumferential Welds"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) Inside surfaces of components at ends to be joined in girth or miter groove welds shall be aligned within the dimensional limits in the WPS and the engineering design."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) If the external surfaces of the components are not aligned, the weld shall be tapered between them."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Longitudinal Welds. Alignment of longitudinal groove welds [not made in accordance with a standard listed in Table A-1 (Table A-1C) or Table 326.1.1-1] shall conform to the requirements of para. 328.4.3(a)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Branch Connection Welds"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) Branch connections that abut the outside surface of the run pipe shall be contoured for groove welds that meet the WPS requirements [see Figure 328.4.3-1, illustrations (a) and (b)]."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) Branch connections that are inserted through a run opening shall be inserted at least as far as the inside surface of the run pipe at all points [see Figure 328.4.3-1, illustration (c)] and shall otherwise conform to para. 328.4.3(c)(1)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) Run openings for branch connections shall not deviate from the required contour more than the dimension m in Figure 328.4.3-1. In no case shall deviations of the shape of the opening cause the root spacing tolerance limits in the WPS to be exceeded. Weld metal may be added and refinished if necessary for compliance."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Spacing. The root opening of the joint shall be within the tolerance limits in the WPS."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "328.5",
+     "heading": "Welding Requirements",
+     "page": 102,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "328.5.1",
+       "heading": "General",
+       "page": 102,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Welds, including addition of weld metal for alignment [paras. 328.4.2(b)(4) and 328.4.3(c)(3)], shall be made in accordance with a qualified procedure and by qualified welders or welding operators."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Each qualified welder and welding operator shall be assigned an identification symbol. Unless otherwise specified in the engineering design, each pressure-containing weld or adjacent area shall be marked with the identification symbol of the welder or welding operator. In lieu of marking the weld, appropriate records shall be filed."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Tack welds at the root of the joint shall be made with filler metal equivalent to that used in the root pass. Tack welds shall be made by a qualified welder or welding operator. Tack welds shall be fused with the root pass weld, except that those that have cracked shall be removed. Bridge tacks (above the weld) shall be removed."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Peening is prohibited on the root pass and final pass of a weld."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) No welding shall be done if there is impingement on the weld area of rain, snow, sleet, or excessive wind, or if the weld area is frosted or wet."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(f)",
+         "indent": 1,
+         "text": "(f) Welding End Valves. The welding sequence and procedure and any heat treatment for a welding end valve shall be such as to preserve the seat tightness of the valve."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(g)",
+         "indent": 1,
+         "text": "(g) When the use of backing gas is specified to control the oxidation of the internal surfaces of materials during welding, the engineering design should specify the acceptable level of discoloration. See PFI Standard ES-50.1"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "1 PFI Standard ES-50. Internal Oxidation for Piping Welds. Pipe Fabrication Institute. (1) The size of an equal leg fillet weld is the leg length of the largest inscribed isosceles right triangle (theoretical throat = 0.707 × size). (2) The size of unequal leg fillet weld is the leg lengths of the largest right triangle that can be inscribed within the weld cross section [e.g.,"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "13 mm × 19 mm (1∕2 in. × 3∕4 in.)]."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.5.2",
+       "heading": "Fillet and Socket Welds",
+       "page": 103,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Fillet and socket welds may vary from convex to concave. The size of these welds shall be determined as shown in Figure 328.5.2-1."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) For any single continuous fillet weld greater than 5 mm (3∕16 in.), the weld may be less than the specified fillet weld size by not more than 1.5 mm (1∕16 in.), provided the total undersized portion of the weld does not exceed 10% of the total length of the weld or 50 mm (2 in.), whichever is less."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Minimum attachment weld dimensions for double-welded slip-on flanges, socket welding flanges, and other socket welding components shall be as shown in Figures 328.5.2-2 and 328.5.2-3."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) If slip-on flanges are single welded, the weld shall be at the hub, i.e., the Xmin by Xmin weld illustrated in Figure 328.5.2-2."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) In making socket welded joints, a gap as shown in Figure 328.5.2-2, illustration (c) and Figure 328.5.2-3 shall be provided prior to welding. After welding, a gap is not required to be present or verified."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.5.3",
+       "heading": "Seal Welds.",
+       "page": 103,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "Seal welding shall be done by a qualified welder. Seal welds shall cover all exposed threads."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.5.4",
+       "heading": "Welded Branch Connections",
+       "page": 103,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Figures 328.5.4-1 through 328.5.4-4 show acceptable details of branch connections with and without added reinforcement, in which the branch pipe is connected directly to the run pipe. The illustrations are typical and are not intended to exclude acceptable details not shown."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Figure 328.5.4-2 shows basic types of weld attachments used in the fabrication of branch connections. The location and minimum size of attachment welds shall conform to the requirements herein. Welds shall be calculated in accordance with para. 304.3.3 but shall be not less than the sizes shown in Figure 328.5.4-2. Figure 328.5.4-4 shows the basic types of attachment welds used with integrally reinforced branch connection fittings. The location and the minimum size of the attachment welds shall conform to the requirements of (i) below."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) The nomenclature and symbols used herein, in Figure 328.5.4-2, and in Figure 328.5.4-4 are"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Tb = nominal thickness of branch"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Th = nominal thickness of header"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Tm = nominal thickness of the branch weld for inte-"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "grally reinforced branch connection fittings"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 6,
+         "text": "(1) as specified by the manufacturer of the"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "branch connection fitting"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 6,
+         "text": "(2) the full depth of the resultant weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "groove, after fit-up, if no manufacturer’s weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "thickness is specified"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 6,
+         "text": "(3) as documented and specified in the"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "engineering design in accordance with"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "para. 300(c)(3), or"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(4)",
+         "indent": 6,
+         "text": "(4) calculated and documented in accor-"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 4,
+         "text": "dance with the requirements of para. 304.7.2"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "Tr = nominal thickness of reinforcing pad or saddle"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "tc = lesser of 0.7 T b or 6 mm (1∕4 in.)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "tmin = lesser of Tb or Tr"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Branch connections, including branch connection fittings (see paras. 300.2 and 304.3.2), that abut the outside of the run or that are inserted in an opening in the run shall be attached by fully penetrated groove welds. The welds shall be finished with cover fillet welds having a throat dimension not less than tc. See Figure 328.5.4-2, illustrations (a) and (b)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) A reinforcing pad or saddle shall be attached to the branch pipe by either"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) a fully penetrated groove weld finished with a cover fillet weld having a throat dimension not less than tc, or"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) a fillet weld having a throat dimension not less than 0.7tmin. See Figure 328.5.4-2, illustration (e). attached to the run pipe by a fillet weld having a throat dimension not less than 0.5 Tr . See Figure 328.5.4-2, illustrations (c) through (e)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(g)",
+         "indent": 1,
+         "text": "(g) Reinforcing pads and saddles shall have a good fit with the parts to which they are attached. A vent hole shall be provided at the side (not at the crotch) of any pad or saddle to reveal leakage in the weld between branch and run and to allow venting during welding and heat treatment. A pad or saddle may be made in more than one piece saddle parent metal, and if each piece has a vent hole."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(h)",
+         "indent": 1,
+         "text": "(h) Examination and any necessary repairs of the completed weld between branch and run shall be made before adding a pad or saddle."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(i)",
+         "indent": 1,
+         "text": "(i) Figure 328.5.4-4 shows additional integrally reinforced branch connections typical of MSS SP-97 fittings that abut the outside of the run attached by a full penetration groove weld. The welds shall be finished with cover fillets having a throat dimension not less than tc. The cover GENERAL NOTE: These illustrations show minimum acceptable welds. Welds may be larger than those shown here."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "Manufacturer’s weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 7,
+         "text": "line (if applicable)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 10,
+         "text": "Note (1)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 11,
+         "text": "(a) Transverse"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 5,
+         "text": "Manufacturer’s weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 5,
+         "text": "line (if applicable)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "Note (3)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 11,
+         "text": "(c) Transverse"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 5,
+         "text": "Manufacturer’s weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 5,
+         "text": "line (if applicable)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "Note (3)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 11,
+         "text": "(e) Transverse GENERAL NOTE: Welds shall be in accordance with para. 328.5.4(i). NOTES: (1) Cover fillet weld shall provide a smooth transition to the run pipe with an equal leg fillet at the longitudinal section to an equal leg fillet,"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "unequal (oblique) leg fillet, or groove butt joint at the transverse section (depending on branch connection size). (2) Heat treatment requirements shall be in accordance with para. 331.1.3(a). (3) Cover fillet weld shall provide a smooth transition to the run pipe with an equal leg fillet at the crotch in the longitudinal section to an equal leg"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "fillet, unequal (oblique) leg fillet, or groove butt joint at the transverse section (depending on branch connection size) to nothing at the heel of"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "the branch connection fitting in the longitudinal section."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "T = nominal wall thickness of pipe"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 2,
+         "text": "T2 = minimum thickness of fabricated lap fillet weld shall fill and smoothly transition to the attachment weld and run pipe or fitting."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.5.5",
+       "heading": "Fabricated Laps.",
+       "page": 107,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "Figure 328.5.5-1 shows acceptable details for fabricated laps. The illustrations are typical and are not intended to exclude other acceptable designs. Fabrication shall be in accordance with the following requirements:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Minimum weld dimensions shall be in accordance with those shown in Figure 328.5.5-1."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Welds shall be full penetration."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Corner groove welds shall be finished with cover fillet welds having a minimum throat dimension of 0.707(T − c)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) Final machining of laps may be completed after welding."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) Welds may be contoured or machined to radius, r, as in Figure 328.5.5-1, illustration (e), if necessary, to match ASME B16.5 lapped joint flanges."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "328.5.6",
+       "heading": "Welding for Severe Cyclic Conditions.",
+       "page": 107,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 24,
+         "text": "A welding procedure shall be employed that provides a smooth, regular, fully penetrated inner surface."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "328.6",
+     "heading": "Weld Repair",
+     "page": 107,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "A weld defect to be repaired shall be removed to sound metal. Repair welds shall be made using a welding procedure qualified in accordance with para. 328.2, recognizing that the cavity to be repaired may differ in contour and dimensions from the original joint. Repair welds shall be made by welders or welding operators qualified in accordance with para. 328.2. Preheating and heat treatment shall be as required for the original welding. See also para. 341.3.3."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "328.7",
+     "heading": "Attachment Welds",
+     "page": 107,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The welding of structural and other non-pressure-containing attachments may be made by complete penetration, partial penetration, fillet, or stud welding."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "For temporary attachments on pressure-containing components, the surfaces where attachments have been removed shall be finished by grinding or other acceptable means. Surfaces shall be blended smoothly into the surrounding base metal without encroaching on the minimum required thickness, tm, and examined. See para. 341.4 for the extent of required examinations and para. 341.3.2 for acceptance criteria."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Low energy capacitor discharge welding may be used for welding sensors without preheat above 10°C (50°F) or subsequent postweld heat treatment on P-No. 1 through P-No. 5B and P-No. 15E materials, provided"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(a)",
+       "indent": 1,
+       "text": "(a) a Welding Procedure Specification is prepared, describing the low energy capacitor discharge equipment, the combination of materials to be joined, and the technique of application; qualification of the welding procedure is not required"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(b)",
+       "indent": 1,
+       "text": "(b) the energy output of the welding process is limited to 125 W-sec"
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(c)",
+       "indent": 1,
+       "text": "(c) for P-Nos. 5A, 5B, and 15E materials, the maximum carbon content of the material is 0.15%"
+      }
+     ],
+     "sections": []
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "330",
+   "heading": "PREHEATING",
+   "page": 107,
+   "paragraphs": [],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "330.1",
+     "heading": "General",
+     "page": 107,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The preheat requirements herein apply to all types of welding, including tack welds, repair welds, and seal welds on threaded joints."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The preheating rules in ASME B31P may be used as an alternate."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "330.1.1",
+       "heading": "Requirements.",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "Unless specified otherwise in the engineering design, the minimum preheat temperatures for materials of various P-Numbers are given in Table 330.1.1-1. The thickness intended in Table 330.1.1-1 is that of the nominal thickness of the thicker component [as defined in para. 331.1.3(c)]. Higher minimum preheat temperatures may be required by the WPS or by the engineering design."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "330.1.2",
+       "heading": "Unlisted Materials.",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "Preheat requirements for an unlisted material shall be specified in the WPS."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "330.1.3",
+       "heading": "Preheat Temperature Verification",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Preheat temperature shall be checked by use of temperature indicating crayons, thermocouple pyrometers, or other suitable means to ensure that the temperature specified in the WPS is obtained prior to and maintained during welding."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Thermocouples may be temporarily attached directly to pressure-containing parts using the low energy capacitor discharge method of welding in accordance with para. 328.7."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "330.1.4",
+       "heading": "Preheat Zone.",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "The preheat zone shall be at or above the specified minimum temperature in all directions from the point of welding for a distance of the larger of 75 mm (3.0 in.) or 1.5 times the greater nominal thickness."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "The base metal temperature for tack welds shall be at or above the specified minimum temperature for a distance not less than 25 mm (1.0 in.) in all directions from the point of welding."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "330.2",
+     "heading": "Specific Requirements",
+     "page": 108,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "330.2.1",
+       "heading": "Different P-No. Materials.",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "When welding two different P-No. materials, the preheat temperature shall be the higher temperature for the material being welded as shown in Table 330.1.1-1."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "330.2.2",
+       "heading": "Interruption of Welding.",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "After welding commences, the minimum preheat temperature shall be maintained until any required PWHT is performed on P-Nos. 3, 4, 5A, 5B, 6, and 15E, except when all of the following conditions are satisfied:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) At least 10 mm (0.4 in.) thickness of weld is deposited or 25% of the welding groove is filled, whichever is less (the weld shall be sufficiently supported to prevent overstressing the weld if the weldment is to be moved or otherwise loaded). Caution is advised that the surface condition prior to cooling should be smooth and free of sharp discontinuities."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) For P-Nos. 3, 4, and 5A materials, the weld is allowed to cool slowly to room temperature."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) For P-Nos. 5B, 6, and 15E materials, the weld is subjected to an adequate intermediate heat treatment with a controlled rate of cooling. The preheat temperature may be reduced to 95°C (200°F) (minimum) for the purpose of root examination without performing an intermediate heat treatment. Intermediate heat treatment for P-No. 5B or P-No. 15E materials may be omitted when using low-hydrogen electrodes and filler metals classified by the filler metal specification with an optional supplemental diffusible-hydrogen designator of H4 or lower and suitably controlled by maintenance procedures to avoid contamination by hydrogen-producing sources. The surface of the base metal prepared for welding shall be free of contaminants."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(d)",
+         "indent": 1,
+         "text": "(d) After cooling and before welding is resumed, visual examination of the weld shall be performed to assure that no cracks have formed."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(e)",
+         "indent": 1,
+         "text": "(e) Required preheat shall be applied before welding is resumed."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "331",
+   "heading": "HEAT TREATMENT",
+   "page": 108,
+   "paragraphs": [],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "331.1",
+     "heading": "General",
+     "page": 108,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "331.1.1",
+       "heading": "Postweld Heat Treatment Requirements",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) PWHT shall be in accordance with the material groupings (P-Nos. and Group Nos.) and ranges in Table 331.1.1-1 except as provided in Tables 331.1.2-1 and 331.1.3-1. The PWHT rules in ASME B31P may be used as an alternate. See Appendix F, para. F331.1. The P-Numbers and Group Numbers are defined in ASME BPVC, Section IX, Table QW/QB-422. (Note that the P-Nos. are also listed in Appendix A.)"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) The PWHT to be used after production welding shall be specified in the WPS and shall be used in qualifying the welding procedure."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) The engineering design shall specify the examination and/or other production quality control (not less than the requirements of this Code) to ensure that the final welds are of adequate quality."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.1.2",
+       "heading": "Other Heat Treatments",
+       "page": 108,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Heat treatment for bending and forming shall be in accordance with para. 332.4."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) See Table 302.3.5-1 for special heat treatment requirements for longitudinal or spiral (helical seam) welds in Elevated Temperature Fluid Service."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) Postweld hydrogen bakeout performed at a temperature colder than that required by Table 331.1.1-1 (or the alternates as allowed by Table 331.1.2-1) is not considered PWHT. Separate procedure qualifications are not required when a postweld hydrogen bakeout is performed."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.1.3",
+       "heading": "Definition of Thicknesses Governing PWHT",
+       "page": 111,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) The term control thickness as used in Tables 331.1.1-1 and 331.1.3-1 is the lesser of"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) the thickness of the weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) the thickness of the materials being joined at the weld or the thickness of the pressure-containing material if the weld is attaching a nonpressure-containing material to a pressure-containing material."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Thickness of the weld, which is a factor in determining the control thickness, is defined as follows:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(1)",
+         "indent": 2,
+         "text": "(1) groove welds (girth and longitudinal) — the thicker of the two abutting ends after weld preparation, including I.D. machining"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(2)",
+         "indent": 2,
+         "text": "(2) fillet welds — the throat thickness of the weld"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(3)",
+         "indent": 2,
+         "text": "(3) partial penetration welds — the depth of the weld groove"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(4)",
+         "indent": 2,
+         "text": "(4) material repair welds — the depth of the cavity to be repaired"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(5)",
+         "indent": 2,
+         "text": "(5) branch welds — the dimension existing in the plane intersecting the longitudinal axes, calculated as indicated for each detail using the thickness through the weld for the details shown in Figures 328.5.4-2 and 328.5.4-4. This thickness shall be computed using the following formulas:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(-a)",
+         "indent": 3,
+         "text": "(-a) for Figure 328.5.4-2, use"
+        },
+        {
+         "kind": "equation",
+         "text": "− illustration (a) = T b + t c",
+         "indent": 7
+        },
+        {
+         "kind": "equation",
+         "text": "− illustration (b) = T h + t c",
+         "indent": 7
+        },
+        {
+         "kind": "equation",
+         "text": "− − illustration (c) = greater of T b + t c or T r + t c",
+         "indent": 4
+        },
+        {
+         "kind": "equation",
+         "text": "− − illustration (d) = T h + T r + t c",
+         "indent": 6
+        },
+        {
+         "kind": "equation",
+         "text": "− illustration (e) = T b + t c",
+         "indent": 7
+        },
+        {
+         "kind": "equation",
+         "text": "− (-b) for Figure 328.5.4-4, use T m + t c for all illus-",
+         "indent": 3
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 0,
+         "text": "trations"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) The term nominal material thickness as used in Table 331.1.3-1 is the thicker of the materials being joined at the weld."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.1.4",
+       "heading": "Heating and Cooling.",
+       "page": 111,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "The heating method shall provide the required metal temperature, metal temperature uniformity, and temperature control, and may include an enclosed furnace, local flame heating, electric resistance, electric induction, or exothermic chemical reaction. Above 315°C (600°F), the rate of heating and cooling shall not exceed 335°C/h (600°F/hr) divided by one-half the maximum material thickness in inches at the weld, but in no case shall the rate exceed 335°C/h (600°F/hr). See Table 331.1.1-1 for cooling rate requirements for P-Nos. 7, 10I, 11A, and 62 materials."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.1.6",
+       "heading": "Temperature Verification.",
+       "page": 111,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "Heat treatment temperature shall be checked by thermocouple pyrometers or other suitable methods to ensure that the WPS requirements are met. See para. 328.7 for attachment of thermocouples by the low energy capacitor discharge method of welding."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) If used, the heat treatment furnace shall be calibrated such that the PWHT can be controlled within the required temperature range."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Any required PWHT shall be as required by the qualified WPS."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) For welds that require PWHT in accordance with Table 331.1.1-1, the temperature of the material during PWHT shall be within the range specified. However, if specified by the designer, the range may be extended as permitted by Table 331.1.2-1, provided the lower transformation temperature of the material is not exceeded."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "331.2",
+     "heading": "Specific Requirements",
+     "page": 111,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Where warranted by experience or knowledge of service conditions, alternative methods of heat treatment or exceptions to the basic heat treatment provisions of para. 331.1 may be adopted as provided in paras. 331.2.1 and 331.2.2."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "331.2.1",
+       "heading": "Alternative Heat Treatment.",
+       "page": 111,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "Normalizing, or normalizing and tempering, or annealing may be applied in lieu of the required heat treatment after welding, bending, or forming, provided that the mechanical properties of any affected weld and base metal meet specification requirements after such treatment and that the substitution is approved by the designer."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.2.2",
+       "heading": "Exceptions to Basic Requirements.",
+       "page": 111,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 21,
+         "text": "As indicated in para. 331, the basic practices therein may require modification to suit service conditions in some cases. In such cases, the designer may specify more-strin-gent requirements in the engineering design, including heat treatment and hardness limitations for lesser thickness, or may specify less stringent heat treatment and hardness requirements, including none."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "When provisions less stringent than those in para. 331 are specified, the designer shall demonstrate to the owner’s satisfaction the adequacy of those provisions by comparable service experience, considering service temperature and its effects, frequency and intensity of thermal cycling, flexibility stress levels, probability of brittle failure, and other pertinent factors. In addition, appropriate tests shall be conducted, including WPS qualification tests."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.2.3",
+       "heading": "Dissimilar Materials",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Heat treatment of welded joints between dissimilar ferritic metals or between ferritic metals using dissimilar ferritic filler metal shall be at the higher of the temperature ranges in Table 331.1.1-1 for the materials in the joint. This may require the use of material transition joint designs."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Heat treatment of welded joints including both ferritic and austenitic components and filler metals shall be as required for the ferritic material or materials unless otherwise specified in the engineering design."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.2.4",
+       "heading": "Delayed Heat Treatment.",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "If a weldment is allowed to cool prior to heat treatment, the rate of cooling shall be controlled or other means shall be used to prevent detrimental effects in the piping."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.2.5",
+       "heading": "Partial Heat Treatment.",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "When an entire piping assembly to be heat treated cannot be fitted into the furnace, it is permissible to heat treat in more than one heat, provided there is at least 300 mm (12 in.) overlap between successive heats, and that parts of the assembly outside the furnace are protected from harmful temperature gradients. This method may not be used for austenitizing heat treatments for ferritic materials."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "331.2.6",
+       "heading": "Local Heat Treatment.",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "Welds may be locally postweld heat treated by heating a circumferential band around the entire component with the weld located in the center of the band. The width of the band heated to the specified temperature range shall be at least three times the wall thickness at the weld of the thickest part being joined. For nozzle and attachment welds, the width of the band heated to the specified temperature range shall extend beyond the nozzle weld or attachment weld on each side at least two times the run pipe thickness, and shall extend completely around the run pipe. Guidance for the placement of thermocouples on circumferential butt welds is provided in AWS D10.10, Sections 5, 6, and 8. Special consideration shall be given to the placement of thermocouples when heating welds adjacent to large heat sinks such as valves or fittings, or when joining parts of different thicknesses. No part of the materials subjected to the heat source shall exceed the lower transformation temperature of the material except as permitted by para. 331.2.1. Pay particular care when the applicable PWHT temperature is close to the material’s lower transformation temperature, such as for P-No. 15E materials or when materials of different P-Nos. are being joined. This method may not be used for austenitizing heat treatments."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "332",
+   "heading": "BENDING AND FORMING",
+   "page": 114,
+   "paragraphs": [],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "332.1",
+     "heading": "General",
+     "page": 114,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Pipe may be bent and components may be formed by any hot or cold method that is suitable for the material, the fluid service, and the severity of the bending or forming process.2 The finished surface shall be free of cracks and substantially free from buckling. Thickness after bending or forming shall be not less than that required by the design."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "332.2",
+     "heading": "Bending",
+     "page": 114,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "332.2.1",
+       "heading": "Bend Ovality.",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "At any bend cross section where the cutting plane is normal (i.e., perpendicular) to the pipe centerline, the difference between maximum and minimum outside diameters shall not exceed 8% of nominal outside diameter for internal pressure and 3% for external pressure. Removal of metal shall not be used to achieve these requirements."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "332.2.2",
+       "heading": "Bending Temperature",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) Cold bending of ferritic materials shall be done at a temperature below the transformation range."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Hot bending shall be done at a temperature above the transformation range and in any case within a temperature range consistent with the material and the intended service."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "332.2.3",
+       "heading": "Corrugated and Other Bends.",
+       "page": 114,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 18,
+         "text": "Dimensions and configuration shall conform to the design qualified in accordance with para. 306.2.2."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "332.3",
+     "heading": "Forming",
+     "page": 114,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "The temperature range for forming shall be consistent with material, intended service, and specified heat treatment."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "332.4",
+     "heading": "Required Heat Treatment",
+     "page": 114,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Heat treatment shall be performed in accordance with para. 331.1.1 when required by para. 332.4.1 or para. 332.4.2. The process and temperature control methods described in ASME B31P are recommended."
+      },
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "2 For pipe bending, PFI Standard ES-24, Pipe Bending Methods, Tolerances, Process and Material Requirements, may be used as a guide."
+      }
+     ],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "332.4.1",
+       "heading": "Hot Bending and Forming.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "After hot bending and forming, heat treatment is required for P-Nos. 3, 4, 5, 6, and 10A materials in all thicknesses. Durations and temperatures shall be in accordance with para. 331."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "332.4.2",
+       "heading": "Cold Bending and Forming.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 17,
+         "text": "After cold bending and forming, heat treatment is required (for all thicknesses, and with temperature and duration as given in Table 331.1.1-1) when any of the following conditions exist:"
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) for P-Nos. 1 through 6 materials, where the maximum calculated fiber elongation after bending or forming exceeds 50% of specified basic minimum elongation (in the direction of severest forming) for the applicable specification, grade, and thickness. This requirement may be waived if it can be demonstrated that the selection of pipe and the choice of bending or forming process provide assurance that, in the finished condition, the most severely strained material retains at least 10% elongation."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) for any material requiring impact testing, where the maximum calculated fiber elongation after bending or forming will exceed 5%."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(c)",
+         "indent": 1,
+         "text": "(c) when specified in the engineering design."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "333",
+   "heading": "BRAZING AND SOLDERING",
+   "page": 115,
+   "paragraphs": [],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "333.1",
+     "heading": "Qualification",
+     "page": 115,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "333.1.1",
+       "heading": "Brazing Qualification.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "The qualification of brazing procedures, brazers, and brazing operators shall be in accordance with para. 328.2. For Category D Fluid Service at design temperature not over 93°C (200°F), such qualification is not required unless specified in the engineering design."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "333.1.2",
+       "heading": "Soldering Qualification.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "The qualification of solderers shall be in accordance with the requirements of ASTM B828.3"
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "333.2",
+     "heading": "Brazing and Soldering Materials",
+     "page": 115,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "333.2.1",
+       "heading": "Brazing and Filler Metal and Flux.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 21,
+         "text": "Brazing filler metal and flux shall comply with AWS A5.8M/ A5.84 and AWS A5.31M/A5.31,5 respectively, or other filler metals and fluxes that have been qualified in accordance with ASME BPVC, Section IX."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "333.2.2",
+       "heading": "Soldering Filler Metal and Flux.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 20,
+         "text": "Soldering filler metal and flux shall comply with ASTM B32, Standard Specification for Solder Metal, and ASTM B813, Standard"
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "3 ASTM B828. Standard Practice for Making Capillary Joints by Soldering of Copper and Copper Alloy Tube and Fittings. ASTM International."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "4 AWS A5.8M/A5.8. Specification for Filler Metals for Brazing and Braze Welding. American Welding Society."
+        },
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 1,
+         "text": "5 AWS A5.31M/A5.31. Specification for Fluxes for Brazing and Braze Welding. American Welding Society. Specification for Liquid and Paste Fluxes for Soldering of Copper and Copper Alloy Tube, respectively."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "333.3",
+     "heading": "Preparation and Cleaning",
+     "page": 115,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "333.3.1",
+       "heading": "Surface Preparation.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 14,
+         "text": "The surfaces to be brazed or soldered shall be clean and free from grease, oxides, paint, scale, and dirt of any kind. A suitable chemical or mechanical cleaning method shall be used if necessary to provide a clean wettable surface."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "333.3.2",
+       "heading": "Joint Clearance.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 13,
+         "text": "The clearance between surfaces to be joined by soldering or brazing shall be no larger than necessary to allow complete capillary distribution of the filler metal."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "333.3.3",
+       "heading": "Flux Removal.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "Residual flux shall be removed."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "section",
+   "id": "335",
+   "heading": "ASSEMBLY AND ERECTION",
+   "page": 115,
+   "paragraphs": [],
+   "sections": [
+    {
+     "kind": "section",
+     "id": "335.1",
+     "heading": "Alignment",
+     "page": 115,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": "(a)",
+       "indent": 1,
+       "text": "(a) Piping Distortions. Any distortion of piping to bring it into alignment for joint assembly that introduces a detrimental strain in equipment or piping components is prohibited."
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(b)",
+       "indent": 1,
+       "text": "(b) Cold Spring. Before assembling any joints to be cold sprung, guides, supports, and anchors shall be examined for errors that might interfere with desired movement or lead to undesired movement. The gap or overlap of piping prior to assembly shall be checked against the drawing and corrected if necessary. Heating shall not be used to help in closing the gap because it defeats the purpose of cold springing."
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(c)",
+       "indent": 1,
+       "text": "(c) Flanged Joints. Unless otherwise specified in the engineering design, flanged joints shall be aligned as described in (1) or (2), and (3)."
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(1)",
+       "indent": 2,
+       "text": "(1) Before bolting, mating gasket contact surfaces shall be aligned to each other within 1 mm in 200 mm (1∕16 in./ft), measured across any diameter."
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(2)",
+       "indent": 2,
+       "text": "(2) The flanged joint shall be capable of being bolted such that the gasket contact surfaces bear uniformly on the gasket."
+      },
+      {
+       "kind": "paragraph",
+       "marker": "(3)",
+       "indent": 2,
+       "text": "(3) Flange bolt holes shall be aligned within 3 mm (1∕8 in.) maximum offset."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "335.2",
+     "heading": "Flanged Joints",
+     "page": 115,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "335.2.1",
+       "heading": "Preparation for Assembly.",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "Any damage to the gasket seating surface that would prevent gasket seating shall be repaired, or the flange shall be replaced."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.2.2",
+       "heading": "Bolt Tightening",
+       "page": 115,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": "(a)",
+         "indent": 1,
+         "text": "(a) In assembling flanged joints, the gasket shall be uniformly compressed to the proper design loading. The bolt stress due to preload may exceed the design stress values for bolting materials in Table A-4 (Table A-4C)."
+        },
+        {
+         "kind": "paragraph",
+         "marker": "(b)",
+         "indent": 1,
+         "text": "(b) Special care shall be used in assembling flanged joints in which the flanges have widely differing mechanical properties. Tightening to a predetermined torque is recommended."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.2.3",
+       "heading": "Bolt Length.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "Bolts shall extend through their nuts such that there is complete thread engagement for the full depth of the nut."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.2.4",
+       "heading": "Gaskets.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "No more than one gasket shall be used between contact faces in assembling a flanged joint."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.2.5",
+       "heading": "Flanged Joint Assembly.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "Assembly requirements for bolted flanged joints and flanged joint assembler qualifications shall be considered in the engineering design. For guidance, see ASME PCC-1, Guidelines for Pressure Boundary Bolted Flange Joint Assembly, and ASME BPVC, Section VIII, Division 1, Nonmandatory Appendix S."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "335.3",
+     "heading": "Threaded Joints",
+     "page": 116,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "335.3.1",
+       "heading": "Thread Compound or Lubricant.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 23,
+         "text": "A n y compound or lubricant used on threads shall be suitable for the service temperatures and shall not react unfavorably with either the service fluid or the piping material."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.3.2",
+       "heading": "Joints for Seal Welding.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "A threaded joint to be seal welded shall be made up without thread compound. A joint containing thread compound that leaks during leak testing may be seal welded in accordance with para. 328.5.3, provided all compound is removed from exposed threads."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.3.3",
+       "heading": "Straight Threaded Joints.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 16,
+         "text": "Typical joints using straight threads, with sealing at a surface other than the threads, are shown in Figure 335.3.3-1, illustrations (a), (b), and (c). Care shall be taken to avoid distorting the seat when incorporating such joints into piping assemblies by welding, brazing, or bonding."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "335.4",
+     "heading": "Tubing Joints",
+     "page": 116,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "335.4.1",
+       "heading": "Flared Tubing Joints.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 15,
+         "text": "The sealing surface of the flare shall be examined for imperfections before assembly and any flare having imperfections shall be rejected."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.4.2",
+       "heading": "Flareless and Compression Tubing Joints.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 0,
+         "text": "Where the manufacturer’s instructions call for a specified number of turns of the nut, these shall be counted from the point at which the nut becomes finger tight."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "335.5",
+     "heading": "Caulked Joints",
+     "page": 116,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "Caulked joints shall be installed and assembled in accordance with the manufacturer’s instructions, as modified by the engineering design. Care shall be taken to ensure adequate engagement of joint members."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "335.6",
+     "heading": "Expanded Joints and Special Joints",
+     "page": 116,
+     "paragraphs": [],
+     "sections": [
+      {
+       "kind": "section",
+       "id": "335.6.1",
+       "heading": "General.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 9,
+         "text": "Expanded joints and special joints (as defined in para. 318) shall be installed and assembled in accordance with the manufacturer’s instructions, as modified by the engineering design. Care shall be taken to ensure adequate engagement of joint members."
+        }
+       ],
+       "sections": []
+      },
+      {
+       "kind": "section",
+       "id": "335.6.2",
+       "heading": "Packed Joints.",
+       "page": 116,
+       "paragraphs": [
+        {
+         "kind": "paragraph",
+         "marker": null,
+         "indent": 11,
+         "text": "Where a packed joint is used to absorb thermal expansion, proper clearance shall be provided at the bottom of the socket to permit this movement."
+        }
+       ],
+       "sections": []
+      }
+     ]
+    },
+    {
+     "kind": "section",
+     "id": "335.9",
+     "heading": "Cleaning of Piping",
+     "page": 117,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "This Code does not prescribe mandatory procedures for flushing and cleaning. However, for potential hazards that may result from performing such procedures refer to Appendix F, para. F335.9 for precautionary considerations."
+      }
+     ],
+     "sections": []
+    },
+    {
+     "kind": "section",
+     "id": "335.10",
+     "heading": "Identification of Piping",
+     "page": 117,
+     "paragraphs": [
+      {
+       "kind": "paragraph",
+       "marker": null,
+       "indent": 1,
+       "text": "See Appendix F, para. F335.10."
+      }
+     ],
+     "sections": []
+    }
+   ]
+  }
+ ]
+}

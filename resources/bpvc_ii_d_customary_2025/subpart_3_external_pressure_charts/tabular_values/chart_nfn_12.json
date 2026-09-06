@@ -1,0 +1,174 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table NFN-12",
+  "title": "Tabular Values for Figure NFN-12",
+  "figure_id": "Figure NFN-12",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for",
+  "figure_pdf_page": 1298,
+  "figure_image": "figures/figure_nfn_12.png",
+  "figure_images": null,
+  "pdf_pages": [
+    1355
+  ],
+  "key_column": "Temp., °F",
+  "columns": [
+    "Temp., °F",
+    "A",
+    "B, psi"
+  ],
+  "value_field": "b_psi",
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis, printed here in psi -- the unit is taken from each sheet, not assumed (NFN-26 and NFN-27 are set in ksi, every other sheet in psi). ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 5,
+  "point_count": 28,
+  "curves": [
+    {
+      "key": 100,
+      "points": [
+        {
+          "a": 0.0002,
+          "b_psi": 3000.0
+        },
+        {
+          "a": 0.0004,
+          "b_psi": 6000.0
+        },
+        {
+          "a": 0.0008,
+          "b_psi": 9000.0
+        },
+        {
+          "a": 0.003,
+          "b_psi": 14000.0
+        },
+        {
+          "a": 0.005,
+          "b_psi": 16000.0
+        },
+        {
+          "a": 0.01,
+          "b_psi": 18000.0
+        }
+      ],
+      "temperature_f": 100
+    },
+    {
+      "key": 200,
+      "points": [
+        {
+          "a": 0.00025,
+          "b_psi": 3600.0
+        },
+        {
+          "a": 0.0008,
+          "b_psi": 8000.0
+        },
+        {
+          "a": 0.001,
+          "b_psi": 10000.0
+        },
+        {
+          "a": 0.005,
+          "b_psi": 14000.0
+        },
+        {
+          "a": 0.01,
+          "b_psi": 16000.0
+        },
+        {
+          "a": 0.025,
+          "b_psi": 17000.0
+        }
+      ],
+      "temperature_f": 200
+    },
+    {
+      "key": 400,
+      "points": [
+        {
+          "a": 0.0004,
+          "b_psi": 5500.0
+        },
+        {
+          "a": 0.0005,
+          "b_psi": 6500.0
+        },
+        {
+          "a": 0.002,
+          "b_psi": 10000.0
+        },
+        {
+          "a": 0.004,
+          "b_psi": 12000.0
+        },
+        {
+          "a": 0.0085,
+          "b_psi": 14000.0
+        }
+      ],
+      "temperature_f": 400
+    },
+    {
+      "key": 600,
+      "points": [
+        {
+          "a": 0.0003,
+          "b_psi": 4000.0
+        },
+        {
+          "a": 0.00045,
+          "b_psi": 6000.0
+        },
+        {
+          "a": 0.0006,
+          "b_psi": 6500.0
+        },
+        {
+          "a": 0.0025,
+          "b_psi": 9900.0
+        },
+        {
+          "a": 0.02,
+          "b_psi": 14000.0
+        }
+      ],
+      "temperature_f": 600
+    },
+    {
+      "key": 800,
+      "points": [
+        {
+          "a": 0.0004,
+          "b_psi": 5000.0
+        },
+        {
+          "a": 0.0005,
+          "b_psi": 6000.0
+        },
+        {
+          "a": 0.002,
+          "b_psi": 9000.0
+        },
+        {
+          "a": 0.003,
+          "b_psi": 10000.0
+        },
+        {
+          "a": 0.007,
+          "b_psi": 12000.0
+        },
+        {
+          "a": 0.015,
+          "b_psi": 13000.0
+        }
+      ],
+      "temperature_f": 800
+    }
+  ]
+}

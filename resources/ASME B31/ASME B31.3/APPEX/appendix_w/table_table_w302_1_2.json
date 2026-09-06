@@ -1,0 +1,59 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "W",
+ "table_id": "Table W302.1-2",
+ "title": "Fatigue Material Coefficients (−2σ)",
+ "pdf_pages": [
+  566,
+  566
+ ],
+ "columns": [
+  {
+   "key": "material",
+   "header": "Material"
+  },
+  {
+   "key": "si_units",
+   "header": "SI Units"
+  },
+  {
+   "key": "cf_u_s_customary_units",
+   "header": "CF U.S. Customary Units"
+  },
+  {
+   "key": "m",
+   "header": "m"
+  },
+  {
+   "key": "k",
+   "header": "k"
+  }
+ ],
+ "row_count": 2,
+ "notes": [
+  "(a) SI units include SEi (MPa) and TE (mm) in eq. (W1).",
+  "(b) U.S. Customary units include SEi (ksi) and TE (in.) in eq. (W1)."
+ ],
+ "rows": [
+  {
+   "material": "Ferritic steels and austenitic stainless steels",
+   "si_units": 16942,
+   "cf_u_s_customary_units": 1198,
+   "m": 3.13,
+   "k": 0.222
+  },
+  {
+   "material": "Aluminum",
+   "si_units": 2828,
+   "cf_u_s_customary_units": 199.9,
+   "m": 3.61,
+   "k": 0.222
+  }
+ ]
+}

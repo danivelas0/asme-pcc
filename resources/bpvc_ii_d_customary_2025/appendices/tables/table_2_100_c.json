@@ -1,0 +1,48 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 2-100(c)",
+  "title": "Criteria for Establishing Allowable Stress or Design Stress Intensity Values for Table 4",
+  "pdf_pages": [
+    1376,
+    1376
+  ],
+  "page_count": 1,
+  "row_count": 2,
+  "notes": [
+    "NOTE: (1) For materials whose strength has been enhanced by heat treatment or by strain hardening, the criteria shown shall govern unless the values are lower than for material whose strength is not enhanced by heat treatment or strain hard- ening, in which case the values for the material whose strength has not been enhanced by heat treatment or strain hard- ening shall be used."
+  ],
+  "columns": [
+    "Product/Material",
+    "Tensile Strength",
+    "Room Temperature and Below Yield Strength",
+    "Above Room Temperature Tensile Strength",
+    "Above Room Temperature Yield Strength"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Room Temperature and",
+    "Above Room Temperature"
+  ],
+  "rows": [
+    {
+      "product_material": "Bolting, with strength not enhanced by heat treatment or strain hardening, ferrous and nonferrous",
+      "tensile_strength": "1/4ST",
+      "room_temperature_and_below_yield_strength": "2/3SY",
+      "above_room_temperature_tensile_strength": "1:1 4 STRT",
+      "above_room_temperature_yield_strength": "2/3SYRY"
+    },
+    {
+      "product_material": "Bolting, with strength enhanced by heat treatment or strain hardening, ferrous and nonferrous [Note (1)]",
+      "tensile_strength": "NA",
+      "room_temperature_and_below_yield_strength": "1/3SY",
+      "above_room_temperature_tensile_strength": "NA",
+      "above_room_temperature_yield_strength": "1/3SYRY"
+    }
+  ]
+}

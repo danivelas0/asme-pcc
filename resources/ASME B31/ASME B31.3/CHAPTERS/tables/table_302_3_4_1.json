@@ -1,0 +1,77 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "II",
+ "table_id": "Table 302.3.4-1",
+ "title": "Longitudinal Weld Joint Quality Factor, Ej",
+ "pdf_pages": [
+  51,
+  51
+ ],
+ "columns": [
+  {
+   "key": "no_1_2_3_4",
+   "header": "No. 1 2 3 4",
+   "banners": []
+  },
+  {
+   "key": "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification",
+   "header": "Furnace butt weld, continuous weld Electric resistance weld Electric fusion weld (a) Single butt weld (with or without filler metal) (b) Double butt weld Specific specification",
+   "banners": [
+    "Type of Joint"
+   ]
+  },
+  {
+   "key": "type_of_joint",
+   "header": null,
+   "banners": [
+    "Type of Joint"
+   ]
+  },
+  {
+   "key": "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below",
+   "header": "Type of Seam Straight Straight or spiral (helical seam) (except as provided in 4 below)",
+   "banners": []
+  },
+  {
+   "key": "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code",
+   "header": "Examination As required by listed specification As required by listed specification or this Code Additionally spot radiographed in accordance with para. 341.5.1 Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1 or this Code",
+   "banners": []
+  },
+  {
+   "key": "factor_ej_0_60_0_85_0_80_0_90_1_00",
+   "header": "Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00",
+   "banners": []
+  }
+ ],
+ "row_count": 2,
+ "notes": [
+  "NOTE: (1) It is not permitted to increase the joint quality factor by additional examination for joint 1 or 2. Si = any computed displacement stress range smaller When determining the required wall thickness for than SE internal pressure in accordance with para. 304, for each coincident operating pressure–temperature condition under consideration, the product of the basic allowWhen the total number of significant stress cycles due to able stress and the applicable weld quality factor, SE, shall all causes exceeds 100 000, and with the owner’s approval, be multiplied by W. the designer may elect to apply the alternative fatigue W is equal to 1.0 when evaluating occasional loads, e.g., assessment rules in Appendix W to satisfy the displacewind and earthquake, or when evaluating permissible ment stress range requirements of this paragraph and of variations in accordance with para. 302.2.4. Application para. 319. A significant stress cycle is defined in para. of W is not required when determining the pressure rating W300. When the alternative rules of Appendix W are for the occasional load or permissible variation condition. applied, the calculations shall be documented in the engiIt is also not required when calculating the allowable neering design. stress range for displacement stresses, SA, in (d).",
+  "(e) Weld Joint Strength Reduction Factor, W. At elevated For other than occasional loads or permissible variatemperatures, the long-term strength of weld joints may tions, W shall be in accordance with Table 302.3.5-1 be lower than the long-term strength of the base material. except as provided in (f). The weld joint strength reduction factor, W, is the ratio",
+  "(f) Alternative Weld Joint Strength Reduction Factors. A of the nominal stress to cause failure of a weld joint to that weld joint strength reduction factor other than that listed of the corresponding base material for an elevated in Table 302.3.5-1 may be used in accordance with one of temperature condition of the same duration. It only the following criteria: applies at weld locations in longitudinal or spiral",
+  "(1) Creep test data may be used to determine the (helical seam) welded piping components. The designer weld joint strength reduction factor, W. However, the is responsible for the application of weld joint strength use of creep test data to increase the factor W above reduction factors to other welds (e.g., circumferential). that shown in Table 302.3.5-1 is not permitted for the"
+ ],
+ "rows": [
+  {
+   "no_1_2_3_4": null,
+   "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification": "API 5L, electric fusion",
+   "type_of_joint": null,
+   "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below": "Straight (with one or two",
+   "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code": "As required by specification",
+   "factor_ej_0_60_0_85_0_80_0_90_1_00": 0.95
+  },
+  {
+   "no_1_2_3_4": null,
+   "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification": "weld, double butt seam",
+   "type_of_joint": null,
+   "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below": "seams) or spiral (helical seam)",
+   "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
+   "factor_ej_0_60_0_85_0_80_0_90_1_00": 1.0
+  }
+ ]
+}

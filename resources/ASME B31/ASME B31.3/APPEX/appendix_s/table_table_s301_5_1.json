@@ -1,0 +1,122 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S301.5-1",
+ "title": "Example 1: Operating Load Case Results: Internal Loads and Deflections",
+ "pdf_pages": [
+  549,
+  549
+ ],
+ "columns": [
+  {
+   "key": "node_number",
+   "header": "Node Number"
+  },
+  {
+   "key": "axial_force_structural_only_n_lb_unsigned",
+   "header": "Axial Force (Structural Only), N (lb) (Unsigned) [Notes (1), (2)]"
+  },
+  {
+   "key": "bending_moment_n_m_ft_lb_unsigned",
+   "header": "Bending Moment, N-m (ft-lb) (Unsigned) [Note (1)]"
+  },
+  {
+   "key": "horizontal_deflection_mm_in",
+   "header": "Horizontal Deflection, mm (in.) [Note (1)]"
+  },
+  {
+   "key": "vertical_deflection_mm_in",
+   "header": "Vertical Deflection, mm (in.) [Note (1)]"
+  }
+ ],
+ "row_count": 11,
+ "notes": [
+  "(1) Forces, moments, and deflections are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units.",
+  "(2) No operating axial pressure force is included in the axial forces listed above."
+ ],
+ "rows": [
+  {
+   "node_number": 10,
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "22 100 (16,300)",
+   "horizontal_deflection_mm_in": 0.0,
+   "vertical_deflection_mm_in": 0.0
+  },
+  {
+   "node_number": 15,
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "11 000 (8,110))",
+   "horizontal_deflection_mm_in": "21 (0.8)",
+   "vertical_deflection_mm_in": "−1 (−0.1)"
+  },
+  {
+   "node_number": 20,
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "46 400 (34,200))",
+   "horizontal_deflection_mm_in": "42 (1.6)",
+   "vertical_deflection_mm_in": 0.0
+  },
+  {
+   "node_number": "30 near",
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "64 700 (47,700)",
+   "horizontal_deflection_mm_in": "50 (1.9)",
+   "vertical_deflection_mm_in": "−3 (−0.1)"
+  },
+  {
+   "node_number": "30 mid",
+   "axial_force_structural_only_n_lb_unsigned": "50 700 (11,400)",
+   "bending_moment_n_m_ft_lb_unsigned": "77 500 (57,100)",
+   "horizontal_deflection_mm_in": "51 (2.0)",
+   "vertical_deflection_mm_in": "−2 (−0.1)"
+  },
+  {
+   "node_number": "30 far",
+   "axial_force_structural_only_n_lb_unsigned": "40 200 (9,040)",
+   "bending_moment_n_m_ft_lb_unsigned": "72 000 (53,100)",
+   "horizontal_deflection_mm_in": "47 (1.8)",
+   "vertical_deflection_mm_in": "2 (0.1)"
+  },
+  {
+   "node_number": "40 near",
+   "axial_force_structural_only_n_lb_unsigned": "28 400 (6,380)",
+   "bending_moment_n_m_ft_lb_unsigned": "72 600 (53,600)",
+   "horizontal_deflection_mm_in": "−26 (−1.0)",
+   "vertical_deflection_mm_in": "18 (0.7)"
+  },
+  {
+   "node_number": "40 mid",
+   "axial_force_structural_only_n_lb_unsigned": "40 100 (9,050)",
+   "bending_moment_n_m_ft_lb_unsigned": "80 400 (59,400)",
+   "horizontal_deflection_mm_in": "−30 (−1.2)",
+   "vertical_deflection_mm_in": "21 (0.8)"
+  },
+  {
+   "node_number": "40 far",
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "74 300 (54,900)",
+   "horizontal_deflection_mm_in": "−29 (−1.1)",
+   "vertical_deflection_mm_in": "23 (0.9)"
+  },
+  {
+   "node_number": 45,
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "18 100 (13,400)",
+   "horizontal_deflection_mm_in": "−21 (−0.8)",
+   "vertical_deflection_mm_in": "16 (0.6)"
+  },
+  {
+   "node_number": 50,
+   "axial_force_structural_only_n_lb_unsigned": "29 700 (6,670)",
+   "bending_moment_n_m_ft_lb_unsigned": "59 000 (43,600)",
+   "horizontal_deflection_mm_in": 0.0,
+   "vertical_deflection_mm_in": 0.0
+  }
+ ]
+}

@@ -1,0 +1,1411 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "F",
+ "title": "Guidance and Precautionary Considerations",
+ "document": "Appendix F prose",
+ "pdf_pages": [
+  468,
+  475
+ ],
+ "section_count": 59,
+ "paragraph_count": 157,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "F300",
+   "heading": "GENERAL",
+   "level": 1,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This Appendix provides guidance and precautionary considerations relating to particular fluid services and piping applications. These are not Code requirements but should be taken into account as applicable in the engineering design. Further information on these subjects can be found in the literature."
+    }
+   ]
+  },
+  {
+   "id": "F300.1",
+   "heading": "Piping That Has Been Placed in Service",
+   "level": 2,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Examples of industry standards that address piping that has been placed in service are ASME PCC-2, Repair of Pressure Equipment and Piping, and API 570, Piping Inspection Code: In-service Inspection, Rating, Repair, and Alteration of Piping Systems."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "F300.1.5 Rounding. The following are examples of rounding in accordance with para. 300.1.5:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) If the requirement were 6 mm maximum, a measured value of 6.2 mm would be acceptable because the measured value would first be rounded to 6 mm before comparing it to the requirement."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) If the requirement were 6.0 mm maximum, a measured value of 6.2 mm would not meet the requirement."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The basic allowable stress at temperature from Appendix A is 19.0 ksi. A calculated stress due to sustained loads of 19,049 psi would be acceptable because the calculated value would first be rounded to 19.0 ksi before comparing it to the requirement."
+    }
+   ]
+  },
+  {
+   "id": "F301",
+   "heading": "DESIGN CONDITIONS",
+   "level": 1,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Selection of pressures, temperatures, forces, and other conditions that may apply to the design of piping can be influenced by unusual requirements that should be considered when applicable. These include but are not limited to the following."
+    }
+   ]
+  },
+  {
+   "id": "F301.4",
+   "heading": "Ambient Effects",
+   "level": 2,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Where fluids can be trapped and subjected to heating and consequent expansion, means of pressure relief should be considered to avoid excessive pressure buildup."
+    }
+   ]
+  },
+  {
+   "id": "F301.5",
+   "heading": "Dynamic Effects",
+   "level": 2,
+   "page": 468,
+   "paragraphs": []
+  },
+  {
+   "id": "F301.5.1",
+   "heading": "Impact",
+   "level": 2,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Impact caused by unsteady fluid flow is possible when condensation occurs inside piping normally handling a gas such as steam. Means should be considered to provide drainage of condensate from low areas to avoid damage from hydraulic shock or liquid slugging that may result from the presence of the condensate."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Geysering is an effect that can occur in piping handling fluids at or near their boiling temperatures under conditions when rapid evolution of vapor within the piping causes rapid expulsion of liquid. In such cases, a pressure surge can be generated that may be destructive to the piping. Geysering usually is associated with vertical pipelines but may occur in inclined lines under certain conditions."
+    }
+   ]
+  },
+  {
+   "id": "F301.7",
+   "heading": "Thermal Expansion and Contraction Effects",
+   "level": 2,
+   "page": 468,
+   "paragraphs": []
+  },
+  {
+   "id": "F301.7.2",
+   "heading": "Loads Due to Temperature Gradients",
+   "level": 2,
+   "page": 468,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "bowing during cooldown : an effect that can occur, usually in horizontal piping, on introduction of a fluid at or near its boiling temperature and at a flow rate that allows stratified two-phase flow, causing large circumferential temperature gradients and possibly unacceptable stresses at anchors, supports, guides, and within pipe walls. (Two-phase flow can also generate excessive pressure oscillations and surges that may damage the piping.) thermal shock: a rapid change in metal temperature caused by the sudden contact of liquid, gas, vapor, or two-phase flow with a metal surface when the liquid, gas, vapor, or two-phase flow is at a different temperature from the metal temperature at the instant of contact."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Thermal shock may result in a highly nonuniform thermal stress distribution through metal thickness, typically with high stresses on the inside surface. Such thermal gradients may be caused by operations such as a fast-tran-sient heat transfer with a pipe in high film coefficient applications (e.g., liquid sodium), or the impingement of fluid on a surface with a different temperature (e.g., cold droplets impinging on the pipe wall of a hot gas stream or a flare header that receives subcooled or flashing liquid from a safety valve)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The effect of thermal shock may result in a thermal gradient that will cause different parts of the metal through the thickness to expand at different rates, resulting in thermal stress, which tends to be highest at geometrical discontinuities (e.g., stress concentrations). This stress is local and may not cause significant movement of the piping system. For brittle materials, this could lead to immediate failure. For ductile materials, fatigue failure could occur through cyclic operation of the thermal shock."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "API 579-1/ASME FFS-1, Fitness-For-Service, Part 3 refers to thermal shock as shock chilling. The standard provides heat transfer coefficients for various materials and guidance on temperature difference for which thermal shock should be considered."
+    }
+   ]
+  },
+  {
+   "id": "F301.10",
+   "heading": "Cyclic Effects",
+   "level": 2,
+   "page": 469,
+   "paragraphs": []
+  },
+  {
+   "id": "F301.10.1",
+   "heading": "Pressure Cycling. The rules in para. K304.8",
+   "level": 2,
+   "page": 469,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "may be considered where fatigue due to pressure cycling is a concern."
+    }
+   ]
+  },
+  {
+   "id": "F301.10.2",
+   "heading": "Fatigue at Mixing Points. Consideration",
+   "level": 2,
+   "page": 469,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "should be given to the potential for fatigue on surfaces exposed to cyclic thermal gradients and pressure variations resulting from chemically thermic reactions or physical mixing of widely differing temperature streams."
+    }
+   ]
+  },
+  {
+   "id": "F301.10.3",
+   "heading": "Severe Cyclic Conditions. Designating",
+   "level": 2,
+   "page": 469,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "piping as being under severe cyclic conditions should be considered when piping is subjected to both a high stress range and many cycles. The phrase many cycles can be taken as when the stress range factor, f, is less than the maximum, fm. The phrase high stress range is normally taken as when the calculated stress range approaches the allowable stress range. Examples include piping associated with batch chemical reactors that cycle more frequently than once a day and piping that has a reasonable likelihood of vibrating."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Frequently, failures occur at small branch connections attached to main piping runs that do not have a high stress range. When experience shows that these small branch connections might be vulnerable to fatigue failure, consideration should be given to designating such piping as being under severe cyclic conditions. See the following references for guidance on the design of small branch connections to avoid fatigue failure:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Guidelines for the Avoidance of Vibration Induced Fatigue Failure in Process Pipework, published by Energy Institute"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Design Guideline for Small Diameter Branch Connections, published jointly by Gas Machinery Research Council, Pipeline Research Council International, and Southwest Research Institute"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "More-conservative approaches to designating piping as being under severe cyclic conditions should be taken when the fluid handled is toxic, flammable, or damaging to human tissue; when failure of the piping would be costly; and also when examination of the piping during operation or normal outages is impracticable."
+    }
+   ]
+  },
+  {
+   "id": "F302",
+   "heading": "DESIGN CRITERIA",
+   "level": 1,
+   "page": 469,
+   "paragraphs": []
+  },
+  {
+   "id": "F302.2",
+   "heading": "Pressure–Temperature Design Criteria",
+   "level": 2,
+   "page": 469,
+   "paragraphs": []
+  },
+  {
+   "id": "F302.2.4",
+   "heading": "Allowances for Pressure and Temperature",
+   "level": 2,
+   "page": 469,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Variations. Consideration should be given to the occasional variations in pressure and temperature resulting from the mixing of fluids during which an exothermic reaction occurs."
+    }
+   ]
+  },
+  {
+   "id": "F304",
+   "heading": "PRESSURE DESIGN",
+   "level": 1,
+   "page": 469,
+   "paragraphs": []
+  },
+  {
+   "id": "F304.7",
+   "heading": "Pressure Design of Other Metallic Components",
+   "level": 2,
+   "page": 469,
+   "paragraphs": []
+  },
+  {
+   "id": null,
+   "heading": "F304.7.4",
+   "level": 1,
+   "page": 469,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "Expansion Joints. The following are specific considerations to be evaluated by the designer when specifying expansion joint requirements, in addition to the guidelines given in EJMA Standards:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) susceptibility to stress corrosion cracking of the materials of construction, considering specific alloy content, method of manufacture, and final heat treated condition."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) consideration of not only the properties of the flowing medium but also the environment external to the expansion joint and the possibility of condensation or ice formation due to the operation of the bellows at a reduced temperature."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) consideration of specifying a minimum bellows or ply thickness. The designer is cautioned that requiring excessive bellows thickness may reduce the fatigue life of the expansion joint and increase end reactions."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) accessibility of the expansion joint for maintenance and inspection."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) need for leak tightness criteria for mechanical seals on slip type joints."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) specification of installation procedures and shipping or preset bars so that the expansion joint will not be extended, compressed, or offset to compensate for improper alignment of piping, other than the intentional offset specified by the designer."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(g)",
+     "indent": 1,
+     "text": "(g) need to request data from the expansion joint manufacturer, including"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) effective thrust area"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) lateral, axial, and rotational stiffness (spring constant)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) calculated design cycle life under specified design conditions"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) friction force in hinges, tie rods, etc."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) installed length and weight"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) requirements for additional support or restraint in the piping"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(7)",
+     "indent": 2,
+     "text": "(7) expansion joint elements that are designed to be uninsulated during operation"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(8)",
+     "indent": 2,
+     "text": "(8) certification of pressure containing and/or restraining materials of construction"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(9)",
+     "indent": 2,
+     "text": "(9) maximum test pressure"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(10)",
+     "indent": 2,
+     "text": "(10) design calculations"
+    }
+   ]
+  },
+  {
+   "id": "F306",
+   "heading": "FITTINGS, BENDS, MITERS, LAPS, AND BRANCH CONNECTIONS",
+   "level": 1,
+   "page": 470,
+   "paragraphs": []
+  },
+  {
+   "id": "F306.7",
+   "heading": "Metallic Hoses",
+   "level": 2,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "For additional guidance, see the EI publication Guidelines for the Management of Flexible Hose Assemblies."
+    }
+   ]
+  },
+  {
+   "id": "F307",
+   "heading": "VALVES",
+   "level": 1,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Extended bonnet valves are recommended where necessary to establish a temperature differential between the valve stem packing and the fluid in the piping, to avoid packing leakage and external icing or other heat flux problems. The valve should be positioned to provide this temperature differential. Consideration should be given to possible packing shrinkage in low temperature fluid service."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The effect of external loads on valve operability and leak tightness should be considered."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The selection of anti-explosive decompression (AED) elastomeric seal materials should be considered for valves that could be subject to rapid gas decompression service."
+    }
+   ]
+  },
+  {
+   "id": "F308",
+   "heading": "FLANGES AND GASKETS",
+   "level": 1,
+   "page": 470,
+   "paragraphs": []
+  },
+  {
+   "id": "F308.2",
+   "heading": "Specific Flanges",
+   "level": 2,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Slip-On Flanges. The need for venting the space between the welds in double-welded slip-on flanges should be considered for fluid services (including vacuum) that require leak testing of the inner fillet weld, or when fluid handled can diffuse into the enclosed space, resulting in possible failure."
+    }
+   ]
+  },
+  {
+   "id": "F308.4",
+   "heading": "Gaskets",
+   "level": 2,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Materials should be selected such that they are suitable for all of the expected service conditions. The following are some specific considerations:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Gasket materials not subject to cold flow should be considered for use with raised-face flanges for fluid services at elevated pressures with temperatures significantly above or below ambient."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Use of full-face gaskets with flat-faced flanges should be considered when using gasket materials subject to cold flow for low pressure and vacuum services at moderate temperatures. When such gasket materials are used in other fluid services, the use of tongue-and-groove or other gasket-confining flange facings should be considered."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The effect of flange facing finish should be considered in gasket material selection."
+    }
+   ]
+  },
+  {
+   "id": "F309",
+   "heading": "BOLTING",
+   "level": 1,
+   "page": 470,
+   "paragraphs": []
+  },
+  {
+   "id": "F309.1",
+   "heading": "General",
+   "level": 2,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The use of controlled bolting procedures should be considered in high, low, and cycling temperature services, and under conditions involving vibration or fatigue, to reduce"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) the potential for joint leakage due to differential thermal expansion"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) the possibility of stress relaxation and loss of bolt tension"
+    }
+   ]
+  },
+  {
+   "id": "F312",
+   "heading": "FLANGED JOINTS",
+   "level": 1,
+   "page": 470,
+   "paragraphs": []
+  },
+  {
+   "id": "F312.1",
+   "heading": "General",
+   "level": 2,
+   "page": 470,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Three distinct elements of a flanged joint act together to provide a leak-free joint — the flanges, the gasket, and the bolting. Factors that affect performance include the following:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Selection and Design"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) consideration of service conditions (including application of thermal insulation)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) consideration of external loads. ASME BPVC, Section VIII, Division 1, UG-44(b) provides one acceptable method for qualifying piping external loadings on welding neck flanges in accordance with ASME B16.5 or ASME B16.47. Nomenclature should be as defined as in UG-44(b), except as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(-a)",
+     "indent": 3,
+     "text": "(-a) PD = maximum operating pressure at operating temperature for the condition being analyzed"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(-b)",
+     "indent": 3,
+     "text": "(-b) PR = flange pressure rating at design temperature (ASME B16.5 or ASME B16.47)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) flange rating, type, material, facing, and facing finish (see para. F308.2)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) gasket type, material, thickness, and design (see para. F308.4)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) bolt material, strength (cold and at temperature), and specifications for tightening of bolts (see para. F309.1)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) design for access to the joint"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Installation. See para. 335.2.5."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) condition of flange mating surfaces"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) joint alignment and gasket placement before bolt-up"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) implementation of specified bolting procedures"
+    }
+   ]
+  },
+  {
+   "id": "F319",
+   "heading": "PIPING FLEXIBILITY",
+   "level": 1,
+   "page": 471,
+   "paragraphs": []
+  },
+  {
+   "id": "F319.3",
+   "heading": "Properties of Flexibility Analysis",
+   "level": 2,
+   "page": 471,
+   "paragraphs": []
+  },
+  {
+   "id": "F319.3.1",
+   "heading": "Thermal Expansion Data",
+   "level": 2,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Values for Stress Range. The maximum and minimum metal temperatures for the thermal cycle under analysis may occur during operating conditions, catalyst regeneration, steam out, solar radiation, JouleThomson effect, auto refrigeration, or as specified in the engineering design."
+    }
+   ]
+  },
+  {
+   "id": "F321",
+   "heading": "PIPING SUPPORT",
+   "level": 1,
+   "page": 471,
+   "paragraphs": []
+  },
+  {
+   "id": "F321.4",
+   "heading": "Wear of Piping at Support Points",
+   "level": 2,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The use of pads or other means of pipe attachment at support points should be considered for piping systems subject to wear and pipe wall metal loss from relative movement between the pipe and its supports (e.g., from wave action on offshore production applications)."
+    }
+   ]
+  },
+  {
+   "id": "F322",
+   "heading": "DESIGN CONSIDERATIONS FOR SPECIFIC SYSTEMS",
+   "level": 1,
+   "page": 471,
+   "paragraphs": []
+  },
+  {
+   "id": "F322.6",
+   "heading": "Pressure Relief Piping",
+   "level": 2,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Stop Valves in Pressure Relief Piping. If stop valves are located in pressure relief piping in accordance with para. 322.6.1(a), and if any of these stop valves are to be closed while the equipment is in operation, an authorized person should be present. The authorized person should remain in attendance at a location where the operating pressure can be observed and should have access to means for relieving the system pressure in the event of overpressure. Before leaving the station, the authorized person should lock or seal the stop valves in the open position."
+    }
+   ]
+  },
+  {
+   "id": "F323",
+   "heading": "MATERIALS",
+   "level": 1,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Selection of materials to resist deterioration in service is not within the scope of this Code. However, suitable materials should be specified or selected for use in piping and associated facilities not covered by this Code but that affect the safety of the piping. Consideration should be given to allowances made for temperature and pressure effects of process reactions, for properties of reaction or decomposition products, and for hazards from instability of contained fluids. Consideration should be given to the use of cladding, lining, or other protective materials to reduce the effects of corrosion, erosion, and abrasion."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Information on material performance can be found in ASME BPVC, Section II, Part D, Nonmandatory Appendix A."
+    }
+   ]
+  },
+  {
+   "id": "F323.1",
+   "heading": "General Considerations",
+   "level": 2,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following are some general considerations that should be evaluated when selecting and applying materials in piping (see also para. FA323.4):"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) the possibility of exposure of the piping to fire and the melting point, degradation temperature, loss of strength at elevated temperature, and combustibility of the piping material under such exposure"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) the susceptibility to brittle failure or failure from thermal shock of the piping material when exposed to fire or to fire-fighting measures, and possible hazards from fragmentation of the material in the event of failure"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) the ability of thermal insulation to protect piping against failure under fire exposure (e.g., its stability, fire resistance, and ability to remain in place during a fire)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) the susceptibility of the piping material to crevice corrosion under backing rings, in threaded joints, in socket welded joints, and in other stagnant, confined areas"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) the possibility of adverse electrolytic effects if the metal is subject to contact with a dissimilar metal"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) the compatibility of lubricants or sealants used on threads with the fluid service"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(g)",
+     "indent": 1,
+     "text": "(g) the compatibility of packing, seals, and O-rings with the fluid service"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(h)",
+     "indent": 1,
+     "text": "(h) the compatibility of materials, such as cements, solvents, solders, and brazing materials, with the fluid service"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(i)",
+     "indent": 1,
+     "text": "(i) the chilling effect of sudden loss of pressure on highly volatile fluids as a factor in determining the lowest expected service temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(j)",
+     "indent": 1,
+     "text": "(j) the possibility of pipe support failure resulting from exposure to low temperatures (which may embrittle the supports) or high temperatures (which may weaken them)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(k)",
+     "indent": 1,
+     "text": "(k) the compatibility of materials, including sealants, gaskets, lubricants, and insulation, used in strong oxidizer fluid service (e.g., oxygen or fluorine)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(l)",
+     "indent": 1,
+     "text": "(l) the possibility of adverse effects from microbiologically influenced corrosion (MIC) or its remediation"
+    }
+   ]
+  },
+  {
+   "id": "F323.2",
+   "heading": "Temperature Limitations",
+   "level": 2,
+   "page": 471,
+   "paragraphs": []
+  },
+  {
+   "id": "F323.2.2",
+   "heading": "Lower Temperature Limits. The following",
+   "level": 2,
+   "page": 471,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "are some general considerations that should be evaluated in applying rules for lower temperature limits."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Regarding materials considered for use at a lower exemption temperature without impact testing using para. 323.2.2(h) or para. 323.2.2(i), the simplified rules of para. 323.2.2 should not be used for piping systems that are anticipated to experience shock loading or thermal bowing, or if they contain welds between dissimilar materials, especially welds between austenitic and ferritic materials. More rigorous means of testing or analysis should be used for such piping systems. For example, the additional stress due to circumferential shear near a dissimilar weld due to differential thermal contraction and its effect on the combined stress should be determined."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The modulus of elasticity for the condition under consideration should be used when evaluating the reactions."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Cold springing or misalignment can result in significant stresses in the ambient condition. The designer is responsible for ensuring that such stresses are accounted for before any credit is taken for reduction in minimum design temperature without impact testing."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The designer should consider additional material requirements for ASTM A105, Classes 150 and 300 weld neck flanges for improved toughness when used with a design minimum temperature from −29°C (−20°F) to −18°C (0°F), such as having the flanges produced to fine grain practice and having the material heat treated after forging (normalized, normalized and tempered, or quenched and tempered)."
+    }
+   ]
+  },
+  {
+   "id": "F323.4",
+   "heading": "Specific Material Considerations — Metals",
+   "level": 2,
+   "page": 472,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following are some specific considerations that should be evaluated when applying certain metals in piping:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Cast Irons — Gray, Malleable, and High Silicon (14.5%). Their lack of ductility and their sensitivity to thermal and mechanical shock."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Carbon Steel, and Low and Intermediate Alloy Steels"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the possibility of embrittlement when handling alkaline or strong caustic fluids"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the possible conversion of carbides to graphite during long time exposure to temperatures above 427°C (800°F) of carbon steels, plain nickel steel, carbon-manganese steel, manganese-vanadium steel, and carbon-silicon steel"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the possible conversion of carbides to graphite during long time exposure to temperatures above 468°C (875°F) of carbon-molybdenum steel, manganese-molybdenum-vanadium steel, and chromium-vana-dium steel"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) the advantages of silicon-killed carbon steel (0.1% silicon minimum) for temperatures above 482°C (900°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) the possibility of damage due to hydrogen exposure at elevated temperature (see API RP 941); hydrogen damage (blistering) may occur at lower temperatures under exposure to aqueous acid solutions1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) the possibility of stress corrosion cracking when exposed to cyanides, acids, acid salts, or wet hydrogen sulfide; a maximum hardness limit is usually specified (see NACE MR0175/ISO 15156-2 or MR0103 and SP0472)1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(7)",
+     "indent": 2,
+     "text": "(7) the possibility of sulfidation in the presence of hydrogen sulfide at elevated temperatures"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) High Alloy (Stainless) Steels"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the possibility of stress corrosion cracking of austenitic stainless steels exposed to media such as chlorides and other halides either internally or externally; the latter can result from improper selection or application of thermal insulation, or from use of marking inks, paints, labels, tapes, adhesives, and other accessory materials containing chlorides or other halides (see NACE MR0175/ISO 15156-3)1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the susceptibility to intergranular corrosion of austenitic stainless steels sensitized by exposure to temperatures between 427°C and 871°C (800°F and 1,600°F); as an example, stress corrosion cracking of sensitized metal at room temperature by polythionic acid (reaction of oxidizable sulfur compound, water, and air); stabilized or low carbon grades may provide improved resistance (see NACE SP0170)1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the susceptibility to intercrystalline attack of austenitic stainless steels on contact with liquid metals (including aluminum, antimony, bismuth, cadmium, gallium, lead, magnesium, tin, and zinc) or their compounds"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) the brittleness of ferritic and martensitic stainless steels at room temperature after service at temperature above 371°C (700°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "1 Titles of referenced documents are as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "API RP 941. Steels for Hydrogen Service at Elevated Temperatures and Pressures in Petroleum Refineries and Petrochemical Plants. American Petroleum Institute."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "NACE MR0103. Materials Resistant to Sulfide Stress Cracking in Corrosive Petroleum Refining Environments. Association for Materials Protection and Performance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "NACE MR0175/ISO 15156-2. Petroleum and natural gas industries — Materials for use in H2S-containing environments in oil and gas production — Part 2: Cracking-resistant carbon and low alloy steels, and the use of cast irons. Association for Materials Protection and Performance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "NACE MR0175/ISO 15156-3. Petroleum and natural gas industries — Materials for use in H2S-containing environments in oil and gas production — Part 3: Cracking-resistant CRAs (corrosion-resistant alloys) and other alloys. Association for Materials Protection and Performance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "NACE SP0472. Methods and Controls to Prevent In-Service Environmental Cracking of Carbon Steel Weldments in Corrosive Petroleum Refining Environments. Association for Materials Protection and Performance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "NACE SP0170. Protection of Austenitic Stainless Steels and Other Austenitic Alloys from Polythionic Acid Stress Corrosion Cracking During a Shutdown of Refinery Equipment. Association for Materials Protection and Performance."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Nickel and Nickel Base Alloys"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the susceptibility to grain boundary attack of nickel and nickel base alloys not containing chromium when exposed to small quantities of sulfur at temperatures above 316°C (600°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the susceptibility to grain boundary attack of nickel base alloys containing chromium at temperatures above 593°C (1,100°F) under reducing conditions and above 760°C (1,400°F) under oxidizing conditions"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the possibility of stress corrosion cracking of nickel-copper Alloy 400 in hydrofluoric acid vapor in the presence of air, if the alloy is highly stressed (including residual stresses from forming or welding)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) Aluminum and Aluminum Alloys"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the compatibility with aluminum of thread compounds used in aluminum threaded joints to prevent seizing and galling"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the possibility of corrosion from concrete, mortar, lime, plaster, or other alkaline materials used in buildings or structures"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the susceptibility of Alloy Nos. 5083, 5086, 5154, and 5456 to exfoliation or intergranular attack; and the upper temperature limit of 66°C (150°F) shown in Appendix A to avoid such deterioration"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(f)",
+     "indent": 1,
+     "text": "(f) Copper and Copper Alloys"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the possibility of dezincification of brass alloys"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the susceptibility to stress-corrosion cracking of copper-based alloys exposed to fluids such as ammonia or ammonium compounds"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) the possibility of unstable acetylide formation when exposed to acetylene"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(g)",
+     "indent": 1,
+     "text": "(g) Titanium and Titanium Alloys. The possibility of deterioration of titanium and its alloys above 316°C (600°F)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(h)",
+     "indent": 1,
+     "text": "(h) Zirconium and Zirconium Alloys. The possibility of deterioration of zirconium and zirconium alloys above 316°C (600°F)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(i)",
+     "indent": 1,
+     "text": "(i) Tantalum. Above 299°C (570°F), the possibility of reactivity of tantalum with all gases except the inert gases. Below 299°C, the possibility of embrittlement of tantalum by nascent (monatomic) hydrogen (but not molecular hydrogen). Nascent hydrogen is produced by galvanic action, or as a product of corrosion by certain chemicals."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(j)",
+     "indent": 1,
+     "text": "(j) Metals With Enhanced Properties. The possible loss of strength, in a material whose properties have been enhanced by heat treatment, during long-continued exposure to temperatures above its tempering temperature."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(k)",
+     "indent": 1,
+     "text": "(k) The desirability of specifying some degree of production impact testing, in addition to the weld procedure qualification tests, when using materials with limited low temperature service experience below the minimum temperature stated in Table A-1 (Table A-1C)."
+    }
+   ]
+  },
+  {
+   "id": "F331",
+   "heading": "HEAT TREATMENT",
+   "level": 1,
+   "page": 473,
+   "paragraphs": []
+  },
+  {
+   "id": "F331.1",
+   "heading": "Heat Treatment Considerations",
+   "level": 2,
+   "page": 473,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Heat treatment temperatures listed in Table 331.1.1-1 for some materials may be higher than the minimum tempering temperatures specified in the ASTM specifications for the base material. For higher-strength normalized and tempered materials, there is consequently a possibility of reducing tensile properties of the base material, particularly if long holding times at the higher temperatures are used."
+    }
+   ]
+  },
+  {
+   "id": "F335",
+   "heading": "ASSEMBLY AND ERECTION",
+   "level": 1,
+   "page": 473,
+   "paragraphs": []
+  },
+  {
+   "id": "F335.9",
+   "heading": "Cleaning of Piping",
+   "level": 2,
+   "page": 473,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following are some general considerations that may be evaluated in determining the need for cleaning of piping:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) requirements of the service, including possible contaminants and corrosion products during fabrication, assembly, storage, erection, and testing."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) for low temperature service, removal of moisture, oil, grease, and other contaminants to prevent sticking of valves or blockage of piping and small cavities."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) for strong oxidizer fluid service (e.g., oxygen or fluorine), special cleaning and inspection. Reference may be made to the Compressed Gas Association’s Pamphlet G-4.1 Cleaning of Equipment for Oxygen Service."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) purging, flushing, or blowing down unwanted dirt, debris, and residual fluid from the inside of a piping system should be performed with caution and control. It is left to the discretion, knowledge, and responsibility of the owner or designer as to the degree of caution and control necessary for a safe work environment. The fluid selected for the purpose of purging, flushing, or blowing down shall preferably be inert. However, for cases in which the use of a flammable or toxic fluid is unavoidable, e.g., when displacing residual testing or flushing fluid with the service fluid, the implementation of additional precautionary considerations may be necessary. Those precautionary considerations should include"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) the discharge of liquids to a safe collection point"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) the discharge of flammable liquids away from ignition sources and personnel"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) venting of gases to a safe outdoor location"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) venting of flammable gases away from ignition sources and personnel"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(5)",
+     "indent": 2,
+     "text": "(5) further protection of personnel via controlled access of the work area, including perimeter warning signs for personnel not involved in the purging process"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(6)",
+     "indent": 2,
+     "text": "(6) for precautionary requirements and recommendations regarding the displacement of flushing and testing fluids using a flammable gas, refer to ANSI Z223.1/NFPA 54, National Fuel Gas Code"
+    }
+   ]
+  },
+  {
+   "id": "F335.10",
+   "heading": "Identification of Piping",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Consideration should be given to identifying the contents of piping. Reference may be made to ASME A13.1.2"
+    }
+   ]
+  },
+  {
+   "id": "F341",
+   "heading": "EXAMINATION",
+   "level": 1,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "F341.3",
+   "heading": "Examination Requirements",
+   "level": 2,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "F341.3.4",
+   "heading": "Progressive Sampling for Examination.",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "When the root cause of a defect is faulty equipment, components, consumables, or other cause and not the ability of the welder, brazer, bonder, or operator, the work performed with the faulty equipment, components, consumables, or other cause should be appropriately examined and corrected."
+    }
+   ]
+  },
+  {
+   "id": "F345",
+   "heading": "TESTING",
+   "level": 1,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "F345.2.3",
+   "heading": "Special Provisions for Testing. When piping",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "subassemblies are tested separately, consideration should be given to performing an additional leak test of the assembled piping system prior to initial operation. The test fluid should be nonhazardous to the process and the people performing the examination. Examination for leaks should be at all joints that have not been previously examined for leaks, or that have been reassembled after being examined for leaks. Examples include flanges where isolation blanks were removed after the leak test and joints where instrumentation or other components were removed for the leak test."
+    }
+   ]
+  },
+  {
+   "id": "F345.4",
+   "heading": "Hydrostatic Leak Test",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "F345.4.1 Test Fluid. Consideration should be given to susceptibility to microbiologically influenced corrosion (MIC). This condition is especially prevalent in no-flow, high-moisture environments. Internal MIC may also depend on the characteristics of the treated or untreated test fluid."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Internal MIC may be lessened or possibly eliminated by properly draining and drying systems and/or by proper selection of test fluid."
+    }
+   ]
+  },
+  {
+   "id": "F345.5",
+   "heading": "Pneumatic Leak Test",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "F345.5.1 Precautions. Consideration should be given to the risk associated with the release of stored energy and to the establishment of the minimum safe distance between personnel and the equipment being tested. Equations and considerations are available in ASME PCC-2, Repair of Pressure Equipment and Piping, Article 5.1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "2 ASME A13.1. Scheme for the Identification of Piping Systems. The American Society of Mechanical Engineers."
+    }
+   ]
+  },
+  {
+   "id": "FA323",
+   "heading": "MATERIALS",
+   "level": 1,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "FA323.4",
+   "heading": "Material Considerations — Nonmetals",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following are some considerations to be evaluated when applying nonmetals in piping. See also paras. F323 and F323.1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Static Charges. Because of the possibility of producing hazardous electrostatic charges in nonmetallic piping and metallic piping lined with nonmetals, consideration should be given to grounding such systems conveying nonconductive fluids."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Compressed Gases. If nonmetallic piping is used above ground for compressed air or other compressed gases, special precautions should be observed. In determining the needed safeguarding for such services, the energetics and the specific failure mechanism need to be evaluated. Encasement of the plastic piping in shatter-resistant material may be considered."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Brittle Piping. If borosilicate glass or other brittle piping material is used, take into account its lack of ductility and its sensitivity to thermal and mechanical shock."
+    }
+   ]
+  },
+  {
+   "id": "FA328",
+   "heading": "BONDING OF PLASTICS",
+   "level": 1,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "FA328.2",
+   "heading": "Bonding Qualifications",
+   "level": 2,
+   "page": 474,
+   "paragraphs": []
+  },
+  {
+   "id": "FA328.2.1",
+   "heading": "Qualification Requirements. Nonmetallic",
+   "level": 2,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "piping joined using a solvent-cement joining method should follow the manufacturer’s recommended cure time. Solvent cement manufacturers specify these cure times by taking into account pipe material, solvent cement type, pipe size, temperature, and humidity."
+    }
+   ]
+  },
+  {
+   "id": "FK300",
+   "heading": "GENERAL STATEMENTS",
+   "level": 1,
+   "page": 474,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The rules in Chapter IX provide an alternative to those in Chapters I through VI. They include special considerations for thick-walled piping components such as the theory of failure and the approaches to fatigue and thermal stresses, generally resulting in lower design factors with respect to burst strength than the base Code. Chapter IX rules may allow thinner piping components than the base Code, resulting in lower piping weight, balanced against increased requirements for material testing, fatigue analysis, fabrication, and examination. Although High Pressure Fluid Service is often considered to be service exceeding that allowed by the ASME B16.5, Class 2500 pressure–temperature rating for a particular material group, there are no pressure limitations for the application of these rules. The decision by an owner to specify High Pressure Fluid Service is based on the economic, technical, and other issues pertaining to the piping."
+    }
+   ]
+  },
+  {
+   "id": "FU315",
+   "heading": "HYGIENIC CLAMP JOINTS",
+   "level": 1,
+   "page": 475,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "To lower the probability of leaks in piping that is subject to transient temperature and pressure fluctuations, consider the use of a two-bolt clamp to increase clamping force in lieu of a hinged clamp for those processes that require"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) passivation"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) clean-in-place (CIP)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) steam- (or sterilize-) in-place (SIP)"
+    }
+   ]
+  }
+ ]
+}

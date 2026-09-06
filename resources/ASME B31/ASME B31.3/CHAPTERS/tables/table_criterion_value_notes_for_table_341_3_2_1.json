@@ -1,0 +1,99 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "VI",
+ "table_id": "Criterion Value Notes for Table 341.3.2-1",
+ "title": null,
+ "pdf_pages": [
+  122,
+  122
+ ],
+ "columns": [
+  {
+   "key": "symbol",
+   "header": "Symbol",
+   "banners": []
+  },
+  {
+   "key": "criterion_measure",
+   "header": "Criterion Measure",
+   "banners": []
+  },
+  {
+   "key": "acceptable_value_limits",
+   "header": "Acceptable Value Limits [Note (1)]",
+   "banners": []
+  }
+ ],
+ "row_count": 12,
+ "notes": [
+  "(1) Where two limiting values are separated by “and,” the lesser of the values determines acceptance. Where two sets of values are separated by “or,” the larger value is acceptable. Tw is the nominal wall thickness of the thinner of two components joined by a butt weld."
+ ],
+ "rows": [
+  {
+   "symbol": "A",
+   "criterion_measure": "Extent of imperfection",
+   "acceptable_value_limits": "Zero (no evident imperfection)"
+  },
+  {
+   "symbol": "C",
+   "criterion_measure": "Cumulative length of incomplete fusion and incomplete penetration",
+   "acceptable_value_limits": "≤38 mm (≤1.5 in.) in any 150 mm (6 in.) weld length or 25% of total weld length, whichever is less. Incomplete fusion is not permitted on external surfaces."
+  },
+  {
+   "symbol": "D",
+   "criterion_measure": "Size and distribution of rounded indications",
+   "acceptable_value_limits": "See ASME BPVC, Section VIII, Division 1, Appendix 4 [Note (2)]"
+  },
+  {
+   "symbol": "E",
+   "criterion_measure": "Size and distribution of rounded indications",
+   "acceptable_value_limits": "For T w 6 mm (1∕4 in.), limit is same as D [Note (2)] For T w > 6 mm (1∕4 in.), limit is 1.5 × D [Note (2)]"
+  },
+  {
+   "symbol": "F",
+   "criterion_measure": "Linear indications characterized as neither incomplete penetration nor incomplete fusion Individual length Individual width Cumulative length",
+   "acceptable_value_limits": "T w /3 ≤2.5 mm (≤3∕32 in.) and T w /3 Tw in any 12 T w weld length [Note (2)]"
+  },
+  {
+   "symbol": "G",
+   "criterion_measure": "Linear indications characterized as neither incomplete penetration nor incomplete fusion Individual length Individual width Cumulative length",
+   "acceptable_value_limits": "2 T w ≤3 mm (≤1∕8 in.) and T w /2 4 T w in any 150 mm (6 in.) weld length or 8% of total weld length, whichever is less [Note (2)]"
+  },
+  {
+   "symbol": "H",
+   "criterion_measure": "Depth of undercut Cumulative length of internal and external undercut",
+   "acceptable_value_limits": "≤1 mm (≤1∕32 in.) and T w /4 [Note (3)] ≤38 mm (≤1.5 in.) in any 150 mm (6 in.) weld length or 25% of total weld length, whichever is less"
+  },
+  {
+   "symbol": "I",
+   "criterion_measure": "Depth of undercut Cumulative length of internal and external undercut",
+   "acceptable_value_limits": "≤1.5 mm (≤1∕16 in.) and [T w /4 or 1 mm (1∕32 in.)] [Note (3)] ≤38 mm (≤1.5 in.) in any 150 mm (6 in.) weld length or 25% of total weld length, whichever is less"
+  },
+  {
+   "symbol": "J",
+   "criterion_measure": "Surface roughness",
+   "acceptable_value_limits": "≤12.5 μm (≤500 μin.) Ra in accordance with ASME B46.1"
+  },
+  {
+   "symbol": "K",
+   "criterion_measure": "Depth of surface concavity, root surface concavity, or burn-through",
+   "acceptable_value_limits": "Total joint thickness, including weld reinforcement, Tw [Notes (4), (5)]"
+  },
+  {
+   "symbol": "L",
+   "criterion_measure": "Height of face reinforcement or root reinforcement [Note (6)] in any plane through the weld shall be within limits of the applicable height value in the tabulation at right, except as provided in Note (7). Weld metal shall merge smoothly into the component surfaces.",
+   "acceptable_value_limits": "Tw, mm (in.) Height, mm (in.) ≤6 (≤1∕4) ≤1.5 (≤1∕16) >6 (>1∕4), ≤13 (≤1∕2) ≤3 (≤1∕8) >13 (>1∕2), ≤25 (≤1.0) ≤4 (≤5∕32) >25 (>1.0) ≤5 (≤3∕16)"
+  },
+  {
+   "symbol": "M",
+   "criterion_measure": "Height of face reinforcement or root reinforcement [Note (6)] as described in L. Note (7) does not apply.",
+   "acceptable_value_limits": "Limit is twice the value applicable for L above"
+  }
+ ]
+}

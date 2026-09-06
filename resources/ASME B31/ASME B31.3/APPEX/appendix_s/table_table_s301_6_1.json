@@ -1,0 +1,96 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S301.6-1",
+ "title": "Example 1: Sustained Forces, Moments, and Stresses [Allowable Sh = 130.8 MPa (19.0 ksi)]",
+ "pdf_pages": [
+  550,
+  550
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "axial_force_structural_only_n_lb_unsigned",
+   "header": "Axial Force, (Structural Only), N (lb) (Unsigned) [Notes (1), (2)]"
+  },
+  {
+   "key": "bending_moment_n_m_ft_lb_unsigned",
+   "header": "Bending Moment, N·m (ft-lb) (Unsigned) [Note (1)]"
+  },
+  {
+   "key": "sustained_stress_sl_mpa_ksi",
+   "header": "Sustained Stress, SL, MPa (ksi) [Notes (1)–(3)]"
+  }
+ ],
+ "row_count": 9,
+ "notes": [
+  "(1) Forces, moments, and stresses are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units.",
+  "(2) Both the unsigned sustained axial forces (listed above) and the unsigned sustained axial pressure force, 413 000 N (92,800 lb), are summed to calculate the stresses due to sustained loads, SL, in accordance with para. 320.",
+  "(3) The sustained longitudinal indices, Ia, are defaulted to 1.0 for all piping components in the absence of more applicable data, in accordance with para. 320.2, and are applied to both the stresses due to sustained axial reactions and axial pressure force."
+ ],
+ "rows": [
+  {
+   "node": "10 anchor",
+   "axial_force_structural_only_n_lb_unsigned": "3 270 (735)",
+   "bending_moment_n_m_ft_lb_unsigned": "17 300 (12,700)",
+   "sustained_stress_sl_mpa_ksi": "59.0 (8.60)"
+  },
+  {
+   "node": "20 support",
+   "axial_force_structural_only_n_lb_unsigned": "3 270 (735)",
+   "bending_moment_n_m_ft_lb_unsigned": "56 100 (41,400)",
+   "sustained_stress_sl_mpa_ksi": "98.9 (14.4)"
+  },
+  {
+   "node": "30 near",
+   "axial_force_structural_only_n_lb_unsigned": "3 270 (735)",
+   "bending_moment_n_m_ft_lb_unsigned": "5 280 (3,900)",
+   "sustained_stress_sl_mpa_ksi": "52.7 (7.50)"
+  },
+  {
+   "node": "30 mid",
+   "axial_force_structural_only_n_lb_unsigned": "17 200 (3,860)",
+   "bending_moment_n_m_ft_lb_unsigned": "14 000 (10,300)",
+   "sustained_stress_sl_mpa_ksi": "69.1 (9.90)"
+  },
+  {
+   "node": "30 far",
+   "axial_force_structural_only_n_lb_unsigned": "19 900 (4,480)",
+   "bending_moment_n_m_ft_lb_unsigned": "16 300 (12,000)",
+   "sustained_stress_sl_mpa_ksi": "73.3 (10.5)"
+  },
+  {
+   "node": "40 near",
+   "axial_force_structural_only_n_lb_unsigned": "8 000 (1,800)",
+   "bending_moment_n_m_ft_lb_unsigned": "370 (270)",
+   "sustained_stress_sl_mpa_ksi": "42.0 (6.00)"
+  },
+  {
+   "node": "40 mid",
+   "axial_force_structural_only_n_lb_unsigned": "7 170 (1,610)",
+   "bending_moment_n_m_ft_lb_unsigned": "250 (185)",
+   "sustained_stress_sl_mpa_ksi": "42.1 (6.00)"
+  },
+  {
+   "node": "40 far",
+   "axial_force_structural_only_n_lb_unsigned": "3 270 (735)",
+   "bending_moment_n_m_ft_lb_unsigned": "2 350 (1,720)",
+   "sustained_stress_sl_mpa_ksi": "46.0 (6.70)"
+  },
+  {
+   "node": "50 anchor",
+   "axial_force_structural_only_n_lb_unsigned": "3 270 (735)",
+   "bending_moment_n_m_ft_lb_unsigned": "37 800 (27,900)",
+   "sustained_stress_sl_mpa_ksi": "79.5 (11.6)"
+  }
+ ]
+}

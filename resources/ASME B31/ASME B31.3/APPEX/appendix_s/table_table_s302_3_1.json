@@ -1,0 +1,128 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S302.3-1",
+ "title": "Example 2: Generic Pipe Stress Model Input: Component Connectivity, Type, and Lengths",
+ "pdf_pages": [
+  552,
+  552
+ ],
+ "columns": [
+  {
+   "key": "from",
+   "header": "From"
+  },
+  {
+   "key": "to",
+   "header": "To"
+  },
+  {
+   "key": "dx_m_ft",
+   "header": "DX, m (ft)"
+  },
+  {
+   "key": "dy_m_ft",
+   "header": "DY, m (ft)"
+  },
+  {
+   "key": "component_type",
+   "header": "Component Type"
+  }
+ ],
+ "row_count": 12,
+ "notes": [
+  "NOTE: (1) The specified component lengths are measured to and/or from each elbow’s tangent intersection point."
+ ],
+ "rows": [
+  {
+   "from": 10,
+   "to": 15,
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "component_type": "10 anchor 15 informational node"
+  },
+  {
+   "from": 15,
+   "to": 20,
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "component_type": "20 Y support"
+  },
+  {
+   "from": 20,
+   "to": 30,
+   "dx_m_ft": "1.52 (5)",
+   "dy_m_ft": null,
+   "component_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "from": 30,
+   "to": 40,
+   "dx_m_ft": null,
+   "dy_m_ft": "6.10 (20)",
+   "component_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "from": 40,
+   "to": 45,
+   "dx_m_ft": "3.05 (10)",
+   "dy_m_ft": null,
+   "component_type": "Informational node"
+  },
+  {
+   "from": 45,
+   "to": 50,
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "component_type": "50 Y+ support"
+  },
+  {
+   "from": 110,
+   "to": 115,
+   "dx_m_ft": "−6.10 (−20)",
+   "dy_m_ft": null,
+   "component_type": "110 anchor"
+  },
+  {
+   "from": 115,
+   "to": 120,
+   "dx_m_ft": "−6.10 (−20)",
+   "dy_m_ft": null,
+   "component_type": "120 Y support"
+  },
+  {
+   "from": 120,
+   "to": 130,
+   "dx_m_ft": "−1.52 (−5)",
+   "dy_m_ft": null,
+   "component_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "from": 130,
+   "to": 140,
+   "dx_m_ft": null,
+   "dy_m_ft": "6.10 (20)",
+   "component_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "from": 140,
+   "to": 145,
+   "dx_m_ft": "−3.05 (−10)",
+   "dy_m_ft": null,
+   "component_type": "Informational node"
+  },
+  {
+   "from": 145,
+   "to": 50,
+   "dx_m_ft": "−6.10 (−20)",
+   "dy_m_ft": null,
+   "component_type": null
+  }
+ ]
+}

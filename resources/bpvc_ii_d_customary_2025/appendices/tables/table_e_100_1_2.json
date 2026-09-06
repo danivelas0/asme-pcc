@@ -1,0 +1,60 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table E-100.1-2",
+  "title": "Tensile and Yield Strength Reduction Factor Due to Long Time Prior Elevated Temperature Service",
+  "pdf_pages": [
+    1430,
+    1430
+  ],
+  "page_count": 1,
+  "row_count": 5,
+  "notes": [
+    "GENERAL NOTE: No reduction factor required for service below the indicated temperature. NOTES: (1) Tables E-100.1-3 and E-100.1-4 are selected to correspond to the maximum wall‐ averaged temperature achieved during any Level A, B, or C Service Loading. (2) See Table E-100.1-5."
+  ],
+  "columns": [
+    "Material",
+    "Service Temp., °F",
+    "YS Reduction Factor",
+    "TS Reduction Factor"
+  ],
+  "value_axis": null,
+  "column_groups": [],
+  "rows": [
+    {
+      "material": "304 SS",
+      "service_temp_f": "≥900",
+      "ys_reduction_factor": 1.0,
+      "ts_reduction_factor": 0.8
+    },
+    {
+      "material": "316 SS",
+      "service_temp_f": "≥900",
+      "ys_reduction_factor": 1.0,
+      "ts_reduction_factor": 0.8
+    },
+    {
+      "material": "800H",
+      "service_temp_f": "≥1,350",
+      "ys_reduction_factor": 0.9,
+      "ts_reduction_factor": 0.9
+    },
+    {
+      "material": "21/4Cr–1Mo",
+      "service_temp_f": "≥800",
+      "ys_reduction_factor": "[Note (1)]",
+      "ts_reduction_factor": "[Note (1)]"
+    },
+    {
+      "material": "9Cr–1Mo–V",
+      "service_temp_f": "≥900",
+      "ys_reduction_factor": 1.0,
+      "ts_reduction_factor": "[Note (2)]"
+    }
+  ]
+}

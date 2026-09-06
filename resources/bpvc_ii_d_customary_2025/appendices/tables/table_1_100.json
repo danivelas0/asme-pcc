@@ -1,0 +1,71 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 1-100",
+  "title": "Criteria for Establishing Allowable Stress Values for Tables 1A and 1B",
+  "pdf_pages": [
+    1373,
+    1373
+  ],
+  "page_count": 1,
+  "row_count": 4,
+  "notes": [
+    "NOTE: (1) Two sets of allowable stress values may be provided for austenitic stainless steels in Table 1A; and nickel alloys, copper alloys, and cobalt alloys in Table 1B; having an SY/ST ratio less than 0.625. The lower values are not specifically identified by a footnote. These lower values do not exceed two‐thirds of the yield strength at temperature. The higher alternative allowable stresses are identified by a footnote. These higher stresses may exceed two‐thirds but do not exceed 90% of the yield strength at temperature. The higher values should be used only where slightly higher deformation is not in itself objectionable. These higher stresses are not recommended for the design of flanges or for other strain-sensitive applications."
+  ],
+  "columns": [
+    "Product/Material",
+    "Room Temperature and Tensile Strength",
+    "Room Temperature and Below Yield Strength",
+    "Tensile Strength",
+    "Above Room Temperature Yield Strength",
+    "Stress Rupture",
+    "Creep Rate"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Room Temperature and"
+  ],
+  "rows": [
+    {
+      "product_material": "Wrought or cast",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3 SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3 SY 2/3 SYRY or 0.9 SYRY [Note",
+      "stress_rupture": "FavgSRavg 0.8 SRmin",
+      "creep_rate": "1.0 Sc"
+    },
+    {
+      "product_material": "ferrous and nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": null,
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "(1)]",
+      "stress_rupture": null,
+      "creep_rate": null
+    },
+    {
+      "product_material": "Welded pipe or tube,",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3 × 0.85 SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3 × 0.85 SY 2/3 × 0.85 SYRY or 0.9 × 0.85",
+      "stress_rupture": "(Favg × 0.85) SRavg (0.8 × 0.85) SRmin",
+      "creep_rate": "0.85 Sc"
+    },
+    {
+      "product_material": "ferrous and nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": null,
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "SYRY [Note (1)]",
+      "stress_rupture": null,
+      "creep_rate": null
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 2-100(a)",
+  "title": "Criteria for Establishing Design Stress Intensity Values for Tables 2A and 2B",
+  "pdf_pages": [
+    1379,
+    1379
+  ],
+  "page_count": 1,
+  "row_count": 3,
+  "notes": [
+    "NOTE: (1) For austenitic stainless steels, nickel alloys, copper alloys, and cobalt alloys having an S Y /S T ratio less than 0.625, the design stress intensity values in Tables 2A and 2B may exceed two‐thirds and may be as high as 90% of the yield strength at temperature."
+  ],
+  "columns": [
+    "Product/Material",
+    "Room Temperature and Tensile Strength",
+    "Room Temperature and Below Yield Strength",
+    "Tensile Strength",
+    "Above Room Temperature Yield Strength"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Room Temperature and"
+  ],
+  "rows": [
+    {
+      "product_material": "Wrought or cast, ferrous and nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3SY 2/3 SYRY or 0.9SYRY [Note (1)]"
+    },
+    {
+      "product_material": "Welded pipe or tube, ferrous and",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3 × 0.85SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3 × 0.85SY 2/3 × 0.85SYRY or"
+    },
+    {
+      "product_material": "nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": null,
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "0.9 × 0.85SYRY [Note (1)]"
+    }
+  ]
+}

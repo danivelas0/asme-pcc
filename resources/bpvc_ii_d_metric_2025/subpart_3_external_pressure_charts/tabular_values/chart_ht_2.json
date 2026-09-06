@@ -1,0 +1,96 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table HT-2",
+  "title": "Tabular Values for Figure HT-2",
+  "figure_id": "Figure HT-2",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for SA-508",
+  "figure_pdf_page": 1256,
+  "figure_image": "figures/figure_ht_2.png",
+  "pdf_pages": [
+    1333
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 1,
+  "point_count": 15,
+  "curves": [
+    {
+      "key": 40,
+      "points": [
+        {
+          "a": 0.000337,
+          "b_mpa": 34.5
+        },
+        {
+          "a": 0.00283,
+          "b_mpa": 290.0
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 298.0
+        },
+        {
+          "a": 0.006,
+          "b_mpa": 303.0
+        },
+        {
+          "a": 0.008,
+          "b_mpa": 309.0
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 313.0
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 323.0
+        },
+        {
+          "a": 0.02,
+          "b_mpa": 328.0
+        },
+        {
+          "a": 0.025,
+          "b_mpa": 332.0
+        },
+        {
+          "a": 0.03,
+          "b_mpa": 336.0
+        },
+        {
+          "a": 0.04,
+          "b_mpa": 341.0
+        },
+        {
+          "a": 0.05,
+          "b_mpa": 343.0
+        },
+        {
+          "a": 0.06,
+          "b_mpa": 343.0
+        },
+        {
+          "a": 0.07,
+          "b_mpa": 345.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 345.0
+        }
+      ],
+      "temperature_c": 40
+    }
+  ]
+}

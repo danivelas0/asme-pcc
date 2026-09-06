@@ -1,0 +1,72 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table NFA-5",
+  "title": "Tabular Values for Figure NFA-5",
+  "figure_id": "Figure NFA-5",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for",
+  "figure_pdf_page": 1274,
+  "figure_image": "figures/figure_nfa_5.png",
+  "pdf_pages": [
+    1344
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 1,
+  "point_count": 9,
+  "curves": [
+    {
+      "key": 40,
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.354
+        },
+        {
+          "a": 0.000492,
+          "b_mpa": 17.6
+        },
+        {
+          "a": 0.0006,
+          "b_mpa": 20.7
+        },
+        {
+          "a": 0.0007,
+          "b_mpa": 22.5
+        },
+        {
+          "a": 0.0008,
+          "b_mpa": 23.9
+        },
+        {
+          "a": 0.0009,
+          "b_mpa": 24.8
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 25.3
+        },
+        {
+          "a": 0.0171,
+          "b_mpa": 37.9
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 37.9
+        }
+      ],
+      "temperature_c": 40
+    }
+  ]
+}

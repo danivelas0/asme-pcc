@@ -1,0 +1,53 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 2-100(b)",
+  "title": "Criteria for Establishing Allowable Stress Values for Table 3",
+  "pdf_pages": [
+    1376,
+    1376
+  ],
+  "page_count": 1,
+  "row_count": 2,
+  "notes": [
+    "NOTE: (1) For materials whose strength has been enhanced by heat treatment or by strain hardening, the criteria shown shall govern unless the values are lower than for the annealed material, in which case the annealed values shall be used."
+  ],
+  "columns": [
+    "Product/Material",
+    "Below Tensile Strength",
+    "Yield Strength",
+    "Tensile Strength",
+    "Above Room Temperature Yield Strength",
+    "Stress Rupture",
+    "Creep Rate"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Room Temperature and"
+  ],
+  "rows": [
+    {
+      "product_material": "Bolting, annealed ferrous and nonferrous",
+      "below_tensile_strength": null,
+      "yield_strength": "2/3SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3SY 2/3SYRY",
+      "stress_rupture": "FavgSRav g 0.8SRmin",
+      "creep_rate": "1.0SC"
+    },
+    {
+      "product_material": "Bolting, with strength enhanced by heat treatment or strain hardening, ferrous and nonferrous [Note (1)]",
+      "below_tensile_strength": null,
+      "yield_strength": null,
+      "tensile_strength": "1/5ST",
+      "above_room_temperature_yield_strength": "1/4SY 2/3SYRY",
+      "stress_rupture": "FavgSRav g 0.8SRmin",
+      "creep_rate": "1.0SC"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table CI-1",
+  "title": "Tabular Values for Figure CI-1",
+  "figure_id": "Figure CI-1",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for Cast Iron",
+  "figure_pdf_page": 1267,
+  "figure_image": "figures/figure_ci_1.png",
+  "pdf_pages": [
+    1340
+  ],
+  "key_column": "Class/Temp., °C",
+  "columns": [
+    "Class/Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 5,
+  "point_count": 15,
+  "curves": [
+    {
+      "key": "Class 60 up to 345",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.758
+        },
+        {
+          "a": 0.0016,
+          "b_mpa": 125.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 125.0
+        }
+      ]
+    },
+    {
+      "key": "Class 50 up to 345",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.687
+        },
+        {
+          "a": 0.00147,
+          "b_mpa": 103.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 103.0
+        }
+      ]
+    },
+    {
+      "key": "Class 40 up to 345",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.601
+        },
+        {
+          "a": 0.00135,
+          "b_mpa": 82.7
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 82.7
+        }
+      ]
+    },
+    {
+      "key": "Class 30 up to 345",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.494
+        },
+        {
+          "a": 0.00122,
+          "b_mpa": 62.6
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 62.6
+        }
+      ]
+    },
+    {
+      "key": "Class 20 up to 345",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.41
+        },
+        {
+          "a": 0.000991,
+          "b_mpa": 41.9
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 41.9
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "IX",
+ "table_id": "Table K302.3.3-1",
+ "title": "Acceptable Severity Levels for Steel Castings",
+ "pdf_pages": [
+  165,
+  165
+ ],
+ "columns": [
+  {
+   "key": "thickness_examined_mm_in",
+   "header": "Thickness Examined, mm (in.)",
+   "banners": []
+  },
+  {
+   "key": "applicable_standards",
+   "header": "Applicable Standards",
+   "banners": []
+  },
+  {
+   "key": "acceptable_severity_level",
+   "header": "Acceptable Severity Level",
+   "banners": []
+  },
+  {
+   "key": "acceptable_discontinuity_categories",
+   "header": "Acceptable Discontinuity Categories",
+   "banners": []
+  }
+ ],
+ "row_count": 3,
+ "notes": [],
+ "rows": [
+  {
+   "thickness_examined_mm_in": "T ≤ 51 (2.0)",
+   "applicable_standards": "ASTM E446",
+   "acceptable_severity_level": 1,
+   "acceptable_discontinuity_categories": "A, B, C"
+  },
+  {
+   "thickness_examined_mm_in": "51 < T ≤ 114 (4.5)",
+   "applicable_standards": "ASTM E186",
+   "acceptable_severity_level": 1,
+   "acceptable_discontinuity_categories": "A, B, C"
+  },
+  {
+   "thickness_examined_mm_in": "114 < T ≤ 305 (12.0)",
+   "applicable_standards": "ASTM E280",
+   "acceptable_severity_level": 1,
+   "acceptable_discontinuity_categories": "A, B, C"
+  }
+ ]
+}

@@ -1,0 +1,69 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S301.3-2",
+ "title": "Example 1: Element Connectivity, Type, and Lengths",
+ "pdf_pages": [
+  548,
+  548
+ ],
+ "columns": [
+  {
+   "key": "dx_m_ft",
+   "header": "DX, m (ft)"
+  },
+  {
+   "key": "dy_m_ft",
+   "header": "DY, m (ft)"
+  },
+  {
+   "key": "element_type",
+   "header": "Element Type"
+  }
+ ],
+ "row_count": 6,
+ "notes": [
+  "GENERAL NOTE: This piping system is planar, i.e., DZ = 0 m (ft) for each piping element.",
+  "NOTE: (1) The specified element lengths are measured to and/or from each elbow’s tangent intersection point. 319.3.1(b). Table C-1 (Table C-1C) values used for Row A and Row B expansion coefficients are listed below.",
+  "(a) Row A = 13.1 × 10−6 mm/mm/°C (7.30 × 10−6 in./",
+  "(b) Row B = 3.43 mm/m (4.00 in./100 ft) The operating load case in this example also includes the effects of internal pressure, pipe weight, insulation weight, and fluid weight on the piping system. Both pipe stiffness and displacement stress range are based on the nominal thickness of the pipe. Pipe deflections and internal reaction loads for the operating load case are listed in Table S301.5-1. Piping loads acting on the anchors and support structure are listed in Table S301.5-2."
+ ],
+ "rows": [
+  {
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "element_type": "10 anchor 15 bisection node"
+  },
+  {
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "element_type": "20 Y support"
+  },
+  {
+   "dx_m_ft": "3.05 (10)",
+   "dy_m_ft": null,
+   "element_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "dx_m_ft": null,
+   "dy_m_ft": "6.10 (20)",
+   "element_type": "Three-node elbow [Note (1)]"
+  },
+  {
+   "dx_m_ft": "3.05 (10)",
+   "dy_m_ft": null,
+   "element_type": "Informational node"
+  },
+  {
+   "dx_m_ft": "6.10 (20)",
+   "dy_m_ft": null,
+   "element_type": "50 anchor"
+  }
+ ]
+}

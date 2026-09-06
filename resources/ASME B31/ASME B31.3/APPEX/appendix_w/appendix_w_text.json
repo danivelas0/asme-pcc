@@ -1,0 +1,841 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "W",
+ "title": "High-Cycle Fatigue Assessment of Piping Systems",
+ "document": "Appendix W prose",
+ "pdf_pages": [
+  564,
+  568
+ ],
+ "section_count": 9,
+ "paragraph_count": 127,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "W300",
+   "heading": "APPLICATION",
+   "level": 1,
+   "page": 564,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This Appendix addresses the fatigue evaluation of Code piping subjected to cyclic loadings when the total number of significant stress cycles, excluding pressure cycling, exceeds 100,000. The Appendix may be used subject to the owner’s approval. When it is used, the details shall be documented in the engineering design."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A significant stress cycle is defined as a cycle with a computed stress range, in accordance with para. 319, greater than 20.7 MPa (3.0 ksi) for ferritic steels and austenitic stainless steels. For other materials, or corrosive environments, all cycles shall be considered significant, unless otherwise documented in the engineering design. The allowable displacement stress range requirements of para. 302, using the computed stress range in accordance with para. 319, provide an acceptable method of evaluating piping systems for fatigue when the number of significant stress cycles is less than or equal to 100,000. The piping cyclic loadings may be due to thermal expansion, anchor motion, vibration, inertial loads, wave motion or other sources."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Fatigue due to pressure cycling is not addressed in this Appendix, but it shall be considered in the engineering design. The methods in Chapter IX or ASME BPVC, Section VIII, Division 2 may be applied to address pressure cycling."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design, fabrication, examination, and testing requirements of this Appendix are in addition to the requirements of Chapters I through VI."
+    }
+   ]
+  },
+  {
+   "id": "W301",
+   "heading": "NOMENCLATURE",
+   "level": 1,
+   "page": 564,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "CF = welded joint fatigue curve coefficient, SI"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "(U.S. Customary) units"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "dt = fatigue damage due to thermal stress"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "with constant amplitude"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "dw = fatigue damage due to wave stress with"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "variable amplitude"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "E = modulus of elasticity at operating"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "e = base of natural logarithm"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "ECSA = modulus of elasticity of carbon steel at"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "ambient temperature or 21°C (70°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "fE = environmental correction factor (see"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "Table W302.1-4)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "fI = fatigue improvement factor from ASME"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "BPVC, Section VIII, Division 2"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "fM,k = fatigue factor for stress ratio"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "ft = temperature correction factor"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "h = Weibull stress range shape distribution"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "parameter"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "k = fatigue strength thickness exponent"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "(see Tables W302.1-1 through"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "W302.1-3)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Ld = piping cyclic design life, yr"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Lw = design storm period of occurrence, yr"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "m = welded joint fatigue curve exponent"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Nd = design number of pipe stress cycles"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Ni = number of cycles for loading condition i"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Nti = allowable number of cycles for loading"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "condition i"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Nw = design storm wave height associated"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "cycles"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "q = Weibull stress range scale distribution"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "parameter that can be expressed in"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "terms of stress range"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Saw = allowable maximum probable stress"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "range during Nw wave cycles, MPa (ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "SEi = computed displacement stress range for"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "condition i corresponding to cycles Ni,"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "MPa (ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "SEi, max = computed maximum displacement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "stress for condition i corresponding"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "to stress range SEi and cycles Ni, MPa"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "(ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "SEi, min = computed minimum displacement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "stress for condition i corresponding"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "to stress range SEi and cycles Ni, MPa"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "(ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "SEW = computed maximum stress range due to"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "wave motion, MPa (ksi)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Syi = yield strength of the component under"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "consideration for condition i"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "TE = effective component thickness at weld"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "joint, mm (in.)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "T = component nominal thickness at weld"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "joint, mm (in.)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Vo = average zero-crossing frequency, Hz Γ(1 + m/h) = gamma function of argument 1 + m/h"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "[see Table W301-1 and eq. (W8)]"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "σ = standard deviation; −2σ is a 95%"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "prediction interval and −3σ is a 99%"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "prediction interval on a statistical basis GENERAL NOTE: This table shows the evaluation of the gamma function, Γ, for values between 3 and 6.95, e.g., Γ(3) = 2. Gamma function for values of (1 + m/h) not listed here may be computed directly from the mathematical definition of the gamma function or computed from the following approximation:"
+    },
+    {
+     "kind": "equation",
+     "text": "(1 + m h / ) 2 ( / ) ( / )/ m h m h [ m h e ] /",
+     "indent": 6
+    }
+   ]
+  },
+  {
+   "id": "W302",
+   "heading": "DESIGN FOR FATIGUE",
+   "level": 1,
+   "page": 565,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The fatigue design procedure in this Appendix addresses two types of cyclic loading — fatigue loading where the loading spectrum may be reduced to a series of stress range–cycle pairs, and fatigue loading where the loading spectrum may be represented by a two-parameter Weibull distribution. Fatigue damage is the summation based on the linear damage rule. The fatigue design analysis method in this Appendix is based on the following general requirements:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) In the absence of more directly applicable data, the stress intensification factors shown in ASME B31J for elbows, bends, and ASME B16.9 tees may be used. The stress intensification factors for other components are the responsibility of the designer and their validity shall be documented in the engineering design."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Integral construction is recommended. Fabricated components such as branch connections and miter elbows are not recommended."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) The maximum stress range from all sources of loadings shall not exceed the displacement stress range requirements of para. 302.3.5 with f = 1.0."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Inertial forces due to wave loading shall be considered as occasional loads and shall satisfy the requirements of para. 302.3.6."
+    }
+   ]
+  },
+  {
+   "id": "W302.1",
+   "heading": "Fatigue Damage Due to Cyclic Stress Range From Other Than Wave Motion",
+   "level": 2,
+   "page": 565,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The maximum stress range, SE, shall be computed in accordance with para. 319 and meet the allowable displacement stress range requirements of para. 302.3.5 with f = 1.0. The stress range–cycle pairs (SEi, Ni) shall be established from a stress–cycle histogram by the Rainflow method of ASME BPVC, Section VIII, Division 2, Annex 5-B. Fatigue damage shall be computed as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Allowable fatigue cycles for load case i"
+    },
+    {
+     "kind": "equation",
+     "text": "m i CF f f y jjjjjj zzzzzz f I M k , t N = − (W1) ti f E S T Ek k Ei {",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "fI = 1.0 unless otherwise documented in the engi-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "neering design"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "fM,k = 1.0 unless (SEi, max + SEi, min) > Syi, in which case"
+    },
+    {
+     "kind": "equation",
+     "text": "fM,k = (1− SEi, min /SEi, max)0.2778",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "ft = temperature correction factor"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "x = E/ECSA"
+    },
+    {
+     "kind": "equation",
+     "text": "TE = 15.88 mm (0.625 in.) for T ≤ 15.88 mm (0.625",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "in.)"
+    },
+    {
+     "kind": "equation",
+     "text": "x = T for 15.88 mm (0.625 in.) < T < 152 mm (6.0 in.) x = 152 mm (6.0 in.) for T ≥ 152 mm (6.0 in.)",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "GENERAL NOTES: (a) SI units include SEi (MPa) and TE (mm) in eq. (W1). (b) U.S. Customary units include SEi (ksi) and TE (in.) in eq. (W1)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Fatigue damage due to displacement loadings"
+    },
+    {
+     "kind": "equation",
+     "text": "N i d t : = (W2) N ti",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where dt is less than 1.0. When computing fatigue damage in accordance with eq. (W2), cycles associated with a stress range less than 20.7 MPa (3 ksi) need not be considered."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The fatigue material coefficients used in eq. (W1) shall be in accordance with Table W302.1-1. Alternatively, when specified in the engineering design and approved by the owner, the fatigue material coefficients may be in accordance with Table W302.1-2. The maximum temperature limits for Table W302.1-1 and Table W302.1-2 are 371°C (700°F) for ferritic steels, 427°C (800°F) for austenitic stainless steels, and 204°C (400°F) for aluminum. The fatigue material coefficients for temperatures in excess of these limits or for materials not listed in Table W302.1-1 or Table W302.1-2 shall be specified and the basis documented in the engineering design."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "When the number of cycles, Nti, exceeds 107, and with approval of the owner, the fatigue material coefficients in Table W302.1-3 may be used instead of the coefficients in Table W302.1-1 or Table W302.1-2 when applying eq. (W1). Alternatively, when specified in the engineering design and approved by the owner, optional fatigue material coefficients may be developed for Nti > 106."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The environmental fatigue factor, fE, is typically a function of the fluid environment, loading frequency, temperature, and material variables, e.g., grain size and chemical composition. In the absence of more directly applicable data, the values of fE provided in Table W302.1-4 may be used for the effect of the environment on the fatigue life of carbon steel piping at temperatures less than or equal to 93°C (200°F). The values of fE for other materials, temperatures, or environments may be assumed to be 4.0 if more-specific data is not available. Alternative environmental fatigue factors may be used when justified based on applicable data, and shall be specified and the basis documented in the engineering design."
+    }
+   ]
+  },
+  {
+   "id": "W302.2",
+   "heading": "Fatigue Damage Due to Cyclic Stress Range From Wave Motion",
+   "level": 2,
+   "page": 566,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This paragraph addresses variable amplitude random loadings where the long-term stress range distribution may be represented by a two-parameter Weibull distribution. The specific requirements are written for wave loadings for applications such as floating offshore platforms; however, the method may be applied to other applications where the Weibull distribution applies. In this Appendix, a “sea state” is defined as the general condition of the free surface on a large body of water with respect to wind waves and swell at a certain location and time. A sea state is characterized by statistics, including the wave height and period, and represented here by parameters h and Vo."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "When designing for wave motion, the design sea state shall be specified by the owner. The sea state shall be characterized by a two-parameter wave-scatter diagram of significant wave height and zero upcrossing period. The stress range is assumed proportional to wave height, and the Weibull stress range shape distribution parameter and average zero crossing frequency are determined from the data."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The long-term stress range distribution may be represented by a two-parameter Weibull distribution as follows:"
+    },
+    {
+     "kind": "equation",
+     "text": "− ( S / ) q h (W3) F = e EW S aw q = (W4) ln( N ) 1/ h [ w ]",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "where"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "F = probability for exceeding the stress range, SEW"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design fatigue curve is represented by a single equaGENERAL NOTES: (a) SI units include SEi (MPa) and TE (mm) in eq. (W1). (b) U.S. Customary units include SEi (ksi) and TE (in.) in eq. (W1). GENERAL NOTES: (a) CFa is CF from Table W302.1-1 or Table W302.1-2 in SI or U.S."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Customary units."
+    },
+    {
+     "kind": "equation",
+     "text": "(b) ax = (1/m2 − 1/m1), where",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "m1 = value of m from Table W302.1-1 or Table W302.1-2"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "m2 = value of m from Table W302.1-3"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "(For ferritic and austenitic stainless steels, ax = −0.1195.)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Allowable fatigue damage for variable wave loadings"
+    },
+    {
+     "kind": "equation",
+     "text": "d w = 1 − d t (W5)",
+     "indent": 9
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Design storm wave height associated cycles"
+    },
+    {
+     "kind": "equation",
+     "text": "N 3.156 10 7 V L (W6) w = × × o × w",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Design number of pipe stress cycles"
+    },
+    {
+     "kind": "equation",
+     "text": "N 3.156 10 7 V L (W7) d = × × o × d",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The maximum probable stress range shall be determined from the maximum probable wave height based on a two-parameter Weibull model. The maximum probable wave height (or maximum probable stress range) will be exceeded, on average, once every Nw design wave cycles."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Allowable maximum probable stress range during Nw wave cycles"
+    },
+    {
+     "kind": "equation",
+     "text": "1/ m 1/ h i d a y ln( N ) jjjjj zzzzz w [ w ] S aw = × Ä É 1/ (W8) ÅÅÅÅÅÅÅ ÑÑÑÑÑÑÑ N m k d { ( 1 + − m ) Ç h Ö where m i y i CF f f y jjjjjj zzzzzz f jjjjjj zzzzzz I M k , t (W9) a = − × k f { T Ek E k {",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "fI = 1.0 unless otherwise documented in the engi-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "neering design The fatigue material coefficients, CF, m, and k, shall be in accordance with Table W302.1-1, unless the alternative analysis methods of para. W302.3 are applied."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The computed maximum stress range, SEW, is assumed to be proportional to the maximum probable wave height (trough to peak). The stress range shall be computed in accordance with para. 319 from the imposed displacements created by the maximum probable wave height and shall not exceed the allowable maximum probable stress range, Saw."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This Appendix does not prescribe specific values for h, Vo, Lw, or Ld. These design parameters shall be specified by the owner or regulatory authority, as applicable. The values for h and Vo are determined by statistical data based on the specific sea state. The design life of the piping, Ld, and the design maximum probable wave height based on the design storm period of occurrence, Lw, shall be based on the intended life of the piping and acceptable risk."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "In the absence of more-applicable data for the specific sea state, the following typical values may be used:"
+    },
+    {
+     "kind": "equation",
+     "text": "(a) h = 1.0 (b) Vo = 0.159 Hz (c) Ld = 20 yr (d) Lw = 100 yr",
+     "indent": 1
+    }
+   ]
+  },
+  {
+   "id": "W302.3",
+   "heading": "Alternative Analysis Methods",
+   "level": 2,
+   "page": 567,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The fatigue analysis method presented in para. W302.1 is based on a design fatigue curve with a single linear slope on a log-log stress-cycles plot, except when the optional coefficients of Table W302.1-3 are applied for a bilinear fatigue curve. The fatigue analysis method presented in para. W302.2 is based on a two-parameter Weibull model for a design fatigue curve with a single linear slope on a log-log stress-cycles plot and a single sea state, represented by parameters h and Vo. With the owner’s approval, the designer may apply more-applica-ble data or more rigorous analysis methods for fatigue of piping, e.g., a bilinear fatigue curve with a change in slope of the fatigue curve at cycles >107 or an endurance limit."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The fatigue analysis method of ASME BPVC, Section VIII, Division 2 may be used for piping as an alternative to the method of this Appendix."
+    }
+   ]
+  },
+  {
+   "id": "W305",
+   "heading": "FLUID SERVICE REQUIREMENTS",
+   "level": 1,
+   "page": 567,
+   "paragraphs": []
+  },
+  {
+   "id": "W305.1",
+   "heading": "General",
+   "level": 2,
+   "page": 567,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The requirements in Chapters I through VI apply in addition to the requirements of this Appendix. When the fatigue damage, dt, computed in accordance with para. W302.1 exceeds 0.5 or when SEW, computed in accordance with para. W302.2, exceeds 0.8Saw, the requirements for severe cyclic conditions in Chapters I through VI shall apply. For special applications, e.g., offshore piping, the owner may elect to require the supplemental requirements of para. W305.3."
+    }
+   ]
+  },
+  {
+   "id": "W305.3",
+   "heading": "Optional Supplemental Requirements",
+   "level": 2,
+   "page": 568,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "When these supplemental requirements are specified, the requirements for para. W305.1 also apply."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "W305.3.1 Examination. The following additional examinations are required:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) All longitudinal welds shall be 100% examined by radiography in accordance with para. 344.5 with acceptance criteria in accordance with Table 341.3.2-1 for Normal Fluid Service."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Circumferential groove welds shall be examined as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) At least 10% of the welds selected at random shall be examined using the liquid penetrant method (para. 344.4) or the magnetic particle method (para. 344.3) with acceptance criteria in accordance with para. 341.3.2."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) When the requirements for severe cyclic conditions do not apply, at least 10% of the welds selected at random shall be 100% examined by radiography in accordance with para. 344.5 with acceptance criteria in accordance with Table 341.3.2-1 for Normal Fluid Service."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "W305.3.2 Leak Testing. Leak testing of the system shall be in accordance with the requirements of para. 345, except that the test duration for hydrostatic testing shall be a minimum of 30 min after the test pressure has been adequately stabilized."
+    }
+   ]
+  }
+ ]
+}

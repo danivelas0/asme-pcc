@@ -1,0 +1,518 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 3 - MECHANICAL REPAIRS",
+  "chapter_kind": "appendix",
+  "chapter_id": "303-II",
+  "chapter_title": "An Illustrative Example Showing an Engineering Analysis Associated With Enlarging a Tapped Hole",
+  "parent_article": "303",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    154,
+    157
+  ],
+  "outline_pages": [
+    154,
+    157
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 96,
+    "figures": 4,
+    "tables": 1,
+    "equations": 32
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 154,
+      "number": "303-II",
+      "level": 1,
+      "text": "Mandatory Appendix 303-II An Illustrative Example Showing an Engineering Analysis Associated With Enlarging a Tapped Hole"
+    },
+    {
+      "type": "section_header",
+      "page": 154,
+      "text": "303-II-1 EXAMPLE 1"
+    },
+    {
+      "type": "paragraph",
+      "page": 154,
+      "text": "The following is an illustrative example showing an engineering analysis associated with enlarging a tapped hole:"
+    },
+    {
+      "type": "paragraph",
+      "page": 154,
+      "text": "Consider the studding outlet fitting as shown below."
+    },
+    {
+      "type": "figure",
+      "page": 154,
+      "image": "fig/app_303_ii_diagram_6.png"
+    },
+    {
+      "type": "section_header",
+      "page": 154,
+      "text": "VESSEL DATA:"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(1) Design pressure: 2160 psig at 840°F"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(2) Shell: SA-387 Gr. D w/347 SS weld overlay"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(3) Studs: 3 in. 8 UN stud bolt, SA-193-B16 material"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(4) Forging: SA-336-F22 w/347 SS weld overlay"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(5) Allowable stress of forging @ 840°F, SF = 14,520 psi"
+    },
+    {
+      "type": "list_item",
+      "page": 154,
+      "text": "(6) Allowable stress of stud bolt @ 840°F, SB = 21,200 psi"
+    },
+    {
+      "type": "paragraph",
+      "page": 154,
+      "text": "NOTE: While removing the existing 3 in. diameter studs, some of the stud holes were found to have stripped threads. The calculations that follow are intended to assess the adequacy of the design if the stud holes are enlarged to 3 1 ∕ 4 in."
+    },
+    {
+      "type": "section_header",
+      "page": 154,
+      "text": "303-II-1.1 Nomenclature"
+    },
+    {
+      "type": "paragraph",
+      "page": 154,
+      "text": "A = total cross-sectional area required in the plane under consideration, in.2 A 1 = area of excess thickness in the vessel shell available for reinforcement, in. 2 [see ASME BPVC, Section VIII, Division 1, UG-37(a)]"
+    },
+    {
+      "type": "paragraph",
+      "page": 154,
+      "text": "A 2 = area of excess thickness in the nozzle wall available for reinforcement, in. 2 [see ASME BPVC, Section VIII, Division 1, UG-37(a)] A 3 = area available for reinforcement when the nozzle extends inside the vessel wall, in.2 [see ASME BPVC, Section VIII, Division 1, UG-37(a)] A 4 = cross-sectional area of the stud hole, in. A 4 (3 in.) = cross-sectional area of a stud hole associated with a 3 in. diameter stud, in. A 4 (3¼ in.) = cross-sectional area of a stud hole associated with a 3 1 ∕ 4 in. diameter stud, in. As = tensile stress area, in.2 ASs = minimum thread shear area for external threads, in. b 3 = base length of that portion of nozzle defining the area A 3 projecting inward from inner surface of vessel, in. d = finished diameter of the opening, in. [see ASME BPVC, Section VIII, Division 1, UG-37(a)] D 1 max. = maximum minor diameter of internal thread, in. D 2 = basic pitch diameter, in. d 2 min. = minimum pitch diameter of external thread for class of thread specified, in. ds = nominal diameter of the stud, in. E = edge distance from centerline of stud to outer edge of the forging, in. En = joint efficiency of the nozzle neck Es = joint efficiency of the shell [see E 1 in ASME BPVC, Section VIII, Division 1, UG-37(a)] F = correction factor that compensates for the variation in internal pressure stresses on different planes with respect to the axis of a pressure vessel [see ASME BPVC, Section VIII, Division 1, UG-37(a)] H = height of fundamental triangle, 0.866025 p , in. h 3 = height of that portion of nozzle defining the area A 3 projecting inward from inner surface of vessel, in."
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "hi = height of inside of that portion of nozzle defining area A 2 projecting outward from outer surface of vessel, in. ho = height of outside of that portion of nozzle defining area A 2 projecting outward from outer surface of vessel, in. L = inside spherical radius for hemispherical head, in. Lc = length of engagement, in. p = thread pitch (1/number of threads per inch), in. P = design pressure, psi q = degree of plane with the longitudinal axis of the vessel, (see ASME BPVC, Section VIII, Division 1, Figure UG-37) Rn = Inside radius of the nozzle under consideration, in. SB = allowable stress of stud bolt, psi SF = allowable stress of forging, psi Ss = allowable stress of shell, psi t = specified vessel wall thickness, in. [see ASME BPVC, Section VIII, Division 1, UG-37(a)] tr = required thickness of the shell, in. [see ASME BPVC, Section VIII, Division 1, UG-37(a)] trn = required thickness of a seamless nozzle wall, in. [see ASME BPVC, Section VIII, Division 1, UG-37(a)] Σ An = sum of areas contributing to reinforcement, A 1 + A 2 + A 3, in. From ASME B1.1-2003, Nonmandatory Appendix B Ä Ç Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ ÑÑ = + L AS D p d D 2( ) 3.1416 max. 1 2 0.57735(1/ )( min. max.) c s 1 2 1 i k jjj y { zz A = z D H 3.1416 2 3 16 s 2 2 where As = tensile stress area of thread ASs = minimum thread shear area for external threads D 1 max. = maximum minor diameter of internal thread, in. D 2 = basic pitch diameter d 2 min. = minimum pitch diameter of external thread for class of thread specified, in. H = 0.866025404 p = 0.866025404/8 = 0.1083 Lc = minimum length of engagement, in. NOTE: ASME B1.1 defines length of engagement as LE 1/ p = number of threads per inch NOTE: The factor of 2 in the numerator of the above equation for Lc means that it is assumed that the area in shear of the stud is twice the tensile stress area to develop the full strength of the"
+    },
+    {
+      "type": "section_header",
+      "page": 155,
+      "text": "303-II-1.2 Evaluate Length of Engagement, Lc"
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "Per ASME BPVC, Section VIII, Division 1, UG-43(g) the minimum thread engagement length is the larger of ds (the nominal diameter of the stud) or"
+    },
+    {
+      "type": "equation",
+      "page": 155,
+      "text": "× = × = 0.75 d 0.75(3.25) 3.564 in. s maximum allowable stress value of stud material at design temperature maximum allowable stress value of tapped material at design temperature 21, 200 14, 500"
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "Since this value is larger than ds (3.25 in.), the required length of engagement, Lc , is 3.564 in."
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "Since actual thread depth (4 1 ∕ 2 in.) exceeds calculated Lc , length of engagement is adequate."
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "NOTE: The required length of engagement will be checked with the criteria in ASME B1.1-2003, in part for illustrative purposes, but also because some of the values for diameters will be used further in the analysis."
+    },
+    {
+      "type": "section_header",
+      "page": 155,
+      "text": "303-II-1.2.1 Length of Engagement, Lc , Using Criteria"
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "stud. This value is slightly larger than required and provides a small factor of safety against stripping."
+    },
+    {
+      "type": "table",
+      "page": 155,
+      "caption": "For a 3 1 ∕ 4 in. 8 UN stud bolt:",
+      "structure": "not_reconstructed",
+      "text": "Class 2 Fit Class 3 Fit Comments D 1 max. 3.140 3.1297 From ASME B1.1, Table 3A d 2 min. 3.1575 3.1623 From ASME B1.1, Table 3A D 2 3.1688 3.1688 From ASME B1.1, Table 13"
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "For a Class 2 fit:"
+    },
+    {
+      "type": "equation",
+      "page": 155,
+      "text": "Ä Ç ÅÅ Å Å ÅÅ Å ÅÅ É Ö ÑÑ Ñ Ñ ÑÑ Ñ ÑÑ A = 3.1416 = 3.1688 2 3(0.1083) 16 8.0898 in. s 2 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 155,
+      "text": "Substitute the value of As (tensile stress area) for the value of ASs (minimum thread shear area of internal threads) and solve for the thread engagement, Lc"
+    },
+    {
+      "type": "equation",
+      "page": 155,
+      "text": "Ä Ç ÅÅÅÅÅÅÅÅÉ Ö ÑÑÑÑÑÑÑÑ = = × × + × ( ) L 2.823 in. c 2 8.0898 3.1416 3.140 1 2 0.57735 8 3.1575 3.140"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "For a Class 3 fit:"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç ÅÅ Å Å ÅÅ Å ÅÅ É Ö ÑÑ Ñ Ñ ÑÑ Ñ ÑÑ A = 3.1416 = 3.1688 2 3(0.1083) 16 8.0898 in. s 2 2"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç ÅÅÅÅÅÅÅÉ Ö ÑÑÑÑÑÑÑ = = × × + × L 2.529 in. c 2 8.0898 3.1416 3.1297 1 2 0.57735 8(3.1623 3.1297)"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Since actual thread depth (41 ∕ 2 in.) exceeds calculated Lc , length of engagement is adequate for either a Class 2 or 3 fit."
+    },
+    {
+      "type": "figure",
+      "page": 156,
+      "image": "fig/app_303_ii_picture_12.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Check distance required from the edge of the nozzle forging to the centerline of the stud bolt"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "force generated by stud bolt = S AB s"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ maximum allowed force on forging = E d S 4 (2 ) s F 2 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Assuming the new stud diameter of 3 1 ∕ 4 in., set the force the maximum allowed force on the forging and solve for the minimum edge distance, E"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç Å ÅÅ Å ÅÅ É Ö Ñ ÑÑ Ñ ÑÑ Ä Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ = × = = S A E d S E E (2 ) 21,200 8.0898 (2 ) 3.25 14,520 2.523 in. B s s F 4 2 2 4 2 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "The actual edge distance of 3 in. exceeds the required minimum edge distance, E ."
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "NOTE: Enlargement of the existing 3 in. 8 UN Stud Bolt to a 31 ∕ 4 in. 8 UN Stud Bolt appears to be okay; however, nozzle opening reinforcement should be verified."
+    },
+    {
+      "type": "section_header",
+      "page": 156,
+      "text": "303-II-1.3 Nozzle Reinforcement Calculation"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Minimum thickness of hemispherical head, tr :"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "= = = × × × × t 4.62 in. r PL 2 0.2 S E P 2160 61.1875 (2 14,520 1.0) (0.2 2160) s s"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Minimum thickness of nozzle neck, trn"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "= = = × × × t 1.99 in. rn PR S E P 0.6 2160 12.1875 (14,520 1.0) (0.6 2160) n F n"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Required reinforcement area, A"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "A dt F = = × × × = 0.5 0.5 24.375 4.62 1.0 56.305 in. r 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "= = × = A t t 0.5d ( ) 0.5 24.375(4.625 4.62) 0.061 in. 1 rn 2"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "= + = × + × = A h h t t ( )( ) (10.75 8.8577) (8.3125 1.99) 61.985 in. 2 o i n rn 1 2 1 2 2"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "A b h = = × × = 2.2114 8.9375 9.8822 in. 3 1 2 3 3 1 2 2"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "= + + = + + = A A A A 0.061 61.985 9.8822 71.928 in. n 1 2 3 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Subtract stud hole area from EAn :"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "(a) For a 3 in. stud bolt:"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ = × + × × ÷ = × + × × = ( ) A d ( stud depth) d d ( /2 tan 59) (3 4.5) 3 0.901 14.852 in. 4 s s s 1 2 1 2 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Therefore, available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "A A n 4 = 71.928 14.852 57.076 in. = > A 2"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "(b) For a 3 1 ∕ 4 in. stud bolt:"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "Ä Ç Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ ÑÑ = × + × × ÷ = × + × × = ( ) A d ( stud depth) d d 1 2 ( /2 tan 59) (3.25 4.5) 1 2 3.25 0.976 16.211 in. 4 s s s 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "Therefore, available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 156,
+      "text": "A A n 4 = 71.928 16.211 55.72 in. = < A 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 156,
+      "text": "NOTE: If we consider on a given plane through the nozzle centerline that only one stud hole is enlarged to 31 ∕ 4 in. while maintaining the opposite hole diameter at 3 in. we may be able to calculate the required reinforcement, A , as follows:"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "A = × = 2 56.305 112.61 in.2"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "= × = = × = > A 2 71.928 A A 2 71.928 14.8 16.03 113.03 112.61 4 (3 in.) 1 4(3 in.) 4"
+    },
+    {
+      "type": "section_header",
+      "page": 157,
+      "text": "303-II-2 EXAMPLE 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Example 1 in section 303-II-1 is for a centrally located opening in a spherical shell. Example 2 has been modified for an opening in a cylindrical shell, to illustrate the difference associated with studs that straddle the natural centerlines such that the required area for the nearest pair of tapped holes would be in a plane of reduced required reinforcement area. Only the reinforcement calculation is repeated here, the preceding calculations involving length of engagement and edge distance remain valid."
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "NOTE: Enlargement of the existing 3 in. 8 UN stud bolt to a 31 ∕ 4 in. 8 UN Stud Bolt appears to be okay; however, nozzle opening reinforcement should be verified."
+    },
+    {
+      "type": "section_header",
+      "page": 157,
+      "text": "303-II-2.1 Nozzle Reinforcement Calculation"
+    },
+    {
+      "type": "section_header",
+      "page": 157,
+      "text": "303-II-2.1.1 Minimum Thickness of Cylindrical Shell,"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "tr . For the purposes of this illustrative example, the minimum thickness of the cylindrical shell, tr , will be assumed to be the same as that for the spherical shell (4.62 in.)."
+    },
+    {
+      "type": "section_header",
+      "page": 157,
+      "text": "303-II-2.1.2 Minimum Thickness of Nozzle Neck, trn"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "= = = × × × t 1.99 in. rn PR S E P 0.6 2160 12.1875 (14,520 1.0) (0.6 2160) n F n"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "The nozzle in this example will be installed in the cylindrical shell such that the studs will straddle the natural centerlines of the vessel. The reinforcement area will be checked in the plane containing the hole closest to the longitudinal axis of the vessel."
+    },
+    {
+      "type": "figure",
+      "page": 157,
+      "image": "fig/app_303_ii_diagram_28.png"
+    },
+    {
+      "type": "figure",
+      "page": 157,
+      "image": "fig/app_303_ii_figure_29.png"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "The forging contains 16 studs, thus the angle defined by adjacent studs is: 360 ÷ 16 = 22.5 deg."
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Since the stud holes straddle the natural centerlines of the vessel, the angle θ from the longitudinal centerline to the adjacent stud hole is: 22.5 ÷ 2 = 11.25 deg."
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "From ASME BPVC, Section VIII, Division 1, Figure UG-37, for angle θ of 11.25 deg, F = 0.98."
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Required reinforcement area, A"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "A dt F = = × × × = 0.5 0.5 24.375 4.62 0.98 55.181 in. r 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "= = × = A t t 0.5d ( ) 0.5 24.375(4.625 4.62) 0.061 in. 1 rn 2"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "= + = × + × = A h h t t 1 2( )( ) 1 2 (10.75 8.8577) (8.3125 1.99) 61.985 in. 2 o i n rn 2"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "A b h = = × × = 1 2 1 2 2.2114 8.9375 9.8822 in. 3 3 3 2"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "= + + = + + = A A A A 0.061 61.985 9.8822 71.928 in. n 1 2 3 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Subtract stud hole area from Σ An :"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "(a) For a 3-in. stud bolt"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "i k jjj y { zzz Ä Ç Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ ÑÑ = × + × × ÷ = × + × × = ( ) A d stud depth d d 1 2 ( /2 tan 59) (3 4.5) 1 2 3 0.901 14.852 in. 4 s s s 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Therefore, available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "A A n 4 = 71.928 14.852 57.076 in. = > A 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "(b) For a 3 1 ∕ 4-in. stud bolt"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "Ä Ç Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ ÑÑ = × + × × ÷ = × + × × = ( ) A d ( stud depth) d d 1 2 ( /2 tan 59) (3.25 4.5) 1 2 3.25 0.976 16.211 in. 4 s s s 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 157,
+      "text": "Therefore, available reinforcement"
+    },
+    {
+      "type": "equation",
+      "page": 157,
+      "text": "A A n = 71.928 16.211 55.72 in. = > A 2"
+    }
+  ]
+}

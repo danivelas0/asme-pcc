@@ -1,0 +1,117 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table CI-1",
+  "title": "Tabular Values for Figure CI-1",
+  "figure_id": "Figure CI-1",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for Cast Iron",
+  "figure_pdf_page": 1263,
+  "figure_image": "figures/figure_ci_1.png",
+  "figure_images": null,
+  "pdf_pages": [
+    1336
+  ],
+  "key_column": "Class / Temp., °F",
+  "columns": [
+    "Class / Temp., °F",
+    "A",
+    "B, psi"
+  ],
+  "value_field": "b_psi",
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis, printed here in psi -- the unit is taken from each sheet, not assumed (NFN-26 and NFN-27 are set in ksi, every other sheet in psi). ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 5,
+  "point_count": 15,
+  "curves": [
+    {
+      "key": "Class 60 up to 650",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_psi": 110.0
+        },
+        {
+          "a": 0.0016,
+          "b_psi": 18200.0
+        },
+        {
+          "a": 0.1,
+          "b_psi": 18200.0
+        }
+      ]
+    },
+    {
+      "key": "Class 50 up to 650",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_psi": 99.7
+        },
+        {
+          "a": 0.00147,
+          "b_psi": 15000.0
+        },
+        {
+          "a": 0.1,
+          "b_psi": 15000.0
+        }
+      ]
+    },
+    {
+      "key": "Class 40 up to 650",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_psi": 87.2
+        },
+        {
+          "a": 0.00135,
+          "b_psi": 12000.0
+        },
+        {
+          "a": 0.1,
+          "b_psi": 12000.0
+        }
+      ]
+    },
+    {
+      "key": "Class 30 up to 650",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_psi": 71.6
+        },
+        {
+          "a": 0.00122,
+          "b_psi": 9080.0
+        },
+        {
+          "a": 0.1,
+          "b_psi": 9080.0
+        }
+      ]
+    },
+    {
+      "key": "Class 20 up to 650",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_psi": 59.5
+        },
+        {
+          "a": 0.000991,
+          "b_psi": 6070.0
+        },
+        {
+          "a": 0.1,
+          "b_psi": 6070.0
+        }
+      ]
+    }
+  ]
+}

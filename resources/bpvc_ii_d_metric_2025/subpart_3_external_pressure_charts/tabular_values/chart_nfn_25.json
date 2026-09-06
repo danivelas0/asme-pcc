@@ -1,0 +1,170 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table NFN-25",
+  "title": "Tabular Values for Figure NFN-25",
+  "figure_id": "Figure NFN-25",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for Stress",
+  "figure_pdf_page": 1315,
+  "figure_image": "figures/figure_nfn_25.png",
+  "pdf_pages": [
+    1368
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 2,
+  "point_count": 32,
+  "curves": [
+    {
+      "key": 38,
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 1.03
+        },
+        {
+          "a": 0.0001,
+          "b_mpa": 10.3
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 51.7
+        },
+        {
+          "a": 0.00075,
+          "b_mpa": 77.5
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 98.4
+        },
+        {
+          "a": 0.00124,
+          "b_mpa": 106.0
+        },
+        {
+          "a": 0.00145,
+          "b_mpa": 109.0
+        },
+        {
+          "a": 0.00174,
+          "b_mpa": 112.0
+        },
+        {
+          "a": 0.00192,
+          "b_mpa": 113.0
+        },
+        {
+          "a": 0.00295,
+          "b_mpa": 117.0
+        },
+        {
+          "a": 0.00465,
+          "b_mpa": 121.0
+        },
+        {
+          "a": 0.00677,
+          "b_mpa": 124.0
+        },
+        {
+          "a": 0.00927,
+          "b_mpa": 126.0
+        },
+        {
+          "a": 0.0188,
+          "b_mpa": 131.0
+        },
+        {
+          "a": 0.05,
+          "b_mpa": 137.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 138.0
+        }
+      ],
+      "temperature_c": 38
+    },
+    {
+      "key": 205,
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.983
+        },
+        {
+          "a": 0.0001,
+          "b_mpa": 9.83
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 49.1
+        },
+        {
+          "a": 0.00075,
+          "b_mpa": 73.6
+        },
+        {
+          "a": 0.00099,
+          "b_mpa": 92.9
+        },
+        {
+          "a": 0.00125,
+          "b_mpa": 101.0
+        },
+        {
+          "a": 0.00145,
+          "b_mpa": 104.0
+        },
+        {
+          "a": 0.00173,
+          "b_mpa": 107.0
+        },
+        {
+          "a": 0.00192,
+          "b_mpa": 108.0
+        },
+        {
+          "a": 0.00288,
+          "b_mpa": 112.0
+        },
+        {
+          "a": 0.00493,
+          "b_mpa": 117.0
+        },
+        {
+          "a": 0.00663,
+          "b_mpa": 119.0
+        },
+        {
+          "a": 0.00972,
+          "b_mpa": 122.0
+        },
+        {
+          "a": 0.0194,
+          "b_mpa": 127.0
+        },
+        {
+          "a": 0.05,
+          "b_mpa": 132.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 132.0
+        }
+      ],
+      "temperature_c": 205
+    }
+  ]
+}

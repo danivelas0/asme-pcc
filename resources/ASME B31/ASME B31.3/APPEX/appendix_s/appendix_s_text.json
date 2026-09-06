@@ -1,0 +1,1480 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "title": "Piping System Stress Analysis Examples",
+ "document": "Appendix S prose",
+ "pdf_pages": [
+  546,
+  560
+ ],
+ "section_count": 35,
+ "paragraph_count": 200,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "S300",
+   "heading": "INTRODUCTION",
+   "level": 1,
+   "page": 546,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The examples in this Appendix are intended to illustrate the application of the rules and definitions in Chapter II, Part 5, Flexibility and Support; and the stress limits of para. 302.3.5. The loadings and conditions necessary to comply with the intent of the Code are presented."
+    }
+   ]
+  },
+  {
+   "id": "S300.1",
+   "heading": "Definitions and Nomenclature",
+   "level": 2,
+   "page": 546,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "global axes: these are Cartesian X, Y, and Z axes. In this Appendix, vertically upward is taken to be the +Y direction with gravity acting in the −Y direction. Pj: piping internal pressure; see para. 301.2; when more than one condition exists for the piping system, each is subscripted (e.g., P1, P2, …). Tj: pipe maximum or minimum metal temperature; see paras. 301.3 and 319.3.1(a); when more than one condition exists for the piping system, each is subscripted (e.g., T1, T2, …). Y+ : a “single acting support” that provides support in only the vertically upward direction and is considered to be “active” when the pipe exerts a downward force on the support. The pipe is free to move upward, i.e., the pipe “lifts off” the support; the support in the “lift-off” situation is considered to be “removed” from providing support, i.e., inactive, during the load condition considered."
+    }
+   ]
+  },
+  {
+   "id": "S301",
+   "heading": "EXAMPLE 1: CODE-COMPLIANT PIPING SYSTEM",
+   "level": 1,
+   "page": 546,
+   "paragraphs": []
+  },
+  {
+   "id": "S301.1",
+   "heading": "Example Description",
+   "level": 2,
+   "page": 546,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This example is intended to illustrate the design of an adequately supported and sufficiently flexible piping system. The piping system in Figure S301.1-1 is fabricated from ASTM A106 Grade B seamless pipe (i.e., E = 1.00); the pipe is DN 400 (NPS 16) with a nominal wall thickness of 9.52 mm (0.375 in.), 127 mm (5 in.) thickness of calcium silicate insulation, and 1.59 mm (0.063 in.) corrosion allowance; the fluid has a specific gravity of 1.0. The equivalent number of full displacement cycles expected for the piping system is fewer than 7 000 [i.e., f = 1.00 in accordance with para. 302.3.5(d)]."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The piping system is in normal fluid service. The reference modulus of elasticity used for the piping analysis is 202.3 GPa (29.4 Msi) from Appendix C, Table C-3 (Table C-3C) in accordance with paras. 319.3.2 and 319.4.4, and Poisson’s ratio is 0.3 in accordance with para. 319.3.3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The piping internal pressures and temperatures expected during normal operation and the design conditions are listed in Table S301.1-1; see paras. 319.2.3(b) and 319.3.1(a). The design conditions are set sufficiently in excess of the operating conditions so as to provide additional margin on the allowable stress for pressure design as required by the owner."
+    }
+   ]
+  },
+  {
+   "id": "S301.2",
+   "heading": "Design Conditions",
+   "level": 2,
+   "page": 546,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design conditions establish the pressure rating, flange ratings, component ratings, and minimum required pipe wall thickness in accordance with para. 301.2.1. For example, ASME B16.5 requires a minimum of Class 300 for ASTM A105 flanges. Also, the minimum required pipe wall thickness, tm, is determined from the design conditions by inserting eq. (3a) into eq. (2); terms are defined in para. 304.1.1 and Appendix J."
+    },
+    {
+     "kind": "equation",
+     "text": "E = 1.0",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "P = design pressure"
+    },
+    {
+     "kind": "equation",
+     "text": "x = 3 800 kPa (550 psi)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "S = allowable stress from Appendix A, Table A-1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "(Table A-1C)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "x = 127.4 MPa (18.4 ksi) at design temperature 288°C"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "(550°F)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "W = 1.0 for carbon steel at any temperature in accor-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "dance with Table 302.3.5-1, Note (9)"
+    },
+    {
+     "kind": "equation",
+     "text": "Y = 0.4 from Table 304.1.1-1",
+     "indent": 1
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Figure S301.1-1",
+   "level": 2,
+   "page": 546,
+   "paragraphs": []
+  },
+  {
+   "id": null,
+   "heading": "Example 1: Simple Code-Compliant Model",
+   "level": 2,
+   "page": 546,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "10"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "20"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 19,
+     "text": "50"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "12.2 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 11,
+     "text": "3.05 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 15,
+     "text": "9.15 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "(40 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 11,
+     "text": "(10 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 16,
+     "text": "(30 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "Y"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 16,
+     "text": "45"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 12,
+     "text": "40"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "6.10 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "Z"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 8,
+     "text": "X"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 18,
+     "text": "(20 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "15"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 15,
+     "text": "30"
+    },
+    {
+     "kind": "equation",
+     "text": "Ä É ÅÅÅÅÅÅÅ ÑÑÑÑÑÑÑ 3 800 2 ( 127.4 MPa )( 1.00 )( 1.00 ) ( + MPa )( ) 0.4 Ç 1 000 Ö c = 1.59 mm t m = 5.99 mm + 1.59 mm = 7.58 mm (0.299 in.)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "In accordance with para. 304.1.2(a), t shall be less than D/6 for eq. (3a) to be appropriate without considering additional factors to compute the pressure design thickness, t (i.e., t < D/6, or 7.58 mm < 406.4 mm/6). Since 7.58 mm (0.299 in.) < 67.7 mm (2.67 in.), eq. (3a) is applicable without special consideration of factors listed in para. 304.1.2(b)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Now select a pipe schedule of adequate thickness. Determine the specified minimum pipe wall thickness, T, from nominal pipe wall thickness, T , considering a mill tolerance of 12.5%."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Select DN 400 (NPS 16) Schedule 30/STD nominal wall thickness from ASME B36.10."
+    },
+    {
+     "kind": "equation",
+     "text": "T = 9.52 mm (0.375 in.) T = (9.52 mm)(1.00 − 0.125) = 8.33 mm (0.328 in.)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Since T > tm [i.e., 8.33 mm (0.328 in.) > 7.58 mm (0.299 in.)], the selection of the nominal pipe wall thickness, T , for Schedule 30/STD pipe is acceptable. The long radius elbows specified for this piping system are in accordance with ASME B16.9 and are specified to be for use with Schedule 30/STD wall thickness pipe."
+    }
+   ]
+  },
+  {
+   "id": "S301.3",
+   "heading": "Computer Model Input",
+   "level": 2,
+   "page": 547,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Tables S301.3-1 and S301.3.-2 list the “node numbers,” lengths, etc., for each piping element displayed in Figure S301.1-1. A bend radius of 1.5 times the nominal pipe diameter [i.e., 609.6 mm (24 in.)] and nominal wall thickness of 9.52 mm (0.375 in.) are used for the elbows in the computer model. Generic computer program options are as follows:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) include pressure stiffening on elbows"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) exclude pressure thrust and Bourdon effects"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) use nominal section properties for both the stiffnesses, forces, moments, and deflections calculation"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) use “nominal less allowances” section properties for the stress due to sustained loads, SL, calculation"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(e)",
+     "indent": 1,
+     "text": "(e) use nominal section properties for displacement stress range, SE, calculation"
+    }
+   ]
+  },
+  {
+   "id": "S301.4",
+   "heading": "Pressure Effects",
+   "level": 2,
+   "page": 547,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "For the operating, sustained, and displacement stress range load cases, the effect of pressure stiffening on the elbows is included to determine the end reactions in accordance with ASME B31J, Table 1-1, Note (4). The effects of pressure-induced elongation and Bourdon effects are not included, as both are deemed negligible for this particular example."
+    }
+   ]
+  },
+  {
+   "id": "S301.5",
+   "heading": "The Operating Load Case",
+   "level": 2,
+   "page": 547,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The operating load case is used to determine the operating position of the piping and reaction loads for any attached equipment, anchors, supports, guides, or stops. The operating load case is based on the temperature range from the ambient (as-installed) temperature of −1°C (30°F) to the maximum operating metal temperature of 260°C (500°F), in accordance with paras. 319.2.3(b) and"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "To"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "15"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "20"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "30"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "40"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "45"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "50 GENERAL NOTE: This piping system is planar, i.e., DZ = 0 m (ft) for each piping element. NOTE: (1) The specified element lengths are measured to and/or from each elbow’s tangent intersection point. 319.3.1(b). Table C-1 (Table C-1C) values used for Row A and Row B expansion coefficients are listed below."
+    },
+    {
+     "kind": "equation",
+     "text": "(a) Row A = 13.1 × 10−6 mm/mm/°C (7.30 × 10−6 in./",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in./°F)"
+    },
+    {
+     "kind": "equation",
+     "text": "(b) Row B = 3.43 mm/m (4.00 in./100 ft)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The operating load case in this example also includes the effects of internal pressure, pipe weight, insulation weight, and fluid weight on the piping system. Both pipe stiffness and displacement stress range are based on the nominal thickness of the pipe. Pipe deflections and internal reaction loads for the operating load case are listed in Table S301.5-1. Piping loads acting on the anchors and support structure are listed in Table S301.5-2."
+    }
+   ]
+  },
+  {
+   "id": "S301.6",
+   "heading": "The Sustained Load Case",
+   "level": 2,
+   "page": 548,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Stresses due to the sustained loads, such as axial forces, internal pressure, and intensified bending moments in this example, are combined in accordance with para. 320 to determine SL. The sustained load case excludes thermal effects and includes the effects of internal pressure [P1 = 3 450 kPa (500 psi)], pipe weight, insulation weight, and fluid weight on the piping system."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Nominal section properties are used to generate the stiffness matrix and sustained loads for the computer model in accordance with para. 319.3.5. The nominal thickness, less allowances, is used to calculate the section properties for SL in accordance with para. 320."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A summary of the sustained load case internal reaction forces, moments, and stress due to sustained loads, SL, is provided in Table S301.6-1. Since this example model lies in only one plane, only the stress due to sustained bending moments due to the in-plane bending moment is not zero. The in-plane bending moment is intensified at each elbow by the sustained in-plane moment index for an unflanged elbow, Ii. Note that SL for the nodes listed in Table S301.6-1 do not exceed the 130.8 MPa (19.0 ksi) sustained allowable stress, Sh, for A106 Grade B piping at the operating maximum metal temperature, T1 = 260°C (500°F), from Appendix A, Table A-1 (Table A-1C). By limiting SL to Sh in accordance with para. 302.3.5(c), the piping system is deemed adequately protected against collapse."
+    }
+   ]
+  },
+  {
+   "id": "S301.7",
+   "heading": "The Displacement Stress Range Load Case",
+   "level": 2,
+   "page": 548,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The displacement stress range, SE, in this example is based on the temperature range from the minimum metal (as-installed) temperature, −1°C (30°F), to maximum metal temperature for the thermal cycles under analysis [T1 = 260°C (500°F)], in accordance with paras. 319.2.3(b) and 319.3.1(a). The displacement stress range, SE, for each element is calculated in accordance with eq. (17) and is listed in Table S301.7-1, along with the internal reaction loads. Nominal section properties are used to generate the stiffness matrix and displacement stress ranges in the piping in accordance with para. 319.3.5. Since this example model lies in only one plane, only the in-plane bending moment range is not zero. The in-plane moment range is intensified at each elbow in accordance with ASME B31J, Table 1-1 stress intensification factor, ii, for an unflanged elbow."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "For simplicity, the allowable displacement stress range, SA, is calculated in accordance with eq. (1a). Though eq. (1a) is used in this example, it is also acceptable to calculate SA in accordance with eq. (1b), which permits SA to exceed the eq. (1a) value for each piping element, based on the magnitude of each element’s SL."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following terms are as defined in para. 302.3.5(d) and Appendix J:"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "f = 1.00 for 7 000 equivalent full displacement cycles,"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "from Figure 302.3.5-1 or eq. (1c)"
+    },
+    {
+     "kind": "equation",
+     "text": "SA = f (1.25Sc + 0.25Sh) x = (1.00)[(1.25)(138 MPa) + (0.25)(130.8 MPa)] x = 205.2 MPa (29.75 ksi)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Sc = allowable stress from Appendix A, Table A-1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "(Table A-1C)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "x = 138 MPa (20.0 ksi) at ambient (as-installed)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Sh = allowable stress from Appendix A, Table A-1"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "(Table A-1C)"
+    },
+    {
+     "kind": "equation",
+     "text": "x = 130.8 MPa (19.0 ksi) at T1",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "T1 = maximum metal temperature"
+    },
+    {
+     "kind": "equation",
+     "text": "x = 260°C (500°F)",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Note that each piping element’s displacement stress range based on minimum to maximum metal temperature for the thermal cycles under analysis, SE, does not exceed the eq. (1a) allowable, SA. By limiting SE to SA, the piping system is deemed adequate to accommodate up to 7 000 equivalent full displacement cycles."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Considering both the stress due to sustained loads and displacement stress range load cases, the piping system is compliant with the requirements of the Code; redesign of NOTES: (1) Forces, moments, and deflections are averaged from commercial programs’ results and are obtained by analyzing the piping system in both"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "U.S. Customary and SI units. (2) No operating axial pressure force is included in the axial forces listed above. NOTES: (1) Reactions are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "units. (2) Reaction forces and moments are those acting on the restraints and are signed based on their vectors acting along and about the selected"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "coordinate system. NOTES: (1) Forces, moments, and stresses are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Customary and SI units. (2) Both the unsigned sustained axial forces (listed above) and the unsigned sustained axial pressure force, 413 000 N (92,800 lb), are summed to"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "calculate the stresses due to sustained loads, SL, in accordance with para. 320. (3) The sustained longitudinal indices, Ia, are defaulted to 1.0 for all piping components in the absence of more applicable data, in accordance with"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "para. 320.2, and are applied to both the stresses due to sustained axial reactions and axial pressure force. NOTES: (1) All ranges listed above are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Customary and SI units. (2) Axial force ranges do not have their sign retained, do not include axial pressure force ranges, and are included in the displacement stress"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "range, SE, in accordance with para. 319.4.4."
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Figure S302.1-1",
+   "level": 2,
+   "page": 551,
+   "paragraphs": []
+  },
+  {
+   "id": null,
+   "heading": "Example 2: Lift-Off Model",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 12,
+     "text": "12.2 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "1.525 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 22,
+     "text": "9.15 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 12,
+     "text": "(40 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 18,
+     "text": "(5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 22,
+     "text": "(30 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 18,
+     "text": "40"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 25,
+     "text": "50"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 22,
+     "text": "6.1 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 21,
+     "text": "(20 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 25,
+     "text": "Y"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "10"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 13,
+     "text": "15"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 16,
+     "text": "20"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 20,
+     "text": "30 the piping system is not required unless the sustained or operating reaction loads at either anchor data point 10 or 50 exceed the allowable loads for the attached equipment nozzle or the support structure at node 20 is overloaded. The nozzle load and support structure analyses are beyond the scope of this Appendix and are not addressed."
+    }
+   ]
+  },
+  {
+   "id": "S302",
+   "heading": "EXAMPLE 2: ANTICIPATED SUSTAINED CONDITIONS CONSIDERING PIPE LIFT-OFF",
+   "level": 1,
+   "page": 551,
+   "paragraphs": []
+  },
+  {
+   "id": "S302.1",
+   "heading": "Example Description",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This example is intended to illustrate the analysis of a piping system in which a portion of the piping lifts off at least one Y+ support in at least one operating condition. The emphasis of this example is to describe the effect this removal of support has on the determination of anticipated sustained conditions. The same principles utilized for this example would also apply for guides and stops (that are single directional or gap-type) that are not engaged during any anticipated operating condition."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The examples in this Appendix are intended for illustration purposes only and are not intended to portray the same as either adequate or even acceptable piping geometries and/or support scenarios. The piping system in Figure S302.1-1 is the same in material properties as in Example 1; see para. S301.1. Note that the distance from node 20 to the elbow node 30 and from nodes 120 to 130 in Example 2’s model is 1.52 m (5 ft). Also, note that both the design and operating conditions are well below the creep regime; therefore, the piping system will not develop any permanent creep-related displacements, relaxation, or sag."
+    }
+   ]
+  },
+  {
+   "id": "S302.2",
+   "heading": "Design Conditions",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design conditions are similar to those in the Example 1 model; see para. S301.2 and Table S302.2-1. Note that the nominal thickness remains unchanged from Example 1 even though the design temperature"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "9.15 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "1.525 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "12.2 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "(30 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "(5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "(40 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "140"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "X"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "130"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "120"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "115"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 14,
+     "text": "110 and corrosion allowance have increased; the corrosion allowance in this example model is 3.18 mm (0.125 in.)."
+    }
+   ]
+  },
+  {
+   "id": "S302.3",
+   "heading": "Computer Model Input",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Table S302.3-1 lists the node numbers, lengths, etc., for each piping component that is displayed in Figure S302.1-1. The computer-based options are the same as those for the Example 1 model; see para. S301.3."
+    }
+   ]
+  },
+  {
+   "id": "S302.4",
+   "heading": "Pressure Effects",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The pressure effect considerations are the same as those for Example 1; see para. 301.4."
+    }
+   ]
+  },
+  {
+   "id": "S302.5",
+   "heading": "The Operating Load Case",
+   "level": 2,
+   "page": 551,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The operating case evaluated and discussed in this example includes the effects of pipe weight, insulation weight, fluid weight, internal pressure [P1 = 3 040 kPa"
+    },
+    {
+     "kind": "equation",
+     "text": "(440 psi)], and temperature [T1 = 288°C (550°F)].",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Table C-1 (Table C-1C) values used for Row A and Row B expansion coefficients are listed below."
+    },
+    {
+     "kind": "equation",
+     "text": "(a) Row A = 13.2 × 10−6 mm/mm/°C (7.35 × 10−6 in./",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in./°F)"
+    },
+    {
+     "kind": "equation",
+     "text": "(b) Row B = 3.80 mm/m (4.5 in./100 ft)",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "An operating load case is evaluated to determine the operating position of the piping and determine the reaction loads for any attached equipment, anchors, supports, guides, or stops. In particular, each operating load case’s support scenario is evaluated or assessed by the designer in order to determine whether any anticipated sustained conditions need to be evaluated with one or more Y+ supports removed. Further operating load case discussion can be found in para. S301.5."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Piping loads acting on the anchors and support structure for the operating load case are listed in Table S302.5-1. Note that only nodes 10 through 50 are listed in the following tables; this is for convenience since the model is symmetric; the reactions, deflections, and stresses for nodes 10 through 40 are the same as for nodes 110 through 140 except that some signs may be reversed."
+    }
+   ]
+  },
+  {
+   "id": "S302.6",
+   "heading": "Sustained Conditions",
+   "level": 2,
+   "page": 552,
+   "paragraphs": []
+  },
+  {
+   "id": "S302.6.1",
+   "heading": "The Stress Due to Sustained Loads, SL,",
+   "level": 2,
+   "page": 552,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Calculations. The stress due to (long-term) sustained loads, SL, is computed in accordance with para. 320.2 for each sustained condition that is evaluated; see para. S302.6.2."
+    }
+   ]
+  },
+  {
+   "id": "S302.6.2",
+   "heading": "Anticipated Sustained Conditions. All antici-",
+   "level": 2,
+   "page": 552,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "pated sustained conditions utilizing all possible support scenarios should be considered. The designer has identified three anticipated sustained conditions for the piping system; each is listed in Table S302.6.2-1, along with the support status of the node 50 Y+ support, as either assessed by analysis or determined by the designer. The designer has deemed the Sustained Condition 3 as NOTE: (1) The specified component lengths are measured to and/or from each elbow’s tangent intersection point. both controlling the sustained design and requiring evaluation."
+    }
+   ]
+  },
+  {
+   "id": "S302.6.3",
+   "heading": "Results for the Evaluated Sustained Condi-",
+   "level": 2,
+   "page": 552,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "tion. Table S302.6.2-1’s Sustained Conditions 1 and 2 reflect the ambient temperature support scenario. Sustained Condition 3 reflects the support scenario of the operating case. All three sustained conditions exclude thermal effects. Sustained Conditions 2 and 3 include the effects of internal pressure [P1 = 3 040 kPa (440 psi)], pipe weight, insulation weight, and fluid weight on the piping system. A summary of the Sustained Condition 3 reactions and stresses due to sustained loads, SL, appears in Table S302.6.3-1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "In the determination of SL, the sustained longitudinal force index, Ia, is defaulted to 1.0 in the absence of more applicable data in accordance with para. 320. The in-plane bending moment is indexed at each elbow by the appropriate Ii calculated for this example by multiplying 0.75 times ii determined from ASME B31J, Table 1-1. See para. S301.6 for additional information concerning the stress due to sustained loads determination."
+    }
+   ]
+  },
+  {
+   "id": "S302.7",
+   "heading": "Displacement Stress Range Load Cases",
+   "level": 2,
+   "page": 552,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The displacement stress range load cases are not listed, since they are not the subject of this example. NOTES: (1) Reactions are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "units. (2) Reactions are signed based on their directions relative to the selected coordinate system’s positive directions. Reactions Fx and Mz are positive"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "in sign for anchor 110. (3) No support is provided at the node 50 Y+ restraint for the operating case. Sustained Condition 2’s support load at node 50 Y+ is 26 300 N (5,900"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "lb); see Table S302.6.2-1 and para. S302.6.3. NOTES: (1) Sustained Condition 1, the ambient condition, includes only pipe"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "weight and insulation weight without fluid contents or internal"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "pressure. (2) Sustained Condition 2 reflects the support scenario of the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "ambient condition, excludes thermal effects, and includes"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "internal pressure, pipe weight, insulation weight, and fluid"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "weight. (3) Sustained Condition 3 reflects the support scenario of the oper-"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "ating condition, excludes thermal effects, and includes internal"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "pressure, pipe weight, insulation weight, and fluid weight."
+    }
+   ]
+  },
+  {
+   "id": "S302.8",
+   "heading": "Code Compliance — Satisfying the Intent of the Code",
+   "level": 2,
+   "page": 553,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The Sustained Condition 3 results indicate that the piping system is not protected against collapse for the cycles under analysis when considering the operating case support scenario. Note the greatest Stresses due to sustained loads, SL, are at elbow nodes 40 and 140 and “Lift-Off” support location, node 50. Therefore, redesign of the piping system is required."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "If the piping system is redesigned such that it is compliant with the intent of the Code, then the piping system would require no further attention unless the sustained, hydrostatic leak test, or operating reaction loads at either anchor data point 10 or 110 exceed the allowable loads for the attached equipment nozzle, or the support structure at either node 20 or 120 is overloaded. The nozzle loads and support structure analyses are beyond the scope of this Appendix and are not addressed. Although the occasional load cases are important to the design and analysis of a piping system, they are not discussed in this example."
+    }
+   ]
+  },
+  {
+   "id": "S303",
+   "heading": "EXAMPLE 3: MOMENT REVERSAL",
+   "level": 1,
+   "page": 553,
+   "paragraphs": []
+  },
+  {
+   "id": "S303.1",
+   "heading": "Example Description",
+   "level": 2,
+   "page": 553,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This example is intended to illustrate the flexibility analysis required for a piping system that is designed for more than one operating condition and also experiences a “reversal of moments” between any two of the anticipated operating conditions. The examples in this Appendix are intended for illustration purposes only and are not intended to portray the same as either adequate or even acceptable piping geometries and/or support scenarios. Both the design and operating conditions are well below the creep regime."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The piping system in Figure S303.1-1 consists of two headers and two branches, which are referred to as gas “meter runs.” Only one of the branches is in service (operating) at a given time; the out-of-service branch is purged and at ambient (as-installed) condition. The design specification calls for each of the meter run branches to alternate in and out of service 5,250 times for the piping system’s planned 30-yr service life for equivalent full displacement cycles, i.e., f = 1.15 in accordance with para. 302.3.5(d). The piping system is fabricated from ASTM A53 Grade B pipe (E = 1.00), both piping headers are DN 600 (NPS 24) and the branches are DN 500 (NPS 20), and both branch and header are 9.52 mm (0.375 in.) thick. GENERAL NOTE: No support is provided at the node 50 Y+ restraint for Sustained Condition 3; see Table S302.6.2-1 and para. S302.6.3. The stress due to sustained loads, SL, at node 50 Y+ when active is 76.3 MPa (11.0 ksi) for Sustained Condition 2. NOTES: (1) Forces, moments, and stresses are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Customary and SI units. The magnitude of loads and stresses for nodes 10 through 40 are the same for nodes 110 through 140, though the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "loads may differ in sign. (2) The sustained longitudinal force indices, Ia, are defaulted to 1.0 for all piping components in the absence of more applicable data in accordance"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "with para. 320.2. (3) Both the sustained axial forces listed above and sustained axial pressure force, +370 000 N (+83,000 lb), are summed in accordance with"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "para. 320 to calculate the stresses due to sustained loads, SL."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The piping system is in normal fluid service. The fluid is gaseous, is considered to add no weight and to be neither a corrosive nor an erosive hazard, i.e., there is no corrosion allowance. The line is not insulated. The ambient (as -installed) temperature is 4°C (40°F). The reference modulus of elasticity used is 202.3 GPa (29.4 Msi) and Poisson’s ratio is 0.3. Consideration is given to the close proximity of the three tees in each header in accordance with the guidance in para. 319.3.6, and the stress intensification factors from ASME B31J are considered to adequately represent the header tees for this piping system. The piping internal pressure and minimum to maximum metal temperature range expected during normal operation for each meter run and the design conditions are listed in Table S303.1-1. The design conditions are set sufficiently in excess of the operating conditions so as to provide additional margin on the allowable as required by the owner."
+    }
+   ]
+  },
+  {
+   "id": "S303.2",
+   "heading": "Design Conditions",
+   "level": 2,
+   "page": 554,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The design conditions establish the pressure rating, flange ratings, components ratings, and minimum required pipe wall thickness. ASME B16.5 requires a minimum of Class 300 for ASTM A105 flanges. The minimum required wall thickness for both the branch and header is 4.34 mm (0.171 in.), considering a 12.5% mill tolerance; therefore, selection of the standard wall thickness of 9.52 mm (0.375 in.) is acceptable."
+    }
+   ]
+  },
+  {
+   "id": "S303.3",
+   "heading": "Computer Model Input",
+   "level": 2,
+   "page": 554,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Table S303.3-1 lists the node numbers, lengths, etc., for each piping component that is displayed in Figure S303.1-1. Note that flanges and valve components are not explicitly included in the model listing in Table S303.3-1. For simplicity, an entire branch (from tee centerline to tee centerline) is considered to be at the operating conditions listed in Table S303.1-1, e.g., the East meter run branch from nodes 40 through 340 operates at 1 724 kPa (250 psi) and 121°C (250°F) for Operating Case 2. The computer-based options are the same as those for the Example 1 model, except that pressure stiffening is not included in the analyses for this example; see para. S301.3."
+    }
+   ]
+  },
+  {
+   "id": "S303.4",
+   "heading": "Pressure Effects",
+   "level": 2,
+   "page": 554,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Neither pressure stiffening nor Bourdon effects are included in the analyses."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "45"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "10"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "1.52 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "(5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "Pipe anchor"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "Pipe support"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 21,
+     "text": "17 780 N"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 10,
+     "text": "(typical)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 21,
+     "text": "(4,000 lb)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 21,
+     "text": "(typical)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "35 GENERAL NOTE: For computer-based temperature and pressure data input, consider the West Branch temperature and pressure to be in effect from nodes 30 through 330 as listed in Table S303.3-1. Likewise, consider the East Branch temperature and pressure to be in effect from nodes 40 through 340 as listed in Table S303.3-1; see para. S303.3. NOTES: (1) East Branch is at ambient (as-installed) conditions. (2) West Branch is at ambient (as-installed) conditions."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 9,
+     "text": "345"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "0.76 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "(2.5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "1.52 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "(5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 12,
+     "text": "310"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "1.52 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 9,
+     "text": "Pipe anchor but"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "(5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 9,
+     "text": "free in X"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "0.76 m"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 17,
+     "text": "(2.5 ft)"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "North"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "335"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 3,
+     "text": "X Z GENERAL NOTE: This piping system is planar, i.e., DY = 0 m (0 ft) for each piping component."
+    }
+   ]
+  },
+  {
+   "id": "S303.5",
+   "heading": "Operating Load Case(s)",
+   "level": 2,
+   "page": 557,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The operating load case is used to determine the operating position of the piping and reaction loads for any attached equipment, anchors, supports, guides, or stops. The owner has mandated in the design specification that the meter runs and piping be more than adequately supported. Therefore, the operating load case, while necessary to set the limits of the strain ranges, does not contribute to the emphasis of this example, and its output is not included. Table C-1 (Table C-1C) values used for Row A and Row B expansion coefficients are listed below."
+    },
+    {
+     "kind": "equation",
+     "text": "(a) Row A = 12.3 × 10−6 mm/mm/°C (6.80 × 10−6 in./",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in./°F)"
+    },
+    {
+     "kind": "equation",
+     "text": "(b) Row B = 1.34 mm/m (1.68 in./100 ft)",
+     "indent": 1
+    }
+   ]
+  },
+  {
+   "id": "S303.6",
+   "heading": "Sustained Load Case",
+   "level": 2,
+   "page": 557,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Stresses due to the sustained loads, such as axial forces, internal pressure, and intensified bending moments in this example, are combined in accordance with para. 320 to determine SL. For reasons similar to those expressed for the operating load case, the sustained load case output is not included."
+    }
+   ]
+  },
+  {
+   "id": "S303.7",
+   "heading": "Displacement Stress Range Load Cases",
+   "level": 2,
+   "page": 557,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The displacement stress range, SE, is computed in accordance with paras. 319.2.3(b) and 319.3.1(a), in which the strains evaluated for the ambient temperature (which is also the as-installed and minimum metal temperature condition for this particular example) are algebraically subtracted from the strains evaluated for Operating Case 1 as listed in Table S303.1-1. Similarly, the displacement stress range, SE, is computed from the algebraic strain difference evaluated from the ambient (as-installed) condition to Operating Case 2 as listed in Table S303.1-1. The individual displacement stress range, SE, along with the internal reaction loads, is evaluated for each piping component in accordance with eq. (17), is listed in Table S303.7-1 (Operating Case 1), and has the same results as listed in Table S303.7-2 (Operating Case 2), with the exception that some signs differ (indicating the moment reversal range between the two conditions)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The algebraic strain difference between the two resultant case evaluations discussed above produces the greatest displacement stress range for the piping system in accordance with paras. 319.2.1(d), 319.2.3(b), and 319.3.1 (a), i.e., SE, the “stress range corresponding to the total displacement strains.” The resulting reactions’ combination and SE for each piping component are listed in Table S303.7-3."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The values in the tables listed in this paragraph consist of averaged and truncated results originally obtained from commercial pipe stress analysis vendors. In spite of the averaging and truncation processes, as well as the various methods in which each vendor has chosen to perform the modeling of branch connections, each vendor's results are within ±6% of the values listed in Tables S303.7-1 through S303.7-3."
+    }
+   ]
+  },
+  {
+   "id": "S303.8",
+   "heading": "Code Compliance — Satisfying the Intent of the Code",
+   "level": 2,
+   "page": 557,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The piping system is compliant with the sustained load requirements of the Code. The displacement stress range from the ambient (as-installed) condition to each of the operating cases indicates the piping system is in compliance with the intent of the Code even when limited to the eq. (1a) allowable, SA. But the “stress range corresponding to the total displacement strains,” which considers the algebraic strain difference between the two operating cases, indicates that the piping system is not protected against fatigue failure for the cycles under analysis even when considering the eq. (1b) allowable, SA. Therefore, redesign of the piping system is required."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "If the piping system is redesigned such that it is compliant with the intent of the Code, then the piping system would require no further attention unless the sustained, hydrostatic leak test, or operating reaction loads at either anchor data point 10 or 310, or meter runs 130 or 230, exceeded the allowable loads for the attached equipment, nozzles, or support structure. The meter loads, nozzle loads, and support structure analyses are beyond the scope of this example. Although the occasional load cases are important to the design and analysis of a piping system, they are not discussed in this example. GENERAL NOTE: The stress due to sustained load used in determining the eq. (1b) allowable displacement stress range, SA, for nodes 20 and 320 is 28.4 MPa (4.12 ksi). NOTES: (1) Force ranges, moment ranges, and displacement stress ranges are averaged from commercial programs’ results, are obtained by analyzing the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "piping system in both U.S. Customary and SI units, and are directly affected by the stiffness chosen for valves, flanges, other relatively stiff"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "components, and branch connections. (2) Each force range and moment range is signed based on its direction relative to the selected coordinate system’s positive direction. (3) In accordance with para. 319.4.4, no operating pressure force range is included in the force ranges and displacement stress ranges listed"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "above. GENERAL NOTE: The stress due to sustained load used in determining the eq. (1b) allowable displacement stress range, SA, for nodes 20 and 320 is 28.4 MPa (4.12 ksi). NOTES: (1) Force ranges, moment ranges, and displacement stress ranges are averaged from commercial programs’ results, are obtained by analyzing the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "piping system in both U.S. Customary and SI units, and are directly affected by the stiffness chosen for valves, flanges, other relatively stiff"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "components, and branch connections. (2) Each force range and moment range is signed based on its direction relative to the selected coordinate system’s positive direction. (3) In accordance with para. 319.4.4, no operating pressure force range is included in the force ranges and displacement stress ranges listed"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "above. GENERAL NOTE: The stress due to sustained load used in determining the eq. (1b) allowable displacement stress range, SA, for nodes 20 and 320 is 28.4 MPa (4.12 ksi). NOTES: (1) Force ranges, moment ranges, and displacement stress ranges are averaged from commercial programs’ results, are obtained by analyzing the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "piping system in both U.S. Customary and SI units, and are directly affected by the stiffness chosen for valves, flanges, other relatively stiff"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "components, and branch connections. (2) In accordance with para. 319.4.4, no operating pressure force range is included in the force ranges and displacement stress ranges listed"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "above. (3) Signs are not listed for Fx and My listed above since signs are irrelevant following the load combination summation; see paras. 319.2.3(b),"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "319.3.1(a), 319.4.4, and 302.3.5(d) in determining the greatest displacement stress range, SE."
+    }
+   ]
+  }
+ ]
+}

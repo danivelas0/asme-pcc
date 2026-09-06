@@ -1,0 +1,281 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 4 - NONMETALLIC AND BONDED REPAIRS",
+  "chapter_kind": "appendix",
+  "chapter_id": "403-I",
+  "chapter_title": "Design Considerations for Buried Pipe",
+  "parent_article": "403",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    266,
+    267
+  ],
+  "outline_pages": [
+    266,
+    267
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 49,
+    "figures": 0,
+    "tables": 0,
+    "equations": 8
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 266,
+      "number": "403-I",
+      "level": 1,
+      "text": "Mandatory Appendix 403-I Design Considerations for Buried Pipe"
+    },
+    {
+      "type": "section_header",
+      "page": 266,
+      "text": "403-I-1 WALL THICKNESS OF CIPP"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "(a) The required CIPP-design wall thickness, tr , for a partially deteriorated host pipe (design application Category B) shall be at least the greater of the thickness determined by eqs. (I-1) and (I-3). This minimum thickness shall be increased to provide for all applicable manufacturing-specific installation constructability tolerances and shall be used in the design analysis.1"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "(b) The tr for a fully deteriorated host pipe shall be at least the greater of the thickness determined by eqs. (I-1) and (I-2). This minimum thickness shall be increased to provide for all applicable manufacturing-specific installation constructability tolerances, shall be referred to as tn , and shall be used in the analysis required by analysis equations below. 1"
+    },
+    {
+      "type": "section_header",
+      "page": 266,
+      "text": "403-I-2 DESIGN EQUATIONS"
+    },
+    {
+      "type": "section_header",
+      "page": 266,
+      "text": "403-I-2.1 Internal Pressure"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "Equation (I-1) shall be used to determine the tr required due to internal pressure on CIPP contained in a partially or fully deteriorated host pipe."
+    },
+    {
+      "type": "equation",
+      "page": 266,
+      "text": "Ä Ç ÅÅ Å Å ÅÅ Å Å ÅÅi k jjjj y { zzzz É Ö ÑÑ Ñ Ñ ÑÑ Ñ Ñ ÑÑ = + t D 1 r o S P N 2 T D S (I-1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "Do = outside diameter of CIPP (inside diameter of host pipe), mm (in.) NS = design safety factor (typically 2) PD = internal design pressure, MPa (psig) ST = time-temperature-corrected ultimate tensile strength of CIPP, MPa (psi) tr = required CIPP design wall thickness, mm (in.)"
+    },
+    {
+      "type": "section_header",
+      "page": 266,
+      "text": "403-I-2.2 External Pressures/Fully Deteriorated Pipes"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "Equation (I-2) shall be used to determine the tr required due to applicable external pressures on CIPP contained in a fully deteriorated host pipe."
+    },
+    {
+      "type": "equation",
+      "page": 266,
+      "text": "Ä Ç Å Å ÅÅ Å Å ÅÅ Å Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ Ñ ÑÑ Ñ Ñ ÑÑ t D = N q C E R B E 0.721 ( / ) r o E t F w s 2 1/3 (I-2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "B′ = coefficient of elastic support x = 1/(1+4e−0.213 H (m)) = 1/(1+4e−0.065 H (ft)) C = ovality reduction factor ="
+    },
+    {
+      "type": "equation",
+      "page": 266,
+      "text": "Ä Ç Å Å ÅÅ Å Å ÅÅ Å Å É Ö Ñ Ñ ÑÑ Ñ Ñ ÑÑ Ñ Ñ C = ( ) ( ) 1 1 + q q 100 100 2 3"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "EF = time-temperature-corrected flexural modulus of elasticity for CIPP, MPa (psi)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "E′S = modulus of soil reaction, MPa (psi)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "H = height of soil above top of host pipe, m (ft)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "Hw = height of groundwater above top of host pipe, m"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "(ft) NE = design factor (typically 2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "q = ovality (%) of host pipe"
+    },
+    {
+      "type": "equation",
+      "page": 266,
+      "text": "x = 100 × max. measured dia. min. measured dia. average measured dia."
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "qt = total external pressure on CIPP, MPa (psi) Rw = water buoyancy factor (0.67 min.) x = 1 − [0.33( Hw / H )]"
+    },
+    {
+      "type": "section_header",
+      "page": 266,
+      "text": "403-I-2.3 External Pressures/Partially Deteriorated Pipes"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "Equation (I-3) shall be used to determine the tr required due to applicable external pressures on CIPP contained in a partially deteriorated host pipe."
+    },
+    {
+      "type": "equation",
+      "page": 266,
+      "text": "Ä Ç Å Å ÅÅ Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ ÑÑ Ñ Ñ ÑÑ Ñ ÑÑ = + t D 1 r o KE C q N v 2 (1 ) 1/3 F h E 2 (I-3)"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 266,
+      "text": "K = buckling enhancement factor of the soil and host pipe adjacent to CIPP. A value of 7.0 may be used qh = groundwater hydraulic load, MPa (psi)"
+    },
+    {
+      "type": "footnote",
+      "page": 266,
+      "text": "1 Although the partially deteriorated host pipe assumption could result in a thinner wall thickness than a fully deteriorated host pipe, it will require future monitoring of the host pipe whereas the fully deteriorated pipe will not."
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "ν = Poisson's ratio = 0.30; or Poisson's ratio may be determined using the test method of ASTM D2105"
+    },
+    {
+      "type": "section_header",
+      "page": 267,
+      "text": "403-I-3 APPLIED LOADS DESIGN"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "To validate CIPP design, the analysis shall consider the effects due to applicable sustained and occasional loads specified in the owner's requirements."
+    },
+    {
+      "type": "section_header",
+      "page": 267,
+      "text": "403-I-3.1 Sustained and Occasional Loads"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "Stresses due to sustained and occasional loads shall meet the requirements of eq. (I-4). Ä"
+    },
+    {
+      "type": "equation",
+      "page": 267,
+      "text": "Ç Å Å Å ÅÅ Å ÅÅ É Ö Ñ Ñ Ñ ÑÑ Ñ ÑÑ + + + P D t i M M Z S A kS 4 0.75 4 mo o n A B T (I-4)"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "A = cross-sectional area of CIPP, mm2 (in. 2 ) Do = outside diameter of CIPP, mm (in.) i = stress intensification factor (SIF). The SIF for sprayed-form CIPP in a straight or curved host pipe shall be taken as unity, thus \"0.75 i \" equals \"1\" k = occasional load factor = 1.2, if occasional loads are included in eq. (I-4); otherwise, k = 1 MA = resultant moment loading on cross section due to weight and other applicable sustained loads, N·mm (in.-lb). If the CIPP is continuously supported by the existing soil system or the partially deteriorated host pipe, the MA term may be neglected. MB = resultant moment loading on cross section due to applicable occasional loads, such as thrusts from relief and safety valve loads, from pressure and flow transients, and seismic inertia, N·m (in.-lb). For seismic inertia, the calculation may use only one-half of the range. The effects of seismic displacements may be excluded from eq. (I-4) if they are included in eq. (I-5)."
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "Pmo = maximum operating pressure, MPa (psig) rm = mean radius of CIPP, mm (in.) Sα = axial loading on cross section due to seismic displacements or other applicable occasional loads, N (lb) ST = time-temperature-corrected ultimate tensile strength of CIPP, MPa (psi) tn = nominal CIPP wall thickness, mm (in.) Z = section modulus of CIPP, mm 3 (in. 3 ) x = π rm 2 tn"
+    },
+    {
+      "type": "section_header",
+      "page": 267,
+      "text": "403-I-3.2 Thermal Expansion Loads"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "Stresses due to thermal expansion loads shall meet the requirements of eq. (I-5)."
+    },
+    {
+      "type": "equation",
+      "page": 267,
+      "text": "+ iM Z S A S 2 C T (I-5)"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "MC = resultant moment loading on cross section due to thermal expansion, N·mm (in.-lb). Also, includes moment effects of seismic displacements if they were omitted from eq. (I-4) S = axial loading on cross section due to seismic displacements, if included, and thermal expansion, N (lb)"
+    },
+    {
+      "type": "section_header",
+      "page": 267,
+      "text": "403-I-3.3 Determination of Resultant Moment"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "For eqs. (I-4) and (I-5), the resultant moments for straight and curved piping members shall be calculated as follows:"
+    },
+    {
+      "type": "equation",
+      "page": 267,
+      "text": "M M M M j A B C = + + ( ) 2 2 2 1 2"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 267,
+      "text": "j = A , B , or C , as defined in eqs. (I-4) and (I-5)"
+    }
+  ]
+}

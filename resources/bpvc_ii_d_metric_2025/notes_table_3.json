@@ -1,0 +1,203 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "document": "NOTES TO TABLE 3",
+  "applies_to": "Table 3",
+  "pdf_pages": [
+    508,
+    509
+  ],
+  "item_count": 40,
+  "sections": [
+    {
+      "section": "GENERAL NOTES",
+      "items": [
+        {
+          "id": "(a)",
+          "text": "The stress values in this Table may be interpolated to determine values for intermediate temperatures. The values at intermediate temperatures shall be rounded to the same number of decimal places as the value at the higher temperature between which values are being interpolated. The rounding rule is: when the next digit beyond the last place to be retained is less than 5, retain unchanged the digit in the last place retained; when the digit next beyond the last place to be retained is 5 or greater, increase by 1 the digit in the last place retained."
+        },
+        {
+          "id": "(b)",
+          "text": "The properties of steels are influenced by the processing history, heat treatment, melting practice, and level of residual elements. See Nonmandatory Appendix A for more information."
+        },
+        {
+          "id": "(c)",
+          "text": "Where a size limit appears in the Size/Thickness column, the limit applies to the dimension appropriate to the product form: wall thickness of tubing, pipe, pipe fittings, and hollow forgings; thickness of plate, flat bar and forgings, and polygonal bar; diameter of solid bar and bolting; and thickest cross–section of other pressure parts, e.g., castings and forgings."
+        },
+        {
+          "id": "(d)",
+          "text": "These stress values are established from a consideration of strength only and will be satisfactory for average service. For bolted joints where freedom from leakage over a long period of time without retightening is required, lower stress values may be necessary as determined from the relative flexibility of the flange and bolts, and corresponding relaxation properties."
+        },
+        {
+          "id": "(e)",
+          "text": "Stress values for 40°C are applicable for colder temperatures when toughness requirements of Section III or Section VIII are met."
+        },
+        {
+          "id": "(f)",
+          "text": "For bolting with a reported hardness exceeding 350 HB, user is cautioned that under certain conditions of temperature and environment or fatigue conditions, stress corrosion cracking of this high hardness bolting shall be considered."
+        },
+        {
+          "id": "(g)",
+          "text": "The following abbreviations are used: Ann., Annealed; ann., annealed; CD, Cold drawn; fin., finished; rel., relieved; str., stress; and wld., welded."
+        },
+        {
+          "id": "(h)",
+          "text": "Where specifications, grades, classes, and types are listed in this Table, and where the material specification in Section II, Part A or Part B is a dual–unit specification (e.g., SA–193/SA–193M), the values listed in this Table shall be applicable to either the customary U.S. version of the material specification or the SI units version of the material specification. For example, the values listed for SA–193 Grade B6 shall be used when SA–193M Grade B6 is used in construction."
+        },
+        {
+          "id": "(i)",
+          "text": "An alternative typeface is used for stress values obtained from time–dependent properties (see Notes T1 through T12)."
+        }
+      ]
+    },
+    {
+      "section": "NOTES – GENERAL REQUIREMENTS",
+      "items": [
+        {
+          "id": "G1",
+          "text": "Alloy N06625 in the annealed condition is subject to severe loss of impact strength at room temperatures after exposure in the range of 550°C to 750°C."
+        },
+        {
+          "id": "G2",
+          "text": "Copper–silicon alloys are not always suitable when exposed to certain media and high temperatures, particularly steam above 100°C. The owner, the owner's designated agent, or the user should ensure him/herself that the alloy selected is satisfactory for the service for which it is to be used."
+        },
+        {
+          "id": "G3",
+          "text": "The maximum operating temperature is arbitrarily set at 250°C because harder temper adversely affects design stress in the creep rupture temperature range."
+        },
+        {
+          "id": "G4",
+          "text": "This material has reduced toughness at room temperature after exposure for about 5000 h at 325°C and after shorter exposure above 350°C."
+        },
+        {
+          "id": "G5",
+          "text": "At temperatures above 550°C, these stress values apply only when the carbon is 0.04% or higher on heat analysis."
+        },
+        {
+          "id": "G6",
+          "text": "For temperatures above 550°C, these stress values may be used only if the material is heat treated by heating it to a minimum temperature of 1040°C."
+        },
+        {
+          "id": "G7",
+          "text": "The user is cautioned that under certain conditions of temperature and environment or fatigue conditions, stress corrosion of this material shall be considered."
+        },
+        {
+          "id": "G8",
+          "text": "For all design temperatures, the maximum hardness shall be Rockwell C35 immediately under thread roots. The hardness shall be taken on a flat area at least 3 mm across, prepared by removing threads; no more material than necessary shall be removed to prepare the flat area. Hardness determinations shall be made at the same frequency as the tensile tests."
+        },
+        {
+          "id": "G9",
+          "text": "For Section VIII, Division 1 applications, use of external pressure charts for material in the form of bar stock is permitted for stiffening rings only."
+        },
+        {
+          "id": "G10",
+          "text": "For stress relieved tempers, stress values for T3 temper can be used for T351, T3510, and T3511; stress values for T4 temper can be used for T451, T4510, and T4511; and stress values for T6 temper can be used for T651, T6510, and T6511."
+        },
+        {
+          "id": "G11",
+          "text": "The shipping lot testing method of SA–574, 11.3, is prohibited."
+        },
+        {
+          "id": "G12",
+          "text": "Since these bolts could be used in flanged joints, the maximum permitted temperature and maximum allowable stress are limited to reduce the potential for bolt relaxation and associated flange leakage."
+        }
+      ]
+    },
+    {
+      "section": "NOTES – HEAT TREATMENT REQUIREMENTS",
+      "items": [
+        {
+          "id": "H1",
+          "text": "Design stresses for the cold drawn temper based on hot rolled properties until required data on cold drawn is submitted."
+        }
+      ]
+    },
+    {
+      "section": "NOTES – TIME–DEPENDENT PROPERTIES [See General Note (i)]",
+      "items": [
+        {
+          "id": "T1",
+          "text": "Allowable stresses for temperatures of 150°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T2",
+          "text": "Allowable stresses for temperatures of 175°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T3",
+          "text": "Allowable stresses for temperatures of 230°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T4",
+          "text": "Allowable stresses for temperatures of 290°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T5",
+          "text": "Allowable stresses for temperatures of 450°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T6",
+          "text": "Allowable stresses for temperatures of 480°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T7",
+          "text": "Allowable stresses for temperatures of 510°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T8",
+          "text": "Allowable stresses for temperatures of 540°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T9",
+          "text": "Allowable stresses for temperatures of 565°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T10",
+          "text": "Allowable stresses for temperatures of 595°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T11",
+          "text": "Allowable stresses for temperatures of 620°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T12",
+          "text": "Allowable stresses for temperatures of 650°C and above are values obtained from time–dependent properties."
+        },
+        {
+          "id": "T13",
+          "text": "Allowable stresses for temperatures of 200°C and above are values obtained from time–dependent properties."
+        }
+      ]
+    },
+    {
+      "section": "NOTES – WELDING REQUIREMENTS",
+      "items": [
+        {
+          "id": "W1",
+          "text": "Welding, brazing, and thermal cutting are not permitted."
+        },
+        {
+          "id": "W2",
+          "text": "If welded, the allowable stress values for the annealed condition shall be used."
+        },
+        {
+          "id": "W3",
+          "text": "This material may be welded by the resistance technique."
+        },
+        {
+          "id": "W4",
+          "text": "The stress values given for this material are not applicable when either welding or thermal cutting is employed."
+        },
+        {
+          "id": "W5",
+          "text": "Except for nonstructural tack welds used as a locking device, welding is prohibited for Section VIII, Division 1 use."
+        }
+      ]
+    }
+  ]
+}

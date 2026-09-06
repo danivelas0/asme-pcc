@@ -1,0 +1,117 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (U.S. Customary)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (U.S. Customary)",
+    "extracted_from": "D Customary 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Mandatory Appendix 3",
+  "kind": "Mandatory",
+  "identifier": "3",
+  "title": "Basis for Establishing External Pressure Charts",
+  "title_as_printed": "BASIS FOR ESTABLISHING EXTERNAL PRESSURE CHARTS",
+  "pdf_pages": [
+    1377,
+    1383
+  ],
+  "section_count": 8,
+  "word_count": 2561,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "3-100",
+      "heading": "GENERAL",
+      "paragraphs": [
+        "The charts in Subpart 3 were established in order to facilitate a conservative approach in determining external pressure ratings for components covering a wide range of geometries, materials, and conditions. The methods provide for a uniform basis of calculation for the referencing Section; the use of the charts eliminates the need for complex calculations by equations and incorporates realistic factors of safety for components of widely varying length-to-diameter and diameter-to-thickness ratios."
+      ]
+    },
+    {
+      "id": "3-200",
+      "heading": "BASIS OF CHARTS IN SUBPART 3",
+      "paragraphs": [
+        "Rules for allowable longitudinal compressive stress, rules for shells and tubes under external pressure, rules for stiffening rings, and rules for formed heads under external pressure make reference to and use material in Subpart 3, Charts and Tables for Determining Shell Thickness of Components Under External Pressure. Entrance into the charts is via the Factor A, abscissa, which is a nondimensional term related to certain geometrical considerations of the part in question, such as thickness, diameter, and length. These geometrical considerations are independent of material properties; thus a single geometry chart, Figure G, applies to all materials and is used in conjunction with the materials charts in Subpart 3."
+      ]
+    },
+    {
+      "id": "3-300",
+      "heading": "USE OF CHARTS IN SUBPART 3",
+      "paragraphs": [
+        "External pressure capability of cylinders, spheres, and formed heads, as well as allowable compressive stress for cylinders subject to axial compression, is obtained by reference to the charts in Subpart 3 along with instructions and equations given in the appropriate paragraphs in the body of the referencing Section."
+      ]
+    },
+    {
+      "id": "3-400",
+      "heading": "BACKGROUND AND DEVELOPMENT OF THEORY",
+      "paragraphs": [
+        "The development of the present rules for external pressure has a long history. Among the principal references used in developing these rules are Timoshenko's Theory of Elasticity ( 3-900 [1]), Theory of Plates and Shells (3-900[2]), and Theory of Elastic Stability (3-900[3]); a group of papers reprinted as Section 9 in ASME's publication Pressure Vessel and Piping Design — Collected Papers 1927–1959 (3-900[4]); and Sturm's 1941 University of Illinois Bulletin 329, A Study of the Collapsing Pressure of Thin Walled Cylinders (3-900[5]). The format for the charts in Subpart 3 is detailed in Sturm's University of Illinois Bulletin 329 (3-900[5]), with additional comments in Bergman's 1952 paper, The New Type Code Chart for the Design of Vessels Under External Pressure (included in 3-900[4]). The Sturm and Bergman papers detail the mechanics involved in combining the materials and geometrical factors into a nomograph format; an important companion paper to those of Sturm and Bergman is Sturm and O'Brien's 1946 ASME paper, Computing Strength of Vessels Subjected to External Pressure (3-900[6]). Alternative rules for determining allowable compressive stress are given in BPVC Section VIII, Division 2. An equation is given (3.D.5) for the tangent modulus of the stress–strain curve that could be used to develop external pressure charts as in Subpart 3 The tangent modulus is derived from generic stress–strain relations, represented in equation form, to represent broad classes of materials."
+      ]
+    },
+    {
+      "id": "3-500",
+      "heading": "DESIGN BASIS",
+      "paragraphs": [
+        "As noted previously, stress and strain values for components are analytically and geometrically distilled into the two chart parameters A and B. The design is based on the following considerations.",
+        "(a) External Pressure on Cylinders. The geometric chart, Figure G,2 for components is used in conjunction with the appropriate material chart and an equation for B to obtain a design external pressure. This is based on the following considerations.",
+        "(1) The assumed critical buckling stress without any reduction for tolerance, etc., is based upon the reference in 3-900[5], assuming pressure on the ends of the vessel as well as radial to the cylinder, and assuming the ends of the cylinder are simply supported.",
+        "(2) The parameters and stresses are those at the design temperature.",
+        "(3) The tangent modulus is used for buckling stresses above the proportional limit. The point at which yield or creep governs (beyond the transition) is chosen at a relatively high value of A (i.e., t/R).",
+        "(4) The allowable tolerances are based on empirical relationships intended to limit the buckling pressure to not less than 80% of that for a perfectly uniform vessel.",
+        "(b) External Pressure on Spheres. The material charts are used together with equations to determine A from the geometry and to determine the pressure using B determined from the chart to determine a design external pressure. This procedure is based upon the following considerations.",
+        "(1) The assumed critical elastic buckling stress including a reduction for tolerance, theory versus tests, etc., is based on",
+        "(2) The parameters and stresses are those at the design temperature.",
+        "(3) The tangent modulus is used for buckling stresses above the proportional limit [see (a)(3) above].",
+        "(4) The allowable tolerances are based upon empirical relationships intended to limit (along with reduction factors based on tests) the buckling pressure to not less than 60% of that obtained using the equation in (1) above. NOTE: This gives results similar to those for the cylinder in the elastic range. However, the present material charts give more restrictive results for spheres than for cylinders in the plastic range.",
+        "(c) Axial Compression on Cylinders.3 An equation is used to determine A from the geometry. Then A is used with the material chart to determine B, the allowable compressive stress for that geometry. This is based upon the following considerations.",
+        "(1) The assumed critical elastic buckling stress including a reduction for tolerance, theory versus tests, etc., is based upon",
+        "(2) The parameters and stresses are those at the design temperature",
+        "(3) The tangent modulus is used for buckling stresses above the proportional limit [see (a)(3) above].",
+        "(4) The allowable tolerances are based upon empirical relationships intended to limit (along with reduction factors based upon tests) the critical buckling stress to not less than that obtained using the equation in (1) above for R/t values.",
+        "(d) Elevated Temperature Effects",
+        "(1) The design basis described here does not include the effects of creep on buckling. The Subpart 3 external pressure charts and tables are based on stress–strain properties that do not include time-dependent effects. At elevated temperatures, the effect of creep is to reduce buckling stress depending on the magnitude of load and time at load. At some temperatures for which limits are provided in the Subpart 3 charts, the material is in the creep range and buckling stresses are reduced, with the reduction increasing with time at load. The result is that for temperatures in the creep range, the actual design margins will be less than those intended by this design basis and the associated criteria for allowable stresses (see 3-600). However, the design margins may still be adequate due to conservatism of the design limits and the specific nature of creep buckling.",
+        "(2) Design limits for elevated temperature buckling and instability are given in Section III, Division 5, Subsection HB, Subpart B. Design guidance is given that may be used to address creep buckling for components designed to the limits of the Subpart 3 external pressure charts. However, if the design temperature of a component is less than the temperature limits provided in Figure 3-500.1 for a cylinder under external pressure, Figure 3-500.2 for a cylinder under axial compression, or Figure 3-500.3 for a sphere under external pressure, the design margin of the Subpart 3 charts is not reduced by creep.",
+        "(3) The temperature limits of Figures 3-500.1, 3-500.2, and 3-500.3 were obtained using the analysis method of WRC Bulletin 443, External Pressure: Effect of Initial Imperfections and Temperature Limits (see 3-900 [7]); the design limits of Section III, Division 5, Subsection HB, Subpart B; and 100,000 hr materials property data except as noted for SA-533. Limits were developed only for materials where the necessary creep properties were available."
+      ]
+    },
+    {
+      "id": "3-600",
+      "heading": "CRITERIA FOR ALLOWABLE STRESSES",
+      "paragraphs": [
+        "In establishing allowable stresses for preparing the material charts, consideration is given not only to the available mechanical property data but also to service experience. The external pressure charts are based on short-term tensile properties and may not adequately account for creep effects. Creep reduces the critical buckling stress. In evaluating new or modified materials, reliance is also placed on comparison with test data and service experience for similar materials. Except for the overriding consideration of experience, the allowable stresses are based on the factors and properties given below.",
+        "(a) For cylindrical shells, under external pressures, the allowable stress is the least of",
+        "(1) 33% of the assumed critical buckling stress as defined in 3-500(a)(1) but limited by allowable tolerances defined in 3-500(a)(4)",
+        "(2) 33% of the specified minimum yield strength and yield strength at temperature",
+        "(3) 66% of the average stress to produce a creep rate of 0.01% per 1,000 hr",
+        "(4) 100% of the allowable stress in tension",
+        "(b) For spheres and spherical portions of heads under external pressure, the allowable stress is the least of",
+        "(1) 25% of the assumed critical buckling stress as defined in 3-500(b)(1) but limited by allowable tolerances defined in 3-500(b)(4)",
+        "(2) 25% of the specified minimum yield strength and yield strength at temperature",
+        "(3) 50% of the average stress to produce a creep rate of 0.01% per 1,000 hr 316 SS 304 SS 9Cr–1Mo–V 21/4Cr–1Mo, AN SA-533 (1,000 hr) 90 100 50 60 70 80 Alloy 800H 316 SS 304 SS 9Cr–1Mo–V 1Cr–1/2Mo, N\u0005T 21/4Cr–1Mo, AN 21/4Cr–1Mo, N T SA-516/55 150 250 300 200 Materials Under the ASME Boiler and Pressure Vessel Code. The requestor is responsible for providing these data in the specified form. The following data are required for each temperature of interest:",
+        "(a) Elastic modulus, E , usually obtained by a dynamic test, and included in, or approved to be included in, Table TM-1, TM-2, TM-3, TM-4, or TM-5 of Section II, Part D.",
+        "(b) Minimum yield strength, σy mi n , from the Section II, Part D yield strength table, Table Y-1, or approved for inclusion in Table Y-1.",
+        "(c) A representative stress–strain, σ –ε, curve that covers the range of strain from 0 to 1.0%.",
+        "(1) Procedure. The procedure for developing the chart parameters, A and B, from the σ–ε plots is described in the following: Step 1. Select a representative σ–ε curve. For a new material, σ –ε curves are provided in accordance with the requirements of Mandatory Appendix 5. For multiple σ –ε Alloy 800H 316 SS 304 SS 9Cr–1Mo–V 1Cr–1/2Mo, N\u0005T 21/4Cr–1Mo, AN SA-516/55 150 200 250 300 σ /E . The rest of the strain at the point is plastic. The elastic strain measured by a tensile test is unreliable, so it is necessary to subtract it out from the total strain [see Figure 3-700.1, illustration (b)]. The σ –ε curve is then normalized to σ y mi n by multiplying the stress at each value of plastic strain by the ratio σ y m i n /σ y [see Figure 3-700.1, illustration (c)]. The normalized σ – ε curve is then constructed by plotting the normalized stress against total strain, where the elastic strain is obtained using the Code approved value of E , i.e., elastic strain = (normalized stress)/E c o d e , for each temperature [see Figure 3-700.1, illustration (d)]. Step 3. Obtain the tangent modulus of the normalized σ –ε plot as a function of stress. This can be done graphically by calculating the tangent (i.e., the slope of a straight line tangent to the curve) at a number of points along the σ –ε curve and plotting the tangent against the stress at the associated points. Alternatively, if the σ –ε curve is approximated in algebraic terms and represented in \bp \u00061 0.2 \u0006y \u0006y PL 0.2 \bp (%)",
+        "(b) Subtract Out Elastic Ecode \be \bp \u0006 \u0006y \u0006y min \u0006 \be = \u0007(PL) Ecode 0 0.2 \bt (%) = \be + \bp",
+        "(d) Add in Code E equation form, the tangent modulus is the first derivative of the equation, d σ /dε , and can be represented in equation form. Step 4. The values of A and B used to construct the external pressure charts can now be calculated from the following: where a different curve is plotted for each temperature.",
+        "(2) Chart Construction. The external pressure charts are plotted in log–log coordinates, with A as the abscissa and B as the ordinate. Section II, Part D, Subpart 3 limits B to one-half of σ y m i n . Thus, the curves can generally be plotted in two or three segments, which may be more convenient for curve fitting. The first segment is linear, representing the linear portion of the σ –ε curve up to the proportional limit, if there is a proportional limit. It may be argued that there is no true proportional limit, and there may not be for a few metals, but definition of a proportional limit is required in Mandatory Appendix 5 and a practical limit can generally be constructed. The second segment is nonlinear and represents the σ –ε curve beyond the proportional limit. It is not necessary that the tangent to the curve be continuous between the first and second segments. The allowable stress, B, increases with increasing A until it reaches 1/2 σ y m i n or the maximum value of A on the chart. If B is restricted by the limit, then there is a third segment of the curve that is linear and parallel to the abscissa at B = 1/2 σ y mi n. In summary,",
+        "(a) Segment 1: B = 1/2 AE up to the proportional limit (PL)",
+        "(b) Segment 2: B = 1/2 AE t from PL to 1/2 σ y m i n , where Et = dσ / dε",
+        "(c) Segment 3: B = 1/2 σ ym in Chart construction and the development of tabular values are the responsibility of the Subgroup on External Pressure of the BPV-II Committee on Materials."
+      ]
+    },
+    {
+      "id": "3-800",
+      "heading": "ALTERNATE PROCEDURE FOR DETERMINING ALLOWABLE COMPRESSIVE STRESSES",
+      "paragraphs": [
+        "Alternative rules for the design of shells under external pressure and allowable compressive stresses are given in Section VIII, Division 2, Part 4, para. 4.4. These rules are based on linear structural stability theory, modified by reduction factors to account for the effects of imperfections, boundary conditions, nonlinearity of material properties, and residual stresses. A step-by-step procedure is given to calculate the allowable compressive stress for components made of carbon and low alloy steel plate material at temperatures limited depending on the specific material. For materials other than carbon and low alloy steel, the procedure is modified by calculating the allowable compressive stress based on carbon and low alloy plate material, and then applying an adjustment that essentially replaces the elastic modulus with the tangent modulus of the material. The tangent modulus is determined based on a stress equal to the elastic compressive membrane failure stress of the component. This alternative procedure is applicable to a broader range of geometry and loading conditions than covered in the external pressure charts of Section II, Part D. Where comparisons have been made between the two methods, agreement is generally good."
+      ]
+    },
+    {
+      "id": "3-900",
+      "heading": "REFERENCES",
+      "paragraphs": [
+        "[1] Timoshenko, S. and Goodier, J. N., Theory of Elasticity, McGraw-Hill Book Co., New York, 1951 [2] Timoshenko, S. and Woinowsky-Krieger, S., Theory of Plates and Shells, McGraw-Hill Book Co., New York, 1959 [3] Timoshenko, S. and Gere, J. M., Theory of Elastic Stability, McGraw-Hill Book Co., New York, 1961 [4] Pressure Vessel and Piping Design — Collected Papers 1927–1959, ASME, New York, 1960 [5] Sturm, R. G., A Study of the Collapsing Pressure of Thin Walled Cylinders, University of Illinois Bulletin 329, 1941 [6] Sturm, R. G. and O'Brien, H. L., Computing Strength of Vessels Subjected to External Pressure, Transactions of the ASME, May 1947 [7] Griffin, D. S., External Pressure: Effect of Initial Imperfections and Temperature Limits, WRC Bulletin 443"
+      ]
+    }
+  ]
+}

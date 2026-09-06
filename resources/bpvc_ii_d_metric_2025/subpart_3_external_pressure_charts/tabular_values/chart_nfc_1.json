@@ -1,0 +1,68 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table NFC-1",
+  "title": "Tabular Values for Figure NFC-1",
+  "figure_id": "Figure NFC-1",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for",
+  "figure_pdf_page": 1283,
+  "figure_image": "figures/figure_nfc_1.png",
+  "pdf_pages": [
+    1348
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 1,
+  "point_count": 8,
+  "curves": [
+    {
+      "key": 65,
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.55
+        },
+        {
+          "a": 0.000163,
+          "b_mpa": 9.24
+        },
+        {
+          "a": 0.00025,
+          "b_mpa": 10.4
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 12.5
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 14.8
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 20.1
+        },
+        {
+          "a": 0.025,
+          "b_mpa": 30.0
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 30.0
+        }
+      ],
+      "temperature_c": 65
+    }
+  ]
+}

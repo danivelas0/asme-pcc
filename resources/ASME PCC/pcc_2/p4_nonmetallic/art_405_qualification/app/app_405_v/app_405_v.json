@@ -1,0 +1,291 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 4 - NONMETALLIC AND BONDED REPAIRS",
+  "chapter_kind": "appendix",
+  "chapter_id": "405-V",
+  "chapter_title": "Measurement of Performance Test Data",
+  "parent_article": "405",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    286,
+    287
+  ],
+  "outline_pages": [
+    286,
+    287
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 51,
+    "figures": 0,
+    "tables": 0,
+    "equations": 4
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 286,
+      "number": "405-V",
+      "level": 1,
+      "text": "Mandatory Appendix 405-V Measurement of Performance Test Data"
+    },
+    {
+      "type": "section_header",
+      "page": 286,
+      "text": "405-V-1 INTRODUCTION"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(a) This Appendix defines the test methods for determining the long-term strength, slt , of the Repair System (used in para. 401-3.4.5 ) by using one of the test methods provided in section 405-V-2."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(1) The 1 000-h data service factor shall be usedif the product is qualified to the testing in para. 405-V-2.1."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(2) The design-life data service factor shall be used if the product is qualified to para. 405-V-2.1, para. 405-V-2.2, or para. 405-V-2.3 ."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(3) If the long-term strengthis determined according to para. 405-V-2.3 , then 1 000-h survival tests shall also be performed, as defined in para. 405-V-2.1."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(4) The long-term strength, slt , may be determined directly from the analysis of the test data measured in either para. 405-V-2.2 or para. 405-V-2.3."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(5) For testing performed according to para. 405-V-2.1, an initial estimate of the long-term strength is required, and the testing shall validate that initial estimate."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(b) The service factors for repair laminates listed in Table 401-3.4.5-1 shall be determined from the testing completed in section 405-V-2."
+    },
+    {
+      "type": "section_header",
+      "page": 286,
+      "text": "405-V-2 METHODS"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(a) The test method alternatives may be one of the following:"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(1) survival testing where the Repair System is subjected to a period of sustained load for 1 000 h for measurement of the long-term strength"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(2) regression testing based on a series of tests on the Repair System over different time periods and extrapolation to design life for measurement of the long-term strength"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(3) coupon testing based on regression testing of representative coupons followed by confirmation of long-term coupon test results with survival testing for measurement of the long-term strain"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(b) All tests shall be carried out at the maximum temperature at which the Repair System is to be used in service."
+    },
+    {
+      "type": "section_header",
+      "page": 286,
+      "text": "405-V-2.1 Survival Testing"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(a) Pipe sections of minimum diameter 100 mm (4 in.), minimum D / t ratio of 20, and minimum length of 2.5 pipe diameters shall be used and the Repair System applied to the entire length of the pipe sample."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(b) A value of internal pressure shall be applied to reach the required long-term strength, slt , as defined by eq. (V-1) or eq. (V-2) and sustained for 1 000 h."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(c) If any deterioration of the repair laminate in the form of cracking, delamination, or leaking occurs, the Repair System shall have failed the test."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(d) Three identical tests shall be performed, and Repair System qualification is only possible if all three tests survive."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(e) The lower confidence long-term stress is calculated using"
+    },
+    {
+      "type": "equation",
+      "page": 286,
+      "text": "= + s P DE 2( E t E t ) lt c c s s test test (V-1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(f) If yielding of the substrate pipe does occur, then the lower confidence long-term stress, slt , is calculated using"
+    },
+    {
+      "type": "equation",
+      "page": 286,
+      "text": "i k jjj y { zz = z s t P D s t 1 2 lt a s test test (V-2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(g) Further guidance on survival pressure testing procedures may be obtained from test method ASTM D1598."
+    },
+    {
+      "type": "section_header",
+      "page": 286,
+      "text": "405-V-2.2 Regression Testing"
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(a) Pipe spools of minimum diameter 100 mm (4 in.) and minimum thickness of 3 mm (0.12 in.) shall be used and the Repair System applied."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(b) A series of test specimens shall be subject to sustained pressures of different values."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(c) The time at which the repair laminate shows signs of deterioration defined as cracking, delamination, or leaking shall be recorded."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(d) The results shall be plotted (log/log) and the required pressure determined by a regression analysis using the 95% lower confidence limit and extrapolation to design life."
+    },
+    {
+      "type": "paragraph",
+      "page": 286,
+      "text": "(e) The conversion from pressure to stress within the repair laminate for each data point shall be according to"
+    },
+    {
+      "type": "equation",
+      "page": 287,
+      "text": "= + s P DE 2( E t E t ) c c s s test min (V-3)"
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(f) If yielding of the substrate does occur, then the 95% lower confidence long-term stress, slt , is calculated using"
+    },
+    {
+      "type": "equation",
+      "page": 287,
+      "text": "i k jjjjj y { zzzzz s = t P D s t 1 2 lt f a s repair (V-4)"
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(g) At least 18 results are required in order to carry out the regression analysis. Test method ASTM D2992 provides further guidance on the long-term testing of composite materials, and the test methods in ISO 14692 provide guidance on the analysis of the data required to calculate slt ."
+    },
+    {
+      "type": "section_header",
+      "page": 287,
+      "text": "405-V-2.3 Representative Coupon Testing"
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(a) Representative coupons of the repair laminate shall be made up and tested in a comparable manner to the actual Repair System laminate."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(1) \"Representative\" implies the same laminate constituents, volume fraction, and fiber orientation."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(2) \"Comparable loading\" implies the coupons shall beloaded identically as the in-service repair laminate (e.g., uniaxial tension or biaxial tension)."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(b) At least 18 coupons shall be tested under constant load to failure [data points in terms of number and length of time of testing according to test method ASTM D2990 and test method ASTM D2992 (Procedure B), with the statistical analysis of data according to the test methods provided in ISO 14692]."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(c) Output of these coupon tests is the regression gradient in terms of log (either stress or strain) against log (time)."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(d) In addition to the representative coupon testing, the survival tests outlined in para. 405-V-2.1 shall be successfully completed."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(e) To determine the long-term failure stress or strain of the Repair System, three medium-term tests pursuant to para. 405-V-2.1 shall be completed."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(1) In these tests, the pressure is fixed, and the time to failure shall be recorded."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(2) A test pressure should be selected so that failure occurs after about 1 000 h."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(f) The lower confidence limit (in terms of time) for these five survival tests shall be calculated according to the mean failure time minus two standard deviations."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(g) The long-term design strength (or strain) of the Repair System shall be the extrapolation of the lower confidence limit to the design lifetime using the measured regression gradient from the coupon tests."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(h) Further guidance on survival pressure testing procedures may be obtained from test method ASTM D1598."
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "(i) Further guidance on long-term testing and data interpretation may be obtained from test method ISO 14692."
+    },
+    {
+      "type": "section_header",
+      "page": 287,
+      "text": "405-V-3 REPORT"
+    },
+    {
+      "type": "paragraph",
+      "page": 287,
+      "text": "A report shall be prepared giving the test conditions, details of the Repair System, individual data points, and derived performance design data."
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S303.7-1",
+ "title": "Example 3: Operating Case 1: Displacement Stress Range [Eq. (1b) Allowable SA = 364 MPa (52.7 ksi): Passes]",
+ "pdf_pages": [
+  558,
+  558
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "global_axis_forces_and_moments_fx_n_lb_signed",
+   "header": "Global Axis Forces and Moments [Note (1)] Fx, N (lb) (Signed) [Notes (2), (3)]"
+  },
+  {
+   "key": "my_n_m_ft_lb_unsigned",
+   "header": "My, N·m (ft-lb) (Unsigned) [Note (2)]"
+  },
+  {
+   "key": "eq_17_se_mpa_ksi",
+   "header": "Eq. (17), SE, MPa (ksi) [Note (3)]"
+  }
+ ],
+ "row_count": 18,
+ "notes": [
+  "GENERAL NOTE: The stress due to sustained load used in determining the eq. (1b) allowable displacement stress range, SA, for nodes 20 and 320 is 28.4 MPa (4.12 ksi).",
+  "(1) Force ranges, moment ranges, and displacement stress ranges are averaged from commercial programs’ results, are obtained by analyzing the piping system in both U.S. Customary and SI units, and are directly affected by the stiffness chosen for valves, flanges, other relatively stiff components, and branch connections.",
+  "(2) Each force range and moment range is signed based on its direction relative to the selected coordinate system’s positive direction.",
+  "(3) In accordance with para. 319.4.4, no operating pressure force range is included in the force ranges and displacement stress ranges listed above."
+ ],
+ "rows": [
+  {
+   "node": "10 anchor",
+   "global_axis_forces_and_moments_fx_n_lb_signed": 0,
+   "my_n_m_ft_lb_unsigned": "180 000 (132,000)",
+   "eq_17_se_mpa_ksi": "68.0 (9.9)"
+  },
+  {
+   "node": "20 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": 0,
+   "my_n_m_ft_lb_unsigned": "180 000 (132,000)",
+   "eq_17_se_mpa_ksi": "224 (32.4)"
+  },
+  {
+   "node": "30 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "110 (15.7)"
+  },
+  {
+   "node": "40 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "110 (15.7)"
+  },
+  {
+   "node": "110 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "120 meter",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "125 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "130 meter",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "140 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "310 anchor",
+   "global_axis_forces_and_moments_fx_n_lb_signed": 0,
+   "my_n_m_ft_lb_unsigned": "180 000 (132,000)",
+   "eq_17_se_mpa_ksi": "68.0 (9.9)"
+  },
+  {
+   "node": "320 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": 0,
+   "my_n_m_ft_lb_unsigned": "180 000 (132,000)",
+   "eq_17_se_mpa_ksi": "224 (32.4)"
+  },
+  {
+   "node": "330 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "110 (15.7)"
+  },
+  {
+   "node": "340 tee",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "110 (15.7)"
+  },
+  {
+   "node": "210 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "220 meter",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "225 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "+94 000 (+21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "230 meter",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  },
+  {
+   "node": "240 Y",
+   "global_axis_forces_and_moments_fx_n_lb_signed": "−94 000 (−21,000)",
+   "my_n_m_ft_lb_unsigned": "52 800 (38,800)",
+   "eq_17_se_mpa_ksi": "35.2 (5.1)"
+  }
+ ]
+}

@@ -1,0 +1,361 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "R",
+ "title": "Use of Alternative Ultrasonic Acceptance Criteria",
+ "document": "Appendix R prose",
+ "pdf_pages": [
+  543,
+  545
+ ],
+ "section_count": 10,
+ "paragraph_count": 44,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "R300",
+   "heading": "GENERAL",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) This Appendix provides alternative fracturemechanics-based acceptance criteria for ultrasonic examination that may be used for Code piping in lieu of those described in para. 344.6."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The acceptance criteria within this Appendix are applicable to Tw having a thickness equal to or greater than 25 mm (1.0 in.). The acceptance criteria stated in para. 344.6.2 shall be used for all thicknesses less than 25 mm (1.0 in.)."
+    }
+   ]
+  },
+  {
+   "id": "R301",
+   "heading": "SCOPE",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The examination shall be conducted using automated or semiautomated techniques utilizing computer-based data acquisition."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The examination shall be performed in accordance with a written procedure approved by UT (ultrasonic testing) Level III personnel [see para. R303(a)] and conforming to the requirements of ASME BPVC, Section V, Article 4."
+    }
+   ]
+  },
+  {
+   "id": "R302",
+   "heading": "EQUIPMENT",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A mechanical guided scanner capable of maintaining a fixed and consistent search unit position relative to the weld centerline shall be used."
+    }
+   ]
+  },
+  {
+   "id": "R303",
+   "heading": "PERSONNEL",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Personnel performing nondestructive examination to the requirements of this Appendix shall be qualified and certified in the ultrasonic testing method in accordance with a procedure as described in ASME BPVC, Section V, Article 1, T-120(e) or T-120(f)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Setup and scanning of welds shall be performed by personnel certified as UT Level II or III (or by Level I personnel under the direct supervision of Level II or Level III personnel)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 1,
+     "text": "(c) Interpretation and evaluation of data shall be performed by UT Level II or III personnel."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(d)",
+     "indent": 1,
+     "text": "(d) Personnel demonstration requirements shall be as stated in ASME BPVC, Section V, Article 4, Mandatory Appendix VIII."
+    }
+   ]
+  },
+  {
+   "id": "R304",
+   "heading": "EXAMINATION",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) The initial straight beam scan for reflectors that could interfere with the angle beam examination shall be performed (1) manually, (2) as part of a previous manufacturing process, or (3) during the weld examination, provided detection of these reflectors is included in the demonstration."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) The examination area shall include the volume of the weld, plus the lesser of 25 mm (1.0 in.) or Tw of adjacent base metal on each side of the weld. Alternatively, the examination volume may be reduced to include the actual heat-affected zone (HAZ) plus 6.4 mm (0.25 in.) of base material beyond the heat-affected zone on each side of the weld, provided the extent of the weld HAZ is measured and documented."
+    }
+   ]
+  },
+  {
+   "id": "R305",
+   "heading": "DATA RECORDING AND CAPTURE",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Data shall be recorded in the unprocessed form as specified in ASME BPVC, Section V, Article 4, V-471.6. The data record shall include the complete examination area as specified in para. R304(b)."
+    }
+   ]
+  },
+  {
+   "id": "R306",
+   "heading": "DATA ANALYSIS",
+   "level": 1,
+   "page": 543,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Reflectors exceeding the limits of (1) or (2) shall be investigated to determine whether the indication originates from a flaw or is a geometric indication as described in (b)."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) For amplitude-based techniques, the location, amplitude, and extent of all reflectors that produce a response greater than 20% of the reference level shall be evaluated."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) For non-amplitude-based techniques, the location and extent of all images that have an indicated length greater than 4.0 mm (0.16 in.) shall be investigated."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Ultrasonic indications of geometric and metallurgical origin shall be classified as specified in ASME BPVC, Section V, Article 4, T-481. Alternatively, other techniques or nondestructive examination methods may be used to classify an indication as geometric (e.g., alternative beam angles, radiography). The method employed is for information only to classify the indication as geometric, and the Code requirements for examination techniques are only required to the extent that they are applicable."
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Figure R307-1",
+   "level": 2,
+   "page": 544,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 24,
+     "text": "lF"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 23,
+     "text": "SF > 0.5h"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(c)",
+     "indent": 21,
+     "text": "(c) Subsurface Flaw"
+    }
+   ]
+  },
+  {
+   "id": "R307",
+   "heading": "FLAW EVALUATION",
+   "level": 1,
+   "page": 544,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": "(a)",
+     "indent": 1,
+     "text": "(a) Dimensions. The dimensions of the flaw or flaws shall be determined by the rectangle that fully contains the area of the flaw or flaws. Refer to Figure R307-1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) The length, lF, of the flaw shall be drawn parallel to the inside pressure-containing surface of the component."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) The height, hF, of the flaw shall be drawn normal to the inside pressure-containing surface of the component."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) The flaw shall be characterized as a surface or subsurface flaw, as shown in Figure R307-1."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(4)",
+     "indent": 2,
+     "text": "(4) A subsurface flaw shall be considered as a surface flaw if the separation (SF in Figure R307-1) of the flaw from the nearest surface of the component is equal to or less than half the through-wall dimension [hF in Figure R307-1, illustration (b)] of the subsurface flaw."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(b)",
+     "indent": 1,
+     "text": "(b) Multiple Flaws"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "hF"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "F"
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(1)",
+     "indent": 2,
+     "text": "(1) Discontinuous flaws that are oriented primarily in parallel planes shall be considered to lie in a single plane if the distance between the adjacent planes is equal to or less than 12.7 mm (0.50 in.) or"
+    },
+    {
+     "kind": "equation",
+     "text": "− 0.5 w, whichever is less. T",
+     "indent": 14
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(2)",
+     "indent": 2,
+     "text": "(2) If the space between two flaws aligned along the axis of weld is less than the height of the flaw of greater height, the two flaws shall be considered a single flaw."
+    },
+    {
+     "kind": "paragraph",
+     "marker": "(3)",
+     "indent": 2,
+     "text": "(3) If the space between two flaws aligned in the through-thickness dimension is less than the height of the flaw of greater height, the two flaws shall be considered a single flaw."
+    }
+   ]
+  },
+  {
+   "id": "R308",
+   "heading": "FLAW ACCEPTANCE CRITERIA",
+   "level": 1,
+   "page": 544,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Flaws shall be evaluated using the applicable criteria of Table R308-1 or Table R308-2. Regardless of flaw height or aspect ratio, flaw length shall not exceed T"
+    },
+    {
+     "kind": "equation",
+     "text": "− 4 w.",
+     "indent": 20
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "GENERAL NOTES: (a) Aspect ratio (hF/lF) used may be determined by rounding the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "calculated hF/lF down to the nearest 0.05 increment value"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "within the column, or by linear interpolation. (b) For intermediate thickness Tw [thicknesses greater than 65 mm"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "(2.5 in.) and less than 100 mm (3.9 in.)], linear interpolation is"
+    },
+    {
+     "kind": "equation",
+     "text": "/ − permitted to obtain h F T w values. Otherwise, the lower values",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "shall be used. GENERAL NOTES: (a) Aspect ratio (hF/lF) used may be determined by rounding the"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "calculated hF/lF down to the nearest 0.10 increment value"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "within the column, or by linear interpolation. (b) For intermediate thickness Tw [thicknesses greater than 65 mm"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "(2.5 in.) and less than 100 mm (3.9 in.)], linear interpolation is"
+    },
+    {
+     "kind": "equation",
+     "text": "/ − permitted to obtain h F T w values. Otherwise, the lower values",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 2,
+     "text": "shall be used."
+    }
+   ]
+  }
+ ]
+}

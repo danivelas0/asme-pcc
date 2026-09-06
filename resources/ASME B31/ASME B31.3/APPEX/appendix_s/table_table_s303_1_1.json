@@ -1,0 +1,126 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S303.1-1",
+ "title": "Example 3: Pressure–Temperature Combinations",
+ "pdf_pages": [
+  555,
+  555
+ ],
+ "columns": [
+  {
+   "key": "condition",
+   "header": "Condition"
+  },
+  {
+   "key": "pressure",
+   "header": "Pressure"
+  },
+  {
+   "key": "header_s_temperature",
+   "header": "Header(s) Temperature"
+  },
+  {
+   "key": "west_pressure",
+   "header": "West Pressure"
+  },
+  {
+   "key": "branch_temperature",
+   "header": "Branch Temperature"
+  },
+  {
+   "key": "pressure_2",
+   "header": "Pressure"
+  },
+  {
+   "key": "east_branch_temperature",
+   "header": "East Branch Temperature"
+  }
+ ],
+ "row_count": 8,
+ "notes": [
+  "GENERAL NOTE: For computer-based temperature and pressure data input, consider the West Branch temperature and pressure to be in effect from nodes 30 through 330 as listed in Table S303.3-1. Likewise, consider the East Branch temperature and pressure to be in effect from nodes 40 through 340 as listed in Table S303.3-1; see para. S303.3.",
+  "(1) East Branch is at ambient (as-installed) conditions.",
+  "(2) West Branch is at ambient (as-installed) conditions."
+ ],
+ "rows": [
+  {
+   "condition": "Design",
+   "pressure": "2 069 kPa",
+   "header_s_temperature": "149°C",
+   "west_pressure": "2 069 kPa",
+   "branch_temperature": "149°C",
+   "pressure_2": "2 069 kPa",
+   "east_branch_temperature": "149°C"
+  },
+  {
+   "condition": null,
+   "pressure": "(300 psi)",
+   "header_s_temperature": "(300°F)",
+   "west_pressure": "(300 psi)",
+   "branch_temperature": "(300°F)",
+   "pressure_2": "(300 psi)",
+   "east_branch_temperature": "(300°F)"
+  },
+  {
+   "condition": "Operating Case 1",
+   "pressure": "1 724 kPa",
+   "header_s_temperature": "121°C",
+   "west_pressure": "1 724 kPa",
+   "branch_temperature": "121°C",
+   "pressure_2": "0 kPa",
+   "east_branch_temperature": "4°C"
+  },
+  {
+   "condition": "[Note (1)]",
+   "pressure": "(250 psi)",
+   "header_s_temperature": "(250°F)",
+   "west_pressure": "(250 psi)",
+   "branch_temperature": "(250°F)",
+   "pressure_2": "(0 psi)",
+   "east_branch_temperature": "(40°F)"
+  },
+  {
+   "condition": "Operating Case 2",
+   "pressure": "1 724 kPa",
+   "header_s_temperature": "121°C",
+   "west_pressure": "0 kPa",
+   "branch_temperature": "4°C",
+   "pressure_2": "1 724 kPa",
+   "east_branch_temperature": "121°C"
+  },
+  {
+   "condition": "[Note (2)]",
+   "pressure": "(250 psi)",
+   "header_s_temperature": "(250°F)",
+   "west_pressure": "(0 psi)",
+   "branch_temperature": "(40°F)",
+   "pressure_2": "(250 psi)",
+   "east_branch_temperature": "(250°F)"
+  },
+  {
+   "condition": "Ambient (as-installed)",
+   "pressure": null,
+   "header_s_temperature": "4°C",
+   "west_pressure": null,
+   "branch_temperature": "4°C",
+   "pressure_2": null,
+   "east_branch_temperature": "4°C"
+  },
+  {
+   "condition": "temperature",
+   "pressure": null,
+   "header_s_temperature": "(40°F)",
+   "west_pressure": null,
+   "branch_temperature": "(40°F)",
+   "pressure_2": null,
+   "east_branch_temperature": "(40°F)"
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 6-100(c)",
+  "title": "Criteria for Establishing Allowable Stress Values for Table 6D",
+  "pdf_pages": [
+    1399,
+    1399
+  ],
+  "page_count": 1,
+  "row_count": 3,
+  "notes": [
+    "NOTE: (1) Two sets of allowable stress values may be provided in Table 6D for austenitic materials. The lower values are not specifically identified by a Note; these lower values do not exceed two-thirds of the yield strength at temperature. The higher alternate allowable stresses are identified by a Note; these higher stresses may exceed two-thirds but do not exceed 90% of the yield strength at temperature. The higher stress values should only be used where slightly higher deformation is not in itself objectionable. These higher stresses are not recom- mended for the design of flanges or for other strain-sensitive applications."
+  ],
+  "columns": [
+    "Product/Material",
+    "Room Temperature and Tensile Strength",
+    "Room Temperature and Below Yield Strength",
+    "Tensile Strength",
+    "Above Room Temperature Yield Strength"
+  ],
+  "value_axis": null,
+  "column_groups": [
+    "Room Temperature and"
+  ],
+  "rows": [
+    {
+      "product_material": "Wrought or cast, ferrous and nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3SY 0.9 SYRY [Note (1)]"
+    },
+    {
+      "product_material": "Welded pipe or tube, ferrous and",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": "2/3 × 0.85 SY",
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "2/3 × 0.85 SY 0.9 × 0.85 SYRY"
+    },
+    {
+      "product_material": "nonferrous",
+      "room_temperature_and_tensile_strength": null,
+      "room_temperature_and_below_yield_strength": null,
+      "tensile_strength": null,
+      "above_room_temperature_yield_strength": "[Note (1)]"
+    }
+  ]
+}

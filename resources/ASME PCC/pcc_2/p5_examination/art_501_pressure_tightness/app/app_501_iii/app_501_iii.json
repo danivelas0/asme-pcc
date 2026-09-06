@@ -1,0 +1,144 @@
+{
+  "code": "ASME PCC-2",
+  "edition": "2022",
+  "part": "Part 5 - EXAMINATION AND TESTING",
+  "chapter_kind": "appendix",
+  "chapter_id": "501-III",
+  "chapter_title": "Safe Distance Calculations for Pneumatic Pressure Test",
+  "parent_article": "501",
+  "appendix_class": "mandatory",
+  "source_pages": [
+    307,
+    308
+  ],
+  "outline_pages": [
+    307,
+    308
+  ],
+  "extraction": {
+    "tool": "marker 2.0.0",
+    "source": "embedded text layer (born-digital, disable_ocr)",
+    "llm": null,
+    "image_format": "PNG",
+    "boundaries": "PDF outline, refined to opening SectionHeader",
+    "date": "2026-09-05"
+  },
+  "counts": {
+    "blocks": 18,
+    "figures": 0,
+    "tables": 2,
+    "equations": 1
+  },
+  "blocks": [
+    {
+      "type": "section_header",
+      "page": 307,
+      "number": "501-III",
+      "level": 1,
+      "text": "Mandatory Appendix 501-III Safe Distance Calculations for Pneumatic Pressure Test"
+    },
+    {
+      "type": "section_header",
+      "page": 307,
+      "text": "<22> 501-III-1 BLAST WAVE DISTANCE"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "The minimum distance between all personnel and the equipment being tested shall be"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "(a) R = 30m (100 ft) for E ≤ 8 130 000 J (6,000,000 ft-lb) (b) as determined by eq. (III-1) for E > 8 130 000 J (6,000,000 ft-lb)"
+    },
+    {
+      "type": "equation",
+      "page": 307,
+      "text": "R R = (2TNT) scaled 1/3 (III-1)"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "where"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "E = stored energy as calculated by Mandatory Appendix 501-II, eq. (II-1) or eq. (II-2)"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "R = actual distance from equipment"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "R scaled = scaled consequence factor; value for eq. (III-1) shall be 20 m/kg1/3 (50 ft/lb1/3) or greater"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "TNT = energy measured in TNT, kg (lb), determined from Mandatory Appendix 501-II, eq. (II-3) or eq. (II-5)"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "If the minimum calculated distance cannot be obtained, an alternative value for R scaled may be chosen based on Table 501-III-1-1 for use in eq. (III-1). See also para. 501-6.2(g)."
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "For example, to prevent lung damage, the distance a person is from the equipment should result in an R scaled value of more than 6 m/kg1/3 (15 ft/lb1/3). Note the structural damage that can occur, which shall be considered."
+    },
+    {
+      "type": "section_header",
+      "page": 307,
+      "text": "501-III-2 FRAGMENT THROW DISTANCE"
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "(a) When fragments of vessel or piping are at risk of being created and impacting personnel, the minimum distance between all persons and the equipment being tested shall be as shown in Table 501-III-2-1 ."
+    },
+    {
+      "type": "paragraph",
+      "page": 307,
+      "text": "(b) If the distances in Table 501-III-2-1 are not achievable, the distance may be evaluated using methods available in the public domain."
+    },
+    {
+      "type": "table",
+      "page": 307,
+      "number": "501-III-1-1",
+      "caption": "Table 501-III-1-1 Alternative Values for R scaled",
+      "structure": "not_reconstructed",
+      "text": "R scaled, m/kg 1/3 R scaled, ft/lb 1/3 Biological Effect Structural Failure 20 50 … Glass windows 12 30 Eardrum rupture Concrete block panels 6 15 Lung damage Brick walls 2 5 Fatal …"
+    },
+    {
+      "type": "table",
+      "page": 308,
+      "number": "501-III-2-1",
+      "caption": "Table 501-III-2-1 Minimum Distances for Fragment Throw Considerations",
+      "structure": "reconstructed",
+      "html": "<content-ref src='/page/307/Reference/383'></content-ref><table><thead><tr><th></th><th></th><th>TNT Equivalent, kg</th><th>Minimum Distance,</th><th>m</th><th></th><th>TNT Equivalent, lb</th><th>Minimum Distance, ft</th></tr></thead><tbody><tr><td>0</td><td>to 3</td><td></td><td>50</td><td>0</td><td>to 5</td><td></td><td>140</td></tr><tr><td>3</td><td>to 5</td><td></td><td>60</td><td>5</td><td>to</td><td>10</td><td>180</td></tr><tr><td>5</td><td>to</td><td>10</td><td>70</td><td>10</td><td>to</td><td>20</td><td>220</td></tr><tr><td>10</td><td>to</td><td>15</td><td>80</td><td>20</td><td>to</td><td>30</td><td>250</td></tr><tr><td>15</td><td>to</td><td>20</td><td>90</td><td>30</td><td>to</td><td>40</td><td>280</td></tr><tr><td>20</td><td>to</td><td>25</td><td>95</td><td>40</td><td>to</td><td>50</td><td>300</td></tr><tr><td>25</td><td>to</td><td>35</td><td>105</td><td>50</td><td>to</td><td>75</td><td>340</td></tr><tr><td>35</td><td>to</td><td>50</td><td>120</td><td>75</td><td>to</td><td>100</td><td>380</td></tr><tr><td>50</td><td>to</td><td>65</td><td>130</td><td>100</td><td>to</td><td>125</td><td>400</td></tr><tr><td>65</td><td>to</td><td>80</td><td>140</td><td>125</td><td>to</td><td>150</td><td>430</td></tr><tr><td>80</td><td>to</td><td>100</td><td>150</td><td>150</td><td>to</td><td>200</td><td>470</td></tr><tr><td>100</td><td>to</td><td>120</td><td>160</td><td>200</td><td>to</td><td>250</td><td>510</td></tr><tr><td>120</td><td>to</td><td>150</td><td>170</td><td>250</td><td>to</td><td>300</td><td>540</td></tr><tr><td>150</td><td>to</td><td>200</td><td>190</td><td>300</td><td>to</td><td>400</td><td>590</td></tr><tr><td>200</td><td>to</td><td>250</td><td>205</td><td>400</td><td>to</td><td>500</td><td>640</td></tr><tr><td>250</td><td>to</td><td>300</td><td>215</td><td>500</td><td>to</td><td>600</td><td>680</td></tr><tr><td>300</td><td>to</td><td>350</td><td>225</td><td>600</td><td>to</td><td>700</td><td>710</td></tr><tr><td>350</td><td>to</td><td>400</td><td>240</td><td>700</td><td>to</td><td>800</td><td>750</td></tr><tr><td>400</td><td>to</td><td>450</td><td>245</td><td>800</td><td>to</td><td>900</td><td>780</td></tr><tr><td>450</td><td>to</td><td>500</td><td>255</td><td>900</td><td>to</td><td>1,000</td><td>800</td></tr><tr><td>500</td><td>to</td><td>600</td><td>270</td><td></td><td>1,000</td><td>to 1,200</td><td>850</td></tr><tr><td>600</td><td>to</td><td>700</td><td>285</td><td></td><td>1,200</td><td>to 1,400</td><td>940</td></tr><tr><td>700</td><td>to</td><td>800</td><td>300</td><td></td><td>1,400</td><td>to 1,800</td><td>980</td></tr><tr><td>800</td><td>to</td><td>900</td><td>310</td><td></td><td>1,800</td><td>to 2,000</td><td>1,010</td></tr><tr><td>900</td><td>to</td><td>1 100</td><td>330</td><td></td><td>2,000</td><td>to 2,500</td><td>1,090</td></tr><tr><td>1</td><td>100</td><td>to 1 300</td><td>350</td><td></td><td>2,500</td><td>to 3,000</td><td>1,160</td></tr><tr><td>1</td><td>300</td><td>to 1 500</td><td>365</td><td></td><td>3,000</td><td>to 4,000</td><td>1,270</td></tr><tr><td>1</td><td>500</td><td>to 1 900</td><td>395</td><td></td><td>4,000</td><td>to 5,000</td><td>1,370</td></tr><tr><td>1</td><td>900</td><td>to 2 300</td><td>420</td><td></td><td>5,000</td><td>to 6,000</td><td>1,460</td></tr><tr><td>2</td><td>300</td><td>to 2 800</td><td>450</td><td></td><td>6,000</td><td>to 7,000</td><td>1,540</td></tr><tr><td>2</td><td>800</td><td>to 3 300</td><td>475</td><td></td><td>7,000</td><td>to 8,000</td><td>1,600</td></tr><tr><td>3</td><td>300</td><td>to 3 800</td><td>500</td><td></td><td>8,000</td><td>to 9,000</td><td>1,670</td></tr><tr><td>3</td><td>800</td><td>to 4 400</td><td>525</td><td></td><td>9,000</td><td>to 10,000</td><td>1,730</td></tr><tr><td>4</td><td>400</td><td>to 5 000</td><td>530</td><td></td><td>10,000</td><td>to 12,000</td><td>1,750</td></tr><tr><td>5</td><td>000</td><td>to 5 500</td><td>535</td><td></td><td>12,000</td><td>to 14,000</td><td>1,770</td></tr><tr><td>5</td><td>500</td><td>to 6 500</td><td>545</td><td></td><td>14,000</td><td>to 16,000</td><td>1,800</td></tr><tr><td>6</td><td>500</td><td>to 7 500</td><td>570</td><td></td><td>16,000</td><td>to 18,000</td><td>1,880</td></tr><tr><td>7</td><td>500</td><td>to 8 500</td><td>590</td><td></td><td>18,000</td><td>to 20,000</td><td>1,950</td></tr><tr><td>8</td><td>500</td><td>to 10 000</td><td>605</td><td></td><td>20,000</td><td>to 25,000</td><td>2,000</td></tr></tbody></table>",
+      "text": "TNT Equivalent, kg Minimum Distance, m TNT Equivalent, lb Minimum Distance, ft 0 to 3 50 0 to 5 140 3 to 5 60 5 to 10 180 5 to 10 70 10 to 20 220 10 to 15 80 20 to 30 250 15 to 20 90 30 to 40 280 20 to 25 95 40 to 50 300 25 to 35 105 50 to 75 340 35 to 50 120 75 to 100 380 50 to 65 130 100 to 125 400 65 to 80 140 125 to 150 430 80 to 100 150 150 to 200 470 100 to 120 160 200 to 250 510 120 to 150 170 250 to 300 540 150 to 200 190 300 to 400 590 200 to 250 205 400 to 500 640 250 to 300 215 500 to 600 680 300 to 350 225 600 to 700 710 350 to 400 240 700 to 800 750 400 to 450 245 800 to 900 780 450 to 500 255 900 to 1,000 800 500 to 600 270 1,000 to 1,200 850 600 to 700 285 1,200 to 1,400 940 700 to 800 300 1,400 to 1,800 980 800 to 900 310 1,800 to 2,000 1,010 900 to 1 100 330 2,000 to 2,500 1,090 1 100 to 1 300 350 2,500 to 3,000 1,160 1 300 to 1 500 365 3,000 to 4,000 1,270 1 500 to 1 900 395 4,000 to 5,000 1,370 1 900 to 2 300 420 5,000 to 6,000 1,460 2 300 to 2 800 450 6,000 to 7,000 1,540 2 800 to 3 300 475 7,000 to 8,000 1,600 3 300 to 3 800 500 8,000 to 9,000 1,670 3 800 to 4 400 525 9,000 to 10,000 1,730 4 400 to 5 000 530 10,000 to 12,000 1,750 5 000 to 5 500 535 12,000 to 14,000 1,770 5 500 to 6 500 545 14,000 to 16,000 1,800 6 500 to 7 500 570 16,000 to 18,000 1,880 7 500 to 8 500 590 18,000 to 20,000 1,950 8 500 to 10 000 605 20,000 to 25,000 2,000",
+      "verification": {
+        "cells_checked": 295,
+        "cell_traceability": 1.0,
+        "unsourced_words": 0,
+        "unsourced_examples": []
+      }
+    },
+    {
+      "type": "paragraph",
+      "page": 308,
+      "text": "GENERAL NOTE: Based on American Table of Distances published by the Institute of Makers of Explosives. Lengths are for inhabited buildings, unbarricaded."
+    }
+  ],
+  "verification_summary": {
+    "tables_verified": 1,
+    "lowest_cell_traceability": 1.0,
+    "total_unsourced_words": 0
+  }
+}

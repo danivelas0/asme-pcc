@@ -1,0 +1,41 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "table_id": "Table 2-100(c)",
+  "title": "Criteria for Establishing Allowable Stress or Design Stress Intensity Values for Table 4",
+  "pdf_pages": [
+    1380,
+    1380
+  ],
+  "page_count": 1,
+  "row_count": 2,
+  "notes": [
+    "NOTE: (1) For materials whose strength has been enhanced by heat treatment or by strain hardening, the criteria shown shall govern unless the values are lower than for material whose strength is not enhanced by heat treatment or strain hard- ening, in which case the values for the material whose strength has not been enhanced by heat treatment or strain hardening shall be used."
+  ],
+  "columns": [
+    "Product/Material",
+    "Room Temperature and Below Tensile Strength Yield Strength",
+    "Above Room Temperature Tensile Strength Yield Strength"
+  ],
+  "value_axis": null,
+  "column_groups": [],
+  "rows": [
+    {
+      "product_material": "ferrous and nonferrous",
+      "room_temperature_and_below_tensile_strength_yield_strength": "1/4ST 2/3SY",
+      "above_room_temperature_tensile_strength_yield_strength": "1:1 4 STRT 2/3 SYRY",
+      "material_subgroup": "Bolting, with strength not enhanced by heat treatment or strain hardening,"
+    },
+    {
+      "product_material": "ferrous and nonferrous [Note (1)]",
+      "room_temperature_and_below_tensile_strength_yield_strength": "NA 1/3SY",
+      "above_room_temperature_tensile_strength_yield_strength": "NA 1/3SYRY",
+      "material_subgroup": "Bolting, with strength enhanced by heat treatment or strain hardening,"
+    }
+  ]
+}

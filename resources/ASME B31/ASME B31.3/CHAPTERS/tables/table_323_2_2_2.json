@@ -1,0 +1,656 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "III",
+ "table_id": "Table 323.2.2-2",
+ "title": "Tabular Values for Minimum Temperatures Without Impact Testing for Carbon Steel Materials",
+ "pdf_pages": [
+  88,
+  88
+ ],
+ "columns": [
+  {
+   "key": "nominal_thickness_t_mm",
+   "header": "mm",
+   "banners": [
+    "Nominal Thickness, T [Note (1)]"
+   ]
+  },
+  {
+   "key": "nominal_thickness_t_in",
+   "header": "in.",
+   "banners": [
+    "Nominal Thickness, T [Note (1)]"
+   ]
+  },
+  {
+   "key": "curve_a_deg_c",
+   "header": "°C",
+   "banners": [
+    "Curve A [Note (2)]"
+   ]
+  },
+  {
+   "key": "curve_a_deg_f",
+   "header": "°F",
+   "banners": [
+    "Curve A [Note (2)]"
+   ]
+  },
+  {
+   "key": "lowest_exemption_temperature_curve_b_deg_c",
+   "header": "°C",
+   "banners": [
+    "Lowest Exemption Temperature",
+    "Curve B [Note (3)]"
+   ]
+  },
+  {
+   "key": "lowest_exemption_temperature_curve_b_deg_f",
+   "header": "°F",
+   "banners": [
+    "Lowest Exemption Temperature",
+    "Curve B [Note (3)]"
+   ]
+  },
+  {
+   "key": "lowest_exemption_temperature_curve_c_deg_c",
+   "header": "°C",
+   "banners": [
+    "Lowest Exemption Temperature",
+    "Curve C [Note (3)]"
+   ]
+  },
+  {
+   "key": "lowest_exemption_temperature_curve_c_deg_f",
+   "header": "°F",
+   "banners": [
+    "Lowest Exemption Temperature",
+    "Curve C [Note (3)]"
+   ]
+  },
+  {
+   "key": "curve_d_deg_c",
+   "header": "°C",
+   "banners": [
+    "Curve D"
+   ]
+  },
+  {
+   "key": "curve_d_deg_f",
+   "header": "°F",
+   "banners": [
+    "Curve D"
+   ]
+  }
+ ],
+ "row_count": 46,
+ "notes": [
+  "GENERAL NOTE: See Figure 323.2.2-1 for curves.",
+  "(1) For blind flanges and blanks made from materials with a letter designation in the Min. Temp. column of Table A-1 (Table A-1C), T shall be 1∕4 of the total thickness, where the total thickness is the thickness of the blind flange or blank including the thickness of the facing(s), if applicable.",
+  "(2) X and L grades of API 5L PSL1, 290 and stronger grades of CSA Z245.1, and ASTM A381 materials may be used in accordance with Curve B if normalized or quenched and tempered.",
+  "(3) The following materials may be used in accordance with Curve D if normalized:",
+  "(a) ASTM A516 plate, all grades",
+  "(b) ASTM A671 pipe made from A516 plate, all grades",
+  "(c) ASTM A672 pipe made from A516 plate, all grades"
+ ],
+ "rows": [
+  {
+   "nominal_thickness_t_mm": 6.35,
+   "nominal_thickness_t_in": 0.25,
+   "curve_a_deg_c": -8,
+   "curve_a_deg_f": 18,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -48,
+   "lowest_exemption_temperature_curve_c_deg_f": -55,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 7.94,
+   "nominal_thickness_t_in": 0.312,
+   "curve_a_deg_c": -8,
+   "curve_a_deg_f": 18,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -48,
+   "lowest_exemption_temperature_curve_c_deg_f": -55,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 9.52,
+   "nominal_thickness_t_in": 0.375,
+   "curve_a_deg_c": -8,
+   "curve_a_deg_f": 18,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -48,
+   "lowest_exemption_temperature_curve_c_deg_f": -55,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 10.0,
+   "nominal_thickness_t_in": 0.394,
+   "curve_a_deg_c": -8,
+   "curve_a_deg_f": 18,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -48,
+   "lowest_exemption_temperature_curve_c_deg_f": -55,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 11.11,
+   "nominal_thickness_t_in": 0.438,
+   "curve_a_deg_c": -4,
+   "curve_a_deg_f": 25,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -40,
+   "lowest_exemption_temperature_curve_c_deg_f": -40,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 12.7,
+   "nominal_thickness_t_in": 0.5,
+   "curve_a_deg_c": 0,
+   "curve_a_deg_f": 32,
+   "lowest_exemption_temperature_curve_b_deg_c": -29,
+   "lowest_exemption_temperature_curve_b_deg_f": -20,
+   "lowest_exemption_temperature_curve_c_deg_c": -37,
+   "lowest_exemption_temperature_curve_c_deg_f": -34,
+   "curve_d_deg_c": -48,
+   "curve_d_deg_f": -55
+  },
+  {
+   "nominal_thickness_t_mm": 14.29,
+   "nominal_thickness_t_in": 0.562,
+   "curve_a_deg_c": 3,
+   "curve_a_deg_f": 37,
+   "lowest_exemption_temperature_curve_b_deg_c": -22,
+   "lowest_exemption_temperature_curve_b_deg_f": -7,
+   "lowest_exemption_temperature_curve_c_deg_c": -32,
+   "lowest_exemption_temperature_curve_c_deg_f": -26,
+   "curve_d_deg_c": -46,
+   "curve_d_deg_f": -51
+  },
+  {
+   "nominal_thickness_t_mm": 15.88,
+   "nominal_thickness_t_in": 0.625,
+   "curve_a_deg_c": 6,
+   "curve_a_deg_f": 43,
+   "lowest_exemption_temperature_curve_b_deg_c": -17,
+   "lowest_exemption_temperature_curve_b_deg_f": 2,
+   "lowest_exemption_temperature_curve_c_deg_c": -30,
+   "lowest_exemption_temperature_curve_c_deg_f": -22,
+   "curve_d_deg_c": -44,
+   "curve_d_deg_f": -48
+  },
+  {
+   "nominal_thickness_t_mm": 17.46,
+   "nominal_thickness_t_in": 0.688,
+   "curve_a_deg_c": 9,
+   "curve_a_deg_f": 48,
+   "lowest_exemption_temperature_curve_b_deg_c": -13,
+   "lowest_exemption_temperature_curve_b_deg_f": 9,
+   "lowest_exemption_temperature_curve_c_deg_c": -28,
+   "lowest_exemption_temperature_curve_c_deg_f": -18,
+   "curve_d_deg_c": -43,
+   "curve_d_deg_f": -45
+  },
+  {
+   "nominal_thickness_t_mm": 19.05,
+   "nominal_thickness_t_in": 0.75,
+   "curve_a_deg_c": 12,
+   "curve_a_deg_f": 53,
+   "lowest_exemption_temperature_curve_b_deg_c": -9,
+   "lowest_exemption_temperature_curve_b_deg_f": 15,
+   "lowest_exemption_temperature_curve_c_deg_c": -26,
+   "lowest_exemption_temperature_curve_c_deg_f": -15,
+   "curve_d_deg_c": -41,
+   "curve_d_deg_f": -42
+  },
+  {
+   "nominal_thickness_t_mm": 20.64,
+   "nominal_thickness_t_in": 0.812,
+   "curve_a_deg_c": 14,
+   "curve_a_deg_f": 57,
+   "lowest_exemption_temperature_curve_b_deg_c": -7,
+   "lowest_exemption_temperature_curve_b_deg_f": 20,
+   "lowest_exemption_temperature_curve_c_deg_c": -24,
+   "lowest_exemption_temperature_curve_c_deg_f": -12,
+   "curve_d_deg_c": -39,
+   "curve_d_deg_f": -38
+  },
+  {
+   "nominal_thickness_t_mm": 22.22,
+   "nominal_thickness_t_in": 0.875,
+   "curve_a_deg_c": 16,
+   "curve_a_deg_f": 61,
+   "lowest_exemption_temperature_curve_b_deg_c": -4,
+   "lowest_exemption_temperature_curve_b_deg_f": 25,
+   "lowest_exemption_temperature_curve_c_deg_c": -23,
+   "lowest_exemption_temperature_curve_c_deg_f": -9,
+   "curve_d_deg_c": -38,
+   "curve_d_deg_f": -36
+  },
+  {
+   "nominal_thickness_t_mm": 23.81,
+   "nominal_thickness_t_in": 0.938,
+   "curve_a_deg_c": 18,
+   "curve_a_deg_f": 65,
+   "lowest_exemption_temperature_curve_b_deg_c": -2,
+   "lowest_exemption_temperature_curve_b_deg_f": 29,
+   "lowest_exemption_temperature_curve_c_deg_c": -21,
+   "lowest_exemption_temperature_curve_c_deg_f": -6,
+   "curve_d_deg_c": -36,
+   "curve_d_deg_f": -33
+  },
+  {
+   "nominal_thickness_t_mm": 25.4,
+   "nominal_thickness_t_in": 1.0,
+   "curve_a_deg_c": 20,
+   "curve_a_deg_f": 68,
+   "lowest_exemption_temperature_curve_b_deg_c": 1,
+   "lowest_exemption_temperature_curve_b_deg_f": 33,
+   "lowest_exemption_temperature_curve_c_deg_c": -19,
+   "lowest_exemption_temperature_curve_c_deg_f": -3,
+   "curve_d_deg_c": -34,
+   "curve_d_deg_f": -30
+  },
+  {
+   "nominal_thickness_t_mm": 26.99,
+   "nominal_thickness_t_in": 1.062,
+   "curve_a_deg_c": 22,
+   "curve_a_deg_f": 72,
+   "lowest_exemption_temperature_curve_b_deg_c": 2,
+   "lowest_exemption_temperature_curve_b_deg_f": 36,
+   "lowest_exemption_temperature_curve_c_deg_c": -18,
+   "lowest_exemption_temperature_curve_c_deg_f": -1,
+   "curve_d_deg_c": -33,
+   "curve_d_deg_f": -28
+  },
+  {
+   "nominal_thickness_t_mm": 28.58,
+   "nominal_thickness_t_in": 1.125,
+   "curve_a_deg_c": 24,
+   "curve_a_deg_f": 75,
+   "lowest_exemption_temperature_curve_b_deg_c": 4,
+   "lowest_exemption_temperature_curve_b_deg_f": 39,
+   "lowest_exemption_temperature_curve_c_deg_c": -17,
+   "lowest_exemption_temperature_curve_c_deg_f": 2,
+   "curve_d_deg_c": -32,
+   "curve_d_deg_f": -26
+  },
+  {
+   "nominal_thickness_t_mm": 30.16,
+   "nominal_thickness_t_in": 1.188,
+   "curve_a_deg_c": 25,
+   "curve_a_deg_f": 77,
+   "lowest_exemption_temperature_curve_b_deg_c": 6,
+   "lowest_exemption_temperature_curve_b_deg_f": 42,
+   "lowest_exemption_temperature_curve_c_deg_c": -16,
+   "lowest_exemption_temperature_curve_c_deg_f": 4,
+   "curve_d_deg_c": -31,
+   "curve_d_deg_f": -23
+  },
+  {
+   "nominal_thickness_t_mm": 31.75,
+   "nominal_thickness_t_in": 1.25,
+   "curve_a_deg_c": 27,
+   "curve_a_deg_f": 80,
+   "lowest_exemption_temperature_curve_b_deg_c": 7,
+   "lowest_exemption_temperature_curve_b_deg_f": 44,
+   "lowest_exemption_temperature_curve_c_deg_c": -14,
+   "lowest_exemption_temperature_curve_c_deg_f": 6,
+   "curve_d_deg_c": -29,
+   "curve_d_deg_f": -21
+  },
+  {
+   "nominal_thickness_t_mm": 33.34,
+   "nominal_thickness_t_in": 1.312,
+   "curve_a_deg_c": 28,
+   "curve_a_deg_f": 82,
+   "lowest_exemption_temperature_curve_b_deg_c": 8,
+   "lowest_exemption_temperature_curve_b_deg_f": 46,
+   "lowest_exemption_temperature_curve_c_deg_c": -13,
+   "lowest_exemption_temperature_curve_c_deg_f": 8,
+   "curve_d_deg_c": -28,
+   "curve_d_deg_f": -19
+  },
+  {
+   "nominal_thickness_t_mm": 34.92,
+   "nominal_thickness_t_in": 1.375,
+   "curve_a_deg_c": 29,
+   "curve_a_deg_f": 84,
+   "lowest_exemption_temperature_curve_b_deg_c": 9,
+   "lowest_exemption_temperature_curve_b_deg_f": 48,
+   "lowest_exemption_temperature_curve_c_deg_c": -12,
+   "lowest_exemption_temperature_curve_c_deg_f": 10,
+   "curve_d_deg_c": -28,
+   "curve_d_deg_f": -18
+  },
+  {
+   "nominal_thickness_t_mm": 36.51,
+   "nominal_thickness_t_in": 1.438,
+   "curve_a_deg_c": 30,
+   "curve_a_deg_f": 86,
+   "lowest_exemption_temperature_curve_b_deg_c": 9,
+   "lowest_exemption_temperature_curve_b_deg_f": 49,
+   "lowest_exemption_temperature_curve_c_deg_c": -11,
+   "lowest_exemption_temperature_curve_c_deg_f": 12,
+   "curve_d_deg_c": -27,
+   "curve_d_deg_f": -16
+  },
+  {
+   "nominal_thickness_t_mm": 38.1,
+   "nominal_thickness_t_in": 1.5,
+   "curve_a_deg_c": 31,
+   "curve_a_deg_f": 88,
+   "lowest_exemption_temperature_curve_b_deg_c": 11,
+   "lowest_exemption_temperature_curve_b_deg_f": 51,
+   "lowest_exemption_temperature_curve_c_deg_c": -10,
+   "lowest_exemption_temperature_curve_c_deg_f": 14,
+   "curve_d_deg_c": -26,
+   "curve_d_deg_f": -14
+  },
+  {
+   "nominal_thickness_t_mm": 39.69,
+   "nominal_thickness_t_in": 1.562,
+   "curve_a_deg_c": 32,
+   "curve_a_deg_f": 90,
+   "lowest_exemption_temperature_curve_b_deg_c": 12,
+   "lowest_exemption_temperature_curve_b_deg_f": 53,
+   "lowest_exemption_temperature_curve_c_deg_c": -9,
+   "lowest_exemption_temperature_curve_c_deg_f": 16,
+   "curve_d_deg_c": -25,
+   "curve_d_deg_f": -13
+  },
+  {
+   "nominal_thickness_t_mm": 41.28,
+   "nominal_thickness_t_in": 1.625,
+   "curve_a_deg_c": 33,
+   "curve_a_deg_f": 92,
+   "lowest_exemption_temperature_curve_b_deg_c": 13,
+   "lowest_exemption_temperature_curve_b_deg_f": 55,
+   "lowest_exemption_temperature_curve_c_deg_c": -8,
+   "lowest_exemption_temperature_curve_c_deg_f": 17,
+   "curve_d_deg_c": -24,
+   "curve_d_deg_f": -11
+  },
+  {
+   "nominal_thickness_t_mm": 42.86,
+   "nominal_thickness_t_in": 1.688,
+   "curve_a_deg_c": 34,
+   "curve_a_deg_f": 93,
+   "lowest_exemption_temperature_curve_b_deg_c": 14,
+   "lowest_exemption_temperature_curve_b_deg_f": 57,
+   "lowest_exemption_temperature_curve_c_deg_c": -7,
+   "lowest_exemption_temperature_curve_c_deg_f": 19,
+   "curve_d_deg_c": -23,
+   "curve_d_deg_f": -10
+  },
+  {
+   "nominal_thickness_t_mm": 44.45,
+   "nominal_thickness_t_in": 1.75,
+   "curve_a_deg_c": 34,
+   "curve_a_deg_f": 94,
+   "lowest_exemption_temperature_curve_b_deg_c": 14,
+   "lowest_exemption_temperature_curve_b_deg_f": 58,
+   "lowest_exemption_temperature_curve_c_deg_c": -7,
+   "lowest_exemption_temperature_curve_c_deg_f": 20,
+   "curve_d_deg_c": -22,
+   "curve_d_deg_f": -8
+  },
+  {
+   "nominal_thickness_t_mm": 46.04,
+   "nominal_thickness_t_in": 1.812,
+   "curve_a_deg_c": 36,
+   "curve_a_deg_f": 96,
+   "lowest_exemption_temperature_curve_b_deg_c": 15,
+   "lowest_exemption_temperature_curve_b_deg_f": 59,
+   "lowest_exemption_temperature_curve_c_deg_c": -6,
+   "lowest_exemption_temperature_curve_c_deg_f": 22,
+   "curve_d_deg_c": -22,
+   "curve_d_deg_f": -7
+  },
+  {
+   "nominal_thickness_t_mm": 47.62,
+   "nominal_thickness_t_in": 1.875,
+   "curve_a_deg_c": 36,
+   "curve_a_deg_f": 97,
+   "lowest_exemption_temperature_curve_b_deg_c": 16,
+   "lowest_exemption_temperature_curve_b_deg_f": 61,
+   "lowest_exemption_temperature_curve_c_deg_c": -5,
+   "lowest_exemption_temperature_curve_c_deg_f": 23,
+   "curve_d_deg_c": -21,
+   "curve_d_deg_f": -6
+  },
+  {
+   "nominal_thickness_t_mm": 49.21,
+   "nominal_thickness_t_in": 1.938,
+   "curve_a_deg_c": 37,
+   "curve_a_deg_f": 98,
+   "lowest_exemption_temperature_curve_b_deg_c": 17,
+   "lowest_exemption_temperature_curve_b_deg_f": 62,
+   "lowest_exemption_temperature_curve_c_deg_c": -4,
+   "lowest_exemption_temperature_curve_c_deg_f": 24,
+   "curve_d_deg_c": -21,
+   "curve_d_deg_f": -5
+  },
+  {
+   "nominal_thickness_t_mm": 50.8,
+   "nominal_thickness_t_in": 2.0,
+   "curve_a_deg_c": 37,
+   "curve_a_deg_f": 99,
+   "lowest_exemption_temperature_curve_b_deg_c": 17,
+   "lowest_exemption_temperature_curve_b_deg_f": 63,
+   "lowest_exemption_temperature_curve_c_deg_c": -3,
+   "lowest_exemption_temperature_curve_c_deg_f": 26,
+   "curve_d_deg_c": -20,
+   "curve_d_deg_f": -4
+  },
+  {
+   "nominal_thickness_t_mm": 52.39,
+   "nominal_thickness_t_in": 2.062,
+   "curve_a_deg_c": 38,
+   "curve_a_deg_f": 100,
+   "lowest_exemption_temperature_curve_b_deg_c": 18,
+   "lowest_exemption_temperature_curve_b_deg_f": 64,
+   "lowest_exemption_temperature_curve_c_deg_c": -3,
+   "lowest_exemption_temperature_curve_c_deg_f": 27,
+   "curve_d_deg_c": -19,
+   "curve_d_deg_f": -3
+  },
+  {
+   "nominal_thickness_t_mm": 53.98,
+   "nominal_thickness_t_in": 2.125,
+   "curve_a_deg_c": 38,
+   "curve_a_deg_f": 101,
+   "lowest_exemption_temperature_curve_b_deg_c": 18,
+   "lowest_exemption_temperature_curve_b_deg_f": 65,
+   "lowest_exemption_temperature_curve_c_deg_c": -2,
+   "lowest_exemption_temperature_curve_c_deg_f": 28,
+   "curve_d_deg_c": -19,
+   "curve_d_deg_f": -2
+  },
+  {
+   "nominal_thickness_t_mm": 55.56,
+   "nominal_thickness_t_in": 2.188,
+   "curve_a_deg_c": 39,
+   "curve_a_deg_f": 102,
+   "lowest_exemption_temperature_curve_b_deg_c": 19,
+   "lowest_exemption_temperature_curve_b_deg_f": 66,
+   "lowest_exemption_temperature_curve_c_deg_c": -2,
+   "lowest_exemption_temperature_curve_c_deg_f": 29,
+   "curve_d_deg_c": -18,
+   "curve_d_deg_f": -1
+  },
+  {
+   "nominal_thickness_t_mm": 57.15,
+   "nominal_thickness_t_in": 2.25,
+   "curve_a_deg_c": 39,
+   "curve_a_deg_f": 102,
+   "lowest_exemption_temperature_curve_b_deg_c": 19,
+   "lowest_exemption_temperature_curve_b_deg_f": 67,
+   "lowest_exemption_temperature_curve_c_deg_c": -1,
+   "lowest_exemption_temperature_curve_c_deg_f": 30,
+   "curve_d_deg_c": -18,
+   "curve_d_deg_f": 0
+  },
+  {
+   "nominal_thickness_t_mm": 58.74,
+   "nominal_thickness_t_in": 2.312,
+   "curve_a_deg_c": 39,
+   "curve_a_deg_f": 103,
+   "lowest_exemption_temperature_curve_b_deg_c": 20,
+   "lowest_exemption_temperature_curve_b_deg_f": 68,
+   "lowest_exemption_temperature_curve_c_deg_c": -1,
+   "lowest_exemption_temperature_curve_c_deg_f": 31,
+   "curve_d_deg_c": -17,
+   "curve_d_deg_f": 1
+  },
+  {
+   "nominal_thickness_t_mm": 60.32,
+   "nominal_thickness_t_in": 2.375,
+   "curve_a_deg_c": 40,
+   "curve_a_deg_f": 104,
+   "lowest_exemption_temperature_curve_b_deg_c": 21,
+   "lowest_exemption_temperature_curve_b_deg_f": 69,
+   "lowest_exemption_temperature_curve_c_deg_c": 0,
+   "lowest_exemption_temperature_curve_c_deg_f": 32,
+   "curve_d_deg_c": -17,
+   "curve_d_deg_f": 2
+  },
+  {
+   "nominal_thickness_t_mm": 61.91,
+   "nominal_thickness_t_in": 2.438,
+   "curve_a_deg_c": 41,
+   "curve_a_deg_f": 105,
+   "lowest_exemption_temperature_curve_b_deg_c": 21,
+   "lowest_exemption_temperature_curve_b_deg_f": 70,
+   "lowest_exemption_temperature_curve_c_deg_c": 1,
+   "lowest_exemption_temperature_curve_c_deg_f": 33,
+   "curve_d_deg_c": -16,
+   "curve_d_deg_f": 3
+  },
+  {
+   "nominal_thickness_t_mm": 63.5,
+   "nominal_thickness_t_in": 2.5,
+   "curve_a_deg_c": 41,
+   "curve_a_deg_f": 105,
+   "lowest_exemption_temperature_curve_b_deg_c": 22,
+   "lowest_exemption_temperature_curve_b_deg_f": 71,
+   "lowest_exemption_temperature_curve_c_deg_c": 1,
+   "lowest_exemption_temperature_curve_c_deg_f": 34,
+   "curve_d_deg_c": -16,
+   "curve_d_deg_f": 4
+  },
+  {
+   "nominal_thickness_t_mm": 65.09,
+   "nominal_thickness_t_in": 2.562,
+   "curve_a_deg_c": 41,
+   "curve_a_deg_f": 106,
+   "lowest_exemption_temperature_curve_b_deg_c": 22,
+   "lowest_exemption_temperature_curve_b_deg_f": 71,
+   "lowest_exemption_temperature_curve_c_deg_c": 2,
+   "lowest_exemption_temperature_curve_c_deg_f": 35,
+   "curve_d_deg_c": -15,
+   "curve_d_deg_f": 5
+  },
+  {
+   "nominal_thickness_t_mm": 66.68,
+   "nominal_thickness_t_in": 2.625,
+   "curve_a_deg_c": 42,
+   "curve_a_deg_f": 107,
+   "lowest_exemption_temperature_curve_b_deg_c": 23,
+   "lowest_exemption_temperature_curve_b_deg_f": 73,
+   "lowest_exemption_temperature_curve_c_deg_c": 2,
+   "lowest_exemption_temperature_curve_c_deg_f": 36,
+   "curve_d_deg_c": -14,
+   "curve_d_deg_f": 6
+  },
+  {
+   "nominal_thickness_t_mm": 68.26,
+   "nominal_thickness_t_in": 2.688,
+   "curve_a_deg_c": 42,
+   "curve_a_deg_f": 107,
+   "lowest_exemption_temperature_curve_b_deg_c": 23,
+   "lowest_exemption_temperature_curve_b_deg_f": 73,
+   "lowest_exemption_temperature_curve_c_deg_c": 3,
+   "lowest_exemption_temperature_curve_c_deg_f": 37,
+   "curve_d_deg_c": -14,
+   "curve_d_deg_f": 7
+  },
+  {
+   "nominal_thickness_t_mm": 69.89,
+   "nominal_thickness_t_in": 2.75,
+   "curve_a_deg_c": 42,
+   "curve_a_deg_f": 108,
+   "lowest_exemption_temperature_curve_b_deg_c": 23,
+   "lowest_exemption_temperature_curve_b_deg_f": 74,
+   "lowest_exemption_temperature_curve_c_deg_c": 3,
+   "lowest_exemption_temperature_curve_c_deg_f": 38,
+   "curve_d_deg_c": -13,
+   "curve_d_deg_f": 8
+  },
+  {
+   "nominal_thickness_t_mm": 71.44,
+   "nominal_thickness_t_in": 2.812,
+   "curve_a_deg_c": 42,
+   "curve_a_deg_f": 108,
+   "lowest_exemption_temperature_curve_b_deg_c": 24,
+   "lowest_exemption_temperature_curve_b_deg_f": 75,
+   "lowest_exemption_temperature_curve_c_deg_c": 4,
+   "lowest_exemption_temperature_curve_c_deg_f": 39,
+   "curve_d_deg_c": -13,
+   "curve_d_deg_f": 8
+  },
+  {
+   "nominal_thickness_t_mm": 73.02,
+   "nominal_thickness_t_in": 2.875,
+   "curve_a_deg_c": 43,
+   "curve_a_deg_f": 109,
+   "lowest_exemption_temperature_curve_b_deg_c": 24,
+   "lowest_exemption_temperature_curve_b_deg_f": 76,
+   "lowest_exemption_temperature_curve_c_deg_c": 4,
+   "lowest_exemption_temperature_curve_c_deg_f": 40,
+   "curve_d_deg_c": -13,
+   "curve_d_deg_f": 9
+  },
+  {
+   "nominal_thickness_t_mm": 74.61,
+   "nominal_thickness_t_in": 2.938,
+   "curve_a_deg_c": 43,
+   "curve_a_deg_f": 109,
+   "lowest_exemption_temperature_curve_b_deg_c": 25,
+   "lowest_exemption_temperature_curve_b_deg_f": 77,
+   "lowest_exemption_temperature_curve_c_deg_c": 4,
+   "lowest_exemption_temperature_curve_c_deg_f": 40,
+   "curve_d_deg_c": -12,
+   "curve_d_deg_f": 10
+  },
+  {
+   "nominal_thickness_t_mm": 76.2,
+   "nominal_thickness_t_in": 3.0,
+   "curve_a_deg_c": 43,
+   "curve_a_deg_f": 110,
+   "lowest_exemption_temperature_curve_b_deg_c": 25,
+   "lowest_exemption_temperature_curve_b_deg_f": 77,
+   "lowest_exemption_temperature_curve_c_deg_c": 5,
+   "lowest_exemption_temperature_curve_c_deg_f": 41,
+   "curve_d_deg_c": -12,
+   "curve_d_deg_f": 11
+  }
+ ]
+}

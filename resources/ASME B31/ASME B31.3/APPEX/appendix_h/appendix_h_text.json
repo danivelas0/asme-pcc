@@ -1,0 +1,1565 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "H",
+ "title": "Sample Calculations for Branch Reinforcement",
+ "document": "Appendix H prose",
+ "pdf_pages": [
+  478,
+  485
+ ],
+ "section_count": 22,
+ "paragraph_count": 249,
+ "preamble": [],
+ "sections": [
+  {
+   "id": "H300",
+   "heading": "INTRODUCTION (SI UNITS)",
+   "level": 1,
+   "page": 478,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following examples are intended to illustrate the application of the rules and definitions in para. 304.3.3 for welded branch connections."
+    }
+   ]
+  },
+  {
+   "id": "H301",
+   "heading": "EXAMPLE 1",
+   "level": 1,
+   "page": 478,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A DN 200 (NPS 8) run (header) in an oil piping system has a DN 100 (NPS 4) branch at right angles (see Figure H301-1). Both pipes are Schedule 40 API 5L Grade A seamless. The design conditions are 2 068 kPa at 200°C. The fillet welds at the crotch are minimum size in accordance with para. 328.5.4. A corrosion allowance of 2.5 mm is specified. Is additional reinforcement necessary?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 478,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, Table A-1, S = 110 MPa for API 5L Grade A; from Table A-3, E = 1.0 for API 5L seamless;"
+    },
+    {
+     "kind": "equation",
+     "text": "W = 1.0. T h = (8.18)(0.875) = 7.16 mm",
+     "indent": 0
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (6.02)(0.875) = 5.27 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(7.16 − 2.5) = 11.65 mm or (2.5)(5.27 − 2.5) = 6.93 mm, whichever is less = 6.93 mm",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "d 1 = [ 114.3 − (2)(5.27 − 2.5) /(sin 90) deg ] = 108.8 mm",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "d 2 = (5.27 − 2.5) + (7.16 − 2.5) + 109/2 = 61.9 mm",
+     "indent": 3
+    },
+    {
+     "kind": "equation",
+     "text": "t h = 2.04 mm",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t b = = 1.07 mm (2)(110, 000)(1.0)(1.00) + (2)(0.4)(2 068)",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t c = (0.7)(6.02) = 4.21 mm, or 6 mm, whichever is less = 4.21 mm",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Minimum leg dimension of fillet weld"
+    },
+    {
+     "kind": "equation",
+     "text": "4.21/0.707 = 6.0 mm",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Thus, the required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (2.04)(108.8)(2 sin 90 deg) 222 mm 2 1 = − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement area in run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (108.8)(7.16 2.04 2.5) 285 mm 2 2 = − − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (2)(6.93) (5.27 1.07) 2.5 24 mm 2 3 = [ − − ] =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 2 A 4 = (2)( )(6.0) = 36 mm",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement area = 345 mm2. This is more than the 222 mm2 so that no additional reinforcement is required to sustain the internal pressure."
+    }
+   ]
+  },
+  {
+   "id": "H302",
+   "heading": "EXAMPLE 2",
+   "level": 1,
+   "page": 478,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "There is a DN 200 (NPS 8) branch at right angles to a DN 300 (NPS 12) header (see Figure H301-1). Both run and branch are of aluminum alloy Schedule 80 ASTM B241 6061-T6 seamless pipe. The connection is reinforced by a ring 350 mm O.D. (measured along the run) cut from a piece of DN 300 (NPS 12) Schedule 80 ASTM B241 6063-T6 seamless pipe and opened slightly to fit over the run pipe. Allowable stresses for welded construction apply in accordance with Appendix A, Note (33). The fillet welds have the minimum dimensions permitted in para. 328.5.4. A zero corrosion allowance is specified. What is the maximum permissible design pressure if the design temperature is −195°C?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 478,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, Table A-1, S = 55.2 MPa for Grade 6061-T6 (welded) pipe and S = 39.3 MPa for Grade 6063-T6 (welded) pad, both at −195°C. From Table"
+    },
+    {
+     "kind": "equation",
+     "text": "A-3, E = 1.0 for ASTM B241; W = 1.0.",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Leg dimensions of welds to the branch"
+    },
+    {
+     "kind": "equation",
+     "text": "− t c = lesser of 0.7 T b or 6 mm = 6 mm",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "2.37 mm"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 6.9 mm",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "219.1 mm O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 38.25 mm",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "323.8 mm O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "8.74 mm 10 mm"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 21.5 mm",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "406.4 mm O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 5.9 mm",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "219.1 mm O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "4.09 mm"
+    },
+    {
+     "kind": "equation",
+     "text": "12.7 6 0.707 or 0.707 = 8.5 mm",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "and to the reinforcing pad"
+    },
+    {
+     "kind": "equation",
+     "text": "− 0.5 T r (0.5)(17.48) = = 12.36 mm 0.707 0.707",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "T h = (17.48)(0.875) = 15.3 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (12.7)(0.875) = 11.1 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T r = (17.48)(0.875) = 15.3 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(15.3 − 0.0) = 38.25 mm",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "[This is smaller than (2.5)(11.1 − 0) + 15.3 = 43.05 mm] d 1 = 219.1 − (2)(11.1 − 0) = 197 mm",
+     "indent": 0
+    },
+    {
+     "kind": "equation",
+     "text": "d 2 = d 1 because this is greater than T b + T c + d 1 /2",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "323.8 P th = (2)(55 200)(1.0)(1.0) + (2)(0.4) P",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "219.1 P t b = (2)(55 200)(1.0)(1.0) + (2)(0.4) P",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Using the symbol"
+    },
+    {
+     "kind": "equation",
+     "text": "P q = 110,400 + 0.8 P",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "we can briefly write"
+    },
+    {
+     "kind": "equation",
+     "text": "t h = 323.8 and q t b = 219.1 q",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A 1 = 197 t h = 63 789 q",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement area in the run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A 2 = (197)(15.3 − 323.8 q − 0) = 3 014 − 63 789 q",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A 3 = (2)(38.25)(11.1 − 219.1 q − 0) = 849 − 16 761 q",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in reinforcing ring"
+    },
+    {
+     "kind": "equation",
+     "text": "A (15.3)(350 219.1)(39 300/55 200) 1 426 mm 2 4 = − =",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "A 4 = (2) 1 2 (8.5) ( ) 2 + (2) 1 2 (12.36) ( ) 2 = 225 mm 2",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement area = 5 514 − 80 550q."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "At the maximum permissible normal operating pressure, the required area and the reinforcement area are equal; thus"
+    },
+    {
+     "kind": "equation",
+     "text": "63 789 q = 5 514 − 80 550 q 144 339 q = 5 514 q = 0.0382",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "But also"
+    },
+    {
+     "kind": "equation",
+     "text": "P q = 110 400 + 0.8 P",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Thus"
+    },
+    {
+     "kind": "equation",
+     "text": "P = (0.0382)(110 400 + 0.8 ) P = 4 217 + 0.03 P 0.97 P = 4 217 P = 4 347 kPa",
+     "indent": 1
+    }
+   ]
+  },
+  {
+   "id": "H303",
+   "heading": "EXAMPLE 3",
+   "level": 1,
+   "page": 480,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A DN 150 (NPS 6) Schedule 40 branch has its axis at a 60 deg angle to the axis of a DN 400 (NPS 16) Schedule 40 run (header) in an oil piping system (see Figure H301-1). Both pipes are API 5L Grade A seamless. The connection is reinforced with a ring 305 mm O.D. (measured along the run) made from 12.7 mm ASTM A285 Grade C plate. All fillet welds are equivalent to 45 deg fillet welds with 10 mm legs. Corrosion allowance = 2.5 mm. The design pressure is 3 450 kPa at 370°C. Is the design adequate for the internal pressure?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 480,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, Table A-1, S = 99.3 MPa for API 5L Grade A and ASTM A285 Grade C; from Table A-3, E = 1.0 for API 5L seamless pipe; W = 1.0."
+    },
+    {
+     "kind": "equation",
+     "text": "T h = (12.7)(0.875) = 11.1 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (7.11)(0.875) = 6.22 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T r = 12.7 mm",
+     "indent": 9
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = − 22 mm",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "=",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "t h = = 6.96 mm",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t b = = 2.88 mm",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "− − d 1 = d 2 = = = 185.7 mm sin 60 deg 0.866",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (6.96)(185.7)(2 0.866) 1 466 mm 2 1 = − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement in the run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (185.7)(11.1 6.96 2.5) 305 mm 2 2 = − − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "i 21.5 y 2 A 3 = (2) jjj 0.866 (6.22 zzz − 2.88 − 2.5) = 41.7 mm k {",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in ring"
+    },
+    {
+     "kind": "equation",
+     "text": "i 168.3 y 2 A 4 = (12.7) 305 jjj − zzz = 1 405 mm k 0.866 {",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 2 A 4 = (4)( )(10) = 200 mm",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement is"
+    },
+    {
+     "kind": "equation",
+     "text": "200 + 1 405 + 41.7 + 305 = 1 952 mm2",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "This total is greater than the 1 466 mm2, so that no additional reinforcement is required."
+    }
+   ]
+  },
+  {
+   "id": "H304",
+   "heading": "EXAMPLE 4",
+   "level": 1,
+   "page": 481,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A DN 200 (NPS 8) run (header) in an oil piping system has a DN 100 (NPS 4) branch at right angles (see Figure H301-1). Both pipes are Schedule 40 API 5L Grade A seamless. The design conditions are 2 400 kPa at 205°C. It is assumed that the piping system is to remain in service until all metal thickness, in both branch and run, in excess of that required by eq. (3a) of para. 304.1.2 has corroded away so that area A2 as defined in para. 304.3.3(c)(1) is zero. What reinforcement is required for this connection?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 481,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "1.0."
+    },
+    {
+     "kind": "equation",
+     "text": "t h 2.37 mm",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t b = = 1.24 mm (2)(110 000)(1.0)(1.0) + (2)(0.4)(2 400)",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "d 1 = 114.3 − (2)(1.24) 112 mm =",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Required reinforcement area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (2.37)(112) 265 mm 2 1 = =",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Try fillet welds only"
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(2.37) = 5.9 mm",
+     "indent": 7
+    },
+    {
+     "kind": "equation",
+     "text": "or (2.5)(1.24) = 3.1 mm",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Use 3.1 mm."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Due to limitation in the height at the reinforcement zone, no practical fillet weld size will supply enough reinforcement area; therefore, further reinforcement is required. Try a 160 mm O.D. reinforcing ring (measured along the run). Assume the ring to be cut from a piece of DN 200 (NPS 8) Schedule 40 API 5L Grade A seamless pipe and welded to the connection with minimum size fillet welds."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Minimum ring thickness"
+    },
+    {
+     "kind": "equation",
+     "text": "T r = (8.18)(0.875) = 7.16 mm",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "New L 4 = (2.5)(1.24) + 7.16 = 10.3 mm",
+     "indent": 4
+    },
+    {
+     "kind": "equation",
+     "text": "or (2.5)(2.37) = 5.9 mm",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Use 5.9 mm."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Reinforcement area in the ring (considering only the thickness within L4)"
+    },
+    {
+     "kind": "equation",
+     "text": "X (5.9)(160 114.3) 270 mm 2 1 = − =",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "(0.5)(8.18) Leg dimension of weld = = 5.8 mm 0.707",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Reinforcement area in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 2 X 2 = (2)( )(5.8) = 34 mm",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Total reinforcement area"
+    },
+    {
+     "kind": "equation",
+     "text": "A X X 304 mm 2 4 = 1 + 2 =",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This total reinforcement area is greater than the required area; therefore, a reinforcing ring 160 mm O.D., cut from a piece of DN 200 (NPS 8) Schedule 40 API 5L Grade A seamless pipe and welded to the connection with minimum size fillet welds would provide adequate reinforcement for this connection."
+    }
+   ]
+  },
+  {
+   "id": "H305",
+   "heading": "EXAMPLE 5 (Not Illustrated)",
+   "level": 2,
+   "page": 481,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "A DN 40 (NPS 11∕2) Class 3000 forged steel socket welding coupling has been welded at right angles to a DN 200 (NPS 8) Schedule 40 run (header) in oil service, using a weld conforming to Figure 328.5.4-2, illustration (a). The run is ASTM A53 Grade B seamless pipe. The design pressure is 2 760 kPa and the design temperature is 230°C. The corrosion allowance is 2.5 mm. Is additional reinforcement required?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 481,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "No. According to para. 304.3.2(b), the design is adequate to sustain the internal pressure and no calculations are necessary. It is presumed, of course, that calculations have shown the run pipe to be satisfactory for the service conditions according to eqs. (2) and (3)."
+    }
+   ]
+  },
+  {
+   "id": "H310",
+   "heading": "INTRODUCTION (U.S. CUSTOMARY UNITS)",
+   "level": 1,
+   "page": 482,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The following examples are intended to illustrate the application of the rules and definitions in para. 304.3.3 for welded branch connections."
+    }
+   ]
+  },
+  {
+   "id": "H311",
+   "heading": "EXAMPLE 1",
+   "level": 1,
+   "page": 482,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "An NPS 8 run (header) in an oil piping system has an NPS 4 branch at right angles (see Figure H311-1). Both pipes are Schedule 40 API 5L Grade A seamless. The design conditions are 300 psig at 400°F. The fillet welds at the crotch are minimum size in accordance with para. 328.5.4. A corrosion allowance of 0.10 in. is specified. Is additional reinforcement necessary?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 482,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, S = 16.0 ksi for API 5L Grade A (Table A-1C); E = 1.0 for API 5L seamless (Table A-3); W = 1.0."
+    },
+    {
+     "kind": "equation",
+     "text": "T h = (0.322)(0.875) = 0.282 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (0.237)(0.875) = 0.207 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(0.282 − 0.1) = 0.455 in. or (2.5)(0.207 − 0.1) + 0 = 0.268 in., whichever is less = 0.268 in.",
+     "indent": 3
+    },
+    {
+     "kind": "equation",
+     "text": "d 1 = [ 4.5 − (2)(0.207 − 0.1) /sin 90 deg ] = 4.286 in.",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "d 2 = (0.207 − 0.1) + (0.282 − 0.1) + 4.286/2 = 2.432 in.",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "t h = 0.080 in.",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t b = = 0.042 in. (2)(16,000)(1.0)(1.0) + (2)(0.4)(300)",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "t c = (0.7)(0.237) = 0.166 in., or 0.25 , whichever is less = 0.166 in.",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Minimum leg dimension of fillet weld"
+    },
+    {
+     "kind": "equation",
+     "text": "0.166/0.707 = 0.235 in.",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Thus, the required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (0.080)(4.286)(2 sin 90 deg) 0.343 in. 2 1 = − =",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement area in run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (4.286)(0.282 0.08 0.10) 0.437 in. 2 2 = − − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (2)(0.268) (0.207 0.042) 0.10 0.035 in. 2 3 = [ − − ] =",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 2 A 4 = (2)( )(0.235) = 0.055 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement area = 0.527 in.2. This is more than 0.343 in.2 so that no additional reinforcement is required to sustain the internal pressure."
+    }
+   ]
+  },
+  {
+   "id": "H312",
+   "heading": "EXAMPLE 2",
+   "level": 1,
+   "page": 482,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "There is an NPS 8 branch at right angles to an NPS 12 header (Figure H311-1). Both run and branch are of aluminum alloy Schedule 80 ASTM B241 6061-T6 seamless pipe. The connection is reinforced by a ring 14 in. O.D. (measured along the run) cut from a piece of NPS 12 Schedule 80 ASTM B241 6063-T6 seamless pipe and opened slightly to fit over the run pipe. Allowable stresses for welded construction apply in accordance with Appendix A, Note (33). The fillet welds have the minimum dimensions permitted in para. 328.5.4. A zero corrosion allowance is specified. What is the maximum permissible design pressure if the design temperature is −320°F?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 482,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, Table A-1C, S = 8.0 ksi for Grade 6061T6 (welded) pipe and S = 5.7 ksi for Grade 6063-T6 (welded) pad, both at −320°F. From Table A-3, E = 1.0"
+    },
+    {
+     "kind": "equation",
+     "text": "for ASTM B241; W = 1.0.",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Leg dimensions of welds"
+    },
+    {
+     "kind": "equation",
+     "text": "t c 0.250 = = 0.354 in. 0.707 0.707 (0.5)(0.687) = 0.486 in. 0.707",
+     "indent": 7
+    },
+    {
+     "kind": "equation",
+     "text": "T h = (0.687)(0.875) = 0.601 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (0.500)(0.875) = 0.438 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T r = (0.687)(0.875) = 0.601 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(0.601 − 0.00) = 1.503 in.",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "[This is smaller than (2.5)(0.438 − 0.00) + 0.601 = 1.696",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in.]"
+    },
+    {
+     "kind": "equation",
+     "text": "d 2 = d 1 = 8.625 − (2)(0.438 − 0.00) = 7.749 in.",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "0.0935 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 0.268 in.",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "8.625 in. O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 1.503 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "12.75 in. O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "0.344 in. 0.353 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 5,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 0.845 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 6,
+     "text": "16 in. O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "Reinforcement"
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "zone"
+    },
+    {
+     "kind": "equation",
+     "text": "L4 = 0.234 in.",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 7,
+     "text": "8.625 in. O.D."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 4,
+     "text": "0.161 in."
+    },
+    {
+     "kind": "equation",
+     "text": "12.75 P t h = (2)(8,000)(1.0)(1.0) + (2)(0.4)( ) P 8.625 P t b = (2)(8,000)(1.0)(1.0) + (2)(0.4)( ) P",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Using the symbol"
+    },
+    {
+     "kind": "equation",
+     "text": "P q = 16,000 + 0.8 P",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "we can briefly write"
+    },
+    {
+     "kind": "equation",
+     "text": "t h = 12.75 and q t b = 8.625 q",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A 1 = 7.749 t h = 98.80 q",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement area in run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A 2 = (7.749)(0.601 − 12.75 q − 0.00) = 4.657 − 98.80 q",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A 3 = (2)(1.503)(0.438 − 8.625 q − 0.00) = 1.317 − 25.93 q",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in ring"
+    },
+    {
+     "kind": "equation",
+     "text": "A 4 = (0.601)(14 − 8.625)(5,700/8,000) = 2.302",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 1 2 2 A 4 = (2)( )(0.354) + (2)( )(0.486) = 0.362",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement area = 8.638 − 124.73q."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "At the maximum permissible normal operating pressure, the required area and the reinforcement area are equal; thus"
+    },
+    {
+     "kind": "equation",
+     "text": "98.80 q = 8.638 − 124.73 q 223.53 q = 8.638 q = 0.0386",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "But also"
+    },
+    {
+     "kind": "equation",
+     "text": "P q = 16,000 + 0.8 P",
+     "indent": 8
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Thus"
+    },
+    {
+     "kind": "equation",
+     "text": "P = (0.0386)(16,000 + 0.8 ) P = 618.3 + 0.0309 P 0.961 P = 618.3 P = 643.1 psig",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "which is the maximum permissible design pressure."
+    }
+   ]
+  },
+  {
+   "id": "H313",
+   "heading": "EXAMPLE 3",
+   "level": 1,
+   "page": 484,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "An NPS 6 Schedule 40 branch has its axis at a 60 deg angle to the axis of an NPS 16 Schedule 40 run (header) in an oil piping system (see Figure H311-1). Both pipes are API 5L Grade A seamless. The connection is reinforced with a ring 12 in. O.D. (measured along the run) made from 1∕2 in. ASTM A285 Grade C plate. All fillet welds are equivalent to 45 deg fillet welds with 3∕8 in. legs. Corrosion allowance = 0.10 in. The design pressure is 500 psig at 700°F. Is the design adequate for the internal pressure?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 484,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "From Appendix A, S = 14.4 ksi for API 5L Grade A and ASTM A285 Grade C (see Table A-1C); E = 1.0 for API 5L seamless pipe (see Table A-3); W = 1.0."
+    },
+    {
+     "kind": "equation",
+     "text": "T h = (0.500)(0.875) = 0.438 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T b = (0.280)(0.875) = 0.245 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "T r = 0.500 in.",
+     "indent": 9
+    },
+    {
+     "kind": "equation",
+     "text": "L −",
+     "indent": 3
+    },
+    {
+     "kind": "equation",
+     "text": "t h = 0.274 in.",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "t b =",
+     "indent": 2
+    },
+    {
+     "kind": "equation",
+     "text": "− − d 2 = d 1 = = = 7.315 in. sin 60 deg 0.866",
+     "indent": 0
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The required area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (0.274)(7.315)(2 0.866) 2.27 in. 2 1 = − =",
+     "indent": 3
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "The reinforcement in the run wall"
+    },
+    {
+     "kind": "equation",
+     "text": "A (7.315)(0.438 0.274 0.10) 0.468 in. 2 2 = − − =",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in branch wall"
+    },
+    {
+     "kind": "equation",
+     "text": "(2) 0.845 i y 2 A 3 = jjj 0.866 (0.245 zzz − 0.113 − 0.10) = 0.062 in. k {",
+     "indent": 1
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in ring"
+    },
+    {
+     "kind": "equation",
+     "text": "i 6.625 y 2 A 4 = (0.500) 12 jjj − zzz = 2.175 in. k 0.866 {",
+     "indent": 4
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "2 2 A 4 = (4)( 1 2 )( 3 8 ) = 0.281 in.",
+     "indent": 6
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "The total reinforcement = 2.986 in.2. This total is greater than 2.27 in.2, so that no additional reinforcement is required."
+    }
+   ]
+  },
+  {
+   "id": "H314",
+   "heading": "EXAMPLE 4",
+   "level": 1,
+   "page": 485,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "An NPS 8 run (header) in an oil piping system has an NPS 4 branch at right angles (Figure H311-1). Both pipes are Schedule 40 API 5L Grade A seamless. The design conditions are 350 psig at 400°F. It is assumed that the piping system is to remain in service until all metal thickness, in both branch and run, in excess of that required by eq. (3a) of para. 304.1.2 has corroded away so that area A2 as defined in para. 304.3.3(c)(1) is zero. What reinforcement is required for this connection?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 485,
+   "paragraphs": [
+    {
+     "kind": "equation",
+     "text": "= 1.0. t h 0.0935 in.",
+     "indent": 0
+    },
+    {
+     "kind": "equation",
+     "text": "t b = = 0.0488 in. (2)(16,000)(1.0)(1.0) + (2)(0.4)(350)",
+     "indent": 1
+    },
+    {
+     "kind": "equation",
+     "text": "d 1 = 4.500 − (2)(0.0488) = 4.402 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Required reinforcement area"
+    },
+    {
+     "kind": "equation",
+     "text": "A (0.0935)(4.402) 0.412 in. 2 1 = =",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Try fillet welds only"
+    },
+    {
+     "kind": "equation",
+     "text": "L 4 = (2.5)(0.0935) = 0.234 in. or (2.5)(0.0488) = 0.122 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Use 0.122 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Due to limitation in the height at the reinforcement zone, no practical fillet weld size will supply enough reinforcement area; therefore, the connection must be further reinforced. Try a 61∕4 in. O.D. reinforcing ring (measured along the run). Assume the ring to be cut from a piece of NPS 8 Schedule 40 API 5L Grade A seamless pipe and welded to the connection with minimum size fillet welds."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Minimum ring thickness"
+    },
+    {
+     "kind": "equation",
+     "text": "T r = (0.322)(0.875) = 0.282 in.",
+     "indent": 6
+    },
+    {
+     "kind": "equation",
+     "text": "New L 4 = (2.5)(0.0488) + 0.282 = 0.404 in.",
+     "indent": 3
+    },
+    {
+     "kind": "equation",
+     "text": "or (2.5)(0.0935) = 0.234 in.",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Use 0.234 in."
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "Reinforcement area in the ring (considering only the thickness within L4)"
+    },
+    {
+     "kind": "equation",
+     "text": "X (0.234)(6.25 4.5) 0.410 in. 2 1 = − =",
+     "indent": 5
+    },
+    {
+     "kind": "equation",
+     "text": "(0.5)(0.322) Leg dimension of weld = = 0.228 in. 0.707",
+     "indent": 2
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Reinforcement area in fillet welds"
+    },
+    {
+     "kind": "equation",
+     "text": "1 2 2 2 X 2 = (2)( )(0.228) = 0.052 in.",
+     "indent": 5
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 0,
+     "text": "Total reinforcement area"
+    },
+    {
+     "kind": "equation",
+     "text": "A X X 0.462 in. 2 4 = 1 + 2 =",
+     "indent": 7
+    },
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "This total reinforcement area is greater than the required area; therefore, a reinforcing ring 61∕4 in. O.D., cut from a piece of NPS 8 Schedule 40 API 5L Grade A seamless pipe and welded to the connection with minimum size fillet welds would provide adequate reinforcement for this connection."
+    }
+   ]
+  },
+  {
+   "id": "H315",
+   "heading": "EXAMPLE 5 (Not Illustrated)",
+   "level": 2,
+   "page": 485,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "An NPS 11∕2 Class 3000 forged steel socket welding coupling has been welded at right angles to an NPS 8 Schedule 40 run (header) in oil service, using a weld conforming to Figure 328.5.4-2, illustration (a). The run is ASTM A53 Grade B seamless pipe. The design pressure is 400 psi and the design temperature is 450°F. The corrosion allowance is 0.10 in. Is additional reinforcement required?"
+    }
+   ]
+  },
+  {
+   "id": null,
+   "heading": "Solution",
+   "level": 2,
+   "page": 485,
+   "paragraphs": [
+    {
+     "kind": "paragraph",
+     "marker": null,
+     "indent": 1,
+     "text": "No. According to para. 304.3.2(b), the design is adequate to sustain the internal pressure and no calculations are necessary. It is presumed, of course, that calculations have shown the run pipe to be satisfactory for the service conditions according to eqs. (2) and (3)."
+    }
+   ]
+  }
+ ]
+}

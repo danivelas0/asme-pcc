@@ -1,0 +1,183 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table HA-5",
+  "title": "Tabular Values for Figure HA-5",
+  "figure_id": "Figure HA-5",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for",
+  "figure_pdf_page": 1261,
+  "figure_image": "figures/figure_ha_5.png",
+  "pdf_pages": [
+    1336
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 3,
+  "point_count": 33,
+  "curves": [
+    {
+      "key": 20,
+      "points": [
+        {
+          "a": 0.000141,
+          "b_mpa": 14.0
+        },
+        {
+          "a": 0.00134,
+          "b_mpa": 131.0,
+          "note": "P.L."
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 133.0
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 142.0
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 155.0
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 164.0
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 179.0
+        },
+        {
+          "a": 0.006,
+          "b_mpa": 195.0
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 210.0
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 217.0
+        },
+        {
+          "a": 0.021,
+          "b_mpa": 225.0
+        }
+      ],
+      "temperature_c": 20
+    },
+    {
+      "key": 205,
+      "points": [
+        {
+          "a": 0.0001509,
+          "b_mpa": 14.0
+        },
+        {
+          "a": 0.001166,
+          "b_mpa": 107.0,
+          "note": "P.L."
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 109.0
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 114.0
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 121.0
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 126.0
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 134.0
+        },
+        {
+          "a": 0.006,
+          "b_mpa": 145.0
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 155.0
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 160.0
+        },
+        {
+          "a": 0.023,
+          "b_mpa": 165.0
+        }
+      ],
+      "temperature_c": 205
+    },
+    {
+      "key": 345,
+      "points": [
+        {
+          "a": 0.00016,
+          "b_mpa": 14.0
+        },
+        {
+          "a": 0.0012,
+          "b_mpa": 103.0,
+          "note": "P.L."
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 107.0
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 112.0
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 117.0
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 123.0
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 131.0
+        },
+        {
+          "a": 0.006,
+          "b_mpa": 140.0
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 151.0
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 155.0
+        },
+        {
+          "a": 0.034,
+          "b_mpa": 157.0
+        }
+      ],
+      "temperature_c": 345
+    }
+  ]
+}

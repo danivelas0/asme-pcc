@@ -1,0 +1,59 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "W",
+ "table_id": "Table W302.1-1",
+ "title": "Fatigue Material Coefficients (−3σ)",
+ "pdf_pages": [
+  566,
+  566
+ ],
+ "columns": [
+  {
+   "key": "material",
+   "header": "Material"
+  },
+  {
+   "key": "si_units",
+   "header": "SI Units"
+  },
+  {
+   "key": "cf_u_s_customary_units",
+   "header": "CF U.S. Customary Units"
+  },
+  {
+   "key": "m",
+   "header": "m"
+  },
+  {
+   "key": "k",
+   "header": "k"
+  }
+ ],
+ "row_count": 2,
+ "notes": [
+  "(a) SI units include SEi (MPa) and TE (mm) in eq. (W1).",
+  "(b) U.S. Customary units include SEi (ksi) and TE (in.) in eq. (W1). Fatigue damage due to displacement loadings N i : d (W2) = t N ti where dt is less than 1.0. When computing fatigue damage in accordance with eq. (W2), cycles associated with a stress range less than 20.7 MPa (3 ksi) need not be considered. The fatigue material coefficients used in eq. (W1) shall be in accordance with Table W302.1-1. Alternatively, when specified in the engineering design and approved by the owner, the fatigue material coefficients may be in accordance with Table W302.1-2. The maximum temperature limits for Table W302.1-1 and Table W302.1-2 are 371°C (700°F) for ferritic steels, 427°C (800°F) for austenitic stainless steels, and 204°C (400°F) for aluminum. The fatigue material coefficients for temperatures in excess of these limits or for materials not listed in Table W302.1-1 or Table W302.1-2 shall be specified and the basis documented in the engineering design. When the number of cycles, Nti, exceeds 107, and with approval of the owner, the fatigue material coefficients in Table W302.1-3 may be used instead of the coefficients in Table W302.1-1 or Table W302.1-2 when applying eq. (W1). Alternatively, when specified in the engineering design and approved by the owner, optional fatigue material coefficients may be developed for Nti > 106."
+ ],
+ "rows": [
+  {
+   "material": "Ferritic steels and austenitic stainless steels",
+   "si_units": 14137,
+   "cf_u_s_customary_units": 999.1,
+   "m": 3.13,
+   "k": 0.222
+  },
+  {
+   "material": "Aluminum",
+   "si_units": 2303,
+   "cf_u_s_customary_units": 162.8,
+   "m": 3.61,
+   "k": 0.222
+  }
+ ]
+}

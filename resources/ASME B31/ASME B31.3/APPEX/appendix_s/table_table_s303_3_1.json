@@ -1,0 +1,198 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S303.3-1",
+ "title": "Example 3: Generic Pipe Stress Model Input: Component Connectivity, Type, and Lengths",
+ "pdf_pages": [
+  556,
+  556
+ ],
+ "columns": [
+  {
+   "key": "from",
+   "header": "From"
+  },
+  {
+   "key": "to",
+   "header": "To"
+  },
+  {
+   "key": "dx_m_ft",
+   "header": "DX, m (ft)"
+  },
+  {
+   "key": "dz_m_ft",
+   "header": "DZ, m (ft)"
+  },
+  {
+   "key": "component_type",
+   "header": "Component Type"
+  }
+ ],
+ "row_count": 22,
+ "notes": [
+  "GENERAL NOTE: This piping system is planar, i.e., DY = 0 m (0 ft) for each piping component."
+ ],
+ "rows": [
+  {
+   "from": 10,
+   "to": 20,
+   "dx_m_ft": "1.52 (5)",
+   "dz_m_ft": null,
+   "component_type": "10 anchor (DN 600 Header) 20 welding tee"
+  },
+  {
+   "from": 20,
+   "to": 30,
+   "dx_m_ft": null,
+   "dz_m_ft": "1.52 (5)",
+   "component_type": "30 welding tee"
+  },
+  {
+   "from": 30,
+   "to": 35,
+   "dx_m_ft": null,
+   "dz_m_ft": "0.76 (2.5)",
+   "component_type": "35 simulated end cap"
+  },
+  {
+   "from": 20,
+   "to": 40,
+   "dx_m_ft": null,
+   "dz_m_ft": "−1.52 (−5)",
+   "component_type": "40 welding tee"
+  },
+  {
+   "from": 40,
+   "to": 45,
+   "dx_m_ft": null,
+   "dz_m_ft": "−0.76 (−2.5)",
+   "component_type": "45 end cap"
+  },
+  {
+   "from": 40,
+   "to": 110,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "(East DN 500 Branch) 110 Y support"
+  },
+  {
+   "from": 110,
+   "to": 120,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "120 pipe segment"
+  },
+  {
+   "from": 120,
+   "to": 125,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "8 890 N (2,000 lb) meter 125 Y support"
+  },
+  {
+   "from": 125,
+   "to": 130,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "8 890 N (2,000 lb) meter"
+  },
+  {
+   "from": 130,
+   "to": 140,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "140 pipe segment"
+  },
+  {
+   "from": 140,
+   "to": 340,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "340 welding tee"
+  },
+  {
+   "from": 30,
+   "to": 210,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "(West DN 500 Branch) 210 Y support"
+  },
+  {
+   "from": 210,
+   "to": 220,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "220 pipe segment"
+  },
+  {
+   "from": 220,
+   "to": 225,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "8 890 N (2,000 lb) meter 225 Y support"
+  },
+  {
+   "from": 225,
+   "to": 230,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "8 890 N (2,000 lb) meter"
+  },
+  {
+   "from": 230,
+   "to": 240,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "240 pipe segment"
+  },
+  {
+   "from": 240,
+   "to": 330,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "330 welding tee"
+  },
+  {
+   "from": 310,
+   "to": 320,
+   "dx_m_ft": "3.05 (10)",
+   "dz_m_ft": null,
+   "component_type": "(DN 600 Header) 310 anchor [free in the X (axial) direction] 320 welding tee"
+  },
+  {
+   "from": 320,
+   "to": 330,
+   "dx_m_ft": null,
+   "dz_m_ft": "1.52 (5)",
+   "component_type": "330 welding tee"
+  },
+  {
+   "from": 330,
+   "to": 335,
+   "dx_m_ft": null,
+   "dz_m_ft": "0.76 (2.5)",
+   "component_type": "335 end cap"
+  },
+  {
+   "from": 320,
+   "to": 340,
+   "dx_m_ft": null,
+   "dz_m_ft": "−1.52 (−5)",
+   "component_type": "340 welding tee"
+  },
+  {
+   "from": 340,
+   "to": 345,
+   "dx_m_ft": null,
+   "dz_m_ft": "−0.76 (−2.5)",
+   "component_type": "345 end cap"
+  }
+ ]
+}

@@ -1,0 +1,59 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "appendix": "S",
+ "table_id": "Table S301.5-2",
+ "title": "Example 1: Operating Load Case Results: Reactions on Supports and Anchors",
+ "pdf_pages": [
+  549,
+  549
+ ],
+ "columns": [
+  {
+   "key": "node",
+   "header": "Node"
+  },
+  {
+   "key": "fx_n_lb_signed",
+   "header": "FX, N (lb) (Signed) [Note (2)]"
+  },
+  {
+   "key": "global_axis_forces_and_moments_fy_n_lb_signed",
+   "header": "Global Axis Forces and Moments [Note (1)] FY, N (lb) (Signed) [Note (2)]"
+  },
+  {
+   "key": "mz_n_m_ft_lb_signed",
+   "header": "MZ, N-m (ft-lb) (Signed) [Note (2)]"
+  }
+ ],
+ "row_count": 3,
+ "notes": [
+  "(1) Reactions are averaged from commercial programs’ results and are obtained by analyzing the piping system in both U.S. Customary and SI units.",
+  "(2) Reaction forces and moments are those acting on the restraints and are signed based on their vectors acting along and about the selected coordinate system."
+ ],
+ "rows": [
+  {
+   "node": "10 anchor",
+   "fx_n_lb_signed": "−29 700 (−6,670)",
+   "global_axis_forces_and_moments_fy_n_lb_signed": "−12 900 (−2,890)",
+   "mz_n_m_ft_lb_signed": "−22 100 (−16,300)"
+  },
+  {
+   "node": "20 support",
+   "fx_n_lb_signed": null,
+   "global_axis_forces_and_moments_fy_n_lb_signed": "−65 300 (−14,700)",
+   "mz_n_m_ft_lb_signed": null
+  },
+  {
+   "node": "50 anchor",
+   "fx_n_lb_signed": "+29 700 (+6,670)",
+   "global_axis_forces_and_moments_fy_n_lb_signed": "+5 300 (+1,180)",
+   "mz_n_m_ft_lb_signed": "−59 000 (−43,600)"
+  }
+ ]
+}

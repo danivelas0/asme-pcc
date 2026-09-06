@@ -1,0 +1,363 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "subpart": "Subpart 3 - Charts and Tables for Determining Shell Thickness of Components Under External Pressure",
+  "table_id": "Table NFA-11",
+  "title": "Tabular Values for Figure NFA-11",
+  "figure_id": "Figure NFA-11",
+  "figure_title": "Chart for Determining Shell Thickness of Components Under External Pressure Developed for",
+  "figure_pdf_page": 1280,
+  "figure_image": "figures/figure_nfa_11.png",
+  "pdf_pages": [
+    1347
+  ],
+  "key_column": "Temp., °C",
+  "columns": [
+    "Temp., °C",
+    "A",
+    "B, MPa"
+  ],
+  "value_notation": "A is the strain (dimensionless) axis, B the stress axis in MPa. ASME prints these in a carried-exponent form -- an exponent is shown only when it changes -- which has been resolved here into absolute values.",
+  "curve_count": 5,
+  "point_count": 77,
+  "curves": [
+    {
+      "key": "65 (Curve 1)",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.351
+        },
+        {
+          "a": 0.000301,
+          "b_mpa": 10.8
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 17.8
+        },
+        {
+          "a": 0.0006,
+          "b_mpa": 21.2
+        },
+        {
+          "a": 0.0007,
+          "b_mpa": 24.3
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 31.9
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 38.4
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 42.3
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 45.0
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 47.3
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 50.3
+        },
+        {
+          "a": 0.005,
+          "b_mpa": 52.3
+        },
+        {
+          "a": 0.009,
+          "b_mpa": 57.6
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 61.6
+        },
+        {
+          "a": 0.0174,
+          "b_mpa": 62.5
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 62.5
+        }
+      ]
+    },
+    {
+      "key": "65 (Curve 2)",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.351
+        },
+        {
+          "a": 0.000301,
+          "b_mpa": 10.8
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 17.8
+        },
+        {
+          "a": 0.0008,
+          "b_mpa": 25.8
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 29.6
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 36.2
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 39.6
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 42.3
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 44.3
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 47.3
+        },
+        {
+          "a": 0.005,
+          "b_mpa": 49.4
+        },
+        {
+          "a": 0.009,
+          "b_mpa": 54.5
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 55.3
+        },
+        {
+          "a": 0.0174,
+          "b_mpa": 59.4
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 59.4
+        }
+      ]
+    },
+    {
+      "key": "65 (Curve 3)",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.351
+        },
+        {
+          "a": 0.000301,
+          "b_mpa": 10.8
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 17.3
+        },
+        {
+          "a": 0.0006,
+          "b_mpa": 20.0
+        },
+        {
+          "a": 0.0007,
+          "b_mpa": 22.5
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 28.0
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 33.9
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 37.1
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 39.5
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 41.6
+        },
+        {
+          "a": 0.009,
+          "b_mpa": 51.0
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 51.9
+        },
+        {
+          "a": 0.0174,
+          "b_mpa": 55.9
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 55.9
+        }
+      ]
+    },
+    {
+      "key": "65 (Curve 4)",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.351
+        },
+        {
+          "a": 0.000301,
+          "b_mpa": 10.8
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 16.9
+        },
+        {
+          "a": 0.0006,
+          "b_mpa": 19.5
+        },
+        {
+          "a": 0.0007,
+          "b_mpa": 21.8
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 27.0
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 32.1
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 35.2
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 37.5
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 39.2
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 41.8
+        },
+        {
+          "a": 0.009,
+          "b_mpa": 47.8
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 48.7
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 51.6
+        },
+        {
+          "a": 0.0174,
+          "b_mpa": 51.9
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 51.9
+        }
+      ]
+    },
+    {
+      "key": "65 (Curve 5)",
+      "points": [
+        {
+          "a": 1e-05,
+          "b_mpa": 0.351
+        },
+        {
+          "a": 0.000301,
+          "b_mpa": 10.8
+        },
+        {
+          "a": 0.0005,
+          "b_mpa": 16.6
+        },
+        {
+          "a": 0.0006,
+          "b_mpa": 19.0
+        },
+        {
+          "a": 0.0007,
+          "b_mpa": 21.0
+        },
+        {
+          "a": 0.001,
+          "b_mpa": 25.6
+        },
+        {
+          "a": 0.0015,
+          "b_mpa": 30.3
+        },
+        {
+          "a": 0.002,
+          "b_mpa": 33.1
+        },
+        {
+          "a": 0.0025,
+          "b_mpa": 35.0
+        },
+        {
+          "a": 0.003,
+          "b_mpa": 36.8
+        },
+        {
+          "a": 0.004,
+          "b_mpa": 39.0
+        },
+        {
+          "a": 0.009,
+          "b_mpa": 44.5
+        },
+        {
+          "a": 0.01,
+          "b_mpa": 45.4
+        },
+        {
+          "a": 0.015,
+          "b_mpa": 48.1
+        },
+        {
+          "a": 0.0174,
+          "b_mpa": 48.7
+        },
+        {
+          "a": 0.1,
+          "b_mpa": 48.7
+        }
+      ]
+    }
+  ]
+}

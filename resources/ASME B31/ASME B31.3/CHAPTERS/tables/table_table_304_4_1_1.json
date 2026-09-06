@@ -1,0 +1,79 @@
+{
+ "source": {
+  "code": "ASME B31.3",
+  "edition": "2024",
+  "title": "Process Piping - ASME Code for Pressure Piping, B31",
+  "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+  "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+ },
+ "chapter": "II",
+ "table_id": "Table 304.4.1-1",
+ "title": "ASME BPVC References for Closures",
+ "pdf_pages": [
+  64,
+  64
+ ],
+ "columns": [
+  {
+   "key": "type_of_closure",
+   "header": "Type of Closure",
+   "banners": []
+  },
+  {
+   "key": "concave_to_pressure",
+   "header": "Concave to Pressure",
+   "banners": []
+  },
+  {
+   "key": "convex_to_pressure",
+   "header": "Convex to Pressure",
+   "banners": []
+  }
+ ],
+ "row_count": 8,
+ "notes": [
+  "GENERAL NOTE: Paragraph numbers are from ASME BPVC, Section VIII, Division 1."
+ ],
+ "rows": [
+  {
+   "type_of_closure": "Ellipsoidal",
+   "concave_to_pressure": "UG-32(d)",
+   "convex_to_pressure": "UG-33(d)"
+  },
+  {
+   "type_of_closure": "Torispherical",
+   "concave_to_pressure": "UG-32(e)",
+   "convex_to_pressure": "UG-33(e)"
+  },
+  {
+   "type_of_closure": "Hemispherical",
+   "concave_to_pressure": "UG-32(f)",
+   "convex_to_pressure": "UG-33(c)"
+  },
+  {
+   "type_of_closure": "Conical (no transition",
+   "concave_to_pressure": "UG-32(g)",
+   "convex_to_pressure": "UG-33(f)"
+  },
+  {
+   "type_of_closure": "to knuckle)",
+   "concave_to_pressure": null,
+   "convex_to_pressure": null
+  },
+  {
+   "type_of_closure": "Toriconical",
+   "concave_to_pressure": "UG-32(h)",
+   "convex_to_pressure": "UG-33(f)"
+  },
+  {
+   "type_of_closure": "Flat (pressure on",
+   "concave_to_pressure": "UG-34",
+   "convex_to_pressure": "UG-34"
+  },
+  {
+   "type_of_closure": "either side)",
+   "concave_to_pressure": null,
+   "convex_to_pressure": null
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+{
+  "extraction_date": "2026-09-05",
+  "tool": "marker 2.0.0 (datalab-to/marker)",
+  "scope": "ASME PCC-2-2022 only. PCC-1 and PCC-3 deferred - see deferred_codes.",
+  "codes": [
+    {
+      "code": "ASME PCC-2",
+      "edition": "2022",
+      "title": "Repair of Pressure Equipment and Piping",
+      "source_pdf": "ASME PCC-2 REPAIR OF PRESSURE EQUIPMENT AND PIPING.pdf",
+      "total_pdf_pages": 326,
+      "path": "pcc_2/",
+      "index": "pcc_2/_index.json",
+      "parts": 5,
+      "chapters": 79,
+      "counts": {
+        "blocks": 5427,
+        "figures": 91,
+        "tables": 58,
+        "equations": 133
+      },
+      "extraction": {
+        "source": "embedded text layer (born-digital); no OCR applied",
+        "flags": "--output_format json --disable_ocr",
+        "llm_postprocessing": false,
+        "image_format": "PNG",
+        "boundaries": "embedded PDF outline, refined to the opening SectionHeader block"
+      }
+    }
+  ],
+  "layout": {
+    "pattern": "pcc_2/<part>/<article>/art_<id>.json, figures in fig/, article-scoped appendices under <article>/app/app_<id>/",
+    "naming": "Directory and file names are deliberately short. Windows resolves paths against a 260-character limit and the delivery root is already 117 characters; earlier descriptive names produced 421-character paths that Explorer could not open. Longest path here is 213. The full chapter title is preserved in each file's 'chapter_title'.",
+    "block_types": [
+      "section_header",
+      "paragraph",
+      "list_item",
+      "table",
+      "figure",
+      "equation",
+      "caption",
+      "footnote",
+      "reference",
+      "code"
+    ],
+    "notes": "Every block carries its 1-indexed PDF 'page'. Headers carry the ASME designator in 'number' and a 'level' derived from that designator."
+  },
+  "verification": {
+    "method": "Each reconstructed table's cell strings are checked against the source PDF's own text layer for the table's page and the next.",
+    "fields": {
+      "cell_traceability": "fraction of cells found verbatim in the source",
+      "unsourced_words": "words appearing NOWHERE on the source page - non-zero means text was invented and must be reviewed"
+    },
+    "tables_verified": 13,
+    "total_unsourced_words": 0,
+    "tables_below_0.90_traceability": [
+      {
+        "chapter": "402-I",
+        "lowest": 0.3
+      },
+      {
+        "chapter": "405-I",
+        "lowest": 0.684
+      }
+    ],
+    "reading": "Low traceability with zero unsourced words means the content is real but columns are split wrongly - check the grid, trust the values."
+  },
+  "excluded_from_extraction": [
+    "cover, title page, copyright and date-of-issuance",
+    "table of contents and lists of figures/tables/forms",
+    "foreword, committee roster, correspondence with the PCC Committee",
+    "summary of changes",
+    "running page headers and footers",
+    "IHS/Accuris licensee stamps and reproduction notices"
+  ],
+  "retained_deliberately": [
+    "all Mandatory and Nonmandatory Appendices - technical content, not back matter, nested under their parent Article"
+  ],
+  "known_limitations": [
+    "Table structure: 22 tables carry a reconstructed HTML grid; 36 are marked structure='not_reconstructed'. For those, every cell value is present in reading order in 'text', but row/column position is NOT recoverable - do not infer positional meaning from them.",
+    "No LLM post-processing. Re-running with --use_llm plus --min_recon_score 0.0 would give the remaining tables real grids; verified on samples at 1.000 cell traceability with zero invented words.",
+    "Equations are captured as text from the PDF layer, not as LaTeX.",
+    "Appendices marked DELETED in the 2022 edition (401-II, 401-III, 401-V, 401-VI, 401-B, 402-II, 402-III and others) appear as single-block chapters. Faithful to the source, not an extraction failure.",
+    "74 ASME revision markers mangled by the source PDF's symbol-font encoding have been normalised to <22> form."
+  ],
+  "deferred_codes": [
+    {
+      "code": "ASME PCC-1",
+      "edition": "2022",
+      "pdf_pages": 117,
+      "reason": "Scanned (150 DPI images) with a corrupt embedded OCR layer that renders Appendix 'B' as '8'. Needs re-OCR via marker's surya VLM, which requires an inference backend (Docker/vLLM or llama-server) not installed.",
+      "prepared": "chapter map derived: 15 sections + 19 appendices (Mandatory I plus Nonmandatory A-R); printed-page to PDF-page offset = +13"
+    },
+    {
+      "code": "ASME PCC-3",
+      "edition": "2022",
+      "pdf_pages": 95,
+      "reason": "Same as PCC-1 - scanned, corrupt OCR layer, needs a VLM backend.",
+      "prepared": "chapter map derived: 16 sections + 6 appendices (A-F); printed-page to PDF-page offset = +11"
+    }
+  ]
+}

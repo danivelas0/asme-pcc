@@ -1,0 +1,97 @@
+{
+  "source": {
+    "code": "ASME B31.3",
+    "edition": "2024",
+    "title": "Process Piping - ASME Code for Pressure Piping, B31",
+    "extracted_from": "ASME B31.3 2024 Process Piping.pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads, printed folios and edition change markers are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null."
+  },
+  "appendix": "B",
+  "table_id": "Table B-5",
+  "title": "Allowable Pressures and Recommended Temperature Limits for Borosilicate Glass Pipe",
+  "caption": null,
+  "pdf_pages": [
+    437,
+    437
+  ],
+  "companion_table": null,
+  "row_count": 5,
+  "notes": [
+    "NOTE: (1) These recommended limits apply only to materials listed. Manufacturers should be consulted for temperature limits on specific types and kinds of materials not listed."
+  ],
+  "columns": [
+    "ASTM Spec. No.",
+    "Material",
+    "Size Range DN",
+    "NPS",
+    "kPa",
+    "Allowable psi",
+    "°C",
+    "°F",
+    "Maximum °F"
+  ],
+  "value_axis": "Temperature Limits [Note (1)]",
+  "column_groups": [
+    "Recommended",
+    "Temperature Limits [Note (1)]",
+    "Gage Pressure",
+    "Minimum"
+  ],
+  "rows": [
+    {
+      "astm_spec_no": "C599",
+      "material": "Borosilicate glass",
+      "size_range_dn": "8–15",
+      "nps": "1∕4–1∕2",
+      "kpa": 690,
+      "allowable_psi": 100,
+      "c": 232,
+      "f": null,
+      "maximum_f": 450
+    },
+    {
+      "astm_spec_no": "C599",
+      "material": null,
+      "size_range_dn": 20,
+      "nps": "3∕4",
+      "kpa": 515,
+      "allowable_psi": 75,
+      "c": 232,
+      "f": null,
+      "maximum_f": 450
+    },
+    {
+      "astm_spec_no": "C599",
+      "material": null,
+      "size_range_dn": "25–80",
+      "nps": "1–3",
+      "kpa": 345,
+      "allowable_psi": 50,
+      "c": 232,
+      "f": null,
+      "maximum_f": 450
+    },
+    {
+      "astm_spec_no": "C599",
+      "material": null,
+      "size_range_dn": 100,
+      "nps": 4,
+      "kpa": 240,
+      "allowable_psi": 35,
+      "c": 232,
+      "f": null,
+      "maximum_f": 450
+    },
+    {
+      "astm_spec_no": "C599",
+      "material": null,
+      "size_range_dn": 150,
+      "nps": 6,
+      "kpa": 138,
+      "allowable_psi": 20,
+      "c": 232,
+      "f": null,
+      "maximum_f": 450
+    }
+  ]
+}

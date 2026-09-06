@@ -1,0 +1,56 @@
+{
+  "source": {
+    "code": "ASME BPVC Section II, Part D (Metric)",
+    "edition": "2025",
+    "title": "ASME Boiler and Pressure Vessel Code, Section II - Materials, Part D - Properties (Metric)",
+    "extracted_from": "D Metric 2025 .pdf",
+    "note": "Technical content only. Publisher front/back matter, running heads and printed folios are omitted. Values are as printed; the ASME ellipsis (no value / not permitted) is represented as null. NP = Not Permitted and SPT = Supports Only are kept verbatim where printed."
+  },
+  "appendix": "Nonmandatory Appendix C",
+  "kind": "Nonmandatory",
+  "identifier": "C",
+  "title": "Guidance for the Use of U.S. Customary and SI Units in the ASME Boiler and Pressure Vessel Code",
+  "title_as_printed": "GUIDANCE FOR THE USE OF U.S. CUSTOMARY AND SI UNITS IN THE ASME BOILER AND PRESSURE VESSEL CODE",
+  "pdf_pages": [
+    1428,
+    1430
+  ],
+  "section_count": 3,
+  "word_count": 1425,
+  "note": "Prose only. Tables and figures printed inside this appendix are in ../appendices/tables and ../appendices/figures.",
+  "sections": [
+    {
+      "id": "C-100",
+      "heading": "USE OF UNITS IN EQUATIONS",
+      "paragraphs": [
+        "The equations in this Section are suitable for use with either the U.S. Customary or the SI units provided in Mandatory Appendix 9, or with the units provided in the nomenclatures associated with the equations. It is the responsibility of the individual and organization performing the calculations to ensure that appropriate units are used. Either U.S. Customary or SI units may be used as a consistent set. When necessary to convert from one system of units to another, the units shall be converted to at least three significant figures for use in calculations and other aspects of construction."
+      ]
+    },
+    {
+      "id": "C-200",
+      "heading": "GUIDELINES USED TO DEVELOP SI EQUIVALENTS",
+      "paragraphs": [
+        "The following guidelines were used to develop SI equivalents:",
+        "(a) SI units are placed in parentheses after the U.S. Customary units in the text.",
+        "(b) In general, separate SI tables are provided if interpolation is expected. The table designation (e.g., table number) is the same for both the U.S. Customary and SI tables, with the addition of suffix \"M\" to the designator for the SI table, if a separate table is provided. In the text, references to a table use only the primary table number (i.e., without the \"M\"). For some small tables, where interpolation is not required, SI units are placed in parentheses after the U.S. Customary unit.",
+        "(c) Separate SI versions of graphical information (charts) are provided, except that if both axes are dimensionless, a single figure (chart) is used.",
+        "(d) In most cases, conversions of units in the text were done using hard SI conversion practices, with some soft conversions on a case‐by‐case basis, as appropriate. This was implemented by rounding the SI values to the number of significant figures of implied precision in the existing U.S. Customary units. For example, 3,000 psi has an implied precision of one significant figure. Therefore, the conversion to SI units would typically be to 20 000 kPa. This is a difference of about 3% from the \"exact\" or soft conversion of 20 684.27 kPa. However, the precision of the conversion was determined by the Committee on a case‐by‐case basis. More significant digits were included in the SI equivalent if there was any question. The values of allowable stress in Section II, Part D generally include three significant figures.",
+        "(e) Minimum thickness and radius values that are expressed in fractions of an inch were generally converted according to the following table: Fraction, Proposed SI Difference, in. Conversion, mm % 1/32 −0.8 0.8 3/64 −0.8 1.2 1/16 1.5 5.5 3/32 −5.0 2.5 1/8 3 5.5 5/32 −0.8 4 3/16 −5.0 5 7/32 5.5 1.0 1/4 6 5.5 5/16 −0.8 8 3/8 −5.0 10 7/16 11 1.0 1/2 −2.4 13 9/16 14 2.0 5/8 −0.8 16 11/16 17 2.6 3/4 19 0.3 7/8 22 1.0 1 25 1.6",
+        "(f) For nominal sizes that are in even increments of inches, even multiples of 25 mm were generally used. Intermediate values were interpolated rather than converting and rounding to the nearest mm. See examples in the following table. [Note that this table does not apply to nominal pipe sizes (NPS), which are covered below.] Size, in. Size, mm 1 25 11/8 29 11/4 32 11/2 38 2 50 21/4 57 21/2 64 3 75 31/2 89 4 100 41/2 114 5 125 6 150 Size, in. Size, mm 8 200 12 300 18 450 20 500 24 600 36 900 40 1 000 54 1 350 60 1 500 72 1 800 Size or Size or Length, ft Length, m 3 1 5 1.5 200 60",
+        "(g) For nominal pipe sizes, the following relationships were used: U.S. U.S. Customary SI Customary SI Practice Practice Practice Practice NPS 1/8 DN 6 NPS 20 DN 500 NPS 1/4 DN 8 NPS 22 DN 550 NPS 3/8 DN 10 NPS 24 DN 600 NPS 1/2 DN 15 NPS 26 DN 650 NPS 3/4 DN 20 NPS 28 DN 700 NPS 1 DN 25 NPS 30 DN 750 NPS 11/4 DN 32 NPS 32 DN 800 NPS 11/2 DN 40 NPS 34 DN 850 NPS 2 DN 50 NPS 36 DN 900 NPS 21/2 DN 65 NPS 38 DN 950 NPS 3 DN 80 NPS 40 DN 1000 NPS 31/2 DN 90 NPS 42 DN 1050 NPS 4 DN 100 NPS 44 DN 1100 NPS 5 DN 125 NPS 46 DN 1150 NPS 6 DN 150 NPS 48 DN 1200 NPS 8 DN 200 NPS 50 DN 1250 NPS 10 DN 250 NPS 52 DN 1300 NPS 12 DN 300 NPS 54 DN 1350 NPS 14 DN 350 NPS 56 DN 1400 NPS 16 DN 400 NPS 58 DN 1450 NPS 18 DN 450 NPS 60 DN 1500",
+        "(h) Areas in square inches (in.2) were converted to square millimeters (mm2), and areas in square feet (ft2) were converted to square meters (m2). See examples in the following table: Area Area (U.S. Customary) (SI) 1 in.2 650 mm2 6 in.2 4 000 mm2 10 in.2 6 500 mm2 5 ft2 0.5 m2",
+        "(i) Volumes in cubic inches (in.3) were converted to cubic millimeters (mm3), and volumes in cubic feet (ft3) were converted to cubic meters (m3). See examples in the following table: Volume Volume (U.S. Customary) (SI) 1 in.3 16 000 mm3 6 in.3 100 000 mm3 10 in.3 160 000 mm3 5 ft3 0.14 m3",
+        "(j) Although the pressure should always be in MPa for calculations, there are cases where other units are used in the text. For example, kPa is used for small pressures. Also, rounding was to one significant figure (two at the most) in most cases. See examples in the following table. (Note that 14.7 psi converts to 101 kPa, while 15 psi converts to 100 kPa. While this may seem at first glance to be a n a n o m a l y , i t i s c o n s i s t e n t w i t h t h e r o u n d i n g philosophy.) Pressure Pressure (U.S. Customary) (SI) 0.5 psi 3 kPa 2 psi 15 kPa 3 psi 20 kPa 10 psi 70 kPa 14.7 psi 101 kPa 15 psi 100 kPa 30 psi 100 kPa 50 psi 350 kPa 100 psi 700 kPa 150 psi 1 MPa 200 psi 1.5 MPa 250 psi 1.7 MPa 300 psi 2 MPa 350 psi 2.5 MPa 400 psi 3 MPa 500 psi 3.5 MPa 600 psi 4 MPa 1,200 psi 8 MPa 1,500 psi 10 MPa",
+        "(k) Material properties that are expressed in psi or ksi (e.g., allowable stress, yield and tensile strength, elastic modulus) were generally converted to MPa to three significant figures. See example in the following table: Strength Strength (U.S. Customary) (SI) 95,000 psi 655 MPa",
+        "(l) In most cases, temperatures (e.g., for PWHT) were rounded to the nearest 5°C. Depending on the implied precision of the temperature, some were rounded to the nearest 1°C or 10°C or even 25°C. Temperatures colder than 0°F (negative values) were generally rounded to the nearest 1°C. The examples in the table below were created by rounding to the nearest 5°C, with one exception: Temperature, Temperature, °F °C 70 20 100 38 120 50 150 65 200 95 250 120 300 150 350 175 400 205 450 230 500 260 550 290 600 315 650 345 700 370 750 400 800 425 850 455 900 480 925 495 950 510 1,000 540 1,050 565 1,100 595 1,150 620 1,200 650 1,250 675 1,800 980 1,900 1 040 2,000 1 095 2,050 1 120"
+      ]
+    },
+    {
+      "id": "C-300",
+      "heading": "SOFT CONVERSION FACTORS",
+      "paragraphs": [
+        "The following table of \"soft\" conversion factors is provided for convenience. Multiply the U.S. Customary value by the factor given to obtain the SI value. Similarly, divide the SI value by the factor given to obtain the U.S. Customary value. In most cases it is appropriate to round the answer to three significant figures. U.S. Customary SI Factor Notes … in. mm 25.4 … ft m 0.3048 in.2 mm2 … 645.16 ft2 m2 … 0.09290304 in.3 mm3 … 16,387.064 ft3 m3 … 0.02831685 m3 … 0.003785412 U.S. gal … U.S. gal liters 3.785412 MPa (N/mm2) psi 0.0068948 Use exclusively in equations psi kPa 6.894757 Use only in text and for nameplate … psi bar 0.06894757 ft‐lb … J 1.355818 5/9 × (°F − 32) °F °C Not for temperature difference 5/9 °F °C For temperature differences only 5/9 R K Absolute temperature … lbm kg 0.4535924 … lbf N 4.448222 in.‐lb N·mm 112.98484 Use exclusively in equations ft‐lb N·m 1.3558181 Use only in text … 1.0988434 Btu/hr W 0.2930711 Use for boiler rating and heat transfer lb/ft3 kg/m3 … 16.018463"
+      ]
+    }
+  ]
+}
