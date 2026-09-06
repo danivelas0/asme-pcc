@@ -30,8 +30,8 @@ resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
                ├─ bpvc_ii_d_metric_2025/       II-D métrica (MPa, °C)
                └─ bpvc_ii_d_customary_2025/    II-D U.S. Customary (ksi, °F)
-outputs/       Entregables. NO leer sin que se te indique un archivo concreto.
-templates/     Plantillas de formato. NO leer sin orden.
+outputs/       Entregables.
+templates/     Plantillas de formato.
 Motor_de_Calculo_ASME_PCC.xlsx   Libro maestro (Rev. 0, intacto)
 ```
 
