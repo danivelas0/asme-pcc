@@ -45,7 +45,7 @@ Ante una duda de alcance, pregunta antes de producir.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev3.xlsm`
-(38 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
+(39 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación a los
 nueve motores (Art. 212, los 7 buscadores, `Instrucciones`) la hace un proyecto VBA de
