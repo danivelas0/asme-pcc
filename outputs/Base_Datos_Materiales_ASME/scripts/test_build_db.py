@@ -189,6 +189,19 @@ class TestNotasEnLasDosEdiciones:
               if n.get("grupo") == "Material Group J"]
         assert si == ["(11)"] and us == ["(10)"]
 
+    def test_cada_edicion_cita_la_nota_que_su_tabla_referencia(self):
+        # La metrica trae el Grupo H en las Notas (8) y (9) pero su tabla apunta
+        # a la (9); la US lo trae solo en la (8). Citar la nota huerfana
+        # remitiria al lector a algo que la tabla no referencia.
+        import json
+        def tabla(ed):
+            ruta = (Path(__file__).resolve().parents[3] / "resources" / ed /
+                    "table_tm_1.json")
+            with open(ruta, encoding="utf-8") as fh:
+                return B.notas_referenciadas(json.load(fh))
+        assert tabla("bpvc_ii_d_metric_2025")["Material Group H"] == "(9)"
+        assert tabla(self.US)["Material Group H"] == "(8)"
+
     def test_la_pertenencia_es_la_misma_en_ambas_ediciones(self):
         # Los valores difieren (MPa vs ksi) pero el reparto de materiales en
         # grupos no: si difiriera, una de las dos extracciones estaria mal.
@@ -198,6 +211,87 @@ class TestNotasEnLasDosEdiciones:
             us = {n["grupo"]: set(n["miembros"]) for n in self._N(archivo, self.US)
                   if n["tipo"] == "grupo"}
             assert si == us, archivo
+
+
+class TestBarrasDeFraccion:
+    """II-D imprime «C-1/2Mo» y el Apendice A del B31.3 «C-1∕2Mo» (U+2215)."""
+
+    def test_las_barras_se_pliegan(self):
+        assert B.comp_key("C–1∕" + "2Mo") == B.comp_key("C-1/2Mo")
+        assert B.comp_key("1Cr–1⁄4Mo") == B.comp_key("1Cr-1/4Mo")
+
+    def test_sin_esto_el_contraste_entre_tablas_fallaria_en_silencio(self):
+        # No lanza excepcion: simplemente no encontraria nada. Por eso hay prueba.
+        import unicodedata
+        assert unicodedata.normalize("NFKC", "∕") != "/"
+
+
+class TestComposicionPrestada:
+    """Filas que no imprimen composicion: se recupera por UNS, nunca como AUTO."""
+
+    NOTAS = {"C-1/2MO": [("TM-1", "(1)", "Material Group A")]}
+
+    def test_recupera_cuando_el_uns_tiene_una_sola_composicion(self):
+        idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
+        r = B._composicion_prestada(idx, "K11522", "", self.NOTAS)
+        assert r is not None
+        comp, hojas, origenes = r
+        assert hojas == ["DB_B31_3"] and origenes[0][2] == "Material Group A"
+
+    def test_no_elige_cuando_el_codigo_da_dos_composiciones(self):
+        idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
+        assert B._composicion_prestada(idx, "K11522", "", self.NOTAS) is None
+
+    def test_no_se_usa_si_la_fila_ya_trae_composicion_propia(self):
+        idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
+        assert B._composicion_prestada(idx, "K11522", "18CR-8NI", self.NOTAS) is None
+
+    def test_el_motivo_distingue_por_que_fallo(self):
+        dos = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
+        assert "mas de una" in B._motivo_sin_composicion(dos, "K11522")
+        una = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
+        assert "no figura en ninguna Nota" in B._motivo_sin_composicion(una, "K11522")
+        assert "no aparece con" in B._motivo_sin_composicion({}, "K11522")
+
+
+class TestDecisionesDelIngeniero:
+    """La vuelta al motor de lo que el ingeniero decide."""
+
+    @staticmethod
+    def _archivo(tmp_path, decisiones):
+        import json
+        p = tmp_path / "decisiones_map_grupo.json"
+        p.write_text(json.dumps({"decisiones": decisiones}, ensure_ascii=False),
+                     encoding="utf-8")
+        return p
+
+    def test_sin_archivo_no_falla(self, tmp_path):
+        assert B.cargar_decisiones(tmp_path / "no_existe.json") == ({}, {})
+
+    def test_ignora_las_entradas_de_plantilla_sin_rellenar(self, tmp_path):
+        p = self._archivo(tmp_path, [{"composicion": "18Cr–8Ni", "grupo_tm": "",
+                                      "grupo_te": ""}])
+        assert B.cargar_decisiones(p) == ({}, {})
+
+    def test_ancla_por_composicion_y_por_uns(self, tmp_path):
+        p = self._archivo(tmp_path, [
+            {"composicion": "9Cr–1Mo–V", "grupo_tm": "Material Group E"},
+            {"uns": "S30400", "grupo_te": "Group 3"},
+        ])
+        comp, uns = B.cargar_decisiones(p)
+        assert B.comp_key("9Cr-1Mo-V") in comp
+        assert "S30400" in uns
+
+    def test_el_estado_validado_es_distinto_de_auto(self):
+        # Quien audite el libro tiene que poder separar lo que dice el codigo de
+        # lo que decidio una persona.
+        assert B.E_VALIDADO not in (B.E_UNS, B.E_NOTA)
+        assert "AUTO" not in B.E_VALIDADO
+
+    def test_la_firma_deja_constancia_aunque_falte(self):
+        assert B._firma({}) == "sin firma, sin fecha"
+        assert B._firma({"validado_por": "DV", "fecha": "2026-09-06"}) == \
+            "DV, 2026-09-06"
 
 
 class TestFormulas:

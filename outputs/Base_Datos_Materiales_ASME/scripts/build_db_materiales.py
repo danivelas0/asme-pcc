@@ -791,6 +791,18 @@ def build_map_factores(res, wb):
 REGLA_TEXTUAL = re.compile(r",\s*including\b", re.I)
 
 
+# El codigo no imprime la barra de fraccion igual en todas partes: II-D usa la
+# barra normal («C-1/2Mo») y el Apendice A del B31.3 la DIVISION SLASH U+2215
+# («C-1∕2Mo»). Ninguna de las dos se pliega a la otra por NFKC, de modo que sin
+# esto un contraste entre tablas falla en silencio: no da error, simplemente no
+# encuentra nada.
+_BARRAS = dict.fromkeys(
+    (0x2044,    # FRACTION SLASH
+     0x2215,    # DIVISION SLASH
+     0xFF0F),   # FULLWIDTH SOLIDUS
+    "/")
+
+
 def comp_key(s) -> str:
     """Clave de comparacion de una composicion nominal impresa.
 
@@ -798,9 +810,30 @@ def comp_key(s) -> str:
     guion segun la columna en que caiga (`18Cr-10Ni-Cb` en la tabla,
     `18Cr - 10Ni - Cb` si la linea se justifico), de modo que el espacio no
     puede formar parte de la clave. Los guiones tipograficos ya los homogeneiza
-    txt(); aqui solo se quitan espacios y se sube a mayusculas.
+    txt(); aqui se pliegan ademas las barras de fraccion, se quitan espacios y
+    se sube a mayusculas.
     """
-    return re.sub(r"\s+", "", txt(s)).upper()
+    return re.sub(r"\s+", "", txt(s)).translate(_BARRAS).upper()
+
+
+# TM-1 rotula «Material Group H [Note (9)]» y TE-1 «... (Group 3) [Note (3)]»:
+# el parentesis de cierre es opcional.
+_REF_NOTA = re.compile(r"((?:Material )?Group [A-J0-9]+)\)?\s*\[Note \((\d+)\)\]")
+
+
+def notas_referenciadas(datos) -> dict:
+    """{grupo: nota que la propia tabla cita} leido de sus rotulos impresos.
+
+    TM-1 lo imprime en la columna de materiales de cada fila («Material Group H
+    [Note (9)]») y TE-1 en los encabezados de columna («... (Group 3) [Note
+    (3)]»). Hace falta porque la edicion metrica trae el Grupo H duplicado en
+    dos notas y solo una es la que la tabla referencia: citar la otra remitiria
+    al lector a una nota huerfana.
+    """
+    textos = [str(v) for r in datos.get("rows", []) for v in r.values()]
+    textos += [str(c) for c in datos.get("columns", [])]
+    return {m.group(1): f"({m.group(2)})"
+            for t in textos for m in _REF_NOTA.finditer(t)}
 
 
 def cargar_notas_de_grupo(res, ed):
@@ -814,6 +847,7 @@ def cargar_notas_de_grupo(res, ed):
     textuales: list[tuple] = []
     for archivo, tabla in (("table_tm_1.json", "TM-1"), ("table_te_1.json", "TE-1")):
         datos = res.load(f"{ed}/{archivo}")
+        referenciadas = notas_referenciadas(datos)
         notas = datos.get("note_members")
         if not notas:
             raise SystemExit(
@@ -825,6 +859,11 @@ def cargar_notas_de_grupo(res, ed):
         for nota in notas:
             if nota.get("tipo") != "grupo":
                 continue          # las notas de alias no definen pertenencia
+            # La edicion metrica imprime el Grupo H en las Notas (8) y (9), pero
+            # su tabla solo apunta a la (9). Citar la (8) seria remitir a una
+            # nota que la tabla no referencia: se descarta si la otra existe.
+            if referenciadas.get(nota["grupo"], nota["nota"]) != nota["nota"]:
+                continue
             origen = (tabla, nota["nota"], nota["grupo"])
             for miembro in nota["miembros"]:
                 if REGLA_TEXTUAL.search(miembro):
@@ -839,16 +878,151 @@ def _stem_textual(miembro: str) -> str:
     return comp_key(miembro.split(",")[0]).split("-")[0]
 
 
+def _uns_tokens(clave: str) -> list[str]:
+    return re.findall(r"[A-Z]\d{5}", clave.upper())
+
+
+def _composicion_prestada(comp_idx, uns_txt, ck, notas_idx):
+    """Recupera la composicion de una fila que no la imprime, via su UNS.
+
+    Solo devuelve algo si se cumplen las tres condiciones a la vez:
+      1. la fila no trae composicion propia,
+      2. su UNS aparece en el libro con UNA sola composicion (si hay varias,
+         el codigo no es consistente para ese UNS y no se elige por cuenta
+         propia),
+      3. esa composicion figura en alguna Nota de TM-1 o TE-1.
+    Devuelve (composicion, hojas_de_origen, origenes_de_nota).
+    """
+    if ck:
+        return None
+    for tok in _uns_tokens(uns_txt):
+        candidatas = comp_idx.get(tok)
+        if not candidatas or len(candidatas) != 1:
+            continue
+        comp_p, hojas = next(iter(candidatas.items()))
+        origenes = notas_idx.get(comp_key(comp_p))
+        if origenes:
+            return comp_p, hojas, origenes
+    return None
+
+
+def _motivo_sin_composicion(comp_idx, uns_txt) -> str:
+    """Explica POR QUE no se pudo recuperar la composicion. El motivo importa:
+    no es lo mismo que el UNS no aparezca en ningun lado que el codigo lo
+    imprima con dos composiciones distintas."""
+    for tok in _uns_tokens(uns_txt):
+        candidatas = comp_idx.get(tok)
+        if candidatas and len(candidatas) > 1:
+            return (f"La fila no imprime composicion nominal y el libro asocia a su "
+                    f"UNS «{tok}» mas de una: {'; '.join(candidatas)}. No se elige "
+                    f"por cuenta propia.")
+        if candidatas:
+            return (f"La fila no imprime composicion nominal. Su UNS «{tok}» aparece "
+                    f"como «{next(iter(candidatas))}», pero esa composicion no figura "
+                    f"en ninguna Nota de TM-1 ni TE-1.")
+    return ("La fila no imprime composicion nominal y su UNS no aparece con "
+            "composicion en ninguna tabla del libro: no hay dato con el que "
+            "buscar el grupo.")
+
+
+def cargar_prd_por_uns(res, ed):
+    """Indice {UNS: fila_de_PRD} desde table_prd.json.
+
+    La Tabla PRD (Poisson y densidad) se indexa por descripcion de material,
+    pero 99 de sus 115 filas NOMBRAN los UNS que cubren («N08800, N08810, and
+    N08811», «S32202»). Esas si permiten un mapeo literal 1:1.
+
+    Las 16 restantes son categorias redactadas —«Carbon steels», «1/2Cr to
+    11/4Cr steels», «High alloy steels (300 series)»— que exigen interpretar a
+    que categoria pertenece un material dado. Eso es criterio de ingenieria y
+    no se resuelve aqui: es exactamente la clase de inferencia que la Rev. 3
+    saco del motor.
+    """
+    idx = {}
+    for r in res.load(f"{ed}/table_prd.json")["rows"]:
+        etiqueta = txt(g(r, "material"))
+        for tok in re.findall(r"[A-Z]\d{5}", etiqueta.upper()):
+            idx[tok] = etiqueta
+    return idx
+
+
+def indice_composicion_por_uns(wb, infos):
+    """Indice {UNS: {composicion: [hojas que la imprimen]}}.
+
+    Sirve para las filas que NO imprimen composicion nominal: su UNS suele
+    aparecer con composicion en otra tabla del mismo libro. El UNS lo asigna
+    SAE/ASTM y designa el mismo material, asi que la composicion es la misma;
+    pero al venir de OTRA tabla —a veces de otro codigo, el Apendice A del
+    B31.3— el resultado no puede presentarse como AUTO. Se marca aparte y se
+    cita de donde salio, para que el ingeniero lo confirme.
+    """
+    idx: dict[str, dict[str, list]] = {}
+    for info in infos:
+        ws = wb[info["sheet"]]
+        for r in range(R_DATA, info["last_row"] + 1):
+            uns = txt(ws.cell(r, C["UNS / Alloy"]).value).upper()
+            comp = txt(ws.cell(r, C["Composicion nominal"]).value)
+            if uns and comp:
+                idx.setdefault(uns, {}).setdefault(comp, [])
+                if info["sheet"] not in idx[uns][comp]:
+                    idx[uns][comp].append(info["sheet"])
+    return idx
+
+
 # Estados del mapeo. No existe ya un estado «PROPUESTA»: o el codigo lo dice y
 # se cita la nota, o se declara el hueco y el calculo queda bloqueado.
 E_UNS = "AUTO (UNS exacto)"
 E_NOTA = "AUTO (composicion en Nota)"
 E_TEXTUAL = "REVISAR (regla textual del codigo)"
+E_COMP_AJENA = "REVISAR (composicion de otra tabla)"
+E_VALIDADO = "VALIDADO POR INGENIERO"
 E_SIN = "SIN MAPEO"
 
 
-def build_map_grupo(res, wb, iid_infos):
-    ed = "bpvc_ii_d_metric_2025"
+def cargar_decisiones(ruta: Path):
+    """Decisiones del ingeniero sobre lo que el codigo no resuelve.
+
+    Cierra el circuito: `Revision_MAP_Grupo.md` dice que hay que decidir, y
+    este archivo trae lo decidido de vuelta al motor. Va SIEMPRE en un estado
+    propio, `VALIDADO POR INGENIERO`, nunca mezclado con las filas AUTO: quien
+    audite el libro tiene que poder separar de un vistazo lo que dice el codigo
+    de lo que decidio una persona.
+
+    No vive en resources/ a proposito. resources/ es el codigo publicado; esto
+    es criterio de ingenieria sobre lo que el codigo no cubre, y confundirlos
+    seria exactamente el error que la Rev. 3 vino a corregir.
+    """
+    if not ruta.exists():
+        return {}, {}
+    with open(ruta, encoding="utf-8") as fh:
+        datos = json.load(fh)
+    por_comp, por_uns = {}, {}
+    for d in datos.get("decisiones", []):
+        if not (txt(d.get("grupo_tm")) or txt(d.get("grupo_te"))):
+            continue                     # entrada de plantilla, aun sin rellenar
+        # Una decision se ancla a la composicion cuando la fila la imprime, y al
+        # UNS cuando no: en esas filas lo que se decide es precisamente si ese
+        # UNS designa el material cuya composicion se tomo prestada.
+        if txt(d.get("uns")):
+            por_uns[txt(d["uns"]).upper()] = d
+        elif comp_key(d.get("composicion")):
+            por_comp[comp_key(d["composicion"])] = d
+    return por_comp, por_uns
+
+
+def _firma(d) -> str:
+    quien = txt(d.get("validado_por")) or "sin firma"
+    cuando = txt(d.get("fecha")) or "sin fecha"
+    return f"{quien}, {cuando}"
+
+
+def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
+                    system="SI"):
+    # Las dos ediciones se mapean por separado contra SUS PROPIAS Notas: no
+    # numeran igual y son extracciones independientes (ver extraer_notas_ii_d).
+    si = system == "SI"
+    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    nombre = "MAP_Grupo" if si else "MAP_GrupoC"
     tm_index = {}
     for i in range(1, 6):
         d = res.load(f"{ed}/table_tm_{i}.json")
@@ -860,13 +1034,16 @@ def build_map_grupo(res, wb, iid_infos):
             for tok in re.findall(r"[A-Z]\d{5}", key):
                 tm_index[tok] = (tid, txt(mat))
             tm_index.setdefault(key, (tid, txt(mat)))
-    prd_groups = {txt(g(r, "material")).upper(): txt(g(r, "material_group"))
-                  for r in res.load(f"{ed}/table_prd.json")["rows"]}
+    prd_por_uns = cargar_prd_por_uns(res, ed)
+    comp_idx = indice_composicion_por_uns(wb, comp_infos)
+    dec_comp, dec_uns = cargar_decisiones(ruta_decisiones)
+    conflictos = {}
 
     notas_idx, textuales = cargar_notas_de_grupo(res, ed)
 
-    ws = new_sheet(wb, "MAP_Grupo",
-                   "MAPEO material -> grupo de propiedades (TM / TE / PRD) · ASME BPVC II-D 2025",
+    ws = new_sheet(wb, nombre,
+                   f"MAPEO material -> grupo de propiedades (TM / TE / PRD) · "
+                   f"ASME BPVC II-D 2025 ({'Metrica' if si else 'U.S. Customary'})",
                    "TM y TE se indexan por GRUPO de material, no por especificacion. La "
                    "pertenencia esta impresa en las Notas al pie de TM-1 (Grupos A..J) y "
                    "TE-1 (Grupos 1..4), y cada fila cita la nota que la sostiene. "
@@ -877,9 +1054,10 @@ def build_map_grupo(res, wb, iid_infos):
                    "publica el dato: NO USAR E NI DILATACION.")
     n = write_headers(ws, ["material_id", "Spec. No.", "UNS / Alloy", "Composicion nominal",
                            "Grupo E (TM)", "Fuente E", "Grupo dilatacion (TE)", "Fuente alfa",
-                           "Grupo PRD", "Estado", "Motivo", "Busqueda"])
+                           "Fila PRD (Poisson/densidad)", "Estado", "Motivo", "Busqueda"])
     recs, pendientes = [], []
-    stats = {E_UNS: 0, E_NOTA: 0, E_TEXTUAL: 0, E_SIN: 0}
+    stats = {E_UNS: 0, E_NOTA: 0, E_VALIDADO: 0, E_TEXTUAL: 0,
+             E_COMP_AJENA: 0, E_SIN: 0}
     for info in iid_infos:
         src = wb[info["sheet"]]
         for r in range(R_DATA, info["last_row"] + 1):
@@ -913,18 +1091,34 @@ def build_map_grupo(res, wb, iid_infos):
             if hit is None and not (grp_e or grp_te):
                 stem = ck.split("-")[0]
                 cand = [t for t in textuales if _stem_textual(t[3]) == stem]
+                prestada = _composicion_prestada(comp_idx, key, ck, notas_idx)
                 if cand:
                     tabla, nota, grupo, miembro = cand[0]
                     estado = E_TEXTUAL
                     motivo = (f"{tabla} Nota {nota} lista «{miembro}». Aplicar la regla "
                               f"y confirmar si este material queda dentro de {grupo}.")
+                elif prestada:
+                    # La fila no imprime composicion, pero su UNS aparece con una
+                    # sola composicion en otra tabla del libro, y esa composicion
+                    # si figura en una Nota. Se propone con toda la trazabilidad
+                    # a la vista; NO se marca AUTO porque el dato no sale de la
+                    # fila propia.
+                    comp_p, hojas_p, origenes = prestada
+                    for tabla, nota, grupo in origenes:
+                        if tabla == "TM-1" and grp_e is None:
+                            grp_e, fuente_e = grupo, f"TM-1 Nota {nota} (comp. prestada)"
+                        elif tabla == "TE-1" and grp_te is None:
+                            grp_te, fuente_te = grupo, f"TE-1 Nota {nota} (comp. prestada)"
+                    estado = E_COMP_AJENA
+                    motivo = (f"La fila no imprime composicion nominal. Su UNS «{key}» "
+                              f"aparece como «{comp_p}» en {', '.join(hojas_p)}, y esa "
+                              f"composicion si figura en Nota. Confirmar que es el mismo "
+                              f"material antes de usar E o dilatacion.")
                 elif not ck:
-                    # Sin composicion impresa no hay nada que contrastar ni que
-                    # decidir: la fila del codigo no trae el dato de entrada.
+                    # Sin composicion impresa y sin forma de recuperarla: la fila
+                    # del codigo no trae el dato de entrada.
                     estado = E_SIN
-                    motivo = ("La fila no imprime composicion nominal y su UNS no "
-                              "figura en TM-1..TM-5: no hay dato con el que buscar "
-                              "el grupo.")
+                    motivo = _motivo_sin_composicion(comp_idx, key)
                 else:
                     estado = E_SIN
                     motivo = ("El UNS no figura en TM-1..TM-5 y la composicion nominal "
@@ -934,11 +1128,55 @@ def build_map_grupo(res, wb, iid_infos):
                 falta = "E (TM-1)" if grp_e is None else "dilatacion (TE-1)"
                 motivo = f"Solo se resolvio uno de los dos grupos; falta {falta}."
 
-            prd = next((v for k, v in prd_groups.items()
-                        if k and k in txt(comp).upper()), None)
+            # 4) Decision del ingeniero. Se aplica SOLO donde el codigo no
+            #    resolvio. Si contradice algo que el codigo si dice, no se
+            #    aplica: se deja el valor del codigo y se reporta el choque,
+            #    porque una decision no puede pisar una fuente normativa sin
+            #    que nadie se entere.
+            dec = dec_comp.get(ck) or next(
+                (dec_uns[t] for t in _uns_tokens(key) if t in dec_uns), None)
+            if dec:
+                if estado in (E_UNS, E_NOTA):
+                    dtm, dte = txt(dec.get("grupo_tm")), txt(dec.get("grupo_te"))
+                    if (dtm and grp_e and dtm != txt(grp_e)) or \
+                       (dte and grp_te and dte != txt(grp_te)):
+                        # Se agrupa por composicion: el choque es uno solo, aunque
+                        # lo arrastren cientos de filas. Repetirlo por fila
+                        # sepultaria el resto de las limitaciones del libro.
+                        conflictos[txt(comp)] = (
+                            f"el codigo asigna {txt(grp_e) or '-'} / "
+                            f"{txt(grp_te) or '-'} y la decision dice "
+                            f"{dtm or '-'} / {dte or '-'}. Se conserva lo del codigo.",
+                            conflictos.get(txt(comp), (None, 0))[1] + 1)
+                else:
+                    if txt(dec.get("grupo_tm")):
+                        grp_e = txt(dec.get("grupo_tm"))
+                        fuente_e = f"Validado por ingeniero ({_firma(dec)})"
+                    if txt(dec.get("grupo_te")):
+                        grp_te = txt(dec.get("grupo_te"))
+                        fuente_te = f"Validado por ingeniero ({_firma(dec)})"
+                    estado = E_VALIDADO
+                    motivo = txt(dec.get("justificacion")) or \
+                        "Decision del ingeniero; sin justificacion registrada."
+
+            # PRD: coincidencia literal del UNS contra las filas de PRD que
+            # nombran los suyos. Hasta la Rev. 3 esto buscaba la descripcion de
+            # PRD como SUBCADENA de la composicion nominal, lo que casi nunca
+            # acertaba y, cuando acertaba, devolvia la familia gruesa
+            # («Ferrous Materials») en vez de la fila que hay que consultar.
+            prd = next((prd_por_uns[t] for t in _uns_tokens(key)
+                        if t in prd_por_uns), None)
             stats[estado] += 1
-            if estado in (E_TEXTUAL, E_SIN):
-                pendientes.append((txt(comp), estado, motivo, txt(spec), txt(uns)))
+            if estado in (E_TEXTUAL, E_COMP_AJENA, E_SIN):
+                # Las filas sin composicion propia se agrupan por UNS: es la
+                # unidad en que se decide, y agruparlas por la composicion
+                # vacia las juntaria todas en una decision falsa.
+                if txt(comp):
+                    clave = ("composicion", txt(comp))
+                else:
+                    tok = next(iter(_uns_tokens(key)), "")
+                    clave = ("uns", tok) if tok else ("composicion", "")
+                pendientes.append((clave, estado, motivo, txt(spec), txt(uns)))
             recs.append(([mid, spec, uns, comp, grp_e, fuente_e, grp_te, fuente_te,
                           prd, estado, motivo,
                           search_key(mid, spec, uns, comp)], {}))
@@ -947,12 +1185,22 @@ def build_map_grupo(res, wb, iid_infos):
                   "H": 18, "I": 20, "J": 28, "K": 60, "L": 28})
     ws.column_dimensions["L"].hidden = True
     ws.auto_filter.ref = f"A{R_HDR}:K{last}"
-    ISSUES.append("MAP_Grupo: " + " · ".join(f"{k}={v}" for k, v in stats.items()))
+    ISSUES.append(f"{nombre}: " + " · ".join(f"{k}={v}" for k, v in stats.items()))
+    n_dec = len(dec_comp) + len(dec_uns)
+    if n_dec:
+        ISSUES.append(f"{nombre}: {n_dec} decisiones validadas leidas de "
+                      f"{ruta_decisiones.name}; aplicadas a {stats[E_VALIDADO]} filas.")
+    for comp_c, (detalle, n) in conflictos.items():
+        ISSUES.append(f"{nombre} CONFLICTO decision vs codigo en «{comp_c}» "
+                      f"({n} filas): {detalle}")
+    n_prd = sum(1 for ident, _ in recs if ident[8])
     ISSUES.append(
-        "MAP_Grupo columna 'Grupo PRD': sigue resolviendose por coincidencia de "
-        "subcadena contra table_prd.json, heredado de la Rev. 2. No se toco en la "
-        "Rev. 3 y no alimenta ningun calculo; pendiente de revisar aparte.")
-    record_meta("MAP_Grupo", "TM-1/TE-1 Notas + TM-1..TM-5 (UNS)",
+        f"{nombre} columna 'Fila PRD': {n_prd} de {len(recs)} filas resueltas por "
+        f"UNS literal contra las 99 filas de table_prd.json que nombran los suyos. "
+        f"Las 16 filas restantes de PRD son categorias redactadas ('Carbon steels', "
+        f"'High alloy steels (300 series)'): encuadrar un material en ellas es "
+        f"criterio de ingenieria y no se resuelve aqui.")
+    record_meta(nombre, "TM-1/TE-1 Notas + TM-1..TM-5 (UNS)",
                 f"{ed}/table_tm_1.json (note_members) ; table_te_1.json "
                 f"(note_members) ; table_tm_*.json ; table_prd.json", "2025", "-",
                 last - R_DATA + 1,
@@ -972,20 +1220,20 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
     """
     from collections import Counter, OrderedDict
     grupos: "OrderedDict[tuple, dict]" = OrderedDict()
-    for comp, estado, motivo, spec, uns in pendientes:
-        g = grupos.setdefault((comp, estado), {"motivo": motivo, "n": 0,
-                                               "specs": Counter(), "uns": Counter()})
+    for clave, estado, motivo, spec, uns in pendientes:
+        g = grupos.setdefault((clave, estado), {"motivo": motivo, "n": 0,
+                                                "specs": Counter(), "uns": Counter()})
         g["n"] += 1
         if spec:
             g["specs"][spec] += 1
         if uns:
             g["uns"][uns] += 1
 
-    # Las filas sin composicion impresa no son una decision de ingenieria: no hay
-    # dato de entrada que juzgar. Se cuentan aparte para no inflar la lista.
-    sin_comp = grupos.pop(("", E_SIN), None)
+    # Filas sin composicion impresa Y sin UNS con el que anclar la decision: no
+    # hay dato de entrada que juzgar. Se cuentan aparte para no inflar la lista.
+    sin_comp = grupos.pop((("composicion", ""), E_SIN), None)
 
-    orden = {E_TEXTUAL: 0, E_SIN: 1}
+    orden = {E_TEXTUAL: 0, E_COMP_AJENA: 1, E_SIN: 2}
     filas = sorted(grupos.items(), key=lambda kv: (orden[kv[0][1]], -kv[1]["n"]))
 
     L = ["# Revision de MAP_Grupo — grupos de propiedades sin resolver por el codigo",
@@ -1017,14 +1265,20 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
     L += ["",
           "## Decisiones",
           "",
-          "| # | Composicion nominal | Filas | Estado | Que hay que decidir | Grupo asignado | Firma / fecha |",
+          "Las filas se cuentan sobre las DOS ediciones (metrica y U.S. Customary):",
+          "una misma decision desbloquea el material en ambas, porque la pertenencia a",
+          "grupo no depende del sistema de unidades.",
+          "",
+          "| # | Se decide sobre | Filas | Estado | Que hay que decidir | Grupo asignado | Firma / fecha |",
           "|---:|---|---:|---|---|---|---|"]
-    for i, ((comp, estado), g) in enumerate(filas, start=1):
+    for i, ((clave, estado), g) in enumerate(filas, start=1):
+        tipo, valor = clave
         specs = ", ".join(s for s, _ in g["specs"].most_common(3))
         if len(g["specs"]) > 3:
             specs += f", +{len(g['specs']) - 3} mas"
         motivo = (g["motivo"] or "").replace("\n", " ")
-        L.append(f"| {i} | `{comp}` | {g['n']} | {estado} | {motivo} "
+        etiqueta = f"`{valor}`" + (" (UNS)" if tipo == "uns" else "")
+        L.append(f"| {i} | {etiqueta} | {g['n']} | {estado} | {motivo} "
                  f"<br>Especificaciones: {specs or '—'} |  |  |")
     L += ["",
           "## Como usar este documento",
@@ -1036,8 +1290,55 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
           "   esos materiales. Es el comportamiento correcto: el codigo prohibe",
           "   extrapolar y prohibe inventar la pertenencia a un grupo.",
           ""]
+    L += ["",
+          "## Vuelta al motor",
+          "",
+          "Para que estas decisiones lleguen al calculo, copie",
+          "`decisiones_map_grupo.plantilla.json` a `decisiones_map_grupo.json`,",
+          "rellene `grupo_tm` / `grupo_te` con el rotulo tal como lo imprime el codigo",
+          "(«Material Group E», «Group 1») y firme cada entrada. El builder las lee en",
+          "la siguiente corrida y esas filas pasan al estado VALIDADO POR INGENIERO,",
+          "**siempre separado de las filas AUTO**: quien audite el libro tiene que poder",
+          "distinguir lo que dice el codigo de lo que decidio una persona.",
+          "",
+          "Una decision no puede pisar al codigo: si contradice un grupo que el codigo",
+          "si asigna, no se aplica y el choque se reporta en las limitaciones del libro.",
+          ""]
     ruta.parent.mkdir(parents=True, exist_ok=True)
     ruta.write_text("\n".join(L), encoding="utf-8")
+
+    # Plantilla legible por el motor, con lo pendiente ya listado. Se escribe
+    # siempre; el archivo que el ingeniero rellena es OTRO, para no pisarselo.
+    plantilla = {
+        "_formato": ("Decisiones de ingenieria sobre la pertenencia a grupo de "
+                     "propiedades de ASME BPVC II-D, para lo que el codigo no "
+                     "resuelve por si solo. Copie este archivo a "
+                     "decisiones_map_grupo.json y rellenelo."),
+        "_como_rellenar": {
+            "composicion": "tal como la imprime el codigo; se compara sin espacios",
+            "uns": ("presente en vez de `composicion` cuando la fila del codigo no "
+                    "imprime composicion nominal: ahi lo que se decide es si ese UNS "
+                    "designa el material cuya composicion se tomo prestada"),
+            "grupo_tm": "rotulo de TM-1, p. ej. 'Material Group E' (modulo E)",
+            "grupo_te": "rotulo de TE-1, p. ej. 'Group 1' (dilatacion)",
+            "justificacion": "por que; queda impreso en la hoja MAP_Grupo",
+            "validado_por": "iniciales o nombre",
+            "fecha": "AAAA-MM-DD",
+        },
+        "_aviso": ("Dejar grupo_tm y grupo_te vacios equivale a no decidir: la fila "
+                   "sigue bloqueada. Una decision nunca sobreescribe un grupo que el "
+                   "codigo si asigna."),
+        "decisiones": [
+            {("uns" if tipo == "uns" else "composicion"): valor,
+             "grupo_tm": "", "grupo_te": "",
+             "justificacion": "", "validado_por": "", "fecha": "",
+             "_filas_afectadas": g["n"], "_estado_actual": estado,
+             "_motivo": (g["motivo"] or "").replace("\n", " ")}
+            for ((tipo, valor), estado), g in filas
+        ],
+    }
+    ruta.with_name("decisiones_map_grupo.plantilla.json").write_text(
+        json.dumps(plantilla, ensure_ascii=False, indent=2), encoding="utf-8")
     return len(filas)
 
 
@@ -2433,6 +2734,10 @@ def main(argv=None):
     ap.add_argument("--in", dest="inp", required=True)
     ap.add_argument("--out", dest="out", required=True)
     ap.add_argument("--report", default=None)
+    ap.add_argument("--decisiones", default=None,
+                    help="JSON de decisiones validadas del ingeniero. Por omision "
+                         "decisiones_map_grupo.json junto al reporte; si no existe "
+                         "se ignora y todo queda como lo deja el codigo.")
     ap.add_argument("--revision", default=None,
                     help="Hoja de revision de MAP_Grupo (Markdown). Por omision se "
                          "escribe junto al libro como <salida>_Revision_MAP_Grupo.md")
@@ -2462,7 +2767,13 @@ def main(argv=None):
     build_appendix_c(res, wb, "US")
     nm = build_nometalicos(res, wb)
     fac = build_map_factores(res, wb)
-    map_last, map_stats, map_pend = build_map_grupo(res, wb, [iid, iidb])
+    ruta_dec = (Path(a.decisiones) if a.decisiones else
+                Path(__file__).resolve().parent.parent / "decisiones_map_grupo.json")
+    todas = [b313, b313c, iid, iidc, iidb, iidbc]
+    map_last, map_stats, map_pend = build_map_grupo(
+        res, wb, [iid, iidb], todas, ruta_dec, "SI")
+    _, mapc_stats, mapc_pend = build_map_grupo(
+        res, wb, [iidc, iidbc], todas, ruta_dec, "US")
     build_notas(res, wb)
 
     # listas simples de los buscadores por grupo
@@ -2561,6 +2872,7 @@ def main(argv=None):
         "Y-1 -> DB_Sy": f"{len(res.rows('bpvc_ii_d_metric_2025/table_y_1.json'))}"
                         f" -> {sy['last_row'] - R_DATA + 1}",
         "MAP_Grupo": " · ".join(f"{k}={v}" for k, v in map_stats.items()),
+        "MAP_GrupoC": " · ".join(f"{k}={v}" for k, v in mapc_stats.items()),
     }
     build_meta(wb, counts)
     rewrite_instrucciones(
@@ -2574,7 +2886,8 @@ def main(argv=None):
     # resuelve: la regla textual que debe aplicar el ingeniero y los materiales
     # para los que II-D no publica el dato. Las filas AUTO no entran: citan la
     # nota que las sostiene y son auditables 1:1.
-    n_sin_resolver = map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_SIN, 0)
+    n_sin_resolver = (map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_COMP_AJENA, 0)
+                      + map_stats.get(E_SIN, 0))
     build_dashboard(wb, [
         ("MATERIALES B31.3 · A-1 y A-4", b313["last_row"] - R_DATA + 1, "registros", False),
         ("MATERIALES II-D · TABLA 1A", iid["last_row"] - R_DATA + 1, "registros", False),
@@ -2592,7 +2905,8 @@ def main(argv=None):
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
              "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_PRD", "DB_PRDC",
              "DB_C_dilatacion", "DB_C_dilatacionC", "DB_C_modulo", "DB_C_moduloC",
-             "DB_NoMetalicos", "MAP_Factores", "MAP_Grupo", "Notas_Codigo", "DB_Listas",
+             "DB_NoMetalicos", "MAP_Factores", "MAP_Grupo", "MAP_GrupoC",
+             "Notas_Codigo", "DB_Listas",
              "_meta", "_Curvas"]
     wb._sheets = [wb[n] for n in order if n in wb.sheetnames] + \
                  [s for s in wb._sheets if s.title not in order]
@@ -2605,7 +2919,8 @@ def main(argv=None):
     # no al libro: es documentacion de respaldo, no un entregable suelto.
     ruta_rev = Path(a.revision) if a.revision else \
         Path(__file__).resolve().parent.parent / "Revision_MAP_Grupo.md"
-    n_decisiones = escribir_revision_map_grupo(map_pend, map_stats, ruta_rev)
+    n_decisiones = escribir_revision_map_grupo(
+        map_pend + mapc_pend, map_stats, ruta_rev)
     ISSUES.append(f"MAP_Grupo: {n_decisiones} decisiones distintas pendientes de "
                   f"validacion del ingeniero -> {ruta_rev.name}")
 

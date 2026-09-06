@@ -116,7 +116,39 @@ de la maquetación a columnas; cada edición se carga en el orden que imprime.
 **Verificación:** 57 pruebas pasan; `verificar.py` 0 fallos, salida 0, con
 `4/4 archivos con note_members`.
 
-**Queda abierto.** `MAP_Grupo` sigue mapeando solo los materiales de la edición
-métrica (`build_map_grupo` fija `ed = "bpvc_ii_d_metric_2025"`). Ahora que las
-notas US existen, construir el mapeo para los materiales US es posible, pero es
-una hoja nueva y no se hizo: excede el cierre del vacío.
+---
+
+## Tercera tanda — el resto de lo abierto
+
+- [x] **Columna PRD.** Se eliminó la coincidencia de subcadena. Ahora es
+      coincidencia literal del UNS contra las **99 de 115 filas de PRD que
+      nombran los suyos** (142 UNS): 1 554 filas resueltas por hoja. Las 16
+      restantes son categorías redactadas y quedan al criterio del ingeniero.
+- [x] **Las filas sin composición nominal impresa.** 386 de las 427 sí tienen
+      UNS, y ese UNS aparece con composición en otra tabla del libro. Se
+      recupera por ahí — pero **nunca como AUTO**: estado propio
+      `REVISAR (composicion de otra tabla)`, citando la tabla de origen. 193
+      filas por hoja salen del bloqueo con propuesta trazable. Si el libro
+      asocia dos composiciones distintas al mismo UNS, no se elige.
+- [x] **Mapeo de la edición US.** `MAP_GrupoC`, resuelta contra las Notas de la
+      edición US. El libro pasa a 39 hojas; la nueva es `veryHidden`.
+- [x] **Vía de retorno de las decisiones.** `decisiones_map_grupo.json` +
+      plantilla autogenerada. Estado `VALIDADO POR INGENIERO`, separado de las
+      AUTO, con firma y fecha en la fuente. Una decisión no puede pisar al
+      código: el choque se reporta y se conserva lo normativo.
+
+**Dos defectos encontrados al hacerlo:**
+
+1. **Barras de fracción.** II-D imprime `C-1/2Mo` y el Apéndice A del B31.3
+   `C-1∕2Mo` (U+2215). No se pliegan por NFKC, así que el contraste entre
+   tablas fallaba **en silencio**: no daba error, simplemente no encontraba
+   nada. Corregido en `comp_key`.
+2. **Cita de la nota huérfana.** La métrica citaba `TM-1 Nota (8)` para el
+   Grupo H, pero su tabla referencia la **(9)** — la (8) es la duplicada. Ahora
+   se lee del rótulo impreso qué nota referencia cada tabla y se cita esa.
+   Métrica → (9), US → (8).
+
+**Verificación:** 69 pruebas pasan; `verificar.py` 0 fallos, salida 0. La
+sección 9 audita **las dos hojas**, cada una contra las Notas de su edición.
+
+**Queda solo lo que es tuyo:** las 157 decisiones de `Revision_MAP_Grupo.md`.

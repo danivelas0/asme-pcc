@@ -670,49 +670,71 @@ def auditar():
     # composicion. Es la comprobacion que convierte el mapeo en auditable: sin
     # ella volveriamos a tener grupos asignados sin respaldo, que es justo el
     # defecto que la Rev. 3 elimino.
-    log("## 9. Mapeo de grupos de propiedades (MAP_Grupo -> Notas de TM-1 / TE-1)")
+    log("## 9. Mapeo de grupos de propiedades "
+        "(MAP_Grupo y MAP_GrupoC -> Notas de TM-1 / TE-1)")
+    log("")
+    log("Cada hoja se audita contra las Notas de SU edicion: no numeran igual, "
+        "asi que cruzarlas ocultaria una cita mal puesta.")
     log("")
     map_bad = 0
-    ws_map = wb0["MAP_Grupo"]
-    cm = col_map(ws_map)
 
     def _ck(s):
         return re.sub(r"\s+", "", str(s or "")).translate(
             dict.fromkeys(map(ord, "‐‑‒–—―−⁃"), "-")
         ).upper()
 
-    # Indice de respaldo, leido de resources/ (no del libro).
-    respaldo = {}
-    for archivo, tabla in (("table_tm_1.json", "TM-1"), ("table_te_1.json", "TE-1")):
-        for nota in RES.load(f"bpvc_ii_d_metric_2025/{archivo}").get("note_members", []):
-            if nota.get("tipo") != "grupo":
-                continue
-            for m in nota["miembros"]:
-                respaldo.setdefault(_ck(m), set()).add(
-                    (tabla, nota["nota"], nota["grupo"]))
+    # Indice de respaldo, leido de resources/ (no del libro). Cada hoja se
+    # audita contra las Notas de SU edicion: no numeran igual, asi que cruzarlas
+    # daria falsos fallos y, peor, ocultaria una cita mal puesta.
+    def respaldo_de(ed):
+        out = {}
+        for archivo, tabla in (("table_tm_1.json", "TM-1"),
+                               ("table_te_1.json", "TE-1")):
+            for nota in RES.load(f"{ed}/{archivo}").get("note_members", []):
+                if nota.get("tipo") != "grupo":
+                    continue
+                for m in nota["miembros"]:
+                    out.setdefault(_ck(m), set()).add(
+                        (tabla, nota["nota"], nota["grupo"]))
+        return out
 
     estados = Counter()
-    sin_cita = huerfanas = 0
-    for r in range(R_DATA, ws_map.max_row + 1):
-        est = ws_map.cell(r, cm["Estado"]).value
-        if est is None:
-            continue
-        estados[est] += 1
-        comp = _ck(ws_map.cell(r, cm["Composicion nominal"]).value)
-        for col_g, col_f, tabla in (("Grupo E (TM)", "Fuente E", "TM-1"),
-                                    ("Grupo dilatacion (TE)", "Fuente alfa", "TE-1")):
-            grupo = ws_map.cell(r, cm[col_g]).value
-            fuente = str(ws_map.cell(r, cm[col_f]).value or "")
-            if not grupo:
+    sin_cita = huerfanas = validado_sin_marca = prestada_sin_origen = 0
+    for hoja, ed in (("MAP_Grupo", "bpvc_ii_d_metric_2025"),
+                     ("MAP_GrupoC", "bpvc_ii_d_customary_2025")):
+        ws_map = wb0[hoja]
+        cm = col_map(ws_map)
+        respaldo = respaldo_de(ed)
+        for r in range(R_DATA, ws_map.max_row + 1):
+            est = str(ws_map.cell(r, cm["Estado"]).value or "")
+            if not est:
                 continue
-            if not fuente:
-                sin_cita += 1           # grupo sin fuente: prohibido
-                continue
-            if "Nota" not in fuente:
-                continue                # procede del UNS impreso, ya auditado en 3
-            nota = fuente.split("Nota")[-1].strip()
-            if (tabla, nota, grupo) not in respaldo.get(comp, set()):
-                huerfanas += 1
+            estados[est] += 1
+            comp = _ck(ws_map.cell(r, cm["Composicion nominal"]).value)
+            motivo = str(ws_map.cell(r, cm["Motivo"]).value or "")
+            for col_g, col_f, tabla in (("Grupo E (TM)", "Fuente E", "TM-1"),
+                                        ("Grupo dilatacion (TE)", "Fuente alfa", "TE-1")):
+                grupo = ws_map.cell(r, cm[col_g]).value
+                fuente = str(ws_map.cell(r, cm[col_f]).value or "")
+                if not grupo:
+                    continue
+                if not fuente:
+                    sin_cita += 1           # grupo sin fuente: prohibido
+                    continue
+                # Una fila validada por una persona tiene que decirlo en la fuente:
+                # es lo que permite separarla de lo que dice el codigo.
+                if est.startswith("VALIDADO") and "Validado por ingeniero" not in fuente:
+                    validado_sin_marca += 1
+                # Una composicion tomada de otra tabla tiene que declarar su origen.
+                if "otra tabla" in est and "prestada" not in fuente:
+                    prestada_sin_origen += 1
+                if "Nota" not in fuente or "prestada" in fuente or "Validado" in fuente:
+                    continue                # UNS impreso, comp. prestada o decision
+                nota = fuente.split("Nota")[-1].strip()
+                if (tabla, nota, grupo) not in respaldo.get(comp, set()):
+                    huerfanas += 1
+            if "otra tabla" in est and "aparece como" not in motivo:
+                prestada_sin_origen += 1
 
     log("| Comprobacion | Detalle | Estado |")
     log("|---|---|---|")
@@ -739,6 +761,12 @@ def auditar():
          f"{len(completas)}/4 archivos con note_members"
          + (f" · faltan: {', '.join(faltan)}" if faltan else ""),
          not faltan),
+        ("Lo validado por una persona se declara como tal",
+         f"{validado_sin_marca} filas VALIDADO sin firma en la fuente",
+         validado_sin_marca == 0),
+        ("Toda composicion prestada declara de donde salio",
+         f"{prestada_sin_origen} filas sin citar la tabla de origen",
+         prestada_sin_origen == 0),
     ]
     for etiqueta, detalle, ok in filas9:
         map_bad += 0 if ok else 1

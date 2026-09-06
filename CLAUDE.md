@@ -163,15 +163,36 @@ idéntica en ambas, verificado grupo a grupo. Nunca copiar las notas de una
 edición a la otra: son extracciones independientes y `test_build_db.py::TestNotasEnLasDosEdiciones`
 lo comprueba.
 
-Estado del mapeo (3 454 filas): **1 292 AUTO por UNS exacto · 1 297 AUTO por
-composición listada en una Nota · 17 REVISAR · 848 SIN MAPEO.** Cada fila con
-grupo cita la nota que lo sostiene, y `verificar.py` §9 comprueba fila a fila que
-esa nota realmente liste esa composición.
+Hay **dos hojas de mapeo**, una por edición: `MAP_Grupo` (métrica) y `MAP_GrupoC`
+(U.S. Customary). Cada una se resuelve contra las Notas de **su** edición.
 
-Lo que queda para el ingeniero está en `outputs/Base_Datos_Materiales_ASME/Revision_MAP_Grupo.md`:
-**65 decisiones distintas** (no 1 518 filas), agrupadas por composición nominal.
-Las `SIN MAPEO` no son un defecto de extracción: II-D no publica E ni dilatación
-para esos materiales y el cálculo queda bloqueado, que es lo que exige el código.
+Estado por hoja (3 454 filas cada una):
+
+| Estado | Filas | Respaldo |
+|---|---:|---|
+| AUTO (UNS exacto) | 1 292 | UNS impreso en TM-1…TM-5 |
+| AUTO (composición en Nota) | 1 297 | Nota citada en la propia fila |
+| VALIDADO POR INGENIERO | según decisiones | `decisiones_map_grupo.json` |
+| REVISAR (regla textual) | 17 | regla de inclusión redactada por el código |
+| REVISAR (composición de otra tabla) | 193 | UNS recuperado de otra tabla del libro |
+| SIN MAPEO | 655 | II-D no publica el dato; cálculo bloqueado |
+
+`verificar.py` §9 audita ambas hojas fila a fila: que toda cita exista realmente
+en el JSON, que lo validado por una persona se declare como tal y que toda
+composición prestada diga de dónde salió.
+
+**Vía de retorno de las decisiones.** `Revision_MAP_Grupo.md` lista las
+**157 decisiones distintas** (por composición, o por UNS cuando la fila no
+imprime composición). Para que lleguen al cálculo, copiar
+`decisiones_map_grupo.plantilla.json` a `decisiones_map_grupo.json` y rellenarlo:
+esas filas pasan al estado `VALIDADO POR INGENIERO`, **siempre separado de las
+AUTO**. Una decisión **nunca sobreescribe** un grupo que el código sí asigna: el
+choque se reporta y se conserva lo del código.
+
+**Columna `Fila PRD`**: coincidencia literal del UNS contra las 99 filas de
+`table_prd.json` que nombran los suyos (1 554 filas resueltas). Las 16 filas
+restantes de PRD son categorías redactadas y encuadrar un material en ellas es
+criterio de ingeniería.
 
 **No reintroducir una heurística de composición.** La Rev. 2 asignaba grupo con
 expresiones regulares y producía asignaciones *falsas*: `mo\b` rotulaba «acero de
@@ -181,9 +202,8 @@ las aleaciones de níquel 62Ni-22Mo-15Cr; `8ni` casaba dentro de `18Ni`.
 
 ### Pendiente
 
-`MAP_Grupo` columna **Grupo PRD**: sigue resolviéndose por coincidencia de
-subcadena contra `table_prd.json`, heredado de la Rev. 2. No alimenta ningún
-cálculo. Sin revisar.
+Las **157 decisiones** de `Revision_MAP_Grupo.md` esperan validación del
+ingeniero. Todo lo demás del mapeo está cerrado y auditado.
 
 ---
 

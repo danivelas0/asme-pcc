@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  38 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  39 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -137,7 +137,7 @@ Dictamen global del modulo: **APTO** (OK).
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
 | Las 9 hojas navegables estan hidden | 9 hojas | OK |
-| El resto esta veryHidden | 28 hojas | OK |
+| El resto esta veryHidden | 29 hojas | OK |
 | Ninguna base de datos alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
 | Los botones cubren las 9 hojas navegables | 9 botones | OK |
@@ -145,7 +145,9 @@ Dictamen global del modulo: **APTO** (OK).
 
 La visibilidad esta grabada en el archivo, no la impone la macro: con las macros bloqueadas el usuario sigue sin ver ninguna base de datos.
 
-## 9. Mapeo de grupos de propiedades (MAP_Grupo -> Notas de TM-1 / TE-1)
+## 9. Mapeo de grupos de propiedades (MAP_Grupo y MAP_GrupoC -> Notas de TM-1 / TE-1)
+
+Cada hoja se audita contra las Notas de SU edicion: no numeran igual, asi que cruzarlas ocultaria una cita mal puesta.
 
 | Comprobacion | Detalle | Estado |
 |---|---|---|
@@ -153,13 +155,16 @@ La visibilidad esta grabada en el archivo, no la impone la macro: con las macros
 | La Nota citada lista esa composicion | 0 citas que el JSON del codigo no respalda | OK |
 | No sobrevive ningun estado de conjetura | sin filas 'PROPUESTA' | OK |
 | Las dos ediciones traen sus Notas de grupo | 4/4 archivos con note_members | OK |
+| Lo validado por una persona se declara como tal | 0 filas VALIDADO sin firma en la fuente | OK |
+| Toda composicion prestada declara de donde salio | 0 filas sin citar la tabla de origen | OK |
 
 | Estado del mapeo | Filas |
 |---|---:|
-| AUTO (composicion en Nota) | 1297 |
-| AUTO (UNS exacto) | 1292 |
-| SIN MAPEO | 848 |
-| REVISAR (regla textual del codigo) | 17 |
+| AUTO (composicion en Nota) | 2594 |
+| AUTO (UNS exacto) | 2584 |
+| SIN MAPEO | 1310 |
+| REVISAR (composicion de otra tabla) | 386 |
+| REVISAR (regla textual del codigo) | 34 |
 
 Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
 
