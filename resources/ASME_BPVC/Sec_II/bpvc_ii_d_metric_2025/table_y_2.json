@@ -9,8 +9,8 @@
   "table_id": "Table Y-2",
   "title": "Factors for Limiting Permanent Strain in Austenitic Stainless Steels, High-Nickel Alloy Steels, Nickel, Nickel Alloys, Copper, and Copper Alloys",
   "pdf_pages": [
-    1204,
-    1204
+    1203,
+    1203
   ],
   "page_count": 1,
   "row_count": 10,
@@ -65,5 +65,11 @@
       "factors": 0.63
     }
   ],
-  "subpart": "Subpart 1 - Stress Tables"
+  "subpart": "Subpart 1 - Stress Tables",
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_seccion_ii.py",
+    "alcance": "Solo la cita de pagina. Ningun valor ni ninguna fila se toca: `row_count` ya coincidia con las filas cargadas en las 27 tablas.",
+    "cambio": "pdf_pages [1204, 1204] -> [1203, 1203], medido buscando el rotulo impreso de la tabla en el PDF de origen"
+  }
 }

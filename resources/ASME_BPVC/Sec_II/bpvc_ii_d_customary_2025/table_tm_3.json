@@ -9,8 +9,8 @@
   "table_id": "Table TM-3",
   "title": "Moduli of Elasticity E of Copper and Copper Alloys for Given Temperatures",
   "pdf_pages": [
-    1238,
-    1238
+    1237,
+    1237
   ],
   "page_count": 1,
   "row_count": 47,
@@ -738,5 +738,11 @@
       }
     }
   ],
-  "subpart": "Subpart 2 - Physical Properties Tables"
+  "subpart": "Subpart 2 - Physical Properties Tables",
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_seccion_ii.py",
+    "alcance": "Solo la cita de pagina. Ningun valor ni ninguna fila se toca: `row_count` ya coincidia con las filas cargadas en las 27 tablas.",
+    "cambio": "pdf_pages [1238, 1238] -> [1237, 1237], medido buscando el rotulo impreso de la tabla en el PDF de origen"
+  }
 }
