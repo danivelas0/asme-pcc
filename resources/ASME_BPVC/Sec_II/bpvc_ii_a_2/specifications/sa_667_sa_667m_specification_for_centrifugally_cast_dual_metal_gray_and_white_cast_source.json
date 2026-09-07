@@ -1,0 +1,1780 @@
+{
+  "source": {
+    "standard": "ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2",
+    "edition": "2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01",
+    "table": "SA-667/SA-667M - Specification for Centrifugally Cast Dual Metal (Gray and White Cast Iron) Cylinders",
+    "clause": "SA-667/SA-667M",
+    "transcribed_from": "database/asme/bpvc_ii_a_2/specifications/sa_667_sa_667m_specification_for_centrifugally_cast_dual_metal_gray_and_white_cast_source.json",
+    "note": "Full text of ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2 — SA-667/SA-667M - Specification for Centrifugally Cast Dual Metal (Gray and White Cast Iron) Cylinders — as supplied by Daniel Velasquez on 2026-09-07 and extracted from the supplied PDF with marker-pdf. `data` is the extractor's output verbatim — the drop's own `document`, `part`, `figures` and `pages` blocks, with the page-by-page block tree, its HTML, tables and layout coordinates unedited. This file IS the source document, so `transcribed_from` names its own path: it is the artefact under review, not a transcription of one. The volume was supplied as one combined PDF and cut into parts at its own headings, so this file is a page-range slice of a single extraction and its page ids (PDF pages None–None, no printed page numbers on these pages) are the combined document's own, not renumbered from 0. Front matter (cover and title page, contents, list of sections, foreword, statement of policy, personnel, correspondence, summary of changes, cross-referencing) and back matter (back cover) were deleted from the drop before supply and are NOT filed; the drop's `content.json`, `index.json`, `meta.json` and `README.md` are retained beside the kind folders, unfiled, for the same reason. The edition — 2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01 — is stated on the title page, which this drop no longer carries as a filed cut: it survives only inside the retained `content.json`, so no filed cut of this standard prints its own edition. This cut carries no figure.",
+    "status": "PRELIMINARY — supplied source document, transcribed for screening and pre-dimensioning. The published standard governs for issued design.",
+    "read_by": "Daniel Velasquez",
+    "read_on": "2026-09-07"
+  },
+  "data": {
+    "document": {
+      "standard": "ASME Boiler and Pressure Vessel Code",
+      "section": "Section II - Materials",
+      "part": "Part A - Ferrous Material Specifications (SA-451 to End)",
+      "volume": "Volume 2 of Part A",
+      "designation": "ASME BPVC.II.A-2025",
+      "edition": "2025 Edition",
+      "edition_year": 2025,
+      "date_of_issuance": "2025-07-01",
+      "publisher": "ASME (The American Society of Mechanical Engineers)",
+      "source_pages": 943,
+      "specification_count": 114
+    },
+    "specification": {
+      "id": "SA-667/SA-667M",
+      "title": "Specification for Centrifugally Cast Dual Metal (Gray and White Cast Iron) Cylinders",
+      "equivalent_designation": "A667/A667M-87(2018)",
+      "equivalence_note": "Identical with ASTM Specification A667/A667M-87(2018).",
+      "folder": "SA-667-SA-667M",
+      "pdf_pages": [
+        398,
+        401
+      ],
+      "printed_pages": [
+        1093,
+        1095
+      ],
+      "page_count": 4
+    },
+    "figures": [],
+    "pages": [
+      {
+        "pdf_page": 398,
+        "printed_page": 1093,
+        "id": "/page/398/Page/24",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/398/PageHeader/0'></content-ref><content-ref src='/page/398/PageHeader/1'></content-ref><content-ref src='/page/398/SectionHeader/2'></content-ref><content-ref src='/page/398/Picture/3'></content-ref><content-ref src='/page/398/Picture/4'></content-ref><content-ref src='/page/398/Text/5'></content-ref><content-ref src='/page/398/Text/6'></content-ref><content-ref src='/page/398/PageFooter/7'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/398/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.4827346801758,
+                34.76670455932617
+              ],
+              [
+                557.9249267578125,
+                34.76670455932617
+              ],
+              [
+                557.9249267578125,
+                47.04376220703125
+              ],
+              [
+                273.4827346801758,
+                47.04376220703125
+              ]
+            ],
+            "bbox": [
+              273.4827346801758,
+              34.76670455932617,
+              557.9249267578125,
+              47.04376220703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/397/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/398/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                490.4237365722656,
+                34.9839506149292
+              ],
+              [
+                559.5471954345703,
+                34.9839506149292
+              ],
+              [
+                559.5471954345703,
+                46.122748374938965
+              ],
+              [
+                490.4237365722656,
+                46.122748374938965
+              ]
+            ],
+            "bbox": [
+              490.4237365722656,
+              34.9839506149292,
+              559.5471954345703,
+              46.122748374938965
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/397/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/398/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>SPECIFICATION FOR CENTRIFUGALLY CAST DUAL</b> <b>METAL (GRAY AND WHITE CAST IRON) CYLINDERS</b></h1>",
+            "polygon": [
+              [
+                117.26592636108398,
+                240.22279357910156
+              ],
+              [
+                511.97959899902344,
+                240.22279357910156
+              ],
+              [
+                511.97959899902344,
+                281.8807678222656
+              ],
+              [
+                117.26592636108398,
+                281.8807678222656
+              ]
+            ],
+            "bbox": [
+              117.26592636108398,
+              240.22279357910156,
+              511.97959899902344,
+              281.8807678222656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/398/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                151.6224489212036,
+                310.614945602417
+              ],
+              [
+                208.5071783065796,
+                310.614945602417
+              ],
+              [
+                208.5071783065796,
+                365.9066379547119
+              ],
+              [
+                151.6224489212036,
+                365.9066379547119
+              ]
+            ],
+            "bbox": [
+              151.6224489212036,
+              310.614945602417,
+              208.5071783065796,
+              365.9066379547119
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/398/Picture/4",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                415.7432579040527,
+                311.1428649902344
+              ],
+              [
+                464.1454902648926,
+                311.1428649902344
+              ],
+              [
+                464.1454902648926,
+                361.8341400146484
+              ],
+              [
+                415.7432579040527,
+                361.8341400146484
+              ]
+            ],
+            "bbox": [
+              415.7432579040527,
+              311.1428649902344,
+              464.1454902648926,
+              361.8341400146484
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/398/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SA-667/SA-667M</b></p>",
+            "polygon": [
+              [
+                256.32190704345703,
+                334.1272888183594
+              ],
+              [
+                371.1724319458008,
+                334.1272888183594
+              ],
+              [
+                371.1724319458008,
+                351.4867858886719
+              ],
+              [
+                256.32190704345703,
+                351.4867858886719
+              ]
+            ],
+            "bbox": [
+              256.32190704345703,
+              334.1272888183594,
+              371.1724319458008,
+              351.4867858886719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/398/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with ASTM Specification A667/A667M-87(2018).)</p>",
+            "polygon": [
+              [
+                210.9683074951172,
+                402.15357971191406
+              ],
+              [
+                424.09776306152344,
+                402.15357971191406
+              ],
+              [
+                424.09776306152344,
+                414.2983703613281
+              ],
+              [
+                210.9683074951172,
+                414.2983703613281
+              ]
+            ],
+            "bbox": [
+              210.9683074951172,
+              402.15357971191406,
+              424.09776306152344,
+              414.2983703613281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/398/PageFooter/7",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                302.0815200805664,
+                738.5572357177734
+              ],
+              [
+                325.96341705322266,
+                738.5572357177734
+              ],
+              [
+                325.96341705322266,
+                751.9525985717773
+              ],
+              [
+                302.0815200805664,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              302.0815200805664,
+              738.5572357177734,
+              325.96341705322266,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/398/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 399,
+        "printed_page": 1094,
+        "id": "/page/399/Page/257",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/399/PageHeader/0'></content-ref><content-ref src='/page/399/PageHeader/1'></content-ref><content-ref src='/page/399/PageFooter/26'></content-ref><content-ref src='/page/399/SectionHeader/2'></content-ref><content-ref src='/page/399/SectionHeader/4'></content-ref><content-ref src='/page/399/Text/5'></content-ref><content-ref src='/page/399/Text/8'></content-ref><content-ref src='/page/399/Text/12'></content-ref><content-ref src='/page/399/SectionHeader/16'></content-ref><content-ref src='/page/399/Text/18'></content-ref><content-ref src='/page/399/Text/19'></content-ref><content-ref src='/page/399/SectionHeader/22'></content-ref><content-ref src='/page/399/Text/24'></content-ref><content-ref src='/page/399/Text/3'></content-ref><content-ref src='/page/399/Text/6'></content-ref><content-ref src='/page/399/SectionHeader/7'></content-ref><content-ref src='/page/399/Text/9'></content-ref><content-ref src='/page/399/SectionHeader/10'></content-ref><content-ref src='/page/399/Text/11'></content-ref><content-ref src='/page/399/Text/13'></content-ref><content-ref src='/page/399/Text/14'></content-ref><content-ref src='/page/399/Text/15'></content-ref><content-ref src='/page/399/SectionHeader/17'></content-ref><content-ref src='/page/399/Text/20'></content-ref><content-ref src='/page/399/SectionHeader/21'></content-ref><content-ref src='/page/399/Text/23'></content-ref><content-ref src='/page/399/Text/25'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/399/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.29962348937988,
+                35.36569404602051
+              ],
+              [
+                117.7807731628418,
+                35.36569404602051
+              ],
+              [
+                117.7807731628418,
+                45.327117919921875
+              ],
+              [
+                51.29962348937988,
+                45.327117919921875
+              ]
+            ],
+            "bbox": [
+              51.29962348937988,
+              35.36569404602051,
+              117.7807731628418,
+              45.327117919921875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/399/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.5083532333374
+              ],
+              [
+                337.8595962524414,
+                35.5083532333374
+              ],
+              [
+                337.8595962524414,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.5083532333374,
+              337.8595962524414,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/399/PageFooter/26",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                284.8450469970703,
+                738.9500427246094
+              ],
+              [
+                306.944091796875,
+                738.9500427246094
+              ],
+              [
+                306.944091796875,
+                751.9525985717773
+              ],
+              [
+                284.8450469970703,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              284.8450469970703,
+              738.9500427246094,
+              306.944091796875,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/398/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>Standard Specification for</b> <b>Centrifugally Cast Dual Metal (Gray and White Cast Iron)</b> <b>Cylinders</b></h1>",
+            "polygon": [
+              [
+                101.1280746459961,
+                68.19144058227539
+              ],
+              [
+                465.7696838378906,
+                68.19144058227539
+              ],
+              [
+                465.7696838378906,
+                114.958251953125
+              ],
+              [
+                101.1280746459961,
+                114.958251953125
+              ]
+            ],
+            "bbox": [
+              101.1280746459961,
+              68.19144058227539,
+              465.7696838378906,
+              114.958251953125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/4",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>1. Scope</b></h4>",
+            "polygon": [
+              [
+                47.09034061431885,
+                184.7556381225586
+              ],
+              [
+                85.76414680480957,
+                184.7556381225586
+              ],
+              [
+                85.76414680480957,
+                196.779052734375
+              ],
+              [
+                47.09034061431885,
+                196.779052734375
+              ]
+            ],
+            "bbox": [
+              47.09034061431885,
+              184.7556381225586,
+              85.76414680480957,
+              196.779052734375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/399/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.1 This specification covers centrifugally cast cylinders with an outer layer of white cast iron and the remainder of the material of gray cast iron. These castings are suitable for pressure containing parts the design strength of which is based on the gray iron portion of the cylinder. These castings are suitable for service at temperatures up to 450°F [230°C].</p>",
+            "polygon": [
+              [
+                46.93959045410156,
+                198.2369384765625
+              ],
+              [
+                290.03199005126953,
+                198.2369384765625
+              ],
+              [
+                290.03199005126953,
+                266.0902099609375
+              ],
+              [
+                46.93959045410156,
+                266.0902099609375
+              ]
+            ],
+            "bbox": [
+              46.93959045410156,
+              198.2369384765625,
+              290.03199005126953,
+              266.0902099609375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/399/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.2 The values stated in either SI units or inch-pound units are to be regarded separately as standard. The values stated in each system may not be exact equivalents; therefore, each system shall be used independently of the other. Combining values from the two systems may result in non-conformance with the standard.</p>",
+            "polygon": [
+              [
+                46.89525890350342,
+                268.2770004272461
+              ],
+              [
+                289.71544647216797,
+                268.2770004272461
+              ],
+              [
+                289.71544647216797,
+                335.2876281738281
+              ],
+              [
+                46.89525890350342,
+                335.2876281738281
+              ]
+            ],
+            "bbox": [
+              46.89525890350342,
+              268.2770004272461,
+              289.71544647216797,
+              335.2876281738281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/399/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.3 The following safety hazards caveat pertains only to the test method portion, Section 8, of this specification: <i>This</i> <i>standard does not purport to address all of the safety concerns,</i> <i>if any, associated with its use. It is the responsibility of the user</i> <i>of this standard to establish appropriate safety and health</i> <i>practices and determine the applicability of regulatory limita</i><i>tions prior to use.</i></p>",
+            "polygon": [
+              [
+                46.71189308166504,
+                336.7786331176758
+              ],
+              [
+                289.84325408935547,
+                336.7786331176758
+              ],
+              [
+                289.84325408935547,
+                415.2715148925781
+              ],
+              [
+                46.71189308166504,
+                415.2715148925781
+              ]
+            ],
+            "bbox": [
+              46.71189308166504,
+              336.7786331176758,
+              289.84325408935547,
+              415.2715148925781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/16",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>2. Referenced Documents</b></h4>",
+            "polygon": [
+              [
+                47.283339500427246,
+                419.4879455566406
+              ],
+              [
+                156.83803939819336,
+                419.4879455566406
+              ],
+              [
+                156.83803939819336,
+                432.53009033203125
+              ],
+              [
+                47.283339500427246,
+                432.53009033203125
+              ]
+            ],
+            "bbox": [
+              47.283339500427246,
+              419.4879455566406,
+              156.83803939819336,
+              432.53009033203125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/399/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.1 <i>ASTM Standards:</i></p>",
+            "polygon": [
+              [
+                54.74973106384277,
+                434.59913635253906
+              ],
+              [
+                143.60130310058594,
+                434.59913635253906
+              ],
+              [
+                143.60130310058594,
+                447.3364562988281
+              ],
+              [
+                54.74973106384277,
+                447.3364562988281
+              ]
+            ],
+            "bbox": [
+              54.74973106384277,
+              434.59913635253906,
+              143.60130310058594,
+              447.3364562988281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/399/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">A278/A278M Specification for Gray Iron Castings for Pressure-Containing Parts for Temperatures Up to 650°F (350°C)</p>",
+            "polygon": [
+              [
+                58.90830993652344,
+                443.6162567138672
+              ],
+              [
+                289.3193664550781,
+                443.6162567138672
+              ],
+              [
+                289.3193664550781,
+                480.03936767578125
+              ],
+              [
+                58.90830993652344,
+                480.03936767578125
+              ]
+            ],
+            "bbox": [
+              58.90830993652344,
+              443.6162567138672,
+              289.3193664550781,
+              480.03936767578125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/22",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>3. Materials and Manufacture</b></h4>",
+            "polygon": [
+              [
+                46.39642810821533,
+                483.96405029296875
+              ],
+              [
+                175.89315032958984,
+                483.96405029296875
+              ],
+              [
+                175.89315032958984,
+                497.1842956542969
+              ],
+              [
+                46.39642810821533,
+                497.1842956542969
+              ]
+            ],
+            "bbox": [
+              46.39642810821533,
+              483.96405029296875,
+              175.89315032958984,
+              497.1842956542969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/399/Text/24",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.1 The melting procedures shall be optional with the foundry.</p>",
+            "polygon": [
+              [
+                46.53134536743164,
+                498.673828125
+              ],
+              [
+                289.14564514160156,
+                498.673828125
+              ],
+              [
+                289.14564514160156,
+                522.8916320800781
+              ],
+              [
+                46.53134536743164,
+                522.8916320800781
+              ]
+            ],
+            "bbox": [
+              46.53134536743164,
+              498.673828125,
+              289.14564514160156,
+              522.8916320800781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/399/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2 The white iron portion of the cylinder shall be made to a minimum hardness of 55 Scleroscope \"C\". The gray iron portion of the cylinder shall conform to Specification A278/ A278M, Class 20 or Class 150.</p>",
+            "polygon": [
+              [
+                303.50445556640625,
+                183.76879119873047
+              ],
+              [
+                547.0469055175781,
+                183.76879119873047
+              ],
+              [
+                547.0469055175781,
+                229.59552001953125
+              ],
+              [
+                303.50445556640625,
+                229.59552001953125
+              ]
+            ],
+            "bbox": [
+              303.50445556640625,
+              183.76879119873047,
+              547.0469055175781,
+              229.59552001953125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/399/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.3 The casting process shall be controlled to produce a metallurgical bond between the two metal layers.</p>",
+            "polygon": [
+              [
+                305.2596130371094,
+                231.02849578857422
+              ],
+              [
+                546.8973083496094,
+                231.02849578857422
+              ],
+              [
+                546.8973083496094,
+                255.18902587890625
+              ],
+              [
+                305.2596130371094,
+                255.18902587890625
+              ]
+            ],
+            "bbox": [
+              305.2596130371094,
+              231.02849578857422,
+              546.8973083496094,
+              255.18902587890625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/7",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>4. Finish</b></h4>",
+            "polygon": [
+              [
+                302.22754669189453,
+                262.59876251220703
+              ],
+              [
+                342.9769287109375,
+                262.59876251220703
+              ],
+              [
+                342.9769287109375,
+                274.5965576171875
+              ],
+              [
+                302.22754669189453,
+                274.5965576171875
+              ]
+            ],
+            "bbox": [
+              302.22754669189453,
+              262.59876251220703,
+              342.9769287109375,
+              274.5965576171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/7"
+            }
+          },
+          {
+            "id": "/page/399/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1 All surfaces shall be machined prior to the cylinders being placed into service.</p>",
+            "polygon": [
+              [
+                302.11143493652344,
+                276.3270492553711
+              ],
+              [
+                545.8922882080078,
+                276.3270492553711
+              ],
+              [
+                545.8922882080078,
+                300.3039245605469
+              ],
+              [
+                302.11143493652344,
+                300.3039245605469
+              ]
+            ],
+            "bbox": [
+              302.11143493652344,
+              276.3270492553711,
+              545.8922882080078,
+              300.3039245605469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/7"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/10",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>5. Physical Requirements</b></h4>",
+            "polygon": [
+              [
+                302.0705108642578,
+                307.06519317626953
+              ],
+              [
+                411.9430847167969,
+                307.06519317626953
+              ],
+              [
+                411.9430847167969,
+                319.80523681640625
+              ],
+              [
+                302.0705108642578,
+                319.80523681640625
+              ]
+            ],
+            "bbox": [
+              302.0705108642578,
+              307.06519317626953,
+              411.9430847167969,
+              319.80523681640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/399/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1 <i>Tensile Requirements—</i>Tension test specimens removed from the casting shall have a tensile strength not less than 80 % of that specified in 3.2.</p>",
+            "polygon": [
+              [
+                301.3545684814453,
+                321.0805435180664
+              ],
+              [
+                546.3248748779297,
+                321.0805435180664
+              ],
+              [
+                546.3248748779297,
+                356.41351318359375
+              ],
+              [
+                301.3545684814453,
+                356.41351318359375
+              ]
+            ],
+            "bbox": [
+              301.3545684814453,
+              321.0805435180664,
+              546.3248748779297,
+              356.41351318359375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/399/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.2 <i>Thickness of White Cast Iron:</i></p>",
+            "polygon": [
+              [
+                312.30274200439453,
+                357.6112289428711
+              ],
+              [
+                448.33287048339844,
+                357.6112289428711
+              ],
+              [
+                448.33287048339844,
+                371.1054992675781
+              ],
+              [
+                312.30274200439453,
+                371.1054992675781
+              ]
+            ],
+            "bbox": [
+              312.30274200439453,
+              357.6112289428711,
+              448.33287048339844,
+              371.1054992675781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/399/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.2.1 The thickness of the white cast iron shall be not less than 5 % nor more than 30 % of the total finished wall thickness.</p>",
+            "polygon": [
+              [
+                301.2791748046875,
+                369.08768463134766
+              ],
+              [
+                546.3421325683594,
+                369.08768463134766
+              ],
+              [
+                546.3421325683594,
+                403.8083801269531
+              ],
+              [
+                301.2791748046875,
+                403.8083801269531
+              ]
+            ],
+            "bbox": [
+              301.2791748046875,
+              369.08768463134766,
+              546.3421325683594,
+              403.8083801269531
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/399/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.2.2 The thickness of the white cast iron shall be determined by ultrasonic testing.</p>",
+            "polygon": [
+              [
+                302.8135757446289,
+                401.4584197998047
+              ],
+              [
+                545.9922637939453,
+                401.4584197998047
+              ],
+              [
+                545.9922637939453,
+                425.6103210449219
+              ],
+              [
+                302.8135757446289,
+                425.6103210449219
+              ]
+            ],
+            "bbox": [
+              302.8135757446289,
+              401.4584197998047,
+              545.9922637939453,
+              425.6103210449219
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/17",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>6. Number of Tests</b></h4>",
+            "polygon": [
+              [
+                302.28641510009766,
+                432.5279846191406
+              ],
+              [
+                385.8885040283203,
+                432.5279846191406
+              ],
+              [
+                385.8885040283203,
+                445.11163330078125
+              ],
+              [
+                302.28641510009766,
+                445.11163330078125
+              ]
+            ],
+            "bbox": [
+              302.28641510009766,
+              432.5279846191406,
+              385.8885040283203,
+              445.11163330078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/17"
+            }
+          },
+          {
+            "id": "/page/399/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.1 The number of tension tests shall be in conformance with Specification A278/A278M.</p>",
+            "polygon": [
+              [
+                301.79209899902344,
+                446.52557373046875
+              ],
+              [
+                546.2099304199219,
+                446.52557373046875
+              ],
+              [
+                546.2099304199219,
+                470.8190002441406
+              ],
+              [
+                301.79209899902344,
+                470.8190002441406
+              ]
+            ],
+            "bbox": [
+              301.79209899902344,
+              446.52557373046875,
+              546.2099304199219,
+              470.8190002441406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/17"
+            }
+          },
+          {
+            "id": "/page/399/SectionHeader/21",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>7. Specimen Preparation</b></h4>",
+            "polygon": [
+              [
+                302.32342529296875,
+                477.2172546386719
+              ],
+              [
+                409.17503356933594,
+                477.2172546386719
+              ],
+              [
+                409.17503356933594,
+                490.3199768066406
+              ],
+              [
+                302.32342529296875,
+                490.3199768066406
+              ]
+            ],
+            "bbox": [
+              302.32342529296875,
+              477.2172546386719,
+              409.17503356933594,
+              490.3199768066406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          },
+          {
+            "id": "/page/399/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1 Separately cast test bars may be used to represent the gray iron portion of the castings. The test bars shall be cast in core sand and have a nominal diameter of 2 in. [50 mm]. Tension test specimens shall be machined from test bars to the dimensions given for Specimen C in Specification A278/ A278M.</p>",
+            "polygon": [
+              [
+                302.2426986694336,
+                492.1922149658203
+              ],
+              [
+                547.343994140625,
+                492.1922149658203
+              ],
+              [
+                547.343994140625,
+                559.6309967041016
+              ],
+              [
+                302.2426986694336,
+                559.6309967041016
+              ]
+            ],
+            "bbox": [
+              302.2426986694336,
+              492.1922149658203,
+              547.343994140625,
+              559.6309967041016
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          },
+          {
+            "id": "/page/399/Text/25",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2 At the option of the manufacturer he may substitute test bars taken from the gray iron portion of the casting. The test bars shall be taken midway between the inside diameter of the casting and the interface between the two layers. Tension test specimens machined from these test bars shall conform to the dimensions shown for Specimen C in Specification A278/ A278M.</p>",
+            "polygon": [
+              [
+                302.25672912597656,
+                560.9964752197266
+              ],
+              [
+                547.2464904785156,
+                560.9964752197266
+              ],
+              [
+                547.2464904785156,
+                639.7288970947266
+              ],
+              [
+                302.25672912597656,
+                639.7288970947266
+              ]
+            ],
+            "bbox": [
+              302.25672912597656,
+              560.9964752197266,
+              547.2464904785156,
+              639.7288970947266
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/399/SectionHeader/2",
+          "4": "/page/399/SectionHeader/21"
+        }
+      },
+      {
+        "pdf_page": 400,
+        "printed_page": 1095,
+        "id": "/page/400/Page/126",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/400/PageHeader/0'></content-ref><content-ref src='/page/400/PageHeader/1'></content-ref><content-ref src='/page/400/PageFooter/10'></content-ref><content-ref src='/page/400/SectionHeader/3'></content-ref><content-ref src='/page/400/Text/4'></content-ref><content-ref src='/page/400/SectionHeader/6'></content-ref><content-ref src='/page/400/Text/7'></content-ref><content-ref src='/page/400/SectionHeader/2'></content-ref><content-ref src='/page/400/Text/5'></content-ref><content-ref src='/page/400/SectionHeader/8'></content-ref><content-ref src='/page/400/Text/9'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/400/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.9027099609375,
+                35.15629577636719
+              ],
+              [
+                557.9249267578125,
+                35.15629577636719
+              ],
+              [
+                557.9249267578125,
+                47.0418701171875
+              ],
+              [
+                273.9027099609375,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.9027099609375,
+              35.15629577636719,
+              557.9249267578125,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          },
+          {
+            "id": "/page/400/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                489.9848327636719,
+                35.44522476196289
+              ],
+              [
+                559.1962280273438,
+                35.44522476196289
+              ],
+              [
+                559.1962280273438,
+                45.74311065673828
+              ],
+              [
+                489.9848327636719,
+                45.74311065673828
+              ]
+            ],
+            "bbox": [
+              489.9848327636719,
+              35.44522476196289,
+              559.1962280273438,
+              45.74311065673828
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          },
+          {
+            "id": "/page/400/PageFooter/10",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.96380615234375,
+                738.5227203369141
+              ],
+              [
+                325.25191497802734,
+                738.5227203369141
+              ],
+              [
+                325.25191497802734,
+                751.9525985717773
+              ],
+              [
+                301.96380615234375,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.96380615234375,
+              738.5227203369141,
+              325.25191497802734,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/399/SectionHeader/21"
+            }
+          },
+          {
+            "id": "/page/400/SectionHeader/3",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>8. Test Method</b></h4>",
+            "polygon": [
+              [
+                63.9894962310791,
+                69.53823280334473
+              ],
+              [
+                131.2953872680664,
+                69.53823280334473
+              ],
+              [
+                131.2953872680664,
+                81.44287109375
+              ],
+              [
+                63.9894962310791,
+                81.44287109375
+              ]
+            ],
+            "bbox": [
+              63.9894962310791,
+              69.53823280334473,
+              131.2953872680664,
+              81.44287109375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/3"
+            }
+          },
+          {
+            "id": "/page/400/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">8.1 Tension test specimens shall fit the holders of the testing machine in such a way that the load shall be axial. The use of self-aligning shackles is suggested. After reaching a stress equivalent to 15 000 psi [100 MPa] the speed of the moving head of the testing machine shall not exceed 1⁄8 in. [3.2 mm]/min.</p>",
+            "polygon": [
+              [
+                64.33906745910645,
+                83.48434066772461
+              ],
+              [
+                307.3517761230469,
+                83.48434066772461
+              ],
+              [
+                307.3517761230469,
+                150.7537841796875
+              ],
+              [
+                64.33906745910645,
+                150.7537841796875
+              ]
+            ],
+            "bbox": [
+              64.33906745910645,
+              83.48434066772461,
+              307.3517761230469,
+              150.7537841796875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/3"
+            }
+          },
+          {
+            "id": "/page/400/SectionHeader/6",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>9. Inspection</b></h4>",
+            "polygon": [
+              [
+                64.26248931884766,
+                157.05307388305664
+              ],
+              [
+                122.26826477050781,
+                157.05307388305664
+              ],
+              [
+                122.26826477050781,
+                169.124267578125
+              ],
+              [
+                64.26248931884766,
+                169.124267578125
+              ]
+            ],
+            "bbox": [
+              64.26248931884766,
+              157.05307388305664,
+              122.26826477050781,
+              169.124267578125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/6"
+            }
+          },
+          {
+            "id": "/page/400/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">9.1 The inspector representing the purchaser shall have free entry at all times while work on the contract of the purchaser is being performed to all parts of the manufacturer's works that concern the manufacture of the material ordered. The manufacturer shall afford the inspector without charge all reasonable facilities to satisfy him that the material is being furnished in accordance with this specification. All tests and inspections shall be made at the place of manufacture prior to the shipment unless otherwise specified and shall be so conducted as not to interfere unnecessarily with the operation of the works.</p>",
+            "polygon": [
+              [
+                64.56805801391602,
+                171.2190399169922
+              ],
+              [
+                306.8698196411133,
+                171.2190399169922
+              ],
+              [
+                306.8698196411133,
+                282.0393371582031
+              ],
+              [
+                64.56805801391602,
+                282.0393371582031
+              ]
+            ],
+            "bbox": [
+              64.56805801391602,
+              171.2190399169922,
+              306.8698196411133,
+              282.0393371582031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/6"
+            }
+          },
+          {
+            "id": "/page/400/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>10. Acceptance and Certification</b></h4>",
+            "polygon": [
+              [
+                319.82350158691406,
+                69.47550201416016
+              ],
+              [
+                459.7954559326172,
+                69.47550201416016
+              ],
+              [
+                459.7954559326172,
+                81.44268798828125
+              ],
+              [
+                319.82350158691406,
+                81.44268798828125
+              ]
+            ],
+            "bbox": [
+              319.82350158691406,
+              69.47550201416016,
+              459.7954559326172,
+              81.44268798828125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/400/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">10.1 Final acceptance of the casting shall follow complete machining of the casting. Upon request of the purchaser and when so specified in the purchase order, a certification shall be made on the basis of acceptance of the material. This shall consist of a copy of the manufacturer's test report or a statement by the supplier accompanied by a copy of the test results that the material has been sampled, tested, and inspected in accordance with the provisions of this specification. Each certification so furnished shall be signed by an authorized agent of the supplier or manufacturer.</p>",
+            "polygon": [
+              [
+                320.44173431396484,
+                83.76439476013184
+              ],
+              [
+                564.2492065429688,
+                83.76439476013184
+              ],
+              [
+                564.2492065429688,
+                194.35760498046875
+              ],
+              [
+                320.44173431396484,
+                194.35760498046875
+              ]
+            ],
+            "bbox": [
+              320.44173431396484,
+              83.76439476013184,
+              564.2492065429688,
+              194.35760498046875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/400/SectionHeader/8",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>11. Product Marking</b></h4>",
+            "polygon": [
+              [
+                319.90848541259766,
+                200.05400848388672
+              ],
+              [
+                411.1846618652344,
+                200.05400848388672
+              ],
+              [
+                411.1846618652344,
+                212.7281494140625
+              ],
+              [
+                319.90848541259766,
+                212.7281494140625
+              ]
+            ],
+            "bbox": [
+              319.90848541259766,
+              200.05400848388672,
+              411.1846618652344,
+              212.7281494140625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/400/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">11.1 Pressure containing castings made in accordance with this specification shall have the name of the manufacturer or his recognized trademark and the class of iron to which it conforms cast or indelibly stamped on the surface indicated by the purchaser or in such a position as not to injure the usefulness of the casting.</p>",
+            "polygon": [
+              [
+                319.97481536865234,
+                215.48886108398438
+              ],
+              [
+                564.4881591796875,
+                215.48886108398438
+              ],
+              [
+                564.4881591796875,
+                282.0393371582031
+              ],
+              [
+                319.97481536865234,
+                282.0393371582031
+              ]
+            ],
+            "bbox": [
+              319.97481536865234,
+              215.48886108398438,
+              564.4881591796875,
+              282.0393371582031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/399/SectionHeader/2",
+              "4": "/page/400/SectionHeader/8"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/399/SectionHeader/2",
+          "4": "/page/400/SectionHeader/8"
+        }
+      },
+      {
+        "pdf_page": 401,
+        "printed_page": null,
+        "id": "/page/401/Page/2",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/401/SectionHeader/0'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/401/SectionHeader/0",
+            "block_type": "SectionHeader",
+            "html": "<h1>INTENTIONALLY LEFT BLANK</h1>",
+            "polygon": [
+              [
+                213.3607635498047,
+                387.7484893798828
+              ],
+              [
+                378.6818389892578,
+                387.7484893798828
+              ],
+              [
+                378.6818389892578,
+                405.58935546875
+              ],
+              [
+                213.3607635498047,
+                405.58935546875
+              ]
+            ],
+            "bbox": [
+              213.3607635498047,
+              387.7484893798828,
+              378.6818389892578,
+              405.58935546875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/401/SectionHeader/0"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/401/SectionHeader/0"
+        }
+      }
+    ]
+  }
+}

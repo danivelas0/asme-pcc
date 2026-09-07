@@ -4,6 +4,19 @@ __pycache__/
 # Archivos temporales de Excel al abrir un libro
 ~$*.xls*
 
+# Seccion II, partes A, B y C: el volcado integro del extractor.
+# Son 269 MB en cuatro archivos que el propio index.json describe como
+# "full-fidelity marker output, inline base64 images retained". NO hacen falta
+# para construir bases de datos: el contenido por especificacion esta en
+# specifications/, con los bloques Table y sus Line hijos -las filas reales-, y
+# las figuras estan en figures/ como PNG. Lo unico que anaden es el material
+# preliminar que el indice ya declara excluido y las imagenes duplicadas en
+# base64. Se quedan en disco para poder reponerlos.
+**/bpvc_ii_a_1/content.json
+**/bpvc_ii_a_2/content.json
+**/bpvc_ii_b/content.json
+**/bpvc_ii_c/content.json
+
 # Fuentes de auditoria del B31.3: paginas escaneadas del codigo y su OCR.
 # Las enmiendas de resources/ las citan por folio impreso, pero el material no
 # se versiona (copyright de ASME). Tienen que estar en disco para reejecutar

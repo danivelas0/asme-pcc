@@ -1,0 +1,4994 @@
+{
+  "source": {
+    "standard": "ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2",
+    "edition": "2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01",
+    "table": "SA-941 - Terminology Relating to Steel, Stainless Steel, Related Alloys, and Ferroalloys",
+    "clause": "SA-941",
+    "transcribed_from": "database/asme/bpvc_ii_a_2/specifications/sa_941_terminology_relating_to_steel_stainless_steel_related_alloys_and_ferroalloys_source.json",
+    "note": "Full text of ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2 — SA-941 - Terminology Relating to Steel, Stainless Steel, Related Alloys, and Ferroalloys — as supplied by Daniel Velasquez on 2026-09-07 and extracted from the supplied PDF with marker-pdf. `data` is the extractor's output verbatim — the drop's own `document`, `part`, `figures` and `pages` blocks, with the page-by-page block tree, its HTML, tables and layout coordinates unedited. This file IS the source document, so `transcribed_from` names its own path: it is the artefact under review, not a transcription of one. The volume was supplied as one combined PDF and cut into parts at its own headings, so this file is a page-range slice of a single extraction and its page ids (PDF pages None–None, no printed page numbers on these pages) are the combined document's own, not renumbered from 0. Front matter (cover and title page, contents, list of sections, foreword, statement of policy, personnel, correspondence, summary of changes, cross-referencing) and back matter (back cover) were deleted from the drop before supply and are NOT filed; the drop's `content.json`, `index.json`, `meta.json` and `README.md` are retained beside the kind folders, unfiled, for the same reason. The edition — 2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01 — is stated on the title page, which this drop no longer carries as a filed cut: it survives only inside the retained `content.json`, so no filed cut of this standard prints its own edition. This cut carries no figure.",
+    "status": "PRELIMINARY — supplied source document, transcribed for screening and pre-dimensioning. The published standard governs for issued design.",
+    "read_by": "Daniel Velasquez",
+    "read_on": "2026-09-07"
+  },
+  "data": {
+    "document": {
+      "standard": "ASME Boiler and Pressure Vessel Code",
+      "section": "Section II - Materials",
+      "part": "Part A - Ferrous Material Specifications (SA-451 to End)",
+      "volume": "Volume 2 of Part A",
+      "designation": "ASME BPVC.II.A-2025",
+      "edition": "2025 Edition",
+      "edition_year": 2025,
+      "date_of_issuance": "2025-07-01",
+      "publisher": "ASME (The American Society of Mechanical Engineers)",
+      "source_pages": 943,
+      "specification_count": 114
+    },
+    "specification": {
+      "id": "SA-941",
+      "title": "Terminology Relating to Steel, Stainless Steel, Related Alloys, and Ferroalloys",
+      "equivalent_designation": "A941-22a",
+      "equivalence_note": "Identical with ASTM Specification A941-22a.",
+      "folder": "SA-941",
+      "pdf_pages": [
+        684,
+        693
+      ],
+      "printed_pages": [
+        1379,
+        1387
+      ],
+      "page_count": 10
+    },
+    "figures": [],
+    "pages": [
+      {
+        "pdf_page": 684,
+        "printed_page": 1379,
+        "id": "/page/684/Page/24",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/684/PageHeader/0'></content-ref><content-ref src='/page/684/PageHeader/1'></content-ref><content-ref src='/page/684/SectionHeader/2'></content-ref><content-ref src='/page/684/Picture/3'></content-ref><content-ref src='/page/684/Picture/4'></content-ref><content-ref src='/page/684/Text/5'></content-ref><content-ref src='/page/684/Text/6'></content-ref><content-ref src='/page/684/PageFooter/7'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/684/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.37735748291016,
+                34.7142333984375
+              ],
+              [
+                557.9865112304688,
+                34.7142333984375
+              ],
+              [
+                557.9865112304688,
+                47.04376220703125
+              ],
+              [
+                273.37735748291016,
+                47.04376220703125
+              ]
+            ],
+            "bbox": [
+              273.37735748291016,
+              34.7142333984375,
+              557.9865112304688,
+              47.04376220703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/683/SectionHeader/9",
+              "4": "/page/683/SectionHeader/15"
+            }
+          },
+          {
+            "id": "/page/684/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                527.9125213623047,
+                35.0181941986084
+              ],
+              [
+                558.8986358642578,
+                35.0181941986084
+              ],
+              [
+                558.8986358642578,
+                45.91670608520508
+              ],
+              [
+                527.9125213623047,
+                45.91670608520508
+              ]
+            ],
+            "bbox": [
+              527.9125213623047,
+              35.0181941986084,
+              558.8986358642578,
+              45.91670608520508
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/683/SectionHeader/9",
+              "4": "/page/683/SectionHeader/15"
+            }
+          },
+          {
+            "id": "/page/684/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>TERMINOLOGY RELATING TO STEEL, STAINLESS</b> <b>STEEL, RELATED ALLOYS, AND FERROALLOYS</b></h1>",
+            "polygon": [
+              [
+                126.1981086730957,
+                240.06859588623047
+              ],
+              [
+                502.2418670654297,
+                240.06859588623047
+              ],
+              [
+                502.2418670654297,
+                281.8807678222656
+              ],
+              [
+                126.1981086730957,
+                281.8807678222656
+              ]
+            ],
+            "bbox": [
+              126.1981086730957,
+              240.06859588623047,
+              502.2418670654297,
+              281.8807678222656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/684/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                151.65989856719972,
+                310.8332405090332
+              ],
+              [
+                208.6150228500366,
+                310.8332405090332
+              ],
+              [
+                208.6150228500366,
+                365.8245964050293
+              ],
+              [
+                151.65989856719972,
+                365.8245964050293
+              ]
+            ],
+            "bbox": [
+              151.65989856719972,
+              310.8332405090332,
+              208.6150228500366,
+              365.8245964050293
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/684/Picture/4",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                415.5403335571289,
+                311.3216926574707
+              ],
+              [
+                464.2547103881836,
+                311.3216926574707
+              ],
+              [
+                464.2547103881836,
+                361.9182518005371
+              ],
+              [
+                415.5403335571289,
+                361.9182518005371
+              ]
+            ],
+            "bbox": [
+              415.5403335571289,
+              311.3216926574707,
+              464.2547103881836,
+              361.9182518005371
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/684/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SA-941</b></p>",
+            "polygon": [
+              [
+                288.86988830566406,
+                334.58040618896484
+              ],
+              [
+                338.6124572753906,
+                334.58040618896484
+              ],
+              [
+                338.6124572753906,
+                351.4867858886719
+              ],
+              [
+                288.86988830566406,
+                351.4867858886719
+              ]
+            ],
+            "bbox": [
+              288.86988830566406,
+              334.58040618896484,
+              338.6124572753906,
+              351.4867858886719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/684/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with ASTM Specification A941-22a.)</p>",
+            "polygon": [
+              [
+                235.35140991210938,
+                402.3735809326172
+              ],
+              [
+                400.11964416503906,
+                402.3735809326172
+              ],
+              [
+                400.11964416503906,
+                414.2983703613281
+              ],
+              [
+                235.35140991210938,
+                414.2983703613281
+              ]
+            ],
+            "bbox": [
+              235.35140991210938,
+              402.3735809326172,
+              400.11964416503906,
+              414.2983703613281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/684/PageFooter/7",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.9501419067383,
+                738.5715179443359
+              ],
+              [
+                326.00372314453125,
+                738.5715179443359
+              ],
+              [
+                326.00372314453125,
+                751.9525985717773
+              ],
+              [
+                301.9501419067383,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.9501419067383,
+              738.5715179443359,
+              326.00372314453125,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/684/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 685,
+        "printed_page": 1380,
+        "id": "/page/685/Page/391",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/685/PageHeader/0'></content-ref><content-ref src='/page/685/PageHeader/1'></content-ref><content-ref src='/page/685/PageFooter/26'></content-ref><content-ref src='/page/685/SectionHeader/2'></content-ref><content-ref src='/page/685/SectionHeader/4'></content-ref><content-ref src='/page/685/Text/5'></content-ref><content-ref src='/page/685/Text/6'></content-ref><content-ref src='/page/685/Text/8'></content-ref><content-ref src='/page/685/Text/10'></content-ref><content-ref src='/page/685/Text/11'></content-ref><content-ref src='/page/685/SectionHeader/13'></content-ref><content-ref src='/page/685/Text/15'></content-ref><content-ref src='/page/685/Text/27'></content-ref><content-ref src='/page/685/SectionHeader/16'></content-ref><content-ref src='/page/685/Text/17'></content-ref><content-ref src='/page/685/Text/18'></content-ref><content-ref src='/page/685/Text/19'></content-ref><content-ref src='/page/685/Text/22'></content-ref><content-ref src='/page/685/Text/3'></content-ref><content-ref src='/page/685/Text/7'></content-ref><content-ref src='/page/685/Text/9'></content-ref><content-ref src='/page/685/Text/12'></content-ref><content-ref src='/page/685/Text/14'></content-ref><content-ref src='/page/685/Text/20'></content-ref><content-ref src='/page/685/Text/21'></content-ref><content-ref src='/page/685/Text/23'></content-ref><content-ref src='/page/685/Text/24'></content-ref><content-ref src='/page/685/Text/25'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/685/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.03951644897461,
+                35.38396739959717
+              ],
+              [
+                80.23212432861328,
+                35.38396739959717
+              ],
+              [
+                80.23212432861328,
+                45.10085391998291
+              ],
+              [
+                51.03951644897461,
+                45.10085391998291
+              ]
+            ],
+            "bbox": [
+              51.03951644897461,
+              35.38396739959717,
+              80.23212432861328,
+              45.10085391998291
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/685/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.402544021606445
+              ],
+              [
+                337.7654342651367,
+                35.402544021606445
+              ],
+              [
+                337.7654342651367,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.402544021606445,
+              337.7654342651367,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/685/PageFooter/26",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                284.38607025146484,
+                738.9059143066406
+              ],
+              [
+                306.9840774536133,
+                738.9059143066406
+              ],
+              [
+                306.9840774536133,
+                751.9525985717773
+              ],
+              [
+                284.38607025146484,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              284.38607025146484,
+              738.9059143066406,
+              306.9840774536133,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/684/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/685/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>Terminology Relating to</b> <b>Steel, Stainless Steel, Related Alloys, and Ferroalloys</b></h1>",
+            "polygon": [
+              [
+                100.53247833251953,
+                67.76655578613281
+              ],
+              [
+                445.9899444580078,
+                67.76655578613281
+              ],
+              [
+                445.9899444580078,
+                99.1688232421875
+              ],
+              [
+                100.53247833251953,
+                99.1688232421875
+              ]
+            ],
+            "bbox": [
+              100.53247833251953,
+              67.76655578613281,
+              445.9899444580078,
+              99.1688232421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/685/SectionHeader/4",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>1. Scope</b></h4>",
+            "polygon": [
+              [
+                46.73933029174805,
+                154.6314926147461
+              ],
+              [
+                85.5933952331543,
+                154.6314926147461
+              ],
+              [
+                85.5933952331543,
+                166.771484375
+              ],
+              [
+                46.73933029174805,
+                166.771484375
+              ]
+            ],
+            "bbox": [
+              46.73933029174805,
+              154.6314926147461,
+              85.5933952331543,
+              166.771484375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.1 This standard is a compilation of definitions of terms related to steel, stainless steel, related alloys, and ferroalloys.</p>",
+            "polygon": [
+              [
+                46.16029930114746,
+                167.57525253295898
+              ],
+              [
+                289.182861328125,
+                167.57525253295898
+              ],
+              [
+                289.182861328125,
+                192.4788818359375
+              ],
+              [
+                46.16029930114746,
+                192.4788818359375
+              ]
+            ],
+            "bbox": [
+              46.16029930114746,
+              167.57525253295898,
+              289.182861328125,
+              192.4788818359375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.2 When a term is used in an ASTM document for which Committee A01 is responsible, it is included herein only when judged, after review by Subcommittee A01.92, to be a generally usable term.</p>",
+            "polygon": [
+              [
+                46.319801330566406,
+                192.5789337158203
+              ],
+              [
+                289.74776458740234,
+                192.5789337158203
+              ],
+              [
+                289.74776458740234,
+                239.87432861328125
+              ],
+              [
+                46.319801330566406,
+                239.87432861328125
+              ]
+            ],
+            "bbox": [
+              46.319801330566406,
+              192.5789337158203,
+              289.74776458740234,
+              239.87432861328125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.3 Some definitions include a discussion section, which is a mandatory part of the definition and contains additional information that is relevant to the meaning of the defined term.</p>",
+            "polygon": [
+              [
+                46.48271083831787,
+                241.81830596923828
+              ],
+              [
+                289.13843536376953,
+                241.81830596923828
+              ],
+              [
+                289.13843536376953,
+                276.36883544921875
+              ],
+              [
+                46.48271083831787,
+                276.36883544921875
+              ]
+            ],
+            "bbox": [
+              46.48271083831787,
+              241.81830596923828,
+              289.13843536376953,
+              276.36883544921875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.4 Definitions of terms specific to a particular standard will appear in that standard and will supersede any definitions of identical terms in this standard.</p>",
+            "polygon": [
+              [
+                46.380263328552246,
+                276.8046112060547
+              ],
+              [
+                289.19091796875,
+                276.8046112060547
+              ],
+              [
+                289.19091796875,
+                312.8634033203125
+              ],
+              [
+                46.380263328552246,
+                312.8634033203125
+              ]
+            ],
+            "bbox": [
+              46.380263328552246,
+              276.8046112060547,
+              289.19091796875,
+              312.8634033203125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.5 <i>This international standard was developed in accor</i><i>dance with internationally recognized principles on standard</i><i>ization established in the Decision on Principles for the</i> <i>Development of International Standards, Guides and Recom</i><i>mendations issued by the World Trade Organization Technical</i> <i>Barriers to Trade (TBT) Committee.</i></p>",
+            "polygon": [
+              [
+                46.370412826538086,
+                313.23387908935547
+              ],
+              [
+                289.4149932861328,
+                313.23387908935547
+              ],
+              [
+                289.4149932861328,
+                380.9991760253906
+              ],
+              [
+                46.370412826538086,
+                380.9991760253906
+              ]
+            ],
+            "bbox": [
+              46.370412826538086,
+              313.23387908935547,
+              289.4149932861328,
+              380.9991760253906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/2",
+              "4": "/page/685/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/685/SectionHeader/13",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>2. Referenced Documents</b></h1>",
+            "polygon": [
+              [
+                47.125285148620605,
+                387.20668029785156
+              ],
+              [
+                156.33570098876953,
+                387.20668029785156
+              ],
+              [
+                156.33570098876953,
+                400.8028869628906
+              ],
+              [
+                47.125285148620605,
+                400.8028869628906
+              ]
+            ],
+            "bbox": [
+              47.125285148620605,
+              387.20668029785156,
+              156.33570098876953,
+              400.8028869628906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13"
+            }
+          },
+          {
+            "id": "/page/685/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.1 <i>ASTM Standards:</i></p>",
+            "polygon": [
+              [
+                56.15811538696289,
+                402.7433624267578
+              ],
+              [
+                143.3797607421875,
+                402.7433624267578
+              ],
+              [
+                143.3797607421875,
+                415.6092834472656
+              ],
+              [
+                56.15811538696289,
+                415.6092834472656
+              ]
+            ],
+            "bbox": [
+              56.15811538696289,
+              402.7433624267578,
+              143.3797607421875,
+              415.6092834472656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13"
+            }
+          },
+          {
+            "id": "/page/685/Text/27",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">E112 Test Methods for Determining Average Grain Size</p>",
+            "polygon": [
+              [
+                58.68581008911133,
+                417.8262023925781
+              ],
+              [
+                276.2481994628906,
+                417.8262023925781
+              ],
+              [
+                276.2481994628906,
+                426.5090637207031
+              ],
+              [
+                58.68581008911133,
+                426.5090637207031
+              ]
+            ],
+            "bbox": [
+              58.68581008911133,
+              417.8262023925781,
+              276.2481994628906,
+              426.5090637207031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13"
+            }
+          },
+          {
+            "id": "/page/685/SectionHeader/16",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>3. Terminology</b></h4>",
+            "polygon": [
+              [
+                46.41122245788574,
+                433.2593536376953
+              ],
+              [
+                112.79448699951172,
+                433.2593536376953
+              ],
+              [
+                112.79448699951172,
+                446.1988830566406
+              ],
+              [
+                46.41122245788574,
+                446.1988830566406
+              ]
+            ],
+            "bbox": [
+              46.41122245788574,
+              433.2593536376953,
+              112.79448699951172,
+              446.1988830566406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.1 <i>Definitions of Terms Specific to This Standard:</i> <i>Accm</i><b>,</b> <i>Ac1</i><b>,</b> <i>Ac3</i><b>,</b> <i>Ac4</i><b>—</b>See <b>transformation temperature</b>.</p>",
+            "polygon": [
+              [
+                46.499027252197266,
+                447.60731506347656
+              ],
+              [
+                269.02020263671875,
+                447.60731506347656
+              ],
+              [
+                269.02020263671875,
+                473.2450256347656
+              ],
+              [
+                46.499027252197266,
+                473.2450256347656
+              ]
+            ],
+            "bbox": [
+              46.499027252197266,
+              447.60731506347656,
+              269.02020263671875,
+              473.2450256347656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><i>Aecm</i><b>,</b> <i>Ae1</i><b>,</b> <i>Ae3</i><b>,</b> <i>Ae4</i><b>—</b>See <b>transformation temperature</b>.</p>",
+            "polygon": [
+              [
+                46.6591272354126,
+                476.01177978515625
+              ],
+              [
+                269.4883346557617,
+                476.01177978515625
+              ],
+              [
+                269.4883346557617,
+                489.8334045410156
+              ],
+              [
+                46.6591272354126,
+                489.8334045410156
+              ]
+            ],
+            "bbox": [
+              46.6591272354126,
+              476.01177978515625,
+              269.4883346557617,
+              489.8334045410156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>age hardening,</b> <i>n—</i>hardening by <b>aging</b>, usually after rapid cooling or <b>cold working</b>.</p>",
+            "polygon": [
+              [
+                46.263187408447266,
+                492.8682403564453
+              ],
+              [
+                289.1550750732422,
+                492.8682403564453
+              ],
+              [
+                289.1550750732422,
+                515.9838562011719
+              ],
+              [
+                46.263187408447266,
+                515.9838562011719
+              ]
+            ],
+            "bbox": [
+              46.263187408447266,
+              492.8682403564453,
+              289.1550750732422,
+              515.9838562011719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/22",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>age hardening,</b> <i>n—</i>see <b>precipitation hardening</b>.</p>",
+            "polygon": [
+              [
+                46.897101402282715,
+                519.564697265625
+              ],
+              [
+                241.18484497070312,
+                519.564697265625
+              ],
+              [
+                241.18484497070312,
+                532.5722961425781
+              ],
+              [
+                46.897101402282715,
+                532.5722961425781
+              ]
+            ],
+            "bbox": [
+              46.897101402282715,
+              519.564697265625,
+              241.18484497070312,
+              532.5722961425781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>aging,</b> <i>n—</i>a change in the properties of certain <b>steels</b> that occurs at ambient or moderately elevated temperatures after hot working or a heat treatment (<b>quench aging, natural</b> <b>aging,</b> or <b>artificial aging</b>) or after a cold-working operation (<b>strain aging</b>).</p>",
+            "polygon": [
+              [
+                301.99706268310547,
+                154.0510711669922
+              ],
+              [
+                546.3225402832031,
+                154.0510711669922
+              ],
+              [
+                546.3225402832031,
+                210.48760986328125
+              ],
+              [
+                301.99706268310547,
+                210.48760986328125
+              ]
+            ],
+            "bbox": [
+              301.99706268310547,
+              154.0510711669922,
+              546.3225402832031,
+              210.48760986328125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—The change in properties is often, but not always, due to <b>precipitation hardening</b>, but never involves a change in the chemical composition of the <b>steel</b>.</p>",
+            "polygon": [
+              [
+                311.8187255859375,
+                209.18378448486328
+              ],
+              [
+                545.6165771484375,
+                209.18378448486328
+              ],
+              [
+                545.6165771484375,
+                239.374755859375
+              ],
+              [
+                311.8187255859375,
+                239.374755859375
+              ]
+            ],
+            "bbox": [
+              311.8187255859375,
+              209.18378448486328,
+              545.6165771484375,
+              239.374755859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>alloy steel,</b> <i>n—</i>a <b>steel</b>, other than a <b>stainless steel</b>, that conforms to a specification that requires one or more of the following elements, by mass percent, to have a minimum content equal to or greater than: 0.30 for aluminum; 0.0008 for boron; 0.30 for chromium; 0.30 for cobalt; 0.40 for copper; 0.40 for lead; 1.65 for manganese; 0.08 for molybdenum; 0.30 for nickel; 0.06 for niobium (columbium); 0.60 for silicon; 0.05 for titanium; 0.30 for tungsten (wolfram); 0.10 for vanadium; 0.05 for zirconium; or 0.10 for any other alloying element, except sulphur, phosphorus, carbon, and nitrogen.</p>",
+            "polygon": [
+              [
+                304.1994094848633,
+                242.93328094482422
+              ],
+              [
+                546.0535583496094,
+                242.93328094482422
+              ],
+              [
+                546.0535583496094,
+                365.0895690917969
+              ],
+              [
+                304.1994094848633,
+                365.0895690917969
+              ]
+            ],
+            "bbox": [
+              304.1994094848633,
+              242.93328094482422,
+              546.0535583496094,
+              365.0895690917969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>annealing,</b> <i>n—</i>a generic term covering any of several <b>heat</b> <b>treatments</b>.</p>",
+            "polygon": [
+              [
+                302.2958450317383,
+                369.63194274902344
+              ],
+              [
+                545.3073577880859,
+                369.63194274902344
+              ],
+              [
+                545.3073577880859,
+                392.8614501953125
+              ],
+              [
+                302.2958450317383,
+                392.8614501953125
+              ]
+            ],
+            "bbox": [
+              302.2958450317383,
+              369.63194274902344,
+              545.3073577880859,
+              392.8614501953125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—This treatment is used for purposes such as reducing hardness, improving machinability, facilitating <b>cold working</b>, producing a desired microstructure, or obtaining desired mechanical, physical, or other properties. Where applicable, it is preferred that the following more specific terms be used: <b>box annealing, bright annealing, full</b> <b>annealing, intermediate annealing, isothermal annealing, process</b> <b>annealing, spheroidizing</b>, and <b>subcritical annealing</b>. The term \"<b>annealing</b>,\" without qualification, implies <b>full annealing</b>. Any process of <b>annealing</b> will usually reduce stresses; however, if the treatment is applied for the sole purpose of stress reduction, it should be designated <b>stress relieving</b>.</p>",
+            "polygon": [
+              [
+                309.85528564453125,
+                390.99696350097656
+              ],
+              [
+                545.7968902587891,
+                390.99696350097656
+              ],
+              [
+                545.7968902587891,
+                497.58160400390625
+              ],
+              [
+                309.85528564453125,
+                497.58160400390625
+              ]
+            ],
+            "bbox": [
+              309.85528564453125,
+              390.99696350097656,
+              545.7968902587891,
+              497.58160400390625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><i>Arcm</i><b>,</b> <i>Ar1</i><b>,</b> <i>Ar3</i><b>,</b> <i>Ar4</i><b>—</b>See <b>transformation temperature</b>.</p>",
+            "polygon": [
+              [
+                303.58209228515625,
+                501.5721130371094
+              ],
+              [
+                522.869384765625,
+                501.5721130371094
+              ],
+              [
+                522.869384765625,
+                515.7177124023438
+              ],
+              [
+                303.58209228515625,
+                515.7177124023438
+              ]
+            ],
+            "bbox": [
+              303.58209228515625,
+              501.5721130371094,
+              522.869384765625,
+              515.7177124023438
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>artificial aging,</b> <i>n—</i><b>aging</b> above room temperature.</p>",
+            "polygon": [
+              [
+                302.53953552246094,
+                518.8104400634766
+              ],
+              [
+                505.6904602050781,
+                518.8104400634766
+              ],
+              [
+                505.6904602050781,
+                531.3444213867188
+              ],
+              [
+                302.53953552246094,
+                531.3444213867188
+              ]
+            ],
+            "bbox": [
+              302.53953552246094,
+              518.8104400634766,
+              505.6904602050781,
+              531.3444213867188
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>atmospheric corrosion resistance,</b> <i>n—</i>the ability to resist degradation or alteration of material through chemical reaction with the surrounding atmosphere.</p>",
+            "polygon": [
+              [
+                302.0061721801758,
+                534.823974609375
+              ],
+              [
+                546.3607635498047,
+                534.823974609375
+              ],
+              [
+                546.3607635498047,
+                570.1120452880859
+              ],
+              [
+                302.0061721801758,
+                570.1120452880859
+              ]
+            ],
+            "bbox": [
+              302.0061721801758,
+              534.823974609375,
+              546.3607635498047,
+              570.1120452880859
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/24",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—This term generally pertains to carbon steel, low alloy steel, or micro-alloyed steel.</p>",
+            "polygon": [
+              [
+                311.1733932495117,
+                567.47021484375
+              ],
+              [
+                545.0584259033203,
+                567.47021484375
+              ],
+              [
+                545.0584259033203,
+                589.6121520996094
+              ],
+              [
+                311.1733932495117,
+                589.6121520996094
+              ]
+            ],
+            "bbox": [
+              311.1733932495117,
+              567.47021484375,
+              545.0584259033203,
+              589.6121520996094
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/685/Text/25",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>austempering,</b> <i>n—</i><b>heat treatment</b> involving <b>quenching</b> a steel object from a temperature above the <b>transformation</b> <b>range</b> in a medium maintained at a temperature above the <b>martensite range</b> sufficiently fast to avoid the formation of</p>",
+            "polygon": [
+              [
+                302.4637756347656,
+                593.7929077148438
+              ],
+              [
+                546.2288818359375,
+                593.7929077148438
+              ],
+              [
+                546.2288818359375,
+                639.1146850585938
+              ],
+              [
+                302.4637756347656,
+                639.1146850585938
+              ]
+            ],
+            "bbox": [
+              302.4637756347656,
+              593.7929077148438,
+              546.2288818359375,
+              639.1146850585938
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 686,
+        "printed_page": 1381,
+        "id": "/page/686/Page/488",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/686/PageHeader/0'></content-ref><content-ref src='/page/686/PageHeader/1'></content-ref><content-ref src='/page/686/PageFooter/4'></content-ref><content-ref src='/page/686/ListGroup/2'></content-ref><content-ref src='/page/686/Text/3'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/686/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.76295471191406,
+                34.81000328063965
+              ],
+              [
+                557.9865112304688,
+                34.81000328063965
+              ],
+              [
+                557.9865112304688,
+                47.0418701171875
+              ],
+              [
+                273.76295471191406,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.76295471191406,
+              34.81000328063965,
+              557.9865112304688,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/686/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                526.9102020263672,
+                35.11695671081543
+              ],
+              [
+                558.8299713134766,
+                35.11695671081543
+              ],
+              [
+                558.8299713134766,
+                45.265379905700684
+              ],
+              [
+                526.9102020263672,
+                45.265379905700684
+              ]
+            ],
+            "bbox": [
+              526.9102020263672,
+              35.11695671081543,
+              558.8299713134766,
+              45.265379905700684
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/686/PageFooter/4",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.8576965332031,
+                738.3217163085938
+              ],
+              [
+                324.9158020019531,
+                738.3217163085938
+              ],
+              [
+                324.9158020019531,
+                751.9525985717773
+              ],
+              [
+                301.8576965332031,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.8576965332031,
+              738.3217163085938,
+              324.9158020019531,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/686/ListGroup/2",
+            "block_type": "ListGroup",
+            "html": "<p block-type='ListGroup'><ul><content-ref src='/page/686/ListItem/482'></content-ref><content-ref src='/page/686/ListItem/484'></content-ref><content-ref src='/page/686/ListItem/485'></content-ref><content-ref src='/page/686/ListItem/486'></content-ref><content-ref src='/page/686/ListItem/487'></content-ref><content-ref src='/page/686/ListItem/488'></content-ref></ul></p>",
+            "polygon": [
+              [
+                64.66595649719238,
+                65.53336715698242
+              ],
+              [
+                565.4733581542969,
+                65.53336715698242
+              ],
+              [
+                565.4733581542969,
+                711.5352630615234
+              ],
+              [
+                64.66595649719238,
+                711.5352630615234
+              ]
+            ],
+            "bbox": [
+              64.66595649719238,
+              65.53336715698242,
+              565.4733581542969,
+              711.5352630615234
+            ],
+            "children": [
+              {
+                "id": "/page/686/ListItem/482",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">high temperature transformation products, and then holding it at that temperature until transformation is complete. <b>austenitizing,</b> <i>n—</i>forming austenite by heating a steel object above the <b>transformation range</b>. <b>baking,</b> <i>n—</i>heating to a low temperature in order to remove gases. <b>batch furnace,</b> <i>n—</i>a heating device within which steel objects are held stationary or oscillated during the thermal processing cycle. <b>blank carburizing,</b> <i>n—</i>simulating the <b>carburizing</b> operation without introducing carbon. DISCUSSION—This is usually accomplished by using an inert material in place of the carburizing agent, or by applying a suitable protective coating on the object being heat treated. <b>blank nitriding,</b> <i>n—</i>simulating the nitriding operation without introducing nitrogen. DISCUSSION—This is usually accomplished by using an inert material in place of the nitriding agent, or by applying a suitable protective coating on the object being heat treated. <b>bluing,</b> <i>n—</i>subjecting the scale-free surface of a steel object to the action of air, steam, or other agents at a suitable temperature, thereby forming a thin blue film of oxide and improving the object's appearance and corrosion resistance. DISCUSSION—This term is ordinarily applied to sheet, strip, or finished parts. It is used also to denote the heating of springs after fabrication in order to improve their properties. <b>box annealing,</b> <i>n—</i><b>annealing</b> in a sealed container under conditions that minimize oxidation. DISCUSSION—The charge is usually heated slowly to a temperature below the <b>transformation range</b>, but sometimes above or within it, and is then cooled slowly. <b>bright annealing,</b> <i>n—</i><b>annealing</b> in a protective medium to prevent discoloration of the bright surface. <b>capped steel,</b> <i>n—</i>a <b>rimmed steel</b> in which, during ingot solidification, the rimming action was limited by mechanical or chemical means. <b>carbon potential,</b> <i>n—</i>the carbon content at the surface of a specimen of pure iron in equilibrium with the carburizing medium considered, and under the conditions specified. <b>carbon restoration,</b> <i>n—</i>replacing the carbon lost from the surface layer in previous processing by carburizing this layer to substantially the original carbon level. <b>carbon steel,</b> <i>n—</i>a <b>steel</b> that conforms to a specification that prescribes a maximum limit, by <b>heat analysis</b> in mass percent, of not more than: 2.00 for carbon and 1.65 for manganese, but does not prescribe a minimum limit for chromium, cobalt, molybdenum, nickel, niobium (columbium), tungsten (wolfram), vanadium, or zirconium. DISCUSSION—Except as required above, it is permissible for carbon steel specifications to prescribe limits (minimum or maximum, or both) for each specified alloying element, subject to the following restrictions for the heat analysis limits in mass percent: <ul><li block-type=\"ListItem\" class=\"list-indent-1\">(a) for wrought carbon steel products, the specified maximum limit is not to exceed: 0.10 for aluminum, 0.60 for silicon, and 0.050 for titanium;</li></ul></li>",
+                "polygon": [
+                  [
+                    67.27415466308594,
+                    72.3248291015625
+                  ],
+                  [
+                    306.19683837890625,
+                    72.3248291015625
+                  ],
+                  [
+                    306.19683837890625,
+                    711.2463684082031
+                  ],
+                  [
+                    67.27415466308594,
+                    711.2463684082031
+                  ]
+                ],
+                "bbox": [
+                  67.27415466308594,
+                  72.3248291015625,
+                  306.19683837890625,
+                  711.2463684082031
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              },
+              {
+                "id": "/page/686/ListItem/484",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">(b) for carbon steel castings, the specified maximum limit is not to exceed: 0.10 for aluminum, 1.00 for silicon, and 0.050 for titanium.</li>",
+                "polygon": [
+                  [
+                    332.2148132324219,
+                    72.36968994140625
+                  ],
+                  [
+                    562.1022338867188,
+                    72.36968994140625
+                  ],
+                  [
+                    562.1022338867188,
+                    89.2293701171875
+                  ],
+                  [
+                    332.2148132324219,
+                    89.2293701171875
+                  ]
+                ],
+                "bbox": [
+                  332.2148132324219,
+                  72.36968994140625,
+                  562.1022338867188,
+                  89.2293701171875
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              },
+              {
+                "id": "/page/686/ListItem/485",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">(c) for <b>carbon steels</b> that are required to be rephosphorized, the specified minimum limit for phosphorus is not to be less than 0.040;</li>",
+                "polygon": [
+                  [
+                    332.2148132324219,
+                    91.32830810546875
+                  ],
+                  [
+                    562.1143188476562,
+                    91.32830810546875
+                  ],
+                  [
+                    562.1143188476562,
+                    108.18804931640625
+                  ],
+                  [
+                    332.2148132324219,
+                    108.18804931640625
+                  ]
+                ],
+                "bbox": [
+                  332.2148132324219,
+                  91.32830810546875,
+                  562.1143188476562,
+                  108.18804931640625
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              },
+              {
+                "id": "/page/686/ListItem/486",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">(d) for <b>carbon steels</b> that are required to be resulfurized, the specified minimum limit for sulfur is not to be less than 0.060;</li>",
+                "polygon": [
+                  [
+                    332.2156066894531,
+                    110.2869873046875
+                  ],
+                  [
+                    562.1102294921875,
+                    110.2869873046875
+                  ],
+                  [
+                    562.1102294921875,
+                    127.1468505859375
+                  ],
+                  [
+                    332.2156066894531,
+                    127.1468505859375
+                  ]
+                ],
+                "bbox": [
+                  332.2156066894531,
+                  110.2869873046875,
+                  562.1102294921875,
+                  127.1468505859375
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              },
+              {
+                "id": "/page/686/ListItem/487",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">(e) for <b>carbon steels</b> that are not required to be rephosphorized or resulfurized, the specified maximum limit is not to exceed: 0.60 for copper, 0.050 for phosphorus, and 0.060 for sulfur; and</li>",
+                "polygon": [
+                  [
+                    332.2156066894531,
+                    129.24560546875
+                  ],
+                  [
+                    562.1118774414062,
+                    129.24560546875
+                  ],
+                  [
+                    562.1118774414062,
+                    155.58477783203125
+                  ],
+                  [
+                    332.2156066894531,
+                    155.58477783203125
+                  ]
+                ],
+                "bbox": [
+                  332.2156066894531,
+                  129.24560546875,
+                  562.1118774414062,
+                  155.58477783203125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              },
+              {
+                "id": "/page/686/ListItem/488",
+                "block_type": "ListItem",
+                "html": "<li block-type=\"ListItem\">(f) for <b>carbon steels</b> that are required to contain boron, copper, or lead, the specified minimum limit is not to exceed: 0.0005 for boron, 0.35 for copper, and 0.25 for lead. <b>carbonitriding,</b> <i>n—</i><b>case hardening</b> in which a suitable steel object is heated above Ac1 in a gaseous atmosphere of such composition as to cause simultaneous absorption of carbon and nitrogen by the surface and, by diffusion, to create a concentration gradient. <b>carburizing,</b> <i>n—</i>a process in which an austenitized steel object is brought into contact with a carbonaceous environment of sufficient carbon potential to cause absorption of carbon at the surface and, by diffusion, to create a concentration gradient. <b>case,</b> <i>n—in case hardening</i>, the outer portion that has been made harder than the <b>core</b> as a result of altered composition or microstructure, or both, from treatments such as <b>carburizing, nitriding</b>, and <b>induction hardening</b>. <b>case hardening,</b> <i>n—</i>a generic term covering any of several processes applicable to <b>steel</b> that change the chemical composition or microstructure, or both, of the surface layer. DISCUSSION—The processes commonly used are: <b>carburizing</b> and <b>quench hardening</b>; <b>nitriding</b>; and <b>carbonitriding</b>. It is preferred that the applicable specific process name be used. <i>cast analysis</i><b>—</b>Deprecated term. Use the preferred term <b>heat</b> <b>analysis</b>. <b>cementation,</b> <i>n—</i>the introduction of one or more elements into the outer portion of a steel object by means of diffusion at high temperature. <b>certificate of compliance,</b> <i>n—in manufactured products</i>,a document that states that the product was manufactured, sampled, tested, and inspected in accordance with the requirements of the specification (including year of issue) and any other requirements specified in the purchase order or contract, and has been found to meet such requirements. DISCUSSION—A single document, containing test report information and certificate of compliance information, may be used. <b>certifying organization,</b> <i>n—in product specifications</i>, the entity responsible for the conformance and certification of the product to the specification requirements. <i>check analysis</i><b>—</b>Deprecated term. Use the preferred term <b>product analysis</b>. <b>coarse grain practice,</b> <i>n—</i>a steelmaking practice for other than <b>stainless steel</b> that is intended to produce a <b>killed steel</b> in which aluminum, niobium (columbium), titanium, and vanadium are <b>residual elements</b>.</li>",
+                "polygon": [
+                  [
+                    323.206787109375,
+                    157.68365478515625
+                  ],
+                  [
+                    562.5635375976562,
+                    157.68365478515625
+                  ],
+                  [
+                    562.5635375976562,
+                    711.5352630615234
+                  ],
+                  [
+                    323.206787109375,
+                    711.5352630615234
+                  ]
+                ],
+                "bbox": [
+                  323.206787109375,
+                  157.68365478515625,
+                  562.5635375976562,
+                  711.5352630615234
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/685/SectionHeader/13",
+                  "4": "/page/685/SectionHeader/16"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/686/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                72.78190040588379,
+                67.96418380737305
+              ],
+              [
+                305.76136779785156,
+                67.96418380737305
+              ],
+              [
+                305.76136779785156,
+                92.47239303588867
+              ],
+              [
+                72.78190040588379,
+                92.47239303588867
+              ]
+            ],
+            "bbox": [
+              72.78190040588379,
+              67.96418380737305,
+              305.76136779785156,
+              92.47239303588867
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 687,
+        "printed_page": 1382,
+        "id": "/page/687/Page/457",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/687/PageHeader/0'></content-ref><content-ref src='/page/687/PageHeader/1'></content-ref><content-ref src='/page/687/PageFooter/3'></content-ref><content-ref src='/page/687/Text/457'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/687/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.1448860168457
+              ],
+              [
+                338.0741271972656,
+                35.1448860168457
+              ],
+              [
+                338.0741271972656,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.1448860168457,
+              338.0741271972656,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/687/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                50.95503616333008,
+                35.55898189544678
+              ],
+              [
+                80.6008529663086,
+                35.55898189544678
+              ],
+              [
+                80.6008529663086,
+                45.47987365722656
+              ],
+              [
+                50.95503616333008,
+                45.47987365722656
+              ]
+            ],
+            "bbox": [
+              50.95503616333008,
+              35.55898189544678,
+              80.6008529663086,
+              45.47987365722656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/687/PageFooter/3",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                284.13892364501953,
+                738.3212127685547
+              ],
+              [
+                306.944091796875,
+                738.3212127685547
+              ],
+              [
+                306.944091796875,
+                751.9525985717773
+              ],
+              [
+                284.13892364501953,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              284.13892364501953,
+              738.3212127685547,
+              306.944091796875,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/687/Text/457",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>cold working,</b> <i>n—</i>mechanical deformation of a metal at temperatures below its <b>recrystallization temperature</b>. <b>cold treatment,</b> <i>n—</i>exposing a steel object to temperatures below room temperature for the purpose of obtaining desired conditions or properties, such as dimensional or structural stability. <b>conditioning heat treatment,</b> <i>n—</i>a preliminary <b>heat treat</b><b>ment</b> used to prepare a steel object for a desired reaction to a subsequent <b>heat treatment</b>. <b>continuous-conveyance furnace,</b> <i>n—</i>a heating device through which steel objects are intentionally moved at a constant rate during the thermal processing cycle. <b>controlled cooling,</b> <i>n—</i>cooling a steel object from an elevated temperature in a predetermined manner to avoid hardening, cracking, or internal damage, or to produce a desired microstructure or mechanical properties. <b>controlling cross section thickness (Tc),</b> <i>n—</i>diameter of the largest theoretical sphere that can be inscribed within the volume of the component. DISCUSSION—The controlling cross section thickness (Tc) is used to determine the size of prolongations, test blocks, or representative test pieces. It is calculated based on the dimensions of the component at the time of heat treatment. Where components are heat treated with internal diameters the calculation is made based on the wall thickness. <b>core,</b> <i>n—in case hardening,</i> the interior portion of unaltered composition or microstructure, or both, of a case hardened steel object. <b>core,</b> <i>n—in clad products,</i> the central portion of a multilayer composite metallic material. <b>critical cooling rate,</b> <i>n—</i>the slowest rate of continuous cooling at which austenite can be cooled from above the <b>transfor</b><b>mation range</b> to prevent its transformation above Ms. <b>cycle annealing,</b> <i>n—</i><b>annealing</b> employing a predetermined and closely controlled time-temperature cycle to produce specific properties or a specific microstructure. <b>decarburization,</b> <i>n—</i>the loss of carbon from the surface of a steel object as a result of its being heated in a medium that reacts with the carbon. <b>defect,</b> <i>n—</i>an imperfection of sufficient magnitude to warrant rejection based on the specified requirements. <b>differential heating,</b> <i>n—</i>heating that intentionally produces a temperature gradient within a steel object such that, after cooling, a desired stress distribution or variation in properties is present within the object. <b>diffusion coating,</b> <i>n—</i>any process whereby a base metal is either coated with another metal and heated to a sufficient temperature in a suitable environment, or exposed to a gaseous or liquid medium containing the other metal, thereby causing diffusion of the coating or other metal into the base metal, with a resultant change in the composition and properties of its surface. <b>direct quenching,</b> <i>n—in thermochemical processing</i>, <b>quench</b><b>ing</b> immediately following the thermochemical treatment. <b>direct quenching,</b> <i>n—in thermomechanical processing</i>, <b>quenching</b> immediately following the final hot deformation. <b>document,</b> <i>n—</i>a written, printed, or electronic record that provides information, evidence, or official statements. <b>double aging,</b> <i>n—</i>employment of two different aging treatments, in sequence, to control the type of precipitate formed from a supersaturated alloy matrix in order to obtain the desired properties. DISCUSSION—The first aging treatment, sometimes referred to as intermediate or stabilizing, is usually carried out at a higher temperature than the second. <b>double tempering,</b> <i>n—</i>a treatment in which a quenchhardened steel object is given two complete tempering cycles at substantially the same temperature for the purpose of ensuring completion of the tempering reaction and promoting stability of the resultant microstructure. <b>electronic data interchange,</b> <i>n—</i>the computer to computer exchange of business information in a standardized format. <b>ellipsis,</b> <i>n—in a tabular entry</i>, three periods (...) that indicate that there is no requirement. <b>ferritizing anneal,</b> <i>n—</i>a <b>heat treatment</b> that produces a predominantly ferritic matrix in a steel object. <b>ferroalloy,</b> <i>n—</i>an alloy of iron and one or more other metals, for use as an addition to the molten metal during the manufacture of <b>steels</b>, nickel alloys, or cobalt alloys. <b>ferrous material,</b> <i>n—</i>metals and alloys that contain iron as the principal component. DISCUSSION—The iron content is not always stated in the specification and is not always determined by chemical analysis. The iron content may be taken to be 100 % minus the sum of the mean values permitted by the specification for all other elements having a specified range or a specified maximum. For conformance purposes, the mean value for iron, whether specified or calculated, is compared on an individual basis to the mean values permitted by the specification for each of the other elements having a specified range or a specified maximum. If an element other than iron is not specified, but is listed as remainder or balance, then, for conformance purposes the mean value for iron is compared to the calculated value for that other element. <b>fine grain practice,</b> <i>n—</i>a steelmaking practice for other than <b>stainless steel</b> that is intended to produce a <b>killed steel</b> that is capable of meeting the requirements specified for fine austenitic grain size when and if the as-rolled or as-forged product is reheated to a temperature at or above the transformation temperature, Ac3. DISCUSSION—When stated as a requirement, <b>fine grain practice</b> normally involves the addition of one or more austenitic grain refining elements in amounts that have been established by the steel producer as being sufficient. Austenitic grain refining elements include, but are not limited to, aluminum, niobium (columbium), titanium, and vanadium. A <b>fine grain practice</b> requirement <i>(1)</i> does not specify a minimum austenitic grain refining element addition; <i>(2)</i> does not require prior austenite grain size testing or measurement, or both; <i>(3)</i> if tested, does not require meeting any prior austenite grain size requirement; and <i>(4)</i> does not apply to, nor in any way control, the prior austenite grain size</p>",
+            "polygon": [
+              [
+                46.875489234924316,
+                68.29607963562012
+              ],
+              [
+                549.8464508056641,
+                68.29607963562012
+              ],
+              [
+                549.8464508056641,
+                711.6206207275391
+              ],
+              [
+                46.875489234924316,
+                711.6206207275391
+              ]
+            ],
+            "bbox": [
+              46.875489234924316,
+              68.29607963562012,
+              549.8464508056641,
+              711.6206207275391
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 688,
+        "printed_page": 1383,
+        "id": "/page/688/Page/573",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/688/PageHeader/0'></content-ref><content-ref src='/page/688/PageHeader/1'></content-ref><content-ref src='/page/688/PageFooter/35'></content-ref><content-ref src='/page/688/Text/573'></content-ref><content-ref src='/page/688/Text/3'></content-ref><content-ref src='/page/688/Text/4'></content-ref><content-ref src='/page/688/Text/5'></content-ref><content-ref src='/page/688/Text/6'></content-ref><content-ref src='/page/688/Text/7'></content-ref><content-ref src='/page/688/Text/8'></content-ref><content-ref src='/page/688/Text/9'></content-ref><content-ref src='/page/688/Text/10'></content-ref><content-ref src='/page/688/Text/11'></content-ref><content-ref src='/page/688/Text/12'></content-ref><content-ref src='/page/688/Text/13'></content-ref><content-ref src='/page/688/Text/14'></content-ref><content-ref src='/page/688/Text/15'></content-ref><content-ref src='/page/688/Text/16'></content-ref><content-ref src='/page/688/Text/17'></content-ref><content-ref src='/page/688/Text/18'></content-ref><content-ref src='/page/688/Text/19'></content-ref><content-ref src='/page/688/Text/20'></content-ref><content-ref src='/page/688/Text/21'></content-ref><content-ref src='/page/688/Text/22'></content-ref><content-ref src='/page/688/Text/23'></content-ref><content-ref src='/page/688/Text/24'></content-ref><content-ref src='/page/688/Text/25'></content-ref><content-ref src='/page/688/Text/26'></content-ref><content-ref src='/page/688/Text/27'></content-ref><content-ref src='/page/688/Text/28'></content-ref><content-ref src='/page/688/Text/29'></content-ref><content-ref src='/page/688/Text/30'></content-ref><content-ref src='/page/688/Text/31'></content-ref><content-ref src='/page/688/Text/32'></content-ref><content-ref src='/page/688/Text/33'></content-ref><content-ref src='/page/688/Text/34'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/688/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.7375717163086,
+                34.678908348083496
+              ],
+              [
+                557.9865112304688,
+                34.678908348083496
+              ],
+              [
+                557.9865112304688,
+                47.0418701171875
+              ],
+              [
+                273.7375717163086,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.7375717163086,
+              34.678908348083496,
+              557.9865112304688,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                526.9150543212891,
+                34.95519161224365
+              ],
+              [
+                558.79541015625,
+                34.95519161224365
+              ],
+              [
+                558.79541015625,
+                45.17478561401367
+              ],
+              [
+                526.9150543212891,
+                45.17478561401367
+              ]
+            ],
+            "bbox": [
+              526.9150543212891,
+              34.95519161224365,
+              558.79541015625,
+              45.17478561401367
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/PageFooter/35",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.9416046142578,
+                738.0949401855469
+              ],
+              [
+                325.09838104248047,
+                738.0949401855469
+              ],
+              [
+                325.09838104248047,
+                751.9525985717773
+              ],
+              [
+                301.9416046142578,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.9416046142578,
+              738.0949401855469,
+              325.09838104248047,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/573",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">or the ferrite grain size of the steel in the as-rolled or as-forged condition. The prior austenitic grain size and the ferritic grain size of as-rolled or as-forged steel products are controlled by the manufacturing process and may be assisted by suitable chemistry. The appropriate manufacturing process controls needed to meet the mechanical property requirements of the specification in the asrolled or as-forged condition are neither defined nor implied by the inclusion of a <b>fine grain practice</b> requirement. <b>flame annealing,</b> <i>n—</i><b>annealing</b> in which the heat is applied directly by a flame. <b>flame hardening,</b> <i>n—</i>a process in which only the surface layer of a suitable steel object is heated by flame to above Ac3 or Accm, and then the object is <b>quenched</b>. <b>fog quenching,</b> <i>n—</i><b>quenching</b> in a mist. <b>full annealing,</b> <i>n—</i><b>annealing</b> a steel object by <b>austenitizing</b> it and then cooling it slowly through the <b>transformation</b> <b>range</b>. DISCUSSION—The austenitizing temperature is usually above Ac3 for hypoeutectoid steels and between Ac1 and Accm for hypereutectoid steels. <b>grain growth,</b> <i>n—</i>an increase in the grain size of a steel object, usually as a result of exposure to elevated temperatures. <b>grain size,</b> <i>n—</i>the dimensions of the grains or crystals in a polycrystalline metal, exclusive of twinned regions and subgrains when present. DISCUSSION—<b>Grain size</b> is usually estimated or measured on the cross section of an aggregate of grains, and designated by an ASTM grain size number. (See Test Methods E112.) <b>graphitization annealing,</b> <i>n—</i><b>annealing</b> a steel object in such a way that some or all of the carbon is precipitated as graphite. <b>hardenability,</b> <i>n—</i>the property that determines the depth and distribution of hardness induced by <b>quenching</b> a steel object. <b>hardening,</b> <i>n—</i>increasing the hardness by suitable treatment, usually involving heating and cooling. DISCUSSION—Where applicable, it is preferred that the following more specific terms be used: <b>age hardening</b>, <b>case hardening</b>, <b>flame</b> <b>hardening</b>, <b>induction hardening</b>, <b>precipitation hardening</b>, and <b>quench hardening</b>. <b>heat,</b> <i>n—</i>a generic term denoting a specific <b>lot</b> of <b>steel</b>, based upon steelmaking and casting considerations. DISCUSSION—Where it is necessary to be more definitive, the following more specific terms are used: <b>primary heat</b>, <b>multiple heat</b>, and <b>remelted heat</b>. In product specifications, the term <b>heat</b> generally is used, without qualification, to mean the <b>primary</b>, <b>multiple</b>, or <b>re</b><b>melted heat</b>, whichever is applicable. <b>heat analysis,</b> <i>n—</i>the chemical analysis determined by the steel producer as being representative of a specific <b>heat</b> of <b>steel</b>. DISCUSSION—Where the analysis reported by the steel producer is not sufficiently complete for conformance with the heat analysis requirements of the applicable product specification to be fully assessed, the <b>manufacturer</b> may complete the assessment of conformance with such heat analysis requirements by using a product analysis for the <b>specified</b> <b>elements</b> that were not reported by the steel producer, provided that product analysis tolerances are not applied and the <b>heat analysis</b> is not altered. <b>heat number,</b> <i>n—</i>the alpha, numeric, or alphanumeric designator used to identify a specific <b>heat</b> of <b>steel</b>. <b>heat treatment,</b> <i>n—</i>heating and cooling a steel object in such a way as to obtain desired conditions or properties. DISCUSSION—Heating for the sole purpose of hot working is excluded from the meaning of this definition. <b>high-strength low-alloy steel,</b> <i>n—</i>a <b>steel</b>, other than a <b>carbon</b> <b>steel</b> or an <b>interstitial-free steel</b>, that conforms to a specification that requires the minimum content for each specified alloying element to be lower than the applicable limit in the definition for <b>alloy steel</b>, and the yield point or yield strength of the product to be at least 36 ksi or 250 MPa. <b>homogeneous carburizing,</b> <i>n—</i>a process that converts a lowcarbon steel to one of substantially uniform and higher carbon content throughout the section, so that a specific response to <b>hardening</b> may be obtained. <b>homogenizing,</b> <i>n—</i>holding a steel object at high temperature to eliminate or decrease chemical segregation by diffusion. <b>hot-cold working,</b> <i>n—</i>the mechanical deformation of austenitic and precipitation hardening steels at a temperature just below the <b>recrystallization temperature</b> to increase the yield strength and hardness by plastic deformation or precipitation hardening effects induced by plastic deformation, or both. <b>hot-finished,</b> <i>n—</i>the condition of a product that has been cooled directly after the last <b>hot-working</b> operation, without <b>cold-working</b> (except for straightening or flattening), and independent of the temperature at which hot-working was completed. DISCUSSION—The tolerances and surface finish of hot-finished product can be different from those of cold-finished, cold-drawn, or cold-rolled product. <b>hot quenching,</b> <i>n—</i>an imprecise term used to cover a variety of quenching procedures in which the quenching medium is maintained at a prescribed temperature above 160 °F or 70 °C. <b>hot working,</b> <i>n—</i>mechanical deformation of a metal at temperatures above its <b>recrystallization temperature</b>. <b>imperfection,</b> <i>n—</i>a material discontinuity or irregularity that is detectable by <b>inspection</b>. <b>inclusion shape control,</b> <i>n—</i>the addition of elements during steel making in order to affect the inclusion morphology. <b>induction hardening,</b> <i>n—in surface hardening</i>, a process in which only the surface layer of a suitable steel object is heated by electrical induction to above Ac3 or Accm, and then the object is <b>quenched</b>. <b>induction hardening,</b> <i>n—in through hardening</i>, a process in which a suitable steel object is heated by electrical induction to above Ac3 or Accm throughout its section, and then the object is <b>quenched</b>.</p>",
+            "polygon": [
+              [
+                63.840951919555664,
+                64.51969528198242
+              ],
+              [
+                565.1823120117188,
+                64.51969528198242
+              ],
+              [
+                565.1823120117188,
+                711.6595153808594
+              ],
+              [
+                63.840951919555664,
+                711.6595153808594
+              ]
+            ],
+            "bbox": [
+              63.840951919555664,
+              64.51969528198242,
+              565.1823120117188,
+              711.6595153808594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                327.9397659301758,
+                67.66576766967773
+              ],
+              [
+                563.3485565185547,
+                67.66576766967773
+              ],
+              [
+                563.3485565185547,
+                97.69282150268555
+              ],
+              [
+                327.9397659301758,
+                97.69282150268555
+              ]
+            ],
+            "bbox": [
+              327.9397659301758,
+              67.66576766967773,
+              563.3485565185547,
+              97.69282150268555
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.00837898254395,
+                67.83273124694824
+              ],
+              [
+                306.78646087646484,
+                67.83273124694824
+              ],
+              [
+                306.78646087646484,
+                145.27910614013672
+              ],
+              [
+                73.00837898254395,
+                145.27910614013672
+              ]
+            ],
+            "bbox": [
+              73.00837898254395,
+              67.83273124694824,
+              306.78646087646484,
+              145.27910614013672
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                321.8438415527344,
+                102.0388412475586
+              ],
+              [
+                563.2032165527344,
+                102.0388412475586
+              ],
+              [
+                563.2032165527344,
+                124.81353378295898
+              ],
+              [
+                321.8438415527344,
+                124.81353378295898
+              ]
+            ],
+            "bbox": [
+              321.8438415527344,
+              102.0388412475586,
+              563.2032165527344,
+              124.81353378295898
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.58895111083984,
+                130.68953704833984
+              ],
+              [
+                563.86962890625,
+                130.68953704833984
+              ],
+              [
+                563.86962890625,
+                170.57085800170898
+              ],
+              [
+                320.58895111083984,
+                170.57085800170898
+              ]
+            ],
+            "bbox": [
+              320.58895111083984,
+              130.68953704833984,
+              563.86962890625,
+              170.57085800170898
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.43874549865723,
+                150.96160125732422
+              ],
+              [
+                306.67506408691406,
+                150.96160125732422
+              ],
+              [
+                306.67506408691406,
+                174.04732131958008
+              ],
+              [
+                64.43874549865723,
+                174.04732131958008
+              ]
+            ],
+            "bbox": [
+              64.43874549865723,
+              150.96160125732422,
+              306.67506408691406,
+              174.04732131958008
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.3246383666992,
+                175.40381240844727
+              ],
+              [
+                564.1430053710938,
+                175.40381240844727
+              ],
+              [
+                564.1430053710938,
+                241.85108184814453
+              ],
+              [
+                320.3246383666992,
+                241.85108184814453
+              ]
+            ],
+            "bbox": [
+              320.3246383666992,
+              175.40381240844727,
+              564.1430053710938,
+              241.85108184814453
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.59974098205566,
+                180.00579071044922
+              ],
+              [
+                307.3946228027344,
+                180.00579071044922
+              ],
+              [
+                307.3946228027344,
+                214.15697479248047
+              ],
+              [
+                64.59974098205566,
+                214.15697479248047
+              ]
+            ],
+            "bbox": [
+              64.59974098205566,
+              180.00579071044922,
+              307.3946228027344,
+              214.15697479248047
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.53822326660156,
+                218.39772033691406
+              ],
+              [
+                226.13829803466797,
+                218.39772033691406
+              ],
+              [
+                226.13829803466797,
+                231.41864776611328
+              ],
+              [
+                64.53822326660156,
+                231.41864776611328
+              ]
+            ],
+            "bbox": [
+              64.53822326660156,
+              218.39772033691406,
+              226.13829803466797,
+              231.41864776611328
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.55351257324219,
+                236.5648956298828
+              ],
+              [
+                307.79713439941406,
+                236.5648956298828
+              ],
+              [
+                307.79713439941406,
+                270.55272674560547
+              ],
+              [
+                64.55351257324219,
+                270.55272674560547
+              ]
+            ],
+            "bbox": [
+              64.55351257324219,
+              236.5648956298828,
+              307.79713439941406,
+              270.55272674560547
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.1407775878906,
+                245.66768646240234
+              ],
+              [
+                563.9751892089844,
+                245.66768646240234
+              ],
+              [
+                563.9751892089844,
+                290.9205780029297
+              ],
+              [
+                320.1407775878906,
+                290.9205780029297
+              ]
+            ],
+            "bbox": [
+              320.1407775878906,
+              245.66768646240234,
+              563.9751892089844,
+              290.9205780029297
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.97071266174316,
+                270.92159271240234
+              ],
+              [
+                306.92992401123047,
+                270.92159271240234
+              ],
+              [
+                306.92992401123047,
+                298.7027893066406
+              ],
+              [
+                73.97071266174316,
+                298.7027893066406
+              ]
+            ],
+            "bbox": [
+              73.97071266174316,
+              270.92159271240234,
+              306.92992401123047,
+              298.7027893066406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.8669967651367,
+                294.6316452026367
+              ],
+              [
+                563.5099639892578,
+                294.6316452026367
+              ],
+              [
+                563.5099639892578,
+                318.08699798583984
+              ],
+              [
+                320.8669967651367,
+                318.08699798583984
+              ]
+            ],
+            "bbox": [
+              320.8669967651367,
+              294.6316452026367,
+              563.5099639892578,
+              318.08699798583984
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.01885604858398,
+                305.38792419433594
+              ],
+              [
+                303.59999084472656,
+                305.38792419433594
+              ],
+              [
+                303.59999084472656,
+                328.9603958129883
+              ],
+              [
+                64.01885604858398,
+                328.9603958129883
+              ]
+            ],
+            "bbox": [
+              64.01885604858398,
+              305.38792419433594,
+              303.59999084472656,
+              328.9603958129883
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.96380615234375,
+                322.27352142333984
+              ],
+              [
+                563.8528289794922,
+                322.27352142333984
+              ],
+              [
+                563.8528289794922,
+                388.2352752685547
+              ],
+              [
+                319.96380615234375,
+                388.2352752685547
+              ]
+            ],
+            "bbox": [
+              319.96380615234375,
+              322.27352142333984,
+              563.8528289794922,
+              388.2352752685547
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                63.300682067871094,
+                333.10533142089844
+              ],
+              [
+                307.51116943359375,
+                333.10533142089844
+              ],
+              [
+                307.51116943359375,
+                368.39190673828125
+              ],
+              [
+                63.300682067871094,
+                368.39190673828125
+              ]
+            ],
+            "bbox": [
+              63.300682067871094,
+              333.10533142089844,
+              307.51116943359375,
+              368.39190673828125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.45733642578125,
+                367.4103469848633
+              ],
+              [
+                307.73670959472656,
+                367.4103469848633
+              ],
+              [
+                307.73670959472656,
+                397.7057647705078
+              ],
+              [
+                73.45733642578125,
+                397.7057647705078
+              ]
+            ],
+            "bbox": [
+              73.45733642578125,
+              367.4103469848633,
+              307.73670959472656,
+              397.7057647705078
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.5248107910156,
+                392.5476379394531
+              ],
+              [
+                563.7029113769531,
+                392.5476379394531
+              ],
+              [
+                563.7029113769531,
+                448.14601135253906
+              ],
+              [
+                319.5248107910156,
+                448.14601135253906
+              ]
+            ],
+            "bbox": [
+              319.5248107910156,
+              392.5476379394531,
+              563.7029113769531,
+              448.14601135253906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.13263893127441,
+                403.23394775390625
+              ],
+              [
+                308.49597930908203,
+                403.23394775390625
+              ],
+              [
+                308.49597930908203,
+                437.2874450683594
+              ],
+              [
+                64.13263893127441,
+                437.2874450683594
+              ]
+            ],
+            "bbox": [
+              64.13263893127441,
+              403.23394775390625,
+              308.49597930908203,
+              437.2874450683594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                63.5255069732666,
+                442.3615264892578
+              ],
+              [
+                307.47802734375,
+                442.3615264892578
+              ],
+              [
+                307.47802734375,
+                476.8352966308594
+              ],
+              [
+                63.5255069732666,
+                476.8352966308594
+              ]
+            ],
+            "bbox": [
+              63.5255069732666,
+              442.3615264892578,
+              307.47802734375,
+              476.8352966308594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/22",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                328.1674118041992,
+                451.6544952392578
+              ],
+              [
+                563.1415100097656,
+                451.6544952392578
+              ],
+              [
+                563.1415100097656,
+                482.86285400390625
+              ],
+              [
+                328.1674118041992,
+                482.86285400390625
+              ]
+            ],
+            "bbox": [
+              328.1674118041992,
+              451.6544952392578,
+              563.1415100097656,
+              482.86285400390625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                63.7672004699707,
+                481.69459533691406
+              ],
+              [
+                306.3533248901367,
+                481.69459533691406
+              ],
+              [
+                306.3533248901367,
+                505.4348602294922
+              ],
+              [
+                63.7672004699707,
+                505.4348602294922
+              ]
+            ],
+            "bbox": [
+              63.7672004699707,
+              481.69459533691406,
+              306.3533248901367,
+              505.4348602294922
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/24",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.29471588134766,
+                487.0502471923828
+              ],
+              [
+                563.6038513183594,
+                487.0502471923828
+              ],
+              [
+                563.6038513183594,
+                530.3654022216797
+              ],
+              [
+                319.29471588134766,
+                530.3654022216797
+              ]
+            ],
+            "bbox": [
+              319.29471588134766,
+              487.0502471923828,
+              563.6038513183594,
+              530.3654022216797
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/25",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.60539436340332,
+                503.72447204589844
+              ],
+              [
+                307.56388092041016,
+                503.72447204589844
+              ],
+              [
+                307.56388092041016,
+                544.5693969726562
+              ],
+              [
+                73.60539436340332,
+                544.5693969726562
+              ]
+            ],
+            "bbox": [
+              73.60539436340332,
+              503.72447204589844,
+              307.56388092041016,
+              544.5693969726562
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/26",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.0009994506836,
+                535.0282287597656
+              ],
+              [
+                562.6871795654297,
+                535.0282287597656
+              ],
+              [
+                562.6871795654297,
+                559.5045318603516
+              ],
+              [
+                320.0009994506836,
+                559.5045318603516
+              ]
+            ],
+            "bbox": [
+              320.0009994506836,
+              535.0282287597656,
+              562.6871795654297,
+              559.5045318603516
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/27",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                64.43622779846191,
+                549.7760009765625
+              ],
+              [
+                308.4180221557617,
+                549.7760009765625
+              ],
+              [
+                308.4180221557617,
+                572.9935455322266
+              ],
+              [
+                64.43622779846191,
+                572.9935455322266
+              ]
+            ],
+            "bbox": [
+              64.43622779846191,
+              549.7760009765625,
+              308.4180221557617,
+              572.9935455322266
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/28",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.01985931396484,
+                561.6865081787109
+              ],
+              [
+                563.4093933105469,
+                561.6865081787109
+              ],
+              [
+                563.4093933105469,
+                585.3038177490234
+              ],
+              [
+                320.01985931396484,
+                585.3038177490234
+              ]
+            ],
+            "bbox": [
+              320.01985931396484,
+              561.6865081787109,
+              563.4093933105469,
+              585.3038177490234
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/29",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.39346694946289,
+                573.0069580078125
+              ],
+              [
+                308.9209899902344,
+                573.0069580078125
+              ],
+              [
+                308.9209899902344,
+                622.3423919677734
+              ],
+              [
+                73.39346694946289,
+                622.3423919677734
+              ]
+            ],
+            "bbox": [
+              73.39346694946289,
+              573.0069580078125,
+              308.9209899902344,
+              622.3423919677734
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/30",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.4611587524414,
+                588.5426788330078
+              ],
+              [
+                563.7192535400391,
+                588.5426788330078
+              ],
+              [
+                563.7192535400391,
+                613.1441802978516
+              ],
+              [
+                319.4611587524414,
+                613.1441802978516
+              ]
+            ],
+            "bbox": [
+              319.4611587524414,
+              588.5426788330078,
+              563.7192535400391,
+              613.1441802978516
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/31",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.20613861083984,
+                615.5979309082031
+              ],
+              [
+                563.7754211425781,
+                615.5979309082031
+              ],
+              [
+                563.7754211425781,
+                661.3257293701172
+              ],
+              [
+                319.20613861083984,
+                661.3257293701172
+              ]
+            ],
+            "bbox": [
+              319.20613861083984,
+              615.5979309082031,
+              563.7754211425781,
+              661.3257293701172
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/32",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                63.2958984375,
+                627.0220184326172
+              ],
+              [
+                308.60511016845703,
+                627.0220184326172
+              ],
+              [
+                308.60511016845703,
+                660.2718200683594
+              ],
+              [
+                63.2958984375,
+                660.2718200683594
+              ]
+            ],
+            "bbox": [
+              63.2958984375,
+              627.0220184326172,
+              308.60511016845703,
+              660.2718200683594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/33",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                72.75720977783203,
+                660.5271606445312
+              ],
+              [
+                307.87669372558594,
+                660.5271606445312
+              ],
+              [
+                307.87669372558594,
+                710.0061950683594
+              ],
+              [
+                72.75720977783203,
+                710.0061950683594
+              ]
+            ],
+            "bbox": [
+              72.75720977783203,
+              660.5271606445312,
+              307.87669372558594,
+              710.0061950683594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/688/Text/34",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                319.3949661254883,
+                665.3664093017578
+              ],
+              [
+                563.8788757324219,
+                665.3664093017578
+              ],
+              [
+                563.8788757324219,
+                710.2511901855469
+              ],
+              [
+                319.3949661254883,
+                710.2511901855469
+              ]
+            ],
+            "bbox": [
+              319.3949661254883,
+              665.3664093017578,
+              563.8788757324219,
+              710.2511901855469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 689,
+        "printed_page": 1384,
+        "id": "/page/689/Page/517",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/689/PageHeader/0'></content-ref><content-ref src='/page/689/PageHeader/1'></content-ref><content-ref src='/page/689/PageFooter/3'></content-ref><content-ref src='/page/689/Text/517'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/689/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.25491809844971
+              ],
+              [
+                338.0746765136719,
+                35.25491809844971
+              ],
+              [
+                338.0746765136719,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.25491809844971,
+              338.0746765136719,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/689/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.083187103271484,
+                35.60554218292236
+              ],
+              [
+                80.62676239013672,
+                35.60554218292236
+              ],
+              [
+                80.62676239013672,
+                45.569397926330566
+              ],
+              [
+                51.083187103271484,
+                45.569397926330566
+              ]
+            ],
+            "bbox": [
+              51.083187103271484,
+              35.60554218292236,
+              80.62676239013672,
+              45.569397926330566
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/689/PageFooter/3",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                284.2869873046875,
+                738.4544677734375
+              ],
+              [
+                306.944091796875,
+                738.4544677734375
+              ],
+              [
+                306.944091796875,
+                751.9525985717773
+              ],
+              [
+                284.2869873046875,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              284.2869873046875,
+              738.4544677734375,
+              306.944091796875,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/689/Text/517",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>induction heating,</b> <i>n—</i>heating by electrical induction. <b>inspection,</b> <i>n—</i>the process of measuring, examining, testing, gaging, or otherwise comparing the unit of product with the applicable requirements. <b>intermediate annealing,</b> <i>n—</i><b>annealing</b> wrought steel objects at one or more stages during manufacture prior to final thermal treatment. <b>interrupted aging,</b> <i>n—</i><b>aging</b> at two or more temperatures, by steps, and cooling to room temperature after each step. <b>interrupted quenching,</b> <i>n—</i><b>quenching</b> in which the object being quenched is removed from the quenching medium while the object is at a temperature substantially higher than that of the quenching medium. <b>interstitial-free steel,</b> <i>n—</i>a <b>steel</b> that has essentially all of its carbon and nitrogen chemically combined with stabilization elements rather than being present interstitially. DISCUSSION—The heat analysis limits (minimum or maximum, or both) that are permitted to be prescribed in interstitial-free steel specifications are as given in the definition for <b>carbon steel</b>, except that the 0.050 % maximum limit for titanium does not apply. <b>isothermal annealing,</b> <i>n—</i><b>austenitizing</b> a steel object and then cooling it to, and holding it at, a temperature at which austenite transforms to a ferrite-carbide aggregate. <b>isothermal transformation,</b> <i>n—</i>a change in phase at any constant temperature. <b>killed steel,</b> <i>n—</i>a <b>steel</b> deoxidized to such a level that essentially no reaction occurred between carbon and oxygen during solidification. <b>laser beam welding,</b> <i>n—</i>a welding process that uses a laser beam as the heat source. <b>lot,</b> <i>n—</i>a definite quantity of product manufactured under conditions that are considered uniform. <b>low-alloy steel,</b> <i>n—</i>a <b>steel</b>, other than a <b>carbon steel</b> or an <b>interstitial-free steel</b>, that conforms to a specification that requires the minimum content for each specified alloying element to be lower than the applicable limit in the definition for <b>alloy steel</b>. <i>Mf</i> <b>,</b> <i>Ms</i><b>—</b>See <b>transformation temperature</b>. <b>manufacturer,</b> <i>n—</i>the organization responsible for the conversion of materials into products meeting the requirements of a product specification. <b>maraging,</b> <i>n—</i>a precipitation hardening treatment applied to a special group of <b>alloy steels</b> to precipitate one or more intermetallic compounds in a matrix of essentially carbonfree martensite. <b>martempering,</b> <i>n—</i><b>quenching</b> an austenitized steel object in a medium at a temperature in the upper part of, or slightly above, the <b>martensite range</b>, holding it in the medium until its temperature is substantially uniform throughout, and then cooling it in air through the <b>martensite range</b>. <b>martensite range,</b> <i>n—</i>the temperature interval between Ms and Mf . <b>microalloyed steel,</b> <i>n—</i>a <b>low-alloy steel</b> that conforms to a specification that requires the presence of one or more carbide-, nitride-, or carbonitride-forming elements, generally in individual concentrations less than 0.15 mass percent, to enhance strength. DISCUSSION—The most common microalloying elements are niobium (columbium), titanium, and vanadium. <b>multiple heat,</b> <i>n—</i>two or more molten <b>primary heats</b>, in whole or in part, combined in a common ladle or in a common non-oscillating mold. DISCUSSION—A <b>multiple heat</b> is identified by a single <b>heat number</b> representative of the <b>multiple heat</b>, or by the individual <b>heat numbers</b> of the <b>primary heats</b> contained in the <b>multiple heat</b>. The <b>heat</b> <b>analysis</b> of a <b>multiple heat</b> identified by a single <b>heat number</b> is the weighted average analysis of the individual <b>primary heats</b> contained in the <b>multiple heat</b>. Two or more molten <b>primary heats</b> sequentially strand cast (poured into an oscillating mold) constitute a series of individual <b>heats</b>, not a <b>multiple heat</b>. <b>natural aging,</b> <i>n—</i>spontaneous aging of a super-saturated solid solution at room temperature. <b>nickel alloy,</b> <i>n—</i>a material that conforms to a specification that requires by mass percent more nickel than any other element. DISCUSSION—In castings, the nickel content requirement is not normally stated in the specification and is not normally determined by chemical analysis, but is taken to be 100 % minus the sum of the mean values permitted by the specification for all other elements having a specified range or a specified maximum. <b>nitriding,</b> <i>n—</i>introducing nitrogen into a solid steel object by holding it at a suitable temperature in contact with a nitrogenous environment. <b>nonferrous material,</b> <i>n—</i>metals and alloys that do not contain iron as the principal component. DISCUSSION—The iron content is not always stated in the specification and is not always determined by chemical analysis. The iron content may be taken to be 100 % minus the sum of the mean values permitted by the specification for all other elements having a specified range or a specified maximum. For conformance purposes, the mean value for iron, whether specified or calculated, is compared on an individual basis to the mean values permitted by the specification for each of the other elements having a specified range or a specified maximum. If an element other than iron is not specified, but is listed as remainder or balance, then, for conformance purposes, the mean value for iron is compared to the calculated value for that other element. <b>normalizing,</b> <i>v—</i>reheating a steel object to a temperature above the <b>transformation range</b> and then cooling it in air to a temperature substantially below the transformation range to achieve both grain refinement and improved homogenization. <b>overaging,</b> <i>n—</i><b>aging</b> under conditions of time and temperature greater than those required to obtain maximum change in a certain property, so that the property is altered away from the maximum. <b>overheating,</b> <i>n—</i>heating a steel object to such a high temperature that excessive grain growth occurs.</p>",
+            "polygon": [
+              [
+                47.20638084411621,
+                60.91776466369629
+              ],
+              [
+                547.6408538818359,
+                60.91776466369629
+              ],
+              [
+                547.6408538818359,
+                711.6229019165039
+              ],
+              [
+                47.20638084411621,
+                711.6229019165039
+              ]
+            ],
+            "bbox": [
+              47.20638084411621,
+              60.91776466369629,
+              547.6408538818359,
+              711.6229019165039
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 690,
+        "printed_page": 1385,
+        "id": "/page/690/Page/505",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/690/PageHeader/0'></content-ref><content-ref src='/page/690/PageHeader/1'></content-ref><content-ref src='/page/690/PageFooter/6'></content-ref><content-ref src='/page/690/Text/505'></content-ref><content-ref src='/page/690/Text/3'></content-ref><content-ref src='/page/690/Text/4'></content-ref><content-ref src='/page/690/Text/5'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/690/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.7349166870117,
+                34.74126720428467
+              ],
+              [
+                557.9865112304688,
+                34.74126720428467
+              ],
+              [
+                557.9865112304688,
+                47.0418701171875
+              ],
+              [
+                273.7349166870117,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.7349166870117,
+              34.74126720428467,
+              557.9865112304688,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                526.8001556396484,
+                35.00675296783447
+              ],
+              [
+                558.7398376464844,
+                35.00675296783447
+              ],
+              [
+                558.7398376464844,
+                45.226441383361816
+              ],
+              [
+                526.8001556396484,
+                45.226441383361816
+              ]
+            ],
+            "bbox": [
+              526.8001556396484,
+              35.00675296783447,
+              558.7398376464844,
+              45.226441383361816
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/PageFooter/6",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.7336654663086,
+                737.9478149414062
+              ],
+              [
+                325.2301940917969,
+                737.9478149414062
+              ],
+              [
+                325.2301940917969,
+                751.9525985717773
+              ],
+              [
+                301.7336654663086,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.7336654663086,
+              737.9478149414062,
+              325.2301940917969,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/Text/505",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—Unlike burning, it may be possible to restore the original properties/microstructure by further heat treatment or mechanical working, or a combination thereof. <b>patenting,</b> <i>n—in wire making,</i> <b>heat treatment</b> of a mediumcarbon or high-carbon steel wire or wire rod that includes heating to a temperature above Ac3 but below normal <b>hot</b> <b>working</b> temperatures, followed directly without <b>hot work</b><b>ing</b> by <b>controlled cooling</b> to achieve a uniform microstructure suitable for <b>cold working</b> and typically characterized by pearlite having a fine interlamellar spacing. DISCUSSION—The method used for controlled cooling is often used to describe the type of patenting. Examples include but are not limited to, air patenting, salt patenting, fluidized bed patenting, and lead patenting. Furthermore, double lead patenting describes a patenting process in which molten lead is used not only for the controlled cooling, but also for the heating to a temperature above Ac3. <b>plate-as-rolled,</b> <i>n—</i>the quantity of plate product rolled at one time, either from an individual slab or directly from an ingot. DISCUSSION—This term does not refer to the surface condition or the heat-treatment state of the material; a <b>plate-as-rolled</b> may be in the as-rolled condition, or may have received one or more surface treatments or <b>heat treatments</b>, or both. <b>post-weld heat treatment,</b> <i>n—</i>heating weldments immediately after welding, to provide <b>tempering</b>, <b>stress relieving</b>, or a controlled rate of cooling to prevent formation of a hard or brittle microstructure. <b>precipitation hardening,</b> <i>n—</i><b>hardening</b> caused by the precipitation of a constituent from a supersaturated solid solution. <b>precipitation heat treatment,</b> <i>n—</i><b>artificial aging</b> in which a constituent precipitates from a supersaturated solid solution. <b>preheating,</b> <i>n—</i>heating before welding, a mechanical treatment, or some further thermal treatment. <b>preheating,</b> <i>n—for tool steels</i>, heating to an intermediate temperature immediately before final <b>austenitizing</b>. <b>primary heat,</b> <i>n—</i>the product of a single cycle of a batch melting process. DISCUSSION—In the investment casting industry, the term <i>master heat</i> is used. <b>process annealing,</b> <i>n—in the sheet and wire industries</i>, heating a steel object to a temperature close to, but below, Ac1 and then cooling it, in order to soften it for further cold working. <b>product analysis,</b> <i>n—</i>a chemical analysis of a specimen taken from the semi-finished product or the finished product. <b>progressive aging,</b> <i>n—</i><b>aging</b> by increasing the temperature in steps, or continuously, during the aging cycle. <b>quench aging,</b> <i>n—</i><b>aging</b> associated with <b>quenching</b> after <b>solution heat treatment</b>. <b>quench hardening,</b> <i>n—</i><b>hardening</b> a steel object by <b>austen</b><b>itizing</b> it, and then cooling it rapidly enough that some or all of the austenite transforms to martensite. DISCUSSION—The austenitizing temperature is usually above Ac3 for hypoeutectoid steels and between Ac1 and Accm for hypereutectoid steels. <b>quenching,</b> <i>n—</i>rapid cooling in a fluid at a rate sufficient to preserve or produce desired material characteristics. DISCUSSION—Where applicable, it is preferred that the following more specific terms be used: <b>fog quenching, hot quenching, inter</b><b>rupted quenching, selective quenching, spray quenching,</b> and <b>time</b> <b>quenching</b>. Quenching is often used in solution heat treatment of austenitic steels to retain certain constituents in solution. Quenching is also used for ferritic steels to develop desired characteristics (such as microstructure or toughness) in thicker sections that can otherwise only be achieved in thinner sections. Liquids and gasses are both fluids. <b>recrystallization,</b> <i>n—</i>the formation of a new grain structure through a nucleation and growth process. DISCUSSION—This is commonly produced by subjecting a steel object, which may be strained, to suitable conditions of time and temperature. <b>recrystallization annealing,</b> <i>n—</i><b>annealing</b> a cold-worked steel object to produce a new grain structure without a change in phase. <b>recrystallization temperature,</b> <i>n—</i>the approximate minimum temperature at which recrystallization of a cold-worked steel object occurs within a specified time. <b>remelted heat,</b> <i>n—</i>the product of the remelting of a <b>primary</b> <b>heat</b>, in whole or in part. DISCUSSION—In the investment casting industry, the term <i>sub-heat</i> is used. <b>residual element,</b> <i>n—in</i> <i>steel</i>, a specified or unspecified element, not intentionally added, originating in the raw materials, refractories, or surrounding atmospheres used in steel making. <b>rimmed steel,</b> <i>n—</i>a <b>steel</b> that contained sufficient oxygen to generate carbon monoxide at the boundary between the solid metal and the remaining molten metal during solidification, resulting in an outer layer low in carbon. <b>secondary hardening,</b> <i>n—</i>the hardening phenomenon that occurs during high-temperature <b>tempering</b> of certain <b>steels</b> containing one or more carbide-forming alloying elements. <b>selective heating,</b> <i>n—</i>intentionally heating only certain portions of a steel object. <b>selective quenching,</b> <i>n—</i><b>quenching</b> only certain portions of a steel object. <b>semicontinuous-conveyance furnace,</b> <i>n—</i>a heating device through which steel objects are intentionally moved in accordance with a predetermined start-stop-start pattern during the thermal processing cycle. <b>semikilled steel,</b> <i>n—</i>an incompletely deoxidized <b>steel</b> that contained sufficient oxygen to form enough entrapped carbon monoxide during solidification to offset solidification shrinkage. <b>shell hardening,</b> <i>n—</i>a surface hardening process in which a suitable steel object, when heated through and quench hardened, develops a martensitic layer or shell that closely follows the contour of the piece and surrounds a <b>core</b> of essentially pearlitic transformation product.</p>",
+            "polygon": [
+              [
+                63.89329719543457,
+                65.50752067565918
+              ],
+              [
+                565.7681121826172,
+                65.50752067565918
+              ],
+              [
+                565.7681121826172,
+                711.6484527587891
+              ],
+              [
+                63.89329719543457,
+                711.6484527587891
+              ]
+            ],
+            "bbox": [
+              63.89329719543457,
+              65.50752067565918,
+              565.7681121826172,
+              711.6484527587891
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                75.23205184936523,
+                67.97109031677246
+              ],
+              [
+                306.38829803466797,
+                67.97109031677246
+              ],
+              [
+                306.38829803466797,
+                97.99960327148438
+              ],
+              [
+                75.23205184936523,
+                97.99960327148438
+              ]
+            ],
+            "bbox": [
+              75.23205184936523,
+              67.97109031677246,
+              306.38829803466797,
+              97.99960327148438
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                328.4425048828125,
+                91.0356216430664
+              ],
+              [
+                563.0769195556641,
+                91.0356216430664
+              ],
+              [
+                563.0769195556641,
+                168.49824142456055
+              ],
+              [
+                328.4425048828125,
+                168.49824142456055
+              ]
+            ],
+            "bbox": [
+              328.4425048828125,
+              91.0356216430664,
+              563.0769195556641,
+              168.49824142456055
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/690/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                73.52007865905762,
+                178.4824562072754
+              ],
+              [
+                307.52879333496094,
+                178.4824562072754
+              ],
+              [
+                307.52879333496094,
+                237.7357177734375
+              ],
+              [
+                73.52007865905762,
+                237.7357177734375
+              ]
+            ],
+            "bbox": [
+              73.52007865905762,
+              178.4824562072754,
+              307.52879333496094,
+              237.7357177734375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 691,
+        "printed_page": 1386,
+        "id": "/page/691/Page/510",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/691/PageHeader/0'></content-ref><content-ref src='/page/691/PageHeader/1'></content-ref><content-ref src='/page/691/PageFooter/31'></content-ref><content-ref src='/page/691/Text/3'></content-ref><content-ref src='/page/691/Text/4'></content-ref><content-ref src='/page/691/Text/6'></content-ref><content-ref src='/page/691/Text/9'></content-ref><content-ref src='/page/691/Text/10'></content-ref><content-ref src='/page/691/Text/12'></content-ref><content-ref src='/page/691/Text/15'></content-ref><content-ref src='/page/691/Text/17'></content-ref><content-ref src='/page/691/Text/20'></content-ref><content-ref src='/page/691/Text/22'></content-ref><content-ref src='/page/691/Text/24'></content-ref><content-ref src='/page/691/Text/28'></content-ref><content-ref src='/page/691/Text/29'></content-ref><content-ref src='/page/691/Text/2'></content-ref><content-ref src='/page/691/Text/5'></content-ref><content-ref src='/page/691/Text/7'></content-ref><content-ref src='/page/691/Text/8'></content-ref><content-ref src='/page/691/Text/11'></content-ref><content-ref src='/page/691/Text/13'></content-ref><content-ref src='/page/691/Text/14'></content-ref><content-ref src='/page/691/Text/16'></content-ref><content-ref src='/page/691/Text/18'></content-ref><content-ref src='/page/691/Text/19'></content-ref><content-ref src='/page/691/Text/21'></content-ref><content-ref src='/page/691/Text/23'></content-ref><content-ref src='/page/691/Text/25'></content-ref><content-ref src='/page/691/Text/26'></content-ref><content-ref src='/page/691/Text/27'></content-ref><content-ref src='/page/691/Text/30'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/691/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.03837585449219
+              ],
+              [
+                337.98875427246094,
+                35.03837585449219
+              ],
+              [
+                337.98875427246094,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.03837585449219,
+              337.98875427246094,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.116329193115234,
+                35.334068298339844
+              ],
+              [
+                80.3825798034668,
+                35.334068298339844
+              ],
+              [
+                80.3825798034668,
+                45.3198881149292
+              ],
+              [
+                51.116329193115234,
+                45.3198881149292
+              ]
+            ],
+            "bbox": [
+              51.116329193115234,
+              35.334068298339844,
+              80.3825798034668,
+              45.3198881149292
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/PageFooter/31",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                284.1720657348633,
+                738.3822326660156
+              ],
+              [
+                307.0345916748047,
+                738.3822326660156
+              ],
+              [
+                307.0345916748047,
+                751.9525985717773
+              ],
+              [
+                284.1720657348633,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              284.1720657348633,
+              738.3822326660156,
+              307.0345916748047,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—This result is accomplished by a proper balance between section size, <b>hardenability</b>, and severity of quench.</p>",
+            "polygon": [
+              [
+                55.958621978759766,
+                67.84146308898926
+              ],
+              [
+                288.3779602050781,
+                67.84146308898926
+              ],
+              [
+                288.3779602050781,
+                89.49026870727539
+              ],
+              [
+                55.958621978759766,
+                89.49026870727539
+              ]
+            ],
+            "bbox": [
+              55.958621978759766,
+              67.84146308898926,
+              288.3779602050781,
+              89.49026870727539
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>slack quenching,</b> <i>n—</i>the incomplete <b>hardening</b> of a steel object due to <b>quenching</b> from the austenitizing temperature at a rate slower than the <b>critical cooling rate</b> for the particular steel composition, resulting in the formation of one or more transformation products in addition to martensite.</p>",
+            "polygon": [
+              [
+                46.658042907714844,
+                94.96921920776367
+              ],
+              [
+                289.24793243408203,
+                94.96921920776367
+              ],
+              [
+                289.24793243408203,
+                161.4874267578125
+              ],
+              [
+                46.658042907714844,
+                161.4874267578125
+              ]
+            ],
+            "bbox": [
+              46.658042907714844,
+              94.96921920776367,
+              289.24793243408203,
+              161.4874267578125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>snap temper,</b> <i>n—</i>a precautionary interim stress-relieving treatment applied to a high-hardenability steel immediately after <b>quenching</b> to prevent cracking because of delay in <b>temper</b><b>ing</b> it at the prescribed higher temperature.</p>",
+            "polygon": [
+              [
+                46.53182029724121,
+                166.65293884277344
+              ],
+              [
+                288.76087188720703,
+                166.65293884277344
+              ],
+              [
+                288.76087188720703,
+                212.09832763671875
+              ],
+              [
+                46.53182029724121,
+                212.09832763671875
+              ]
+            ],
+            "bbox": [
+              46.53182029724121,
+              166.65293884277344,
+              288.76087188720703,
+              212.09832763671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>soaking,</b> <i>n—</i>prolonged holding at a selected temperature.</p>",
+            "polygon": [
+              [
+                46.23830795288086,
+                217.4713897705078
+              ],
+              [
+                271.63983154296875,
+                217.4713897705078
+              ],
+              [
+                271.63983154296875,
+                230.0062255859375
+              ],
+              [
+                46.23830795288086,
+                230.0062255859375
+              ]
+            ],
+            "bbox": [
+              46.23830795288086,
+              217.4713897705078,
+              271.63983154296875,
+              230.0062255859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>solution heat treatment,</b> <i>n—</i>heating a steel object to a suitable temperature, holding it at that temperature long enough to cause one or more constituents to enter into solid solution, and then cooling it rapidly enough to hold such constituents in solution.</p>",
+            "polygon": [
+              [
+                46.11947250366211,
+                235.43682861328125
+              ],
+              [
+                289.669921875,
+                235.43682861328125
+              ],
+              [
+                289.669921875,
+                291.5180969238281
+              ],
+              [
+                46.11947250366211,
+                291.5180969238281
+              ]
+            ],
+            "bbox": [
+              46.11947250366211,
+              235.43682861328125,
+              289.669921875,
+              291.5180969238281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>specified element,</b> <i>n—in</i> <i>steel</i>, an element controlled to a specified minimum, maximum, or range, in accordance with the requirements of the applicable product specification.</p>",
+            "polygon": [
+              [
+                46.263916969299316,
+                296.5595169067383
+              ],
+              [
+                289.19034576416016,
+                296.5595169067383
+              ],
+              [
+                289.19034576416016,
+                331.22796630859375
+              ],
+              [
+                46.263916969299316,
+                331.22796630859375
+              ]
+            ],
+            "bbox": [
+              46.263916969299316,
+              296.5595169067383,
+              289.19034576416016,
+              331.22796630859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>spheroidizing,</b> <i>n—</i>heating and cooling a steel object to produce a spheroidal or globular form of carbide in its microstructure.</p>",
+            "polygon": [
+              [
+                46.30058670043945,
+                336.2099304199219
+              ],
+              [
+                288.5489044189453,
+                336.2099304199219
+              ],
+              [
+                288.5489044189453,
+                370.9377746582031
+              ],
+              [
+                46.30058670043945,
+                370.9377746582031
+              ]
+            ],
+            "bbox": [
+              46.30058670043945,
+              336.2099304199219,
+              288.5489044189453,
+              370.9377746582031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—Spheroidizing methods commonly used are the following: (1) prolonged holding at a temperature just below Ae1; (2) heating and cooling alternately between temperatures that are just above, and just below, Ae1; (3) heating to a temperature above Ae1 or Ae3 and then cooling very slowly in the furnace or holding at a temperature just below Ae1; (4) cooling, from the minimum temperature at which all carbide is dissolved, at a rate suitable to prevent the reformation of a carbide network, and then reheating in accordance with Method (1) or (2) above. (Applicable to hypereutectoid steels containing a carbide network.)</p>",
+            "polygon": [
+              [
+                54.60583305358887,
+                369.52052307128906
+              ],
+              [
+                289.60265350341797,
+                369.52052307128906
+              ],
+              [
+                289.60265350341797,
+                467.2132873535156
+              ],
+              [
+                54.60583305358887,
+                467.2132873535156
+              ]
+            ],
+            "bbox": [
+              54.60583305358887,
+              369.52052307128906,
+              289.60265350341797,
+              467.2132873535156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>spray quenching,</b> <i>n—</i><b>quenching</b> in a spray of liquid.</p>",
+            "polygon": [
+              [
+                46.46820259094238,
+                472.22080993652344
+              ],
+              [
+                258.5169677734375,
+                472.22080993652344
+              ],
+              [
+                258.5169677734375,
+                485.0489196777344
+              ],
+              [
+                46.46820259094238,
+                485.0489196777344
+              ]
+            ],
+            "bbox": [
+              46.46820259094238,
+              472.22080993652344,
+              258.5169677734375,
+              485.0489196777344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/22",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>stabilized stainless steel,</b> <i>n—</i>a <b>stainless steel</b> that conforms to a specification that prescribes limits (minimum or range) for niobium (columbium), tantalum, titanium, or a combination thereof.</p>",
+            "polygon": [
+              [
+                46.15927791595459,
+                490.4171447753906
+              ],
+              [
+                289.7097473144531,
+                490.4171447753906
+              ],
+              [
+                289.7097473144531,
+                535.7535705566406
+              ],
+              [
+                46.15927791595459,
+                535.7535705566406
+              ]
+            ],
+            "bbox": [
+              46.15927791595459,
+              490.4171447753906,
+              289.7097473144531,
+              535.7535705566406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/24",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—Such limits are sometimes expressed as a function of the carbon and nitrogen contents. In an appropriately annealed condition, a <b>stabilized stainless steel</b> will resist sensitization to intergranular corrosion associated with the precipitation of chromium carbide at grain boundaries as a result of thermal exposure, such as <b>annealing, stress relieving</b>, welding, or high temperature service. Resistance to sensitization to intergranular corrosion is dependent upon the corrosivity of the environment. The condition of being stabilized with respect to sensitization is frequently demonstrated by passing one or more standard corrosion tests for sensitization.</p>",
+            "polygon": [
+              [
+                54.38473320007324,
+                533.8799285888672
+              ],
+              [
+                289.9581756591797,
+                533.8799285888672
+              ],
+              [
+                289.9581756591797,
+                632.1260528564453
+              ],
+              [
+                54.38473320007324,
+                632.1260528564453
+              ]
+            ],
+            "bbox": [
+              54.38473320007324,
+              533.8799285888672,
+              289.9581756591797,
+              632.1260528564453
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/28",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>stabilizing treatment,</b> <i>n—</i>any treatment intended to stabilize the microstructure or dimensions of a steel object.</p>",
+            "polygon": [
+              [
+                46.04594135284424,
+                636.3558197021484
+              ],
+              [
+                289.45001220703125,
+                636.3558197021484
+              ],
+              [
+                289.45001220703125,
+                660.8611297607422
+              ],
+              [
+                46.04594135284424,
+                660.8611297607422
+              ]
+            ],
+            "bbox": [
+              46.04594135284424,
+              636.3558197021484,
+              289.45001220703125,
+              660.8611297607422
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/29",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>stainless steel,</b> <i>n—</i>a <b>steel</b> that conforms to a specification that requires, by mass percent, a minimum chromium content of 10.5 or more, and a maximum carbon content of less than 1.20.</p>",
+            "polygon": [
+              [
+                45.39495277404785,
+                664.7982788085938
+              ],
+              [
+                289.4117889404297,
+                664.7982788085938
+              ],
+              [
+                289.4117889404297,
+                711.5657806396484
+              ],
+              [
+                45.39495277404785,
+                711.5657806396484
+              ]
+            ],
+            "bbox": [
+              45.39495277404785,
+              664.7982788085938,
+              289.4117889404297,
+              711.5657806396484
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/2",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>steel,</b> <i>n—</i>a material that conforms to a specification that requires, by mass percent, more iron than any other element and a maximum carbon content of generally less than 2.</p>",
+            "polygon": [
+              [
+                301.9512176513672,
+                67.58544158935547
+              ],
+              [
+                545.8363494873047,
+                67.58544158935547
+              ],
+              [
+                545.8363494873047,
+                102.81610107421875
+              ],
+              [
+                301.9512176513672,
+                102.81610107421875
+              ]
+            ],
+            "bbox": [
+              301.9512176513672,
+              67.58544158935547,
+              545.8363494873047,
+              102.81610107421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—The iron content requirement is not normally stated in the specification and is not normally determined by chemical analysis, but is taken to be 100 % minus the sum of the mean values permitted by the specification for all other elements having a specified range or a specified maximum. For conformance purposes, this calculated value for iron is compared on an individual basis to the mean values permitted by the specification for each of the other elements having a specified range or a specified maximum. Some chromium-containing steels may contain more than 2 % carbon; however, 2 % carbon is generally considered to be the demarcation between <b>steel</b> and cast iron.</p>",
+            "polygon": [
+              [
+                310.5490951538086,
+                101.48917007446289
+              ],
+              [
+                545.1477355957031,
+                101.48917007446289
+              ],
+              [
+                545.1477355957031,
+                197.77801513671875
+              ],
+              [
+                310.5490951538086,
+                197.77801513671875
+              ]
+            ],
+            "bbox": [
+              310.5490951538086,
+              101.48917007446289,
+              545.1477355957031,
+              197.77801513671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>strain aging,</b> <i>n—</i><b>aging</b> induced by cold working.</p>",
+            "polygon": [
+              [
+                302.6723327636719,
+                200.13592529296875
+              ],
+              [
+                497.58148193359375,
+                200.13592529296875
+              ],
+              [
+                497.58148193359375,
+                212.8787841796875
+              ],
+              [
+                302.6723327636719,
+                212.8787841796875
+              ]
+            ],
+            "bbox": [
+              302.6723327636719,
+              200.13592529296875,
+              497.58148193359375,
+              212.8787841796875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>strain hardening,</b> <i>n—</i>an increase in hardness and strength of a metal caused by plastic deformation at temperatures below its <b>recrystallization temperature</b>. (Syn. <i>work hardening</i>)</p>",
+            "polygon": [
+              [
+                302.41614532470703,
+                214.75428771972656
+              ],
+              [
+                545.6903228759766,
+                214.75428771972656
+              ],
+              [
+                545.6903228759766,
+                249.94970703125
+              ],
+              [
+                302.41614532470703,
+                249.94970703125
+              ]
+            ],
+            "bbox": [
+              302.41614532470703,
+              214.75428771972656,
+              545.6903228759766,
+              249.94970703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>stress relieving,</b> <i>n—</i>heating a steel object to a suitable temperature, holding it long enough to reduce residual stresses, and then cooling it slowly enough to minimize the development of new residual stresses.</p>",
+            "polygon": [
+              [
+                301.87220764160156,
+                251.96397399902344
+              ],
+              [
+                545.8731994628906,
+                251.96397399902344
+              ],
+              [
+                545.8731994628906,
+                297.8276672363281
+              ],
+              [
+                301.87220764160156,
+                297.8276672363281
+              ]
+            ],
+            "bbox": [
+              301.87220764160156,
+              251.96397399902344,
+              545.8731994628906,
+              297.8276672363281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>subcritical annealing,</b> <i>n—</i><b>annealing</b> at a temperature slightly below Ac1.</p>",
+            "polygon": [
+              [
+                301.213623046875,
+                300.18811798095703
+              ],
+              [
+                544.8794403076172,
+                300.18811798095703
+              ],
+              [
+                544.8794403076172,
+                325.31512451171875
+              ],
+              [
+                301.213623046875,
+                325.31512451171875
+              ]
+            ],
+            "bbox": [
+              301.213623046875,
+              300.18811798095703,
+              544.8794403076172,
+              325.31512451171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>surface hardening,</b> <i>n—</i>a generic term covering any of several processes that, by <b>quench hardening</b> only, produce in a steel object a surface layer that is harder or more wear resistant than the <b>core</b>.</p>",
+            "polygon": [
+              [
+                301.31815338134766,
+                325.3981475830078
+              ],
+              [
+                545.9422302246094,
+                325.3981475830078
+              ],
+              [
+                545.9422302246094,
+                371.78021240234375
+              ],
+              [
+                301.31815338134766,
+                371.78021240234375
+              ]
+            ],
+            "bbox": [
+              301.31815338134766,
+              325.3981475830078,
+              545.9422302246094,
+              371.78021240234375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—There is no significant alteration of the chemical composition of the surface layer. Where applicable, it is preferred that the following more specific terms be used: <b>induction hardening, flame</b> <b>hardening</b>, and <b>shell hardening</b>.</p>",
+            "polygon": [
+              [
+                310.70642852783203,
+                368.8860855102539
+              ],
+              [
+                546.0862426757812,
+                368.8860855102539
+              ],
+              [
+                546.0862426757812,
+                409.86199951171875
+              ],
+              [
+                310.70642852783203,
+                409.86199951171875
+              ]
+            ],
+            "bbox": [
+              310.70642852783203,
+              368.8860855102539,
+              546.0862426757812,
+              409.86199951171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>temper brittleness,</b> <i>n—</i>brittleness that results when certain <b>steels</b> are held within, or are cooled slowly through, a certain range of temperature below the <b>transformation range</b>.</p>",
+            "polygon": [
+              [
+                302.6300811767578,
+                412.02040100097656
+              ],
+              [
+                545.939208984375,
+                412.02040100097656
+              ],
+              [
+                545.939208984375,
+                446.6722717285156
+              ],
+              [
+                302.6300811767578,
+                446.6722717285156
+              ]
+            ],
+            "bbox": [
+              302.6300811767578,
+              412.02040100097656,
+              545.939208984375,
+              446.6722717285156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>tempering,</b> <i>n—</i>reheating a quench hardened or normalized steel object to a temperature below Ac1, and then cooling it at any desired rate.</p>",
+            "polygon": [
+              [
+                302.58631896972656,
+                448.05963134765625
+              ],
+              [
+                546.4615173339844,
+                448.05963134765625
+              ],
+              [
+                546.4615173339844,
+                483.6485900878906
+              ],
+              [
+                302.58631896972656,
+                483.6485900878906
+              ]
+            ],
+            "bbox": [
+              302.58631896972656,
+              448.05963134765625,
+              546.4615173339844,
+              483.6485900878906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>test record,</b> <i>n—</i>a document or electronic record that contains the observations and derived data obtained by applying a given test method.</p>",
+            "polygon": [
+              [
+                302.09342193603516,
+                485.3595428466797
+              ],
+              [
+                546.2354736328125,
+                485.3595428466797
+              ],
+              [
+                546.2354736328125,
+                520.6246643066406
+              ],
+              [
+                302.09342193603516,
+                520.6246643066406
+              ]
+            ],
+            "bbox": [
+              302.09342193603516,
+              485.3595428466797,
+              546.2354736328125,
+              520.6246643066406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>test report,</b> <i>n—</i>a document that presents the applicable qualitative or quantitative results obtained by applying one or more given test methods.</p>",
+            "polygon": [
+              [
+                301.69493865966797,
+                522.5539855957031
+              ],
+              [
+                545.9060211181641,
+                522.5539855957031
+              ],
+              [
+                545.9060211181641,
+                557.6016998291016
+              ],
+              [
+                301.69493865966797,
+                557.6016998291016
+              ]
+            ],
+            "bbox": [
+              301.69493865966797,
+              522.5539855957031,
+              545.9060211181641,
+              557.6016998291016
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/25",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—A single document, containing test report information and certificate of compliance information, may be used.</p>",
+            "polygon": [
+              [
+                311.2334747314453,
+                555.3870849609375
+              ],
+              [
+                546.3301391601562,
+                555.3870849609375
+              ],
+              [
+                546.3301391601562,
+                576.7250823974609
+              ],
+              [
+                311.2334747314453,
+                576.7250823974609
+              ]
+            ],
+            "bbox": [
+              311.2334747314453,
+              555.3870849609375,
+              546.3301391601562,
+              576.7250823974609
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/26",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>Thermal-Mechanical Control Process (TMCP),</b> <i>n—</i>a rolling process that produces a fine-grained ferritic steel by a particular combination of controls on the manufacturing process, from slab reheating to post-rolling cooling, thereby achieving enhanced mechanical properties.</p>",
+            "polygon": [
+              [
+                302.11280822753906,
+                577.9056701660156
+              ],
+              [
+                546.8785858154297,
+                577.9056701660156
+              ],
+              [
+                546.8785858154297,
+                635.3378601074219
+              ],
+              [
+                302.11280822753906,
+                635.3378601074219
+              ]
+            ],
+            "bbox": [
+              302.11280822753906,
+              577.9056701660156,
+              546.8785858154297,
+              635.3378601074219
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/27",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">DISCUSSION—(TMCP) requires appropriate selection of chemical composition and accurate control of steel temperature and rolling reduction.</p>",
+            "polygon": [
+              [
+                312.13428497314453,
+                633.4829864501953
+              ],
+              [
+                546.9612579345703,
+                633.4829864501953
+              ],
+              [
+                546.9612579345703,
+                663.9407653808594
+              ],
+              [
+                312.13428497314453,
+                663.9407653808594
+              ]
+            ],
+            "bbox": [
+              312.13428497314453,
+              633.4829864501953,
+              546.9612579345703,
+              663.9407653808594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/691/Text/30",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>thermochemical treatment,</b> <i>n—</i>a <b>heat treatment</b> carried out in a medium suitably chosen to produce a change in the chemical composition of the steel object by exchange with the medium.</p>",
+            "polygon": [
+              [
+                302.3719711303711,
+                665.3527221679688
+              ],
+              [
+                546.6427459716797,
+                665.3527221679688
+              ],
+              [
+                546.6427459716797,
+                711.6522979736328
+              ],
+              [
+                302.3719711303711,
+                711.6522979736328
+              ]
+            ],
+            "bbox": [
+              302.3719711303711,
+              665.3527221679688,
+              546.6427459716797,
+              711.6522979736328
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 692,
+        "printed_page": 1387,
+        "id": "/page/692/Page/181",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/692/PageHeader/0'></content-ref><content-ref src='/page/692/PageHeader/1'></content-ref><content-ref src='/page/692/PageFooter/3'></content-ref><content-ref src='/page/692/Text/181'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/692/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                274.18956756591797,
+                34.760868072509766
+              ],
+              [
+                557.9865112304688,
+                34.760868072509766
+              ],
+              [
+                557.9865112304688,
+                47.0418701171875
+              ],
+              [
+                274.18956756591797,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              274.18956756591797,
+              34.760868072509766,
+              557.9865112304688,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/692/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                528.2727355957031,
+                34.96223831176758
+              ],
+              [
+                558.5380554199219,
+                34.96223831176758
+              ],
+              [
+                558.5380554199219,
+                44.932342529296875
+              ],
+              [
+                528.2727355957031,
+                44.932342529296875
+              ]
+            ],
+            "bbox": [
+              528.2727355957031,
+              34.96223831176758,
+              558.5380554199219,
+              44.932342529296875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/692/PageFooter/3",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                302.17028045654297,
+                738.7667541503906
+              ],
+              [
+                324.9158020019531,
+                738.7667541503906
+              ],
+              [
+                324.9158020019531,
+                751.9525985717773
+              ],
+              [
+                302.17028045654297,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              302.17028045654297,
+              738.7667541503906,
+              324.9158020019531,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/692/Text/181",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>time quenching,</b> <i>n—</i>interrupted <b>quenching</b> in which the duration of holding in the quenching medium is controlled. <b>transformation ranges,</b> <i>n—</i>those ranges of temperature within which austenite forms during heating and transforms during cooling. DISCUSSION—The two ranges are distinct, sometimes overlapping but never coinciding. The limiting temperatures of the ranges are dependent upon the steel composition and the rate of change of temperature, particularly during cooling. <b>transformation temperature,</b> <i>n—</i>the temperature at which a change in phase occurs, with the limiting temperatures of the <b>transformation ranges</b> designated using the following symbols: Accm—the temperature at which the solution of cementite in austenite is completed during heating. Ac1—the temperature at which austenite begins to form during heating. Ac3—the temperature at which transformation of ferrite to austenite is completed during heating. Ac4—the temperature at which austenite transforms to delta ferrite during heating. Ae1, Ae3, Aecm, Ae4—the temperatures of phase change at equilibrium. Arcm—the temperature at which precipitation of cementite starts during cooling. Ar1—the temperature at which transformation of austenite to ferrite or to ferrite plus cementite is completed during cooling. Ar3—the temperature at which austenite begins to transform to ferrite during cooling. Ar4—the temperature at which delta ferrite transforms to austenite during cooling. Mf —the temperature at which transformation of austenite to martensite is substantially completed during cooling. Ms—the temperature at which transformation of austenite to martensite starts during cooling. DISCUSSION—All of the above changes, except the formation of martensite, occur at lower temperatures during cooling than during heating, and are dependent upon the rate of change of temperature. <b>unspecified element,</b> <i>n—in</i> <i>steel</i>, an element not controlled to a specified minimum, maximum, or range, in accordance with the requirements of the applicable product specification. <b>wrought product,</b> <i>n—</i>item of steel which has been subject to deformation by rolling, drawing, forging, or some other method, for example, a bar, plate, strip, tube, or wire. DISCUSSION—The extent of deformation needed to transform an as-cast material to one that exhibits the microstructure and properties expected for wrought products is impractical to define because it may vary among different deformation practices and product application.</p>",
+            "polygon": [
+              [
+                63.85067367553711,
+                68.14081764221191
+              ],
+              [
+                564.9706878662109,
+                68.14081764221191
+              ],
+              [
+                564.9706878662109,
+                348.76224517822266
+              ],
+              [
+                63.85067367553711,
+                348.76224517822266
+              ]
+            ],
+            "bbox": [
+              63.85067367553711,
+              68.14081764221191,
+              564.9706878662109,
+              348.76224517822266
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/685/SectionHeader/13",
+              "4": "/page/685/SectionHeader/16"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/685/SectionHeader/13",
+          "4": "/page/685/SectionHeader/16"
+        }
+      },
+      {
+        "pdf_page": 693,
+        "printed_page": null,
+        "id": "/page/693/Page/2",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/693/SectionHeader/0'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/693/SectionHeader/0",
+            "block_type": "SectionHeader",
+            "html": "<h1>INTENTIONALLY LEFT BLANK</h1>",
+            "polygon": [
+              [
+                213.3607635498047,
+                387.7484893798828
+              ],
+              [
+                378.6818389892578,
+                387.7484893798828
+              ],
+              [
+                378.6818389892578,
+                405.58935546875
+              ],
+              [
+                213.3607635498047,
+                405.58935546875
+              ]
+            ],
+            "bbox": [
+              213.3607635498047,
+              387.7484893798828,
+              378.6818389892578,
+              405.58935546875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/693/SectionHeader/0"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/693/SectionHeader/0"
+        }
+      }
+    ]
+  }
+}

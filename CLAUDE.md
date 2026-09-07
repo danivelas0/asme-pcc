@@ -29,6 +29,8 @@ resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ ASME B31/ASME B31.3/APPEX/   Apéndices A, B y C
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
                └─ ASME_BPVC/Sec_II/
+                  ├─ bpvc_ii_a_1/, a_2/, b/, c/  Partes A, B y C: texto íntegro
+                  │                              de 379 especificaciones
                   ├─ bpvc_ii_d_metric_2025/    II-D métrica (MPa, °C)
                   └─ bpvc_ii_d_customary_2025/ II-D U.S. Customary (ksi, °F)
 outputs/       Entregables.
@@ -42,6 +44,31 @@ templates/     maestro_con_macros.xlsm — Rev. 0 + proyecto VBA, entrada del bu
 Ante una duda de alcance, pregunta antes de producir.
 
 ---
+
+### Sección II, partes A, B y C — cómo está troceada
+
+379 especificaciones de material (SA-, SB-, SFA-), una por archivo en
+`specifications/`, más los apéndices en `appendices/` y las figuras en
+`figures/`. `index.json` es el catálogo —designación, título, páginas PDF y
+folios impresos— y `meta.json` la procedencia.
+
+**El contenido de cada tabla NO viene como `<table>`.** Los bloques `Table`
+tienen el `html` vacío y las filas cuelgan de ellos como bloques `Table` →
+`Line`, cada uno con su texto y su `bbox`. Una fila llega así:
+
+```
+/page/224/Table/27  →  "Carbon, max 0.25A 0.30B 0.35B"
+                       "Manganese 0.27–0.93 0.29–1.06 0.29–1.06"
+```
+
+Es decir: el dato está entero, pero **construir una base exige recomponer las
+columnas desde los `Line` y sus `bbox`**, no leer una tabla ya formada. Cuando
+una fila reparte sus celdas en varios `Line` (Tabla 2 de SA-106), el `bbox` es
+lo único que dice a qué columna va cada una.
+
+`verificar_seccion_ii.py` audita las seis partes contra sus PDF: que cada
+especificación empiece donde dice, que el folio impreso cuadre y que no haya
+solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 
 ## Motor de cálculo — estado actual
 

@@ -1,0 +1,950 @@
+{
+  "source": {
+    "standard": "ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2",
+    "edition": "2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01",
+    "table": "SA/JIS G5504 - Specification for Heavy-Walled Ferritic Spheroidal Graphite Iron Castings for Low Temperature Service",
+    "clause": "SA/JIS G5504",
+    "transcribed_from": "database/asme/bpvc_ii_a_2/specifications/sa_jis_g5504_specification_for_heavy_walled_ferritic_spheroidal_graphite_iron_castings_source.json",
+    "note": "Full text of ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 2 — SA/JIS G5504 - Specification for Heavy-Walled Ferritic Spheroidal Graphite Iron Castings for Low Temperature Service — as supplied by Daniel Velasquez on 2026-09-07 and extracted from the supplied PDF with marker-pdf. `data` is the extractor's output verbatim — the drop's own `document`, `part`, `figures` and `pages` blocks, with the page-by-page block tree, its HTML, tables and layout coordinates unedited. This file IS the source document, so `transcribed_from` names its own path: it is the artefact under review, not a transcription of one. The volume was supplied as one combined PDF and cut into parts at its own headings, so this file is a page-range slice of a single extraction and its page ids (PDF pages None–None, no printed page numbers on these pages) are the combined document's own, not renumbered from 0. Front matter (cover and title page, contents, list of sections, foreword, statement of policy, personnel, correspondence, summary of changes, cross-referencing) and back matter (back cover) were deleted from the drop before supply and are NOT filed; the drop's `content.json`, `index.json`, `meta.json` and `README.md` are retained beside the kind folders, unfiled, for the same reason. The edition — 2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01 — is stated on the title page, which this drop no longer carries as a filed cut: it survives only inside the retained `content.json`, so no filed cut of this standard prints its own edition. This cut carries no figure.",
+    "status": "PRELIMINARY — supplied source document, transcribed for screening and pre-dimensioning. The published standard governs for issued design.",
+    "read_by": "Daniel Velasquez",
+    "read_on": "2026-09-07"
+  },
+  "data": {
+    "document": {
+      "standard": "ASME Boiler and Pressure Vessel Code",
+      "section": "Section II - Materials",
+      "part": "Part A - Ferrous Material Specifications (SA-451 to End)",
+      "volume": "Volume 2 of Part A",
+      "designation": "ASME BPVC.II.A-2025",
+      "edition": "2025 Edition",
+      "edition_year": 2025,
+      "date_of_issuance": "2025-07-01",
+      "publisher": "ASME (The American Society of Mechanical Engineers)",
+      "source_pages": 943,
+      "specification_count": 114
+    },
+    "specification": {
+      "id": "SA/JIS G5504",
+      "title": "Specification for Heavy-Walled Ferritic Spheroidal Graphite Iron Castings for Low Temperature Service",
+      "equivalent_designation": "JIS G5504:2005",
+      "equivalence_note": "Identical with International Specification JIS G5504:2005 as translated and published in the English language by the Japanese Standards Association, with these additional requirements.",
+      "folder": "SA-JIS-G5504",
+      "pdf_pages": [
+        912,
+        913
+      ],
+      "printed_pages": [
+        1607,
+        1608
+      ],
+      "page_count": 2
+    },
+    "figures": [],
+    "pages": [
+      {
+        "pdf_page": 912,
+        "printed_page": 1607,
+        "id": "/page/912/Page/29",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/912/PageHeader/0'></content-ref><content-ref src='/page/912/PageHeader/1'></content-ref><content-ref src='/page/912/SectionHeader/2'></content-ref><content-ref src='/page/912/Picture/3'></content-ref><content-ref src='/page/912/Text/4'></content-ref><content-ref src='/page/912/Text/5'></content-ref><content-ref src='/page/912/PageFooter/6'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/912/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.5643081665039,
+                34.80865001678467
+              ],
+              [
+                557.9879760742188,
+                34.80865001678467
+              ],
+              [
+                557.9879760742188,
+                47.04412841796875
+              ],
+              [
+                273.5643081665039,
+                47.04412841796875
+              ]
+            ],
+            "bbox": [
+              273.5643081665039,
+              34.80865001678467,
+              557.9879760742188,
+              47.04412841796875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/911/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/912/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                504.6167907714844,
+                35.103166580200195
+              ],
+              [
+                558.8662719726562,
+                35.103166580200195
+              ],
+              [
+                558.8662719726562,
+                45.621079444885254
+              ],
+              [
+                504.6167907714844,
+                45.621079444885254
+              ]
+            ],
+            "bbox": [
+              504.6167907714844,
+              35.103166580200195,
+              558.8662719726562,
+              45.621079444885254
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/911/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/912/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>SPECIFICATION FOR HEAVY-WALLED FERRITIC</b> <b>SPHEROIDAL GRAPHITE IRON CASTINGS FOR LOW</b> <b>TEMPERATURE SERVICE</b></h1>",
+            "polygon": [
+              [
+                117.36450576782227,
+                240.43013763427734
+              ],
+              [
+                511.1344299316406,
+                240.43013763427734
+              ],
+              [
+                511.1344299316406,
+                300.8730773925781
+              ],
+              [
+                117.36450576782227,
+                300.8730773925781
+              ]
+            ],
+            "bbox": [
+              117.36450576782227,
+              240.43013763427734,
+              511.1344299316406,
+              300.8730773925781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/912/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                151.9047540664673,
+                329.085746383667
+              ],
+              [
+                208.29546031951904,
+                329.085746383667
+              ],
+              [
+                208.29546031951904,
+                385.9758762359619
+              ],
+              [
+                151.9047540664673,
+                385.9758762359619
+              ]
+            ],
+            "bbox": [
+              151.9047540664673,
+              329.085746383667,
+              208.29546031951904,
+              385.9758762359619
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/912/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SA/JIS G5504</b></p>",
+            "polygon": [
+              [
+                268.2249069213867,
+                352.8082580566406
+              ],
+              [
+                359.1136779785156,
+                352.8082580566406
+              ],
+              [
+                359.1136779785156,
+                370.4789123535156
+              ],
+              [
+                268.2249069213867,
+                370.4789123535156
+              ]
+            ],
+            "bbox": [
+              268.2249069213867,
+              352.8082580566406,
+              359.1136779785156,
+              370.4789123535156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/912/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with International Specification JIS G5504:2005 as translated and published in the English language by the Japanese Standards Association, with these additional requirements.)</p>",
+            "polygon": [
+              [
+                112.35062026977539,
+                421.0952911376953
+              ],
+              [
+                523.8552703857422,
+                421.0952911376953
+              ],
+              [
+                523.8552703857422,
+                443.4121398925781
+              ],
+              [
+                112.35062026977539,
+                443.4121398925781
+              ]
+            ],
+            "bbox": [
+              112.35062026977539,
+              421.0952911376953,
+              523.8552703857422,
+              443.4121398925781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/912/PageFooter/6",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                301.9405059814453,
+                738.2979583740234
+              ],
+              [
+                325.1682586669922,
+                738.2979583740234
+              ],
+              [
+                325.1682586669922,
+                751.9525985717773
+              ],
+              [
+                301.9405059814453,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              301.9405059814453,
+              738.2979583740234,
+              325.1682586669922,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/912/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 913,
+        "printed_page": 1608,
+        "id": "/page/913/Page/346",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/913/PageHeader/0'></content-ref><content-ref src='/page/913/PageHeader/1'></content-ref><content-ref src='/page/913/PageFooter/17'></content-ref><content-ref src='/page/913/SectionHeader/2'></content-ref><content-ref src='/page/913/Picture/3'></content-ref><content-ref src='/page/913/Text/4'></content-ref><content-ref src='/page/913/Text/5'></content-ref><content-ref src='/page/913/SectionHeader/6'></content-ref><content-ref src='/page/913/SectionHeader/8'></content-ref><content-ref src='/page/913/Text/9'></content-ref><content-ref src='/page/913/SectionHeader/12'></content-ref><content-ref src='/page/913/Text/13'></content-ref><content-ref src='/page/913/SectionHeader/16'></content-ref><content-ref src='/page/913/Text/7'></content-ref><content-ref src='/page/913/SectionHeader/10'></content-ref><content-ref src='/page/913/Text/11'></content-ref><content-ref src='/page/913/SectionHeader/14'></content-ref><content-ref src='/page/913/Text/15'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/913/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.06285095214844,
+                35.24311065673828
+              ],
+              [
+                103.77271270751953,
+                35.24311065673828
+              ],
+              [
+                103.77271270751953,
+                45.28018283843994
+              ],
+              [
+                51.06285095214844,
+                45.28018283843994
+              ]
+            ],
+            "bbox": [
+              51.06285095214844,
+              35.24311065673828,
+              103.77271270751953,
+              45.28018283843994
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.36894989013672
+              ],
+              [
+                337.9482650756836,
+                35.36894989013672
+              ],
+              [
+                337.9482650756836,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.36894989013672,
+              337.9482650756836,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/PageFooter/17",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                285.0799026489258,
+                739.5000915527344
+              ],
+              [
+                307.1664276123047,
+                739.5000915527344
+              ],
+              [
+                307.1664276123047,
+                751.9525985717773
+              ],
+              [
+                285.0799026489258,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              285.0799026489258,
+              739.5000915527344,
+              307.1664276123047,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/912/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>SPECIFICATION</b> <b>FOR</b> <b>HEAVY-WALLED</b> <b>FERRITIC</b> <b>SPHEROIDAL</b> <b>GRAPHITE</b> <b>IRON</b> <b>CASTINGS</b> <b>FOR</b> <b>LOW</b> <b>TEMPERATURE</b> <b>SERVICE</b></h1>",
+            "polygon": [
+              [
+                96.64169311523438,
+                66.9642162322998
+              ],
+              [
+                494.73280334472656,
+                66.9642162322998
+              ],
+              [
+                494.73280334472656,
+                130.5594482421875
+              ],
+              [
+                96.64169311523438,
+                130.5594482421875
+              ]
+            ],
+            "bbox": [
+              96.64169311523438,
+              66.9642162322998,
+              494.73280334472656,
+              130.5594482421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                102.70944213867188,
+                161.00518798828125
+              ],
+              [
+                183.80449676513672,
+                161.00518798828125
+              ],
+              [
+                183.80449676513672,
+                241.24848175048828
+              ],
+              [
+                102.70944213867188,
+                241.24848175048828
+              ]
+            ],
+            "bbox": [
+              102.70944213867188,
+              161.00518798828125,
+              183.80449676513672,
+              241.24848175048828
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/913/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SA/JIS</b> <b>G5504</b></p>",
+            "polygon": [
+              [
+                245.37716674804688,
+                197.65383911132812
+              ],
+              [
+                323.3825454711914,
+                197.65383911132812
+              ],
+              [
+                323.3825454711914,
+                212.65447998046875
+              ],
+              [
+                245.37716674804688,
+                212.65447998046875
+              ]
+            ],
+            "bbox": [
+              245.37716674804688,
+              197.65383911132812,
+              323.3825454711914,
+              212.65447998046875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with International Specification JIS G5504:2005, as translated and published in the English language by the Japanese Standards Association, with these additional requirements.)</p>",
+            "polygon": [
+              [
+                53.457183837890625,
+                241.24848175048828
+              ],
+              [
+                537.9063720703125,
+                241.24848175048828
+              ],
+              [
+                537.9063720703125,
+                263.61077880859375
+              ],
+              [
+                53.457183837890625,
+                263.61077880859375
+              ]
+            ],
+            "bbox": [
+              53.457183837890625,
+              241.24848175048828,
+              537.9063720703125,
+              263.61077880859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/6",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>1.</b> <b>Additional</b> <b>Requirements</b></h1>",
+            "polygon": [
+              [
+                51.6273307800293,
+                295.3721466064453
+              ],
+              [
+                185.28301620483398,
+                295.3721466064453
+              ],
+              [
+                185.28301620483398,
+                310.4482116699219
+              ],
+              [
+                51.6273307800293,
+                310.4482116699219
+              ]
+            ],
+            "bbox": [
+              51.6273307800293,
+              295.3721466064453,
+              185.28301620483398,
+              310.4482116699219
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/6"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/8",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>1.1</b> <i>Marking:</i></h1>",
+            "polygon": [
+              [
+                61.4252872467041,
+                313.09410095214844
+              ],
+              [
+                123.3416976928711,
+                313.09410095214844
+              ],
+              [
+                123.3416976928711,
+                327.4187316894531
+              ],
+              [
+                61.4252872467041,
+                327.4187316894531
+              ]
+            ],
+            "bbox": [
+              61.4252872467041,
+              313.09410095214844,
+              123.3416976928711,
+              327.4187316894531
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/913/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">In addition to the marking requirements of this specification in para. 16, all products are to be identified by this SA/JIS specification designation.</p>",
+            "polygon": [
+              [
+                51.55363082885742,
+                325.6123809814453
+              ],
+              [
+                289.02044677734375,
+                325.6123809814453
+              ],
+              [
+                289.02044677734375,
+                361.55181884765625
+              ],
+              [
+                51.55363082885742,
+                361.55181884765625
+              ]
+            ],
+            "bbox": [
+              51.55363082885742,
+              325.6123809814453,
+              289.02044677734375,
+              361.55181884765625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/12",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>1.2</b> <i>Mechanical</i> <i>Properties:</i></h1>",
+            "polygon": [
+              [
+                61.327938079833984,
+                365.3385772705078
+              ],
+              [
+                177.35698699951172,
+                365.3385772705078
+              ],
+              [
+                177.35698699951172,
+                378.97564697265625
+              ],
+              [
+                61.327938079833984,
+                378.97564697265625
+              ]
+            ],
+            "bbox": [
+              61.327938079833984,
+              365.3385772705078,
+              177.35698699951172,
+              378.97564697265625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12"
+            }
+          },
+          {
+            "id": "/page/913/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">The mechanical properties, including proof stress, shall conform to the requirements of Table 1.</p>",
+            "polygon": [
+              [
+                49.866302490234375,
+                376.5813446044922
+              ],
+              [
+                288.16539001464844,
+                376.5813446044922
+              ],
+              [
+                288.16539001464844,
+                401.6578369140625
+              ],
+              [
+                49.866302490234375,
+                401.6578369140625
+              ]
+            ],
+            "bbox": [
+              49.866302490234375,
+              376.5813446044922,
+              288.16539001464844,
+              401.6578369140625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/16",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>1.3</b> <i>Test</i> <i>Reports:</i></h4>",
+            "polygon": [
+              [
+                61.46949577331543,
+                406.1468811035156
+              ],
+              [
+                137.75030136108398,
+                406.1468811035156
+              ],
+              [
+                137.75030136108398,
+                419.08258056640625
+              ],
+              [
+                61.46949577331543,
+                419.08258056640625
+              ]
+            ],
+            "bbox": [
+              61.46949577331543,
+              406.1468811035156,
+              137.75030136108398,
+              419.08258056640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12",
+              "4": "/page/913/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/913/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">A test report shall be furnished containing the results of all tests performed. It shall include this SA/JIS specification designation including the edition year.</p>",
+            "polygon": [
+              [
+                302.6579818725586,
+                295.5081253051758
+              ],
+              [
+                540.4984588623047,
+                295.5081253051758
+              ],
+              [
+                540.4984588623047,
+                331.76776123046875
+              ],
+              [
+                302.6579818725586,
+                331.76776123046875
+              ]
+            ],
+            "bbox": [
+              302.6579818725586,
+              295.5081253051758,
+              540.4984588623047,
+              331.76776123046875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12",
+              "4": "/page/913/SectionHeader/16"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/10",
+            "block_type": "SectionHeader",
+            "html": "<h2><b>1.4.</b> <i>Repair:</i></h2>",
+            "polygon": [
+              [
+                311.8534927368164,
+                335.8044662475586
+              ],
+              [
+                367.5209426879883,
+                335.8044662475586
+              ],
+              [
+                367.5209426879883,
+                349.1925354003906
+              ],
+              [
+                311.8534927368164,
+                349.1925354003906
+              ]
+            ],
+            "bbox": [
+              311.8534927368164,
+              335.8044662475586,
+              367.5209426879883,
+              349.1925354003906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12",
+              "2": "/page/913/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/913/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">Castings shall not be repaired by plugging, welding, brazing, impregnation, or any other means.</p>",
+            "polygon": [
+              [
+                305.4868469238281,
+                347.3122100830078
+              ],
+              [
+                539.5607299804688,
+                347.3122100830078
+              ],
+              [
+                539.5607299804688,
+                371.8747253417969
+              ],
+              [
+                305.4868469238281,
+                371.8747253417969
+              ]
+            ],
+            "bbox": [
+              305.4868469238281,
+              347.3122100830078,
+              539.5607299804688,
+              371.8747253417969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/12",
+              "2": "/page/913/SectionHeader/10"
+            }
+          },
+          {
+            "id": "/page/913/SectionHeader/14",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>2.</b> <b>Source</b></h1>",
+            "polygon": [
+              [
+                301.9511489868164,
+                379.7604217529297
+              ],
+              [
+                351.05873107910156,
+                379.7604217529297
+              ],
+              [
+                351.05873107910156,
+                393.8779602050781
+              ],
+              [
+                301.9511489868164,
+                393.8779602050781
+              ]
+            ],
+            "bbox": [
+              301.9511489868164,
+              379.7604217529297,
+              351.05873107910156,
+              393.8779602050781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/913/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>2.1</b> See Nonmandatory Appendix A for ordering information to obtain an English language copy of JIS G5504 and its references.</p>",
+            "polygon": [
+              [
+                303.1581802368164,
+                397.76170349121094
+              ],
+              [
+                539.9785766601562,
+                397.76170349121094
+              ],
+              [
+                539.9785766601562,
+                433.5870056152344
+              ],
+              [
+                303.1581802368164,
+                433.5870056152344
+              ]
+            ],
+            "bbox": [
+              303.1581802368164,
+              397.76170349121094,
+              539.9785766601562,
+              433.5870056152344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/913/SectionHeader/14"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/913/SectionHeader/14"
+        }
+      }
+    ]
+  }
+}

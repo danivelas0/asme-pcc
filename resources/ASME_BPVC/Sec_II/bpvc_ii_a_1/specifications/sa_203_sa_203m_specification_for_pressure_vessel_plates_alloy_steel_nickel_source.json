@@ -1,0 +1,3810 @@
+{
+  "source": {
+    "standard": "ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 1",
+    "edition": "2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01",
+    "table": "SA-203/SA-203M - Specification for Pressure Vessel Plates, Alloy Steel, Nickel",
+    "clause": "SA-203/SA-203M",
+    "transcribed_from": "database/asme/bpvc_ii_a_1/specifications/sa_203_sa_203m_specification_for_pressure_vessel_plates_alloy_steel_nickel_source.json",
+    "note": "Full text of ASME BPVC Section II, Part A (Ferrous Material Specifications), Volume 1 — SA-203/SA-203M - Specification for Pressure Vessel Plates, Alloy Steel, Nickel — as supplied by Daniel Velasquez on 2026-09-07 and extracted from the supplied PDF with marker-pdf. `data` is the extractor's output verbatim — the drop's own `document`, `part`, `figures` and `pages` blocks, with the page-by-page block tree, its HTML, tables and layout coordinates unedited. This file IS the source document, so `transcribed_from` names its own path: it is the artefact under review, not a transcription of one. The volume was supplied as one combined PDF and cut into parts at its own headings, so this file is a page-range slice of a single extraction and its page ids (PDF pages None–None, no printed page numbers on these pages) are the combined document's own, not renumbered from 0. Front matter (cover and title page, contents, list of sections, foreword, statement of policy, personnel, correspondence, summary of changes, cross-referencing) and back matter (back cover) were deleted from the drop before supply and are NOT filed; the drop's `content.json`, `index.json`, `meta.json` and `README.md` are retained beside the kind folders, unfiled, for the same reason. The edition — 2025 Edition (ASME BPVC.II.A-2025), issued 2025-07-01 — is stated on the title page, which this drop no longer carries as a filed cut: it survives only inside the retained `content.json`, so no filed cut of this standard prints its own edition. This cut carries no figure.",
+    "status": "PRELIMINARY — supplied source document, transcribed for screening and pre-dimensioning. The published standard governs for issued design.",
+    "read_by": "Daniel Velasquez",
+    "read_on": "2026-09-07"
+  },
+  "data": {
+    "document": {
+      "standard": "ASME Boiler and Pressure Vessel Code",
+      "section": "Section II - Materials",
+      "part": "Part A - Ferrous Material Specifications (Beginning to SA-450)",
+      "volume": "Volume 1 of Part A",
+      "designation": "ASME BPVC.II.A-2025",
+      "edition": "2025 Edition",
+      "edition_year": 2025,
+      "date_of_issuance": "2025-07-01",
+      "publisher": "ASME (The American Society of Mechanical Engineers)",
+      "source_pages": 803,
+      "specification_count": 76
+    },
+    "specification": {
+      "id": "SA-203/SA-203M",
+      "title": "Specification for Pressure Vessel Plates, Alloy Steel, Nickel",
+      "astm_designation": "A203/A203M-17",
+      "astm_note": "Identical with ASTM Specification A203/A203M-17.",
+      "folder": "SA-203-SA-203M",
+      "pdf_pages": [
+        314,
+        317
+      ],
+      "printed_pages": [
+        261,
+        264
+      ],
+      "page_count": 4
+    },
+    "figures": [],
+    "pages": [
+      {
+        "pdf_page": 314,
+        "printed_page": 261,
+        "id": "/page/314/Page/24",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/314/PageHeader/0'></content-ref><content-ref src='/page/314/PageHeader/1'></content-ref><content-ref src='/page/314/SectionHeader/2'></content-ref><content-ref src='/page/314/Picture/3'></content-ref><content-ref src='/page/314/Picture/4'></content-ref><content-ref src='/page/314/Text/5'></content-ref><content-ref src='/page/314/Text/6'></content-ref><content-ref src='/page/314/PageFooter/7'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/314/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.3145980834961,
+                34.75199317932129
+              ],
+              [
+                557.925048828125,
+                34.75199317932129
+              ],
+              [
+                557.925048828125,
+                47.04376220703125
+              ],
+              [
+                273.3145980834961,
+                47.04376220703125
+              ]
+            ],
+            "bbox": [
+              273.3145980834961,
+              34.75199317932129,
+              557.925048828125,
+              47.04376220703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/313/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/314/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                490.4388427734375,
+                34.91531753540039
+              ],
+              [
+                559.4875946044922,
+                34.91531753540039
+              ],
+              [
+                559.4875946044922,
+                46.34959030151367
+              ],
+              [
+                490.4388427734375,
+                46.34959030151367
+              ]
+            ],
+            "bbox": [
+              490.4388427734375,
+              34.91531753540039,
+              559.4875946044922,
+              46.34959030151367
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/313/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/314/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>SPECIFICATION FOR PRESSURE VESSEL PLATES,</b> <b>ALLOY STEEL, NICKEL</b></h1>",
+            "polygon": [
+              [
+                125.5850601196289,
+                239.99876403808594
+              ],
+              [
+                502.72906494140625,
+                239.99876403808594
+              ],
+              [
+                502.72906494140625,
+                281.8807678222656
+              ],
+              [
+                125.5850601196289,
+                281.8807678222656
+              ]
+            ],
+            "bbox": [
+              125.5850601196289,
+              239.99876403808594,
+              502.72906494140625,
+              281.8807678222656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/314/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                151.68575649261476,
+                310.7412643432617
+              ],
+              [
+                208.57604999542235,
+                310.7412643432617
+              ],
+              [
+                208.57604999542235,
+                366.0183792114258
+              ],
+              [
+                151.68575649261476,
+                366.0183792114258
+              ]
+            ],
+            "bbox": [
+              151.68575649261476,
+              310.7412643432617,
+              208.57604999542235,
+              366.0183792114258
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/314/Picture/4",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                415.61445236206055,
+                311.4157585144043
+              ],
+              [
+                464.1030921936035,
+                311.4157585144043
+              ],
+              [
+                464.1030921936035,
+                362.08190689086916
+              ],
+              [
+                415.61445236206055,
+                362.08190689086916
+              ]
+            ],
+            "bbox": [
+              415.61445236206055,
+              311.4157585144043,
+              464.1030921936035,
+              362.08190689086916
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/314/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SA-203/SA-203M</b></p>",
+            "polygon": [
+              [
+                256.1268768310547,
+                334.1693801879883
+              ],
+              [
+                371.3473892211914,
+                334.1693801879883
+              ],
+              [
+                371.3473892211914,
+                351.4867858886719
+              ],
+              [
+                256.1268768310547,
+                351.4867858886719
+              ]
+            ],
+            "bbox": [
+              256.1268768310547,
+              334.1693801879883,
+              371.3473892211914,
+              351.4867858886719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/314/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with ASTM Specification A203/A203M-17.)</p>",
+            "polygon": [
+              [
+                222.67105865478516,
+                402.4816131591797
+              ],
+              [
+                412.9708557128906,
+                402.4816131591797
+              ],
+              [
+                412.9708557128906,
+                414.2983703613281
+              ],
+              [
+                222.67105865478516,
+                414.2983703613281
+              ]
+            ],
+            "bbox": [
+              222.67105865478516,
+              402.4816131591797,
+              412.9708557128906,
+              414.2983703613281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/314/PageFooter/7",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                304.8124465942383,
+                738.9795684814453
+              ],
+              [
+                323.06632232666016,
+                738.9795684814453
+              ],
+              [
+                323.06632232666016,
+                751.9525985717773
+              ],
+              [
+                304.8124465942383,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              304.8124465942383,
+              738.9795684814453,
+              323.06632232666016,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/314/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 315,
+        "printed_page": 262,
+        "id": "/page/315/Page/254",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/315/PageHeader/0'></content-ref><content-ref src='/page/315/PageHeader/1'></content-ref><content-ref src='/page/315/PageFooter/22'></content-ref><content-ref src='/page/315/SectionHeader/2'></content-ref><content-ref src='/page/315/SectionHeader/4'></content-ref><content-ref src='/page/315/Text/5'></content-ref><content-ref src='/page/315/Text/6'></content-ref><content-ref src='/page/315/Text/9'></content-ref><content-ref src='/page/315/Table/10'></content-ref><content-ref src='/page/315/Text/13'></content-ref><content-ref src='/page/315/Text/14'></content-ref><content-ref src='/page/315/Text/17'></content-ref><content-ref src='/page/315/SectionHeader/3'></content-ref><content-ref src='/page/315/Text/254'></content-ref><content-ref src='/page/315/Text/8'></content-ref><content-ref src='/page/315/SectionHeader/11'></content-ref><content-ref src='/page/315/Text/12'></content-ref><content-ref src='/page/315/Text/15'></content-ref><content-ref src='/page/315/Text/16'></content-ref><content-ref src='/page/315/SectionHeader/18'></content-ref><content-ref src='/page/315/Text/19'></content-ref><content-ref src='/page/315/SectionHeader/20'></content-ref><content-ref src='/page/315/Text/21'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/315/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.26986885070801,
+                35.177212715148926
+              ],
+              [
+                117.68209075927734,
+                35.177212715148926
+              ],
+              [
+                117.68209075927734,
+                45.11777114868164
+              ],
+              [
+                51.26986885070801,
+                45.11777114868164
+              ]
+            ],
+            "bbox": [
+              51.26986885070801,
+              35.177212715148926,
+              117.68209075927734,
+              45.11777114868164
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/315/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.27611255645752
+              ],
+              [
+                337.77186584472656,
+                35.27611255645752
+              ],
+              [
+                337.77186584472656,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.27611255645752,
+              337.77186584472656,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/315/PageFooter/22",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.22364807128906,
+                739.18359375
+              ],
+              [
+                304.4616394042969,
+                739.18359375
+              ],
+              [
+                304.4616394042969,
+                751.9525985717773
+              ],
+              [
+                286.22364807128906,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.22364807128906,
+              739.18359375,
+              304.4616394042969,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/314/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>Standard Specification for</b> <b>Pressure Vessel Plates, Alloy Steel, Nickel</b></h1>",
+            "polygon": [
+              [
+                100.31549835205078,
+                67.04067420959473
+              ],
+              [
+                373.4662170410156,
+                67.04067420959473
+              ],
+              [
+                373.4662170410156,
+                98.8367919921875
+              ],
+              [
+                100.31549835205078,
+                98.8367919921875
+              ]
+            ],
+            "bbox": [
+              100.31549835205078,
+              67.04067420959473,
+              373.4662170410156,
+              98.8367919921875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/4",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>1. Scope</b></h4>",
+            "polygon": [
+              [
+                46.687700271606445,
+                174.0919075012207
+              ],
+              [
+                85.63707733154297,
+                174.0919075012207
+              ],
+              [
+                85.63707733154297,
+                186.31329345703125
+              ],
+              [
+                46.687700271606445,
+                186.31329345703125
+              ]
+            ],
+            "bbox": [
+              46.687700271606445,
+              174.0919075012207,
+              85.63707733154297,
+              186.31329345703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                310.4874572753906,
+                187.8914680480957
+              ],
+              [
+                396.6661834716797,
+                187.8914680480957
+              ],
+              [
+                396.6661834716797,
+                199.23209381103516
+              ],
+              [
+                310.4874572753906,
+                199.23209381103516
+              ]
+            ],
+            "bbox": [
+              310.4874572753906,
+              187.8914680480957,
+              396.6661834716797,
+              199.23209381103516
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.1 This specification covers nickel-alloy steel plates intended primarily for welded pressure vessels.</p>",
+            "polygon": [
+              [
+                46.760647773742676,
+                190.87272262573242
+              ],
+              [
+                288.57994079589844,
+                190.87272262573242
+              ],
+              [
+                288.57994079589844,
+                214.85101318359375
+              ],
+              [
+                46.760647773742676,
+                214.85101318359375
+              ]
+            ],
+            "bbox": [
+              46.760647773742676,
+              190.87272262573242,
+              288.57994079589844,
+              214.85101318359375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.2 Plates under this specification are available with four strength levels and two nickel compositions as follows:</p>",
+            "polygon": [
+              [
+                46.88214683532715,
+                217.94869995117188
+              ],
+              [
+                288.93727111816406,
+                217.94869995117188
+              ],
+              [
+                288.93727111816406,
+                243.27886962890625
+              ],
+              [
+                46.88214683532715,
+                243.27886962890625
+              ]
+            ],
+            "bbox": [
+              46.88214683532715,
+              217.94869995117188,
+              288.93727111816406,
+              243.27886962890625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Table/10",
+            "block_type": "Table",
+            "html": "<p></p>",
+            "polygon": [
+              [
+                61.213165283203125,
+                244.45470428466797
+              ],
+              [
+                290.78729248046875,
+                244.45470428466797
+              ],
+              [
+                290.78729248046875,
+                320.3841552734375
+              ],
+              [
+                61.213165283203125,
+                320.3841552734375
+              ]
+            ],
+            "bbox": [
+              61.213165283203125,
+              244.45470428466797,
+              290.78729248046875,
+              320.3841552734375
+            ],
+            "children": [
+              {
+                "id": "/page/315/Line/53",
+                "block_type": "Line",
+                "html": "Grade Nominal Nickel ",
+                "polygon": [
+                  [
+                    63.768714904785156,
+                    249.24566650390625
+                  ],
+                  [
+                    155.84042358398438,
+                    249.24566650390625
+                  ],
+                  [
+                    155.84042358398438,
+                    259.410400390625
+                  ],
+                  [
+                    63.768714904785156,
+                    259.410400390625
+                  ]
+                ],
+                "bbox": [
+                  63.768714904785156,
+                  249.24566650390625,
+                  155.84042358398438,
+                  259.410400390625
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/58",
+                "block_type": "Line",
+                "html": "Content % ",
+                "polygon": [
+                  [
+                    117.85362243652344,
+                    257.1749267578125
+                  ],
+                  [
+                    149.20176696777344,
+                    257.1749267578125
+                  ],
+                  [
+                    149.20176696777344,
+                    263.438720703125
+                  ],
+                  [
+                    117.85362243652344,
+                    263.438720703125
+                  ]
+                ],
+                "bbox": [
+                  117.85362243652344,
+                  257.1749267578125,
+                  149.20176696777344,
+                  263.438720703125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/61",
+                "block_type": "Line",
+                "html": "Yield Strength, min, ",
+                "polygon": [
+                  [
+                    173.08644104003906,
+                    249.11962890625
+                  ],
+                  [
+                    231.47967529296875,
+                    249.11962890625
+                  ],
+                  [
+                    231.47967529296875,
+                    255.4630126953125
+                  ],
+                  [
+                    173.08644104003906,
+                    255.4630126953125
+                  ]
+                ],
+                "bbox": [
+                  173.08644104003906,
+                  249.11962890625,
+                  231.47967529296875,
+                  255.4630126953125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/64",
+                "block_type": "Line",
+                "html": "ksi [MPa] ",
+                "polygon": [
+                  [
+                    188.44003295898438,
+                    257.27447509765625
+                  ],
+                  [
+                    216.09225463867188,
+                    257.27447509765625
+                  ],
+                  [
+                    216.09225463867188,
+                    263.438720703125
+                  ],
+                  [
+                    188.44003295898438,
+                    263.438720703125
+                  ]
+                ],
+                "bbox": [
+                  188.44003295898438,
+                  257.27447509765625,
+                  216.09225463867188,
+                  263.438720703125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/67",
+                "block_type": "Line",
+                "html": "Tensile Strength, ",
+                "polygon": [
+                  [
+                    240.99215698242188,
+                    249.11962890625
+                  ],
+                  [
+                    290.78729248046875,
+                    249.11962890625
+                  ],
+                  [
+                    290.78729248046875,
+                    255.4630126953125
+                  ],
+                  [
+                    240.99215698242188,
+                    255.4630126953125
+                  ]
+                ],
+                "bbox": [
+                  240.99215698242188,
+                  249.11962890625,
+                  290.78729248046875,
+                  255.4630126953125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/70",
+                "block_type": "Line",
+                "html": "min, ksi [MPa] ",
+                "polygon": [
+                  [
+                    244.6820526123047,
+                    257.27447509765625
+                  ],
+                  [
+                    287.0787353515625,
+                    257.27447509765625
+                  ],
+                  [
+                    287.0787353515625,
+                    263.438720703125
+                  ],
+                  [
+                    244.6820526123047,
+                    263.438720703125
+                  ]
+                ],
+                "bbox": [
+                  244.6820526123047,
+                  257.27447509765625,
+                  287.0787353515625,
+                  263.438720703125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/73",
+                "block_type": "Line",
+                "html": "A 2.25 37 [255] 65 [450] ",
+                "polygon": [
+                  [
+                    70.76904296875,
+                    265.40948486328125
+                  ],
+                  [
+                    278.0539245605469,
+                    265.40948486328125
+                  ],
+                  [
+                    278.0539245605469,
+                    271.57373046875
+                  ],
+                  [
+                    70.76904296875,
+                    271.57373046875
+                  ]
+                ],
+                "bbox": [
+                  70.76904296875,
+                  265.40948486328125,
+                  278.0539245605469,
+                  271.57373046875
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/76",
+                "block_type": "Line",
+                "html": "B 2.25 40 [275] 70 [485] ",
+                "polygon": [
+                  [
+                    70.76904296875,
+                    273.54437255859375
+                  ],
+                  [
+                    278.0539245605469,
+                    273.54437255859375
+                  ],
+                  [
+                    278.0539245605469,
+                    279.7086181640625
+                  ],
+                  [
+                    70.76904296875,
+                    279.7086181640625
+                  ]
+                ],
+                "bbox": [
+                  70.76904296875,
+                  273.54437255859375,
+                  278.0539245605469,
+                  279.7086181640625
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/79",
+                "block_type": "Line",
+                "html": "D 3.50 37 [255] 65 [450] ",
+                "polygon": [
+                  [
+                    70.58988952636719,
+                    281.6793518066406
+                  ],
+                  [
+                    278.0539245605469,
+                    281.6793518066406
+                  ],
+                  [
+                    278.0539245605469,
+                    287.8436279296875
+                  ],
+                  [
+                    70.58988952636719,
+                    287.8436279296875
+                  ]
+                ],
+                "bbox": [
+                  70.58988952636719,
+                  281.6793518066406,
+                  278.0539245605469,
+                  287.8436279296875
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/82",
+                "block_type": "Line",
+                "html": "E 3.50 40 [275] 70 [485] ",
+                "polygon": [
+                  [
+                    70.76904296875,
+                    289.8149719238281
+                  ],
+                  [
+                    278.0539245605469,
+                    289.8149719238281
+                  ],
+                  [
+                    278.0539245605469,
+                    295.97918701171875
+                  ],
+                  [
+                    70.76904296875,
+                    295.97918701171875
+                  ]
+                ],
+                "bbox": [
+                  70.76904296875,
+                  289.8149719238281,
+                  278.0539245605469,
+                  295.97918701171875
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/85",
+                "block_type": "Line",
+                "html": "F 3.50 ",
+                "polygon": [
+                  [
+                    70.954833984375,
+                    297.9764709472656
+                  ],
+                  [
+                    139.97793579101562,
+                    297.9764709472656
+                  ],
+                  [
+                    139.97793579101562,
+                    304.11419677734375
+                  ],
+                  [
+                    70.954833984375,
+                    304.11419677734375
+                  ]
+                ],
+                "bbox": [
+                  70.954833984375,
+                  297.9764709472656,
+                  139.97793579101562,
+                  304.11419677734375
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/88",
+                "block_type": "Line",
+                "html": "2 in. [50 mm] and under 55 [380] 80 [550] ",
+                "polygon": [
+                  [
+                    75.92472839355469,
+                    306.0848693847656
+                  ],
+                  [
+                    278.0539245605469,
+                    306.0848693847656
+                  ],
+                  [
+                    278.0539245605469,
+                    312.2491455078125
+                  ],
+                  [
+                    75.92472839355469,
+                    312.2491455078125
+                  ]
+                ],
+                "bbox": [
+                  75.92472839355469,
+                  306.0848693847656,
+                  278.0539245605469,
+                  312.2491455078125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              },
+              {
+                "id": "/page/315/Line/91",
+                "block_type": "Line",
+                "html": "Over 2 in. [50 mm] 50 [345] 75 [515]",
+                "polygon": [
+                  [
+                    75.92472839355469,
+                    314.120361328125
+                  ],
+                  [
+                    278.0545959472656,
+                    314.120361328125
+                  ],
+                  [
+                    278.0545959472656,
+                    320.3841552734375
+                  ],
+                  [
+                    75.92472839355469,
+                    320.3841552734375
+                  ]
+                ],
+                "bbox": [
+                  75.92472839355469,
+                  314.120361328125,
+                  278.0545959472656,
+                  320.3841552734375
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/315/SectionHeader/2",
+                  "4": "/page/315/SectionHeader/4"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.3 The maximum thickness of plates is limited only by the capacity of the composition to meet the specified mechanical property requirements.</p>",
+            "polygon": [
+              [
+                46.15169048309326,
+                323.71154022216797
+              ],
+              [
+                289.09041595458984,
+                323.71154022216797
+              ],
+              [
+                289.09041595458984,
+                359.1904296875
+              ],
+              [
+                46.15169048309326,
+                359.1904296875
+              ]
+            ],
+            "bbox": [
+              46.15169048309326,
+              323.71154022216797,
+              289.09041595458984,
+              359.1904296875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.4 The values stated in either inch-pound units or SI units are to be regarded separately as standard. Within the text, the SI units are shown in brackets. The values stated in each system are not exact equivalents. Therefore, each system must be used independently of the other. Combining values from the two systems may result in nonconformance with this specification.</p>",
+            "polygon": [
+              [
+                45.947479248046875,
+                362.91190338134766
+              ],
+              [
+                289.11865997314453,
+                362.91190338134766
+              ],
+              [
+                289.11865997314453,
+                444.3032531738281
+              ],
+              [
+                45.947479248046875,
+                444.3032531738281
+              ]
+            ],
+            "bbox": [
+              45.947479248046875,
+              362.91190338134766,
+              289.11865997314453,
+              444.3032531738281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.5 <i>This international standard was developed in accor</i><i>dance with internationally recognized principles on standard</i><i>ization established in the Decision on Principles for the</i> <i>Development of International Standards, Guides and Recom</i><i>mendations issued by the World Trade Organization Technical</i> <i>Barriers to Trade (TBT) Committee.</i></p>",
+            "polygon": [
+              [
+                45.835126876831055,
+                446.88629150390625
+              ],
+              [
+                289.3648910522461,
+                446.88629150390625
+              ],
+              [
+                289.3648910522461,
+                516.6007080078125
+              ],
+              [
+                45.835126876831055,
+                516.6007080078125
+              ]
+            ],
+            "bbox": [
+              45.835126876831055,
+              446.88629150390625,
+              289.3648910522461,
+              516.6007080078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/3",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>2. Referenced Documents</b></h4>",
+            "polygon": [
+              [
+                303.1362075805664,
+                173.62191009521484
+              ],
+              [
+                411.48280334472656,
+                173.62191009521484
+              ],
+              [
+                411.48280334472656,
+                186.34991455078125
+              ],
+              [
+                303.1362075805664,
+                186.34991455078125
+              ]
+            ],
+            "bbox": [
+              303.1362075805664,
+              173.62191009521484,
+              411.48280334472656,
+              186.34991455078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/3"
+            }
+          },
+          {
+            "id": "/page/315/Text/254",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.1 <i>ASTM Standards:</i> A20/A20M Specification for General Requirements for Steel Plates for Pressure Vessels A435/A435M Specification for Straight-Beam Ultrasonic Examination of Steel Plates A577/A577M Specification for Ultrasonic Angle-Beam Examination of Steel Plates A578/A578M Specification for Straight-Beam Ultrasonic Examination of Rolled Steel Plates for Special Applications</p>",
+            "polygon": [
+              [
+                311.455810546875,
+                190.94038009643555
+              ],
+              [
+                545.3345031738281,
+                190.94038009643555
+              ],
+              [
+                545.3345031738281,
+                299.224853515625
+              ],
+              [
+                311.455810546875,
+                299.224853515625
+              ]
+            ],
+            "bbox": [
+              311.455810546875,
+              190.94038009643555,
+              545.3345031738281,
+              299.224853515625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/3"
+            }
+          },
+          {
+            "id": "/page/315/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                313.1850357055664,
+                198.25254821777344
+              ],
+              [
+                545.2161254882812,
+                198.25254821777344
+              ],
+              [
+                545.2161254882812,
+                221.2796859741211
+              ],
+              [
+                313.1850357055664,
+                221.2796859741211
+              ]
+            ],
+            "bbox": [
+              313.1850357055664,
+              198.25254821777344,
+              545.2161254882812,
+              221.2796859741211
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/3"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/11",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>3. General Requirements and Ordering Information</b></h4>",
+            "polygon": [
+              [
+                302.7236022949219,
+                303.0326843261719
+              ],
+              [
+                522.4235687255859,
+                303.0326843261719
+              ],
+              [
+                522.4235687255859,
+                316.0918273925781
+              ],
+              [
+                302.7236022949219,
+                316.0918273925781
+              ]
+            ],
+            "bbox": [
+              302.7236022949219,
+              303.0326843261719,
+              522.4235687255859,
+              316.0918273925781
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/315/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.1 Material supplied to this material specification shall conform to Specification A20/A20M. These requirements outline the testing and retesting methods and procedures, permitted variations in dimensions, and mass, quality and repair of defects, marking, loading, and ordering information.</p>",
+            "polygon": [
+              [
+                302.5267868041992,
+                317.0500259399414
+              ],
+              [
+                546.2361602783203,
+                317.0500259399414
+              ],
+              [
+                546.2361602783203,
+                374.5013732910156
+              ],
+              [
+                302.5267868041992,
+                374.5013732910156
+              ]
+            ],
+            "bbox": [
+              302.5267868041992,
+              317.0500259399414,
+              546.2361602783203,
+              374.5013732910156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/315/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2 In addition to the basic requirements of this specification, certain supplementary requirements are available when additional control, testing, or examination is required to meet end use requirements. The purchaser is referred to the listed supplementary requirements in this specification and to the detailed requirements in Specification A20/A20M.</p>",
+            "polygon": [
+              [
+                302.2580337524414,
+                375.46483612060547
+              ],
+              [
+                546.1912078857422,
+                375.46483612060547
+              ],
+              [
+                546.1912078857422,
+                443.6993713378906
+              ],
+              [
+                302.2580337524414,
+                443.6993713378906
+              ]
+            ],
+            "bbox": [
+              302.2580337524414,
+              375.46483612060547,
+              546.1912078857422,
+              443.6993713378906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/315/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.3 If the requirements of this specification are in conflict with the requirements of Specification A20/A20M, the requirements of this specification shall prevail.</p>",
+            "polygon": [
+              [
+                301.8534393310547,
+                443.8574523925781
+              ],
+              [
+                545.4951782226562,
+                443.8574523925781
+              ],
+              [
+                545.4951782226562,
+                480.1933288574219
+              ],
+              [
+                301.8534393310547,
+                480.1933288574219
+              ]
+            ],
+            "bbox": [
+              301.8534393310547,
+              443.8574523925781,
+              545.4951782226562,
+              480.1933288574219
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/2",
+              "4": "/page/315/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/18",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>4. Materials and Manufacture</b></h1>",
+            "polygon": [
+              [
+                301.92423248291016,
+                483.705322265625
+              ],
+              [
+                430.7271728515625,
+                483.705322265625
+              ],
+              [
+                430.7271728515625,
+                497.056640625
+              ],
+              [
+                301.92423248291016,
+                497.056640625
+              ]
+            ],
+            "bbox": [
+              301.92423248291016,
+              483.705322265625,
+              430.7271728515625,
+              497.056640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/315/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1 <i>Steelmaking Practice—</i>The steel shall be killed and shall conform to the fine grain size requirement of Specification A20/A20M.</p>",
+            "polygon": [
+              [
+                301.9075012207031,
+                498.2519073486328
+              ],
+              [
+                545.5894317626953,
+                498.2519073486328
+              ],
+              [
+                545.5894317626953,
+                533.6653137207031
+              ],
+              [
+                301.9075012207031,
+                533.6653137207031
+              ]
+            ],
+            "bbox": [
+              301.9075012207031,
+              498.2519073486328,
+              545.5894317626953,
+              533.6653137207031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/315/SectionHeader/20",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>5. Heat Treatment</b></h1>",
+            "polygon": [
+              [
+                302.1845397949219,
+                537.1140289306641
+              ],
+              [
+                382.3810043334961,
+                537.1140289306641
+              ],
+              [
+                382.3810043334961,
+                550.5276947021484
+              ],
+              [
+                302.1845397949219,
+                550.5276947021484
+              ]
+            ],
+            "bbox": [
+              302.1845397949219,
+              537.1140289306641,
+              382.3810043334961,
+              550.5276947021484
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/315/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1 All plates shall be thermally treated as follows:</p>",
+            "polygon": [
+              [
+                307.2469711303711,
+                551.4761352539062
+              ],
+              [
+                516.2813415527344,
+                551.4761352539062
+              ],
+              [
+                516.2813415527344,
+                565.3345031738281
+              ],
+              [
+                307.2469711303711,
+                565.3345031738281
+              ]
+            ],
+            "bbox": [
+              307.2469711303711,
+              551.4761352539062,
+              516.2813415527344,
+              565.3345031738281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/315/SectionHeader/20"
+        }
+      },
+      {
+        "pdf_page": 316,
+        "printed_page": 263,
+        "id": "/page/316/Page/321",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/316/PageHeader/0'></content-ref><content-ref src='/page/316/PageHeader/1'></content-ref><content-ref src='/page/316/PageFooter/22'></content-ref><content-ref src='/page/316/Text/10'></content-ref><content-ref src='/page/316/Text/11'></content-ref><content-ref src='/page/316/Text/12'></content-ref><content-ref src='/page/316/SectionHeader/15'></content-ref><content-ref src='/page/316/Text/16'></content-ref><content-ref src='/page/316/SectionHeader/18'></content-ref><content-ref src='/page/316/Text/21'></content-ref><content-ref src='/page/316/Text/9'></content-ref><content-ref src='/page/316/Text/13'></content-ref><content-ref src='/page/316/Text/14'></content-ref><content-ref src='/page/316/Text/17'></content-ref><content-ref src='/page/316/SectionHeader/19'></content-ref><content-ref src='/page/316/Text/20'></content-ref><content-ref src='/page/316/TableGroup/320'></content-ref><content-ref src='/page/316/Text/4'></content-ref><content-ref src='/page/316/TableGroup/321'></content-ref><content-ref src='/page/316/Text/7'></content-ref><content-ref src='/page/316/Text/8'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/316/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.27198028564453,
+                34.646721839904785
+              ],
+              [
+                557.9249267578125,
+                34.646721839904785
+              ],
+              [
+                557.9249267578125,
+                47.0418701171875
+              ],
+              [
+                273.27198028564453,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.27198028564453,
+              34.646721839904785,
+              557.9249267578125,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                489.3983917236328,
+                34.95469093322754
+              ],
+              [
+                558.9125518798828,
+                34.95469093322754
+              ],
+              [
+                558.9125518798828,
+                45.42252731323242
+              ],
+              [
+                489.3983917236328,
+                45.42252731323242
+              ]
+            ],
+            "bbox": [
+              489.3983917236328,
+              34.95469093322754,
+              558.9125518798828,
+              45.42252731323242
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/PageFooter/22",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                304.3322296142578,
+                738.6339111328125
+              ],
+              [
+                322.7595520019531,
+                738.6339111328125
+              ],
+              [
+                322.7595520019531,
+                751.9525985717773
+              ],
+              [
+                304.3322296142578,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              304.3322296142578,
+              738.6339111328125,
+              322.7595520019531,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.1 All plates of Grades A, B, D, and E shall be normalized except as permitted by 5.1.1.1.</p>",
+            "polygon": [
+              [
+                61.70528984069824,
+                434.4194641113281
+              ],
+              [
+                303.97212982177734,
+                434.4194641113281
+              ],
+              [
+                303.97212982177734,
+                458.5176696777344
+              ],
+              [
+                61.70528984069824,
+                458.5176696777344
+              ]
+            ],
+            "bbox": [
+              61.70528984069824,
+              434.4194641113281,
+              303.97212982177734,
+              458.5176696777344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.1.1 If approved by the purchaser for Grades A, B, D, and E, cooling rates faster than air cooling are permissible for improvement of the toughness, provided the plates are subsequently tempered at not less than 1100°F [595°C] for not less than 1⁄2 h.</p>",
+            "polygon": [
+              [
+                61.59832763671875,
+                456.5960998535156
+              ],
+              [
+                304.73165130615234,
+                456.5960998535156
+              ],
+              [
+                304.73165130615234,
+                513.0229797363281
+              ],
+              [
+                61.59832763671875,
+                513.0229797363281
+              ]
+            ],
+            "bbox": [
+              61.59832763671875,
+              456.5960998535156,
+              304.73165130615234,
+              513.0229797363281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.2 All plates of Grade F shall be heat treated by heating into the austenitic range, quenching in water, and tempering at not less than 1100°F [595°C] for not less than 1⁄2 h.</p>",
+            "polygon": [
+              [
+                61.470096588134766,
+                510.4254913330078
+              ],
+              [
+                304.40897369384766,
+                510.4254913330078
+              ],
+              [
+                304.40897369384766,
+                545.7257385253906
+              ],
+              [
+                61.470096588134766,
+                545.7257385253906
+              ]
+            ],
+            "bbox": [
+              61.470096588134766,
+              510.4254913330078,
+              304.40897369384766,
+              545.7257385253906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20"
+            }
+          },
+          {
+            "id": "/page/316/SectionHeader/15",
+            "block_type": "SectionHeader",
+            "html": "<h3><b>6. Chemical Composition</b></h3>",
+            "polygon": [
+              [
+                61.11833953857422,
+                551.2907409667969
+              ],
+              [
+                169.9119644165039,
+                551.2907409667969
+              ],
+              [
+                169.9119644165039,
+                564.4754333496094
+              ],
+              [
+                61.11833953857422,
+                564.4754333496094
+              ]
+            ],
+            "bbox": [
+              61.11833953857422,
+              551.2907409667969,
+              169.9119644165039,
+              564.4754333496094
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20",
+              "3": "/page/316/SectionHeader/15"
+            }
+          },
+          {
+            "id": "/page/316/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.1 The steel shall conform to the chemical requirements shown in Table 1 unless otherwise modified in accordance with Supplementary Requirement S17, Vacuum Carbon-Deoxidized Steel, in Specification A20/A20M.</p>",
+            "polygon": [
+              [
+                61.09273910522461,
+                566.3938293457031
+              ],
+              [
+                304.4534454345703,
+                566.3938293457031
+              ],
+              [
+                304.4534454345703,
+                611.9844665527344
+              ],
+              [
+                61.09273910522461,
+                611.9844665527344
+              ]
+            ],
+            "bbox": [
+              61.09273910522461,
+              566.3938293457031,
+              304.4534454345703,
+              611.9844665527344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/315/SectionHeader/20",
+              "3": "/page/316/SectionHeader/15"
+            }
+          },
+          {
+            "id": "/page/316/SectionHeader/18",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>7. Mechanical Properties</b></h1>",
+            "polygon": [
+              [
+                61.17458724975586,
+                616.521240234375
+              ],
+              [
+                169.16761779785156,
+                616.521240234375
+              ],
+              [
+                169.16761779785156,
+                630.734130859375
+              ],
+              [
+                61.17458724975586,
+                630.734130859375
+              ]
+            ],
+            "bbox": [
+              61.17458724975586,
+              616.521240234375,
+              169.16761779785156,
+              630.734130859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1 <i>Tension Test Requirements—</i>The material as represented by the tension test specimens shall conform to the requirements shown in Table 2.</p>",
+            "polygon": [
+              [
+                61.244510650634766,
+                632.0474395751953
+              ],
+              [
+                303.79492950439453,
+                632.0474395751953
+              ],
+              [
+                303.79492950439453,
+                667.341911315918
+              ],
+              [
+                61.244510650634766,
+                667.341911315918
+              ]
+            ],
+            "bbox": [
+              61.244510650634766,
+              632.0474395751953,
+              303.79492950439453,
+              667.341911315918
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1.1 For plates that have been heat treated in accordance with 5.1.1.1 or 5.1.2 and have a nominal thickness of 3⁄4 in. [20 mm] and under, the 11⁄2-in. (40-mm) wide rectangular specimen may be used for the tension test, and the elongation may be determined in a 2-in. [50-mm] gage length that includes the fracture and that shows the greatest elongation. When this specimen is used, the elongation shall be not less than 23 %.</p>",
+            "polygon": [
+              [
+                317.32738494873047,
+                434.09564208984375
+              ],
+              [
+                561.7914733886719,
+                434.09564208984375
+              ],
+              [
+                561.7914733886719,
+                513.0227661132812
+              ],
+              [
+                317.32738494873047,
+                513.0227661132812
+              ]
+            ],
+            "bbox": [
+              317.32738494873047,
+              434.09564208984375,
+              561.7914733886719,
+              513.0227661132812
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2 <i>Impact Test Requirements:</i></p>",
+            "polygon": [
+              [
+                324.5273895263672,
+                513.5469818115234
+              ],
+              [
+                448.8695068359375,
+                513.5469818115234
+              ],
+              [
+                448.8695068359375,
+                527.1466369628906
+              ],
+              [
+                324.5273895263672,
+                527.1466369628906
+              ]
+            ],
+            "bbox": [
+              324.5273895263672,
+              513.5469818115234,
+              448.8695068359375,
+              527.1466369628906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2.1 Plates of Grades A, B, D, and E that have been heat treated in accordance with 5.1.1.1 shall be Charpy V-notch impact tested. The impact test shall meet 20 ft · lbf [27 J]. The test temperature and orientation shall be a matter of agreement between the purchaser and supplier.</p>",
+            "polygon": [
+              [
+                317.26778411865234,
+                525.26513671875
+              ],
+              [
+                561.8310699462891,
+                525.26513671875
+              ],
+              [
+                561.8310699462891,
+                581.6510467529297
+              ],
+              [
+                317.26778411865234,
+                581.6510467529297
+              ]
+            ],
+            "bbox": [
+              317.26778411865234,
+              525.26513671875,
+              561.8310699462891,
+              581.6510467529297
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2.2 Grade F plates shall be impact tested in accordance with Supplementary Requirement S5 in Specification A20/ A20M.</p>",
+            "polygon": [
+              [
+                316.79349517822266,
+                578.9154052734375
+              ],
+              [
+                561.8582153320312,
+                578.9154052734375
+              ],
+              [
+                561.8582153320312,
+                614.3547058105469
+              ],
+              [
+                316.79349517822266,
+                614.3547058105469
+              ]
+            ],
+            "bbox": [
+              316.79349517822266,
+              578.9154052734375,
+              561.8582153320312,
+              614.3547058105469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18"
+            }
+          },
+          {
+            "id": "/page/316/SectionHeader/19",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>8. Keywords</b></h4>",
+            "polygon": [
+              [
+                316.6610641479492,
+                617.9867706298828
+              ],
+              [
+                373.6852340698242,
+                617.9867706298828
+              ],
+              [
+                373.6852340698242,
+                630.8388671875
+              ],
+              [
+                316.6610641479492,
+                630.8388671875
+              ]
+            ],
+            "bbox": [
+              316.6610641479492,
+              617.9867706298828,
+              373.6852340698242,
+              630.8388671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">8.1 alloy steel plate; nickel alloy steel; pressure containing parts; pressure vessel steels; steel plates; steel plates for pressure vessel applications</p>",
+            "polygon": [
+              [
+                316.8585205078125,
+                631.9919128417969
+              ],
+              [
+                561.638671875,
+                631.9919128417969
+              ],
+              [
+                561.638671875,
+                667.4461975097656
+              ],
+              [
+                316.8585205078125,
+                667.4461975097656
+              ]
+            ],
+            "bbox": [
+              316.8585205078125,
+              631.9919128417969,
+              561.638671875,
+              667.4461975097656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/TableGroup/320",
+            "block_type": "TableGroup",
+            "html": "<content-ref src='/page/316/Caption/2'></content-ref><content-ref src='/page/316/Table/3'></content-ref>",
+            "polygon": [
+              [
+                60.668128967285156,
+                66.45086288452148
+              ],
+              [
+                561.8346405029297,
+                66.45086288452148
+              ],
+              [
+                561.8346405029297,
+                259.88099670410156
+              ],
+              [
+                60.668128967285156,
+                259.88099670410156
+              ]
+            ],
+            "bbox": [
+              60.668128967285156,
+              66.45086288452148,
+              561.8346405029297,
+              259.88099670410156
+            ],
+            "children": [
+              {
+                "id": "/page/316/Caption/2",
+                "block_type": "Caption",
+                "html": "<p><b>TABLE 1 Chemical Requirements</b></p>",
+                "polygon": [
+                  [
+                    248.0496597290039,
+                    66.45086288452148
+                  ],
+                  [
+                    372.4576416015625,
+                    66.45086288452148
+                  ],
+                  [
+                    372.4576416015625,
+                    79.15948486328125
+                  ],
+                  [
+                    248.0496597290039,
+                    79.15948486328125
+                  ]
+                ],
+                "bbox": [
+                  248.0496597290039,
+                  66.45086288452148,
+                  372.4576416015625,
+                  79.15948486328125
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/316/SectionHeader/18",
+                  "4": "/page/316/SectionHeader/19"
+                }
+              },
+              {
+                "id": "/page/316/Table/3",
+                "block_type": "Table",
+                "html": "<p></p>",
+                "polygon": [
+                  [
+                    60.668128967285156,
+                    78.37593269348145
+                  ],
+                  [
+                    561.8346405029297,
+                    78.37593269348145
+                  ],
+                  [
+                    561.8346405029297,
+                    259.88099670410156
+                  ],
+                  [
+                    60.668128967285156,
+                    259.88099670410156
+                  ]
+                ],
+                "bbox": [
+                  60.668128967285156,
+                  78.37593269348145,
+                  561.8346405029297,
+                  259.88099670410156
+                ],
+                "children": [
+                  {
+                    "id": "/page/316/Line/187",
+                    "block_type": "Line",
+                    "html": "Elements Composition, % ",
+                    "polygon": [
+                      [
+                        137.363037109375,
+                        85.02294921875
+                      ],
+                      [
+                        424.7813720703125,
+                        85.02294921875
+                      ],
+                      [
+                        424.7813720703125,
+                        96.77410888671875
+                      ],
+                      [
+                        137.363037109375,
+                        96.77410888671875
+                      ]
+                    ],
+                    "bbox": [
+                      137.363037109375,
+                      85.02294921875,
+                      424.7813720703125,
+                      96.77410888671875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/192",
+                    "block_type": "Line",
+                    "html": "Grade A Grade B Grade D Grades E and F ",
+                    "polygon": [
+                      [
+                        237.71702575683594,
+                        95.997802734375
+                      ],
+                      [
+                        523.690185546875,
+                        95.997802734375
+                      ],
+                      [
+                        523.690185546875,
+                        102.26153564453125
+                      ],
+                      [
+                        237.71702575683594,
+                        102.26153564453125
+                      ]
+                    ],
+                    "bbox": [
+                      237.71702575683594,
+                      95.997802734375,
+                      523.690185546875,
+                      102.26153564453125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/195",
+                    "block_type": "Line",
+                    "html": "Carbon, max:<sup>A</sup> ",
+                    "polygon": [
+                      [
+                        64.6659164428711,
+                        106.19573974609375
+                      ],
+                      [
+                        108.3309555053711,
+                        106.19573974609375
+                      ],
+                      [
+                        108.3309555053711,
+                        113.23663330078125
+                      ],
+                      [
+                        64.6659164428711,
+                        113.23663330078125
+                      ]
+                    ],
+                    "bbox": [
+                      64.6659164428711,
+                      106.19573974609375,
+                      108.3309555053711,
+                      113.23663330078125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/199",
+                    "block_type": "Line",
+                    "html": "Up to 2 in. [50 mm] in thickness 0.17 0.21 0.17 0.20 ",
+                    "polygon": [
+                      [
+                        71.29508972167969,
+                        115.20697021484375
+                      ],
+                      [
+                        488.6683349609375,
+                        115.20697021484375
+                      ],
+                      [
+                        488.6683349609375,
+                        121.3712158203125
+                      ],
+                      [
+                        71.29508972167969,
+                        121.3712158203125
+                      ]
+                    ],
+                    "bbox": [
+                      71.29508972167969,
+                      115.20697021484375,
+                      488.6683349609375,
+                      121.3712158203125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/202",
+                    "block_type": "Line",
+                    "html": "Over 2 in. to 4 in. [100 mm] incl. in thickness 0.20 0.24 0.20 0.23 ",
+                    "polygon": [
+                      [
+                        71.29508972167969,
+                        123.24237060546875
+                      ],
+                      [
+                        488.6689453125,
+                        123.24237060546875
+                      ],
+                      [
+                        488.6689453125,
+                        129.50616455078125
+                      ],
+                      [
+                        71.29508972167969,
+                        129.50616455078125
+                      ]
+                    ],
+                    "bbox": [
+                      71.29508972167969,
+                      123.24237060546875,
+                      488.6689453125,
+                      129.50616455078125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/205",
+                    "block_type": "Line",
+                    "html": "Over 4 in. [100 mm] in thickness 0.23 0.25 ... ... ",
+                    "polygon": [
+                      [
+                        71.29508972167969,
+                        131.3773193359375
+                      ],
+                      [
+                        481.2891845703125,
+                        131.3773193359375
+                      ],
+                      [
+                        481.2891845703125,
+                        137.64105224609375
+                      ],
+                      [
+                        71.29508972167969,
+                        137.64105224609375
+                      ]
+                    ],
+                    "bbox": [
+                      71.29508972167969,
+                      131.3773193359375,
+                      481.2891845703125,
+                      137.64105224609375
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/208",
+                    "block_type": "Line",
+                    "html": "Manganese, max: ",
+                    "polygon": [
+                      [
+                        64.65972137451172,
+                        139.6383056640625
+                      ],
+                      [
+                        117.76921844482422,
+                        139.6383056640625
+                      ],
+                      [
+                        117.76921844482422,
+                        145.85565185546875
+                      ],
+                      [
+                        64.65972137451172,
+                        145.85565185546875
+                      ]
+                    ],
+                    "bbox": [
+                      64.65972137451172,
+                      139.6383056640625,
+                      117.76921844482422,
+                      145.85565185546875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/211",
+                    "block_type": "Line",
+                    "html": "Heat analysis: ",
+                    "polygon": [
+                      [
+                        71.29508972167969,
+                        147.7733154296875
+                      ],
+                      [
+                        113.33613586425781,
+                        147.7733154296875
+                      ],
+                      [
+                        113.33613586425781,
+                        153.95086669921875
+                      ],
+                      [
+                        71.29508972167969,
+                        153.95086669921875
+                      ]
+                    ],
+                    "bbox": [
+                      71.29508972167969,
+                      147.7733154296875,
+                      113.33613586425781,
+                      153.95086669921875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/214",
+                    "block_type": "Line",
+                    "html": "2 in. [50 mm] and under 0.70 0.70 0.70 0.70 ",
+                    "polygon": [
+                      [
+                        77.93045806884766,
+                        155.88177490234375
+                      ],
+                      [
+                        488.6683654785156,
+                        155.88177490234375
+                      ],
+                      [
+                        488.6683654785156,
+                        162.04595947265625
+                      ],
+                      [
+                        77.93045806884766,
+                        162.04595947265625
+                      ]
+                    ],
+                    "bbox": [
+                      77.93045806884766,
+                      155.88177490234375,
+                      488.6683654785156,
+                      162.04595947265625
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/217",
+                    "block_type": "Line",
+                    "html": "Over 2 in. [50 mm] 0.80 0.80 0.80 0.80 ",
+                    "polygon": [
+                      [
+                        77.93045806884766,
+                        163.91717529296875
+                      ],
+                      [
+                        488.6676330566406,
+                        163.91717529296875
+                      ],
+                      [
+                        488.6676330566406,
+                        170.18096923828125
+                      ],
+                      [
+                        77.93045806884766,
+                        170.18096923828125
+                      ]
+                    ],
+                    "bbox": [
+                      77.93045806884766,
+                      163.91717529296875,
+                      488.6676330566406,
+                      170.18096923828125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/220",
+                    "block_type": "Line",
+                    "html": "Product analysis: ",
+                    "polygon": [
+                      [
+                        71.30172729492188,
+                        172.17816162109375
+                      ],
+                      [
+                        122.19634246826172,
+                        172.17816162109375
+                      ],
+                      [
+                        122.19634246826172,
+                        178.355712890625
+                      ],
+                      [
+                        71.30172729492188,
+                        178.355712890625
+                      ]
+                    ],
+                    "bbox": [
+                      71.30172729492188,
+                      172.17816162109375,
+                      122.19634246826172,
+                      178.355712890625
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/223",
+                    "block_type": "Line",
+                    "html": "2 in. [50 mm] and under 0.78 0.78 0.78 0.78 ",
+                    "polygon": [
+                      [
+                        77.93708801269531,
+                        180.28662109375
+                      ],
+                      [
+                        488.6743469238281,
+                        180.28662109375
+                      ],
+                      [
+                        488.6743469238281,
+                        186.45086669921875
+                      ],
+                      [
+                        77.93708801269531,
+                        186.45086669921875
+                      ]
+                    ],
+                    "bbox": [
+                      77.93708801269531,
+                      180.28662109375,
+                      488.6743469238281,
+                      186.45086669921875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/226",
+                    "block_type": "Line",
+                    "html": "Over 2 in. [50 mm] 0.88 0.88 0.88 0.88 ",
+                    "polygon": [
+                      [
+                        77.93708801269531,
+                        188.322021484375
+                      ],
+                      [
+                        488.6743469238281,
+                        188.322021484375
+                      ],
+                      [
+                        488.6743469238281,
+                        194.5858154296875
+                      ],
+                      [
+                        77.93708801269531,
+                        194.5858154296875
+                      ]
+                    ],
+                    "bbox": [
+                      77.93708801269531,
+                      188.322021484375,
+                      488.6743469238281,
+                      194.5858154296875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/229",
+                    "block_type": "Line",
+                    "html": "Phosphorus, max<sup>A</sup> 0.025 0.025 0.025 0.025 ",
+                    "polygon": [
+                      [
+                        64.67298889160156,
+                        195.65447998046875
+                      ],
+                      [
+                        492.3528747558594,
+                        195.65447998046875
+                      ],
+                      [
+                        492.3528747558594,
+                        202.721435546875
+                      ],
+                      [
+                        64.67298889160156,
+                        202.721435546875
+                      ]
+                    ],
+                    "bbox": [
+                      64.67298889160156,
+                      195.65447998046875,
+                      492.3528747558594,
+                      202.721435546875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/235",
+                    "block_type": "Line",
+                    "html": "Sulfur, max<sup>A</sup> 0.025 0.025 0.025 0.025 ",
+                    "polygon": [
+                      [
+                        64.66155242919922,
+                        203.7864990234375
+                      ],
+                      [
+                        492.3528747558594,
+                        203.7864990234375
+                      ],
+                      [
+                        492.3528747558594,
+                        210.83251953125
+                      ],
+                      [
+                        64.66155242919922,
+                        210.83251953125
+                      ]
+                    ],
+                    "bbox": [
+                      64.66155242919922,
+                      203.7864990234375,
+                      492.3528747558594,
+                      210.83251953125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/241",
+                    "block_type": "Line",
+                    "html": "Silicon: ",
+                    "polygon": [
+                      [
+                        64.66155242919922,
+                        212.70062255859375
+                      ],
+                      [
+                        86.05199432373047,
+                        212.70062255859375
+                      ],
+                      [
+                        86.05199432373047,
+                        218.96441650390625
+                      ],
+                      [
+                        64.66155242919922,
+                        218.96441650390625
+                      ]
+                    ],
+                    "bbox": [
+                      64.66155242919922,
+                      212.70062255859375,
+                      86.05199432373047,
+                      218.96441650390625
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/244",
+                    "block_type": "Line",
+                    "html": "Heat analysis 0.15–0.40 0.15–0.40 0.15–0.40 0.15–0.40 ",
+                    "polygon": [
+                      [
+                        71.29692840576172,
+                        220.9622802734375
+                      ],
+                      [
+                        505.2744140625,
+                        220.9622802734375
+                      ],
+                      [
+                        505.2744140625,
+                        227.13983154296875
+                      ],
+                      [
+                        71.29692840576172,
+                        227.13983154296875
+                      ]
+                    ],
+                    "bbox": [
+                      71.29692840576172,
+                      220.9622802734375,
+                      505.2744140625,
+                      227.13983154296875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/247",
+                    "block_type": "Line",
+                    "html": "Product analysis 0.13–0.45 0.13–0.45 0.13–0.45 0.13–0.45 ",
+                    "polygon": [
+                      [
+                        71.29692840576172,
+                        229.0972900390625
+                      ],
+                      [
+                        505.2744140625,
+                        229.0972900390625
+                      ],
+                      [
+                        505.2744140625,
+                        235.27484130859375
+                      ],
+                      [
+                        71.29692840576172,
+                        235.27484130859375
+                      ]
+                    ],
+                    "bbox": [
+                      71.29692840576172,
+                      229.0972900390625,
+                      505.2744140625,
+                      235.27484130859375
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/250",
+                    "block_type": "Line",
+                    "html": "Nickel: ",
+                    "polygon": [
+                      [
+                        64.66155242919922,
+                        237.23223876953125
+                      ],
+                      [
+                        84.57164001464844,
+                        237.23223876953125
+                      ],
+                      [
+                        84.57164001464844,
+                        243.3699951171875
+                      ],
+                      [
+                        64.66155242919922,
+                        243.3699951171875
+                      ]
+                    ],
+                    "bbox": [
+                      64.66155242919922,
+                      237.23223876953125,
+                      84.57164001464844,
+                      243.3699951171875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/253",
+                    "block_type": "Line",
+                    "html": "Heat analysis 2.10–2.50 2.10–2.50 3.25–3.75 3.25–3.75 ",
+                    "polygon": [
+                      [
+                        71.29692840576172,
+                        245.3671875
+                      ],
+                      [
+                        505.2744140625,
+                        245.3671875
+                      ],
+                      [
+                        505.2744140625,
+                        251.54473876953125
+                      ],
+                      [
+                        71.29692840576172,
+                        251.54473876953125
+                      ]
+                    ],
+                    "bbox": [
+                      71.29692840576172,
+                      245.3671875,
+                      505.2744140625,
+                      251.54473876953125
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/256",
+                    "block_type": "Line",
+                    "html": "Product analysis 2.03–2.57 2.03–2.57 3.18–3.82 3.18–3.82",
+                    "polygon": [
+                      [
+                        71.29692840576172,
+                        253.50213623046875
+                      ],
+                      [
+                        505.2744140625,
+                        253.50213623046875
+                      ],
+                      [
+                        505.2744140625,
+                        259.6796875
+                      ],
+                      [
+                        71.29692840576172,
+                        259.6796875
+                      ]
+                    ],
+                    "bbox": [
+                      71.29692840576172,
+                      253.50213623046875,
+                      505.2744140625,
+                      259.6796875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  }
+                ],
+                "section_hierarchy": {
+                  "1": "/page/316/SectionHeader/18",
+                  "4": "/page/316/SectionHeader/19"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><sup>A</sup> Applies to both heat and product analyses.</p>",
+            "polygon": [
+              [
+                62.238224029541016,
+                260.10374450683594
+              ],
+              [
+                197.59375,
+                260.10374450683594
+              ],
+              [
+                197.59375,
+                271.7509765625
+              ],
+              [
+                62.238224029541016,
+                271.7509765625
+              ]
+            ],
+            "bbox": [
+              62.238224029541016,
+              260.10374450683594,
+              197.59375,
+              271.7509765625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/TableGroup/321",
+            "block_type": "TableGroup",
+            "html": "<content-ref src='/page/316/Caption/5'></content-ref><content-ref src='/page/316/Table/6'></content-ref>",
+            "polygon": [
+              [
+                60.87714958190918,
+                289.97545623779297
+              ],
+              [
+                556.7034301757812,
+                289.97545623779297
+              ],
+              [
+                556.7034301757812,
+                393.0926208496094
+              ],
+              [
+                60.87714958190918,
+                393.0926208496094
+              ]
+            ],
+            "bbox": [
+              60.87714958190918,
+              289.97545623779297,
+              556.7034301757812,
+              393.0926208496094
+            ],
+            "children": [
+              {
+                "id": "/page/316/Caption/5",
+                "block_type": "Caption",
+                "html": "<p><b>TABLE 2 Tensile Requirements</b></p>",
+                "polygon": [
+                  [
+                    252.22208404541016,
+                    289.97545623779297
+                  ],
+                  [
+                    368.38433837890625,
+                    289.97545623779297
+                  ],
+                  [
+                    368.38433837890625,
+                    302.0033264160156
+                  ],
+                  [
+                    252.22208404541016,
+                    302.0033264160156
+                  ]
+                ],
+                "bbox": [
+                  252.22208404541016,
+                  289.97545623779297,
+                  368.38433837890625,
+                  302.0033264160156
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/316/SectionHeader/18",
+                  "4": "/page/316/SectionHeader/19"
+                }
+              },
+              {
+                "id": "/page/316/Table/6",
+                "block_type": "Table",
+                "html": "<p></p>",
+                "polygon": [
+                  [
+                    60.87714958190918,
+                    299.37989044189453
+                  ],
+                  [
+                    556.7034301757812,
+                    299.37989044189453
+                  ],
+                  [
+                    556.7034301757812,
+                    393.0926208496094
+                  ],
+                  [
+                    60.87714958190918,
+                    393.0926208496094
+                  ]
+                ],
+                "bbox": [
+                  60.87714958190918,
+                  299.37989044189453,
+                  556.7034301757812,
+                  393.0926208496094
+                ],
+                "children": [
+                  {
+                    "id": "/page/316/Line/267",
+                    "block_type": "Line",
+                    "html": "Grades A and D Grades B and E Grade F ",
+                    "polygon": [
+                      [
+                        258.5388488769531,
+                        307.8658447265625
+                      ],
+                      [
+                        515.4151611328125,
+                        307.8658447265625
+                      ],
+                      [
+                        515.4151611328125,
+                        314.129638671875
+                      ],
+                      [
+                        258.5388488769531,
+                        314.129638671875
+                      ]
+                    ],
+                    "bbox": [
+                      258.5388488769531,
+                      307.8658447265625,
+                      515.4151611328125,
+                      314.129638671875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/270",
+                    "block_type": "Line",
+                    "html": "ksi [MPa] ksi [MPa] ksi [MPa] ",
+                    "polygon": [
+                      [
+                        250.9214324951172,
+                        318.9409484863281
+                      ],
+                      [
+                        539.9334716796875,
+                        318.9409484863281
+                      ],
+                      [
+                        539.9334716796875,
+                        325.10516357421875
+                      ],
+                      [
+                        250.9214324951172,
+                        325.10516357421875
+                      ]
+                    ],
+                    "bbox": [
+                      250.9214324951172,
+                      318.9409484863281,
+                      539.9334716796875,
+                      325.10516357421875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/273",
+                    "block_type": "Line",
+                    "html": "Tensile strength ",
+                    "polygon": [
+                      [
+                        64.82518005371094,
+                        329.9416809082031
+                      ],
+                      [
+                        111.66690826416016,
+                        329.9416809082031
+                      ],
+                      [
+                        111.66690826416016,
+                        336.1590270996094
+                      ],
+                      [
+                        64.82518005371094,
+                        336.1590270996094
+                      ]
+                    ],
+                    "bbox": [
+                      64.82518005371094,
+                      329.9416809082031,
+                      111.66690826416016,
+                      336.1590270996094
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/276",
+                    "block_type": "Line",
+                    "html": "2 in. [50 mm] and under 65–85 [450–585] 70–90 [485–620] 80–100 [550–690] ",
+                    "polygon": [
+                      [
+                        71.46056365966797,
+                        338.0501403808594
+                      ],
+                      [
+                        546.0325317382812,
+                        338.0501403808594
+                      ],
+                      [
+                        546.0325317382812,
+                        344.21441650390625
+                      ],
+                      [
+                        71.46056365966797,
+                        344.21441650390625
+                      ]
+                    ],
+                    "bbox": [
+                      71.46056365966797,
+                      338.0501403808594,
+                      546.0325317382812,
+                      344.21441650390625
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/279",
+                    "block_type": "Line",
+                    "html": "Over 2 in. [50 mm] 65–85 [450–585] 70–90 [485–620] 75–95 [515–655] ",
+                    "polygon": [
+                      [
+                        71.46056365966797,
+                        346.08624267578125
+                      ],
+                      [
+                        546.033935546875,
+                        346.08624267578125
+                      ],
+                      [
+                        546.033935546875,
+                        352.35003662109375
+                      ],
+                      [
+                        71.46056365966797,
+                        352.35003662109375
+                      ]
+                    ],
+                    "bbox": [
+                      71.46056365966797,
+                      346.08624267578125,
+                      546.033935546875,
+                      352.35003662109375
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/282",
+                    "block_type": "Line",
+                    "html": "Yield strength, min ",
+                    "polygon": [
+                      [
+                        64.82518005371094,
+                        354.3472595214844
+                      ],
+                      [
+                        120.26502990722656,
+                        354.3472595214844
+                      ],
+                      [
+                        120.26502990722656,
+                        360.5646057128906
+                      ],
+                      [
+                        64.82518005371094,
+                        360.5646057128906
+                      ]
+                    ],
+                    "bbox": [
+                      64.82518005371094,
+                      354.3472595214844,
+                      120.26502990722656,
+                      360.5646057128906
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/285",
+                    "block_type": "Line",
+                    "html": "2 in. [50 mm] and under 37 [255] 40 [275] 55 [380] ",
+                    "polygon": [
+                      [
+                        71.46056365966797,
+                        362.4557189941406
+                      ],
+                      [
+                        538.6468505859375,
+                        362.4557189941406
+                      ],
+                      [
+                        538.6468505859375,
+                        368.6199951171875
+                      ],
+                      [
+                        71.46056365966797,
+                        368.6199951171875
+                      ]
+                    ],
+                    "bbox": [
+                      71.46056365966797,
+                      362.4557189941406,
+                      538.6468505859375,
+                      368.6199951171875
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/288",
+                    "block_type": "Line",
+                    "html": "Over 2 in. [50 mm] 37 [255] 40 [275] 50 [345] ",
+                    "polygon": [
+                      [
+                        71.46056365966797,
+                        370.49114990234375
+                      ],
+                      [
+                        538.6468505859375,
+                        370.49114990234375
+                      ],
+                      [
+                        538.6468505859375,
+                        376.75494384765625
+                      ],
+                      [
+                        71.46056365966797,
+                        376.75494384765625
+                      ]
+                    ],
+                    "bbox": [
+                      71.46056365966797,
+                      370.49114990234375,
+                      538.6468505859375,
+                      376.75494384765625
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/291",
+                    "block_type": "Line",
+                    "html": "Elongation in 8 in. [200 mm] min, %<sup>A</sup> 19 17 ... ",
+                    "polygon": [
+                      [
+                        64.82518005371094,
+                        377.8349609375
+                      ],
+                      [
+                        505.821533203125,
+                        377.8349609375
+                      ],
+                      [
+                        505.821533203125,
+                        384.9695129394531
+                      ],
+                      [
+                        64.82518005371094,
+                        384.9695129394531
+                      ]
+                    ],
+                    "bbox": [
+                      64.82518005371094,
+                      377.8349609375,
+                      505.821533203125,
+                      384.9695129394531
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  },
+                  {
+                    "id": "/page/316/Line/297",
+                    "block_type": "Line",
+                    "html": "Elongation in 2 in. [50 mm] min, %<sup>A</sup>,<sup>B</sup> 23 21 20",
+                    "polygon": [
+                      [
+                        64.8334732055664,
+                        385.96795654296875
+                      ],
+                      [
+                        506.7431640625,
+                        385.96795654296875
+                      ],
+                      [
+                        506.7431640625,
+                        393.0926208496094
+                      ],
+                      [
+                        64.8334732055664,
+                        393.0926208496094
+                      ]
+                    ],
+                    "bbox": [
+                      64.8334732055664,
+                      385.96795654296875,
+                      506.7431640625,
+                      393.0926208496094
+                    ],
+                    "children": null,
+                    "section_hierarchy": {
+                      "1": "/page/316/SectionHeader/18",
+                      "4": "/page/316/SectionHeader/19"
+                    }
+                  }
+                ],
+                "section_hierarchy": {
+                  "1": "/page/316/SectionHeader/18",
+                  "4": "/page/316/SectionHeader/19"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><sup>A</sup> See Specification A20/A20M for elongation adjustments.</p>",
+            "polygon": [
+              [
+                61.52412414550781,
+                393.8734588623047
+              ],
+              [
+                237.42462158203125,
+                393.8734588623047
+              ],
+              [
+                237.42462158203125,
+                405.1764831542969
+              ],
+              [
+                61.52412414550781,
+                405.1764831542969
+              ]
+            ],
+            "bbox": [
+              61.52412414550781,
+              393.8734588623047,
+              237.42462158203125,
+              405.1764831542969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/316/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><sup>B</sup> See 7.1.1.</p>",
+            "polygon": [
+              [
+                61.71704292297363,
+                402.27415466308594
+              ],
+              [
+                101.65377044677734,
+                402.27415466308594
+              ],
+              [
+                101.65377044677734,
+                413.15380859375
+              ],
+              [
+                61.71704292297363,
+                413.15380859375
+              ]
+            ],
+            "bbox": [
+              61.71704292297363,
+              402.27415466308594,
+              101.65377044677734,
+              413.15380859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/316/SectionHeader/18",
+          "4": "/page/316/SectionHeader/19"
+        }
+      },
+      {
+        "pdf_page": 317,
+        "printed_page": 264,
+        "id": "/page/317/Page/85",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/317/PageHeader/0'></content-ref><content-ref src='/page/317/PageHeader/1'></content-ref><content-ref src='/page/317/PageFooter/6'></content-ref><content-ref src='/page/317/SectionHeader/2'></content-ref><content-ref src='/page/317/Text/3'></content-ref><content-ref src='/page/317/Text/4'></content-ref><content-ref src='/page/317/Text/85'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/317/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.308773040771484,
+                35.33594799041748
+              ],
+              [
+                117.89915084838867,
+                35.33594799041748
+              ],
+              [
+                117.89915084838867,
+                45.192933082580566
+              ],
+              [
+                51.308773040771484,
+                45.192933082580566
+              ]
+            ],
+            "bbox": [
+              51.308773040771484,
+              35.33594799041748,
+              117.89915084838867,
+              45.192933082580566
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/317/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.50447654724121
+              ],
+              [
+                338.30101776123047,
+                35.50447654724121
+              ],
+              [
+                338.30101776123047,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.50447654724121,
+              338.30101776123047,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/317/PageFooter/6",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.7698059082031,
+                739.9655456542969
+              ],
+              [
+                304.96277618408203,
+                739.9655456542969
+              ],
+              [
+                304.96277618408203,
+                751.9525985717773
+              ],
+              [
+                286.7698059082031,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.7698059082031,
+              739.9655456542969,
+              304.96277618408203,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/316/SectionHeader/19"
+            }
+          },
+          {
+            "id": "/page/317/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>SUPPLEMENTARY REQUIREMENTS</b></h4>",
+            "polygon": [
+              [
+                211.30540466308594,
+                68.01995086669922
+              ],
+              [
+                380.06009674072266,
+                68.01995086669922
+              ],
+              [
+                380.06009674072266,
+                80.5018310546875
+              ],
+              [
+                211.30540466308594,
+                80.5018310546875
+              ]
+            ],
+            "bbox": [
+              211.30540466308594,
+              68.01995086669922,
+              380.06009674072266,
+              80.5018310546875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/317/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/317/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">Supplementary requirements shall not apply unless specified in the order.</p>",
+            "polygon": [
+              [
+                110.60235214233398,
+                89.53403091430664
+              ],
+              [
+                397.3450927734375,
+                89.53403091430664
+              ],
+              [
+                397.3450927734375,
+                102.891357421875
+              ],
+              [
+                110.60235214233398,
+                102.891357421875
+              ]
+            ],
+            "bbox": [
+              110.60235214233398,
+              89.53403091430664,
+              397.3450927734375,
+              102.891357421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/317/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/317/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">A list of standardized supplementary requirements for use at the option of the purchaser are included in Specification A20/A20M. Those which are considered suitable for use with this specification are listed below by title.</p>",
+            "polygon": [
+              [
+                101.7850341796875,
+                101.1822509765625
+              ],
+              [
+                492.5738067626953,
+                101.1822509765625
+              ],
+              [
+                492.5738067626953,
+                135.59423828125
+              ],
+              [
+                101.7850341796875,
+                135.59423828125
+              ]
+            ],
+            "bbox": [
+              101.7850341796875,
+              101.1822509765625,
+              492.5738067626953,
+              135.59423828125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/317/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/317/Text/85",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">S1. Vacuum Treatment, S2. Product Analysis, S3. Simulated Post-Weld Heat Treatment of Mechanical Test Coupons, S4.1 Additional Tension Test, S5. Charpy V-Notch Impact Test, S6. Drop Weight Test (for Material 0.625 in. [16 mm] and over in Thickness), S7. High-Temperature Tension Test, S8. Ultrasonic Examination in accordance with Specification A435/A435M, S9. Magnetic Particle Examination, S11. Ultrasonic Examination in accordance with Specification A577/A577M, S12. Ultrasonic Examination in accordance with Specification A578/A578M, and S17. Vacuum Carbon-Deoxidized Steel.</p>",
+            "polygon": [
+              [
+                46.89163112640381,
+                151.97125625610352
+              ],
+              [
+                544.8564147949219,
+                151.97125625610352
+              ],
+              [
+                544.8564147949219,
+                252.0069580078125
+              ],
+              [
+                46.89163112640381,
+                252.0069580078125
+              ]
+            ],
+            "bbox": [
+              46.89163112640381,
+              151.97125625610352,
+              544.8564147949219,
+              252.0069580078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/316/SectionHeader/18",
+              "4": "/page/317/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/316/SectionHeader/18",
+          "4": "/page/317/SectionHeader/2"
+        }
+      }
+    ]
+  }
+}

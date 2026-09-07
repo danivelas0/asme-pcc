@@ -1,0 +1,5216 @@
+{
+  "source": {
+    "standard": "ASME BPVC Section II, Part B (Nonferrous Material Specifications)",
+    "edition": "2025 Edition (ASME BPVC.II.B-2025), issued 2025-07-01",
+    "table": "SB-666/SB-666M - Practice for Identification Marking of Aluminum and Magnesium Products",
+    "clause": "SB-666/SB-666M",
+    "transcribed_from": "database/asme/bpvc_ii_b/specifications/sb_666_sb_666m_practice_for_identification_marking_of_aluminum_and_magnesium_products_source.json",
+    "note": "Full text of ASME BPVC Section II, Part B (Nonferrous Material Specifications) — SB-666/SB-666M - Practice for Identification Marking of Aluminum and Magnesium Products — as supplied by Daniel Velasquez on 2026-09-07 and extracted from the supplied PDF with marker-pdf. `data` is the extractor's output verbatim — the drop's own `document`, `part`, `figures` and `pages` blocks, with the page-by-page block tree, its HTML, tables and layout coordinates unedited. This file IS the source document, so `transcribed_from` names its own path: it is the artefact under review, not a transcription of one. The volume was supplied as one combined PDF and cut into parts at its own headings, so this file is a page-range slice of a single extraction and its page ids (PDF pages None–None, no printed page numbers on these pages) are the combined document's own, not renumbered from 0. Front matter (cover and title page, contents, list of sections, foreword, statement of policy, personnel, correspondence, summary of changes, cross-referencing) and back matter (back cover) were deleted from the drop before supply and are NOT filed; the drop's `content.json`, `index.json`, `meta.json` and `README.md` are retained beside the kind folders, unfiled, for the same reason. The edition — 2025 Edition (ASME BPVC.II.B-2025), issued 2025-07-01 — is stated on the title page, which this drop no longer carries as a filed cut: it survives only inside the retained `content.json`, so no filed cut of this standard prints its own edition. This cut carries 12 figure images, filed under database/asme/bpvc_ii_b/figures/ and recorded one record per image; nothing in this repository reads a value off any of them.",
+    "status": "PRELIMINARY — supplied source document, transcribed for screening and pre-dimensioning. The published standard governs for issued design.",
+    "read_by": "Daniel Velasquez",
+    "read_on": "2026-09-07"
+  },
+  "data": {
+    "document": {
+      "standard": "ASME Boiler and Pressure Vessel Code",
+      "section": "Section II - Materials",
+      "part": "Part B - Nonferrous Material Specifications",
+      "designation": "ASME BPVC.II.B-2025",
+      "edition": "2025 Edition",
+      "edition_year": 2025,
+      "date_of_issuance": "2025-07-01",
+      "publisher": "ASME (The American Society of Mechanical Engineers)",
+      "source_pages": 1319,
+      "specification_count": 143
+    },
+    "specification": {
+      "id": "SB-666/SB-666M",
+      "title": "Practice for Identification Marking of Aluminum and Magnesium Products",
+      "equivalent_designation": "B666/B666M-15",
+      "equivalence_note": "Identical with ASTM Specification B666/B666M-15.",
+      "folder": "SB-666-SB-666M",
+      "pdf_pages": [
+        1024,
+        1031
+      ],
+      "printed_pages": [
+        975,
+        982
+      ],
+      "page_count": 8
+    },
+    "figures": [
+      {
+        "figure": "FIG. 1 M",
+        "caption": "FIG. 1 M Spot Marking for Coiled Sheet",
+        "file": "figures/FIG-1-M.png",
+        "printed_page": 977,
+        "pdf_page": 1026
+      },
+      {
+        "figure": "Fig. 1",
+        "caption": "Fig. 1 Spot Marking for Coiled Sheet",
+        "file": "figures/FIG-1.png",
+        "printed_page": 977,
+        "pdf_page": 1026
+      },
+      {
+        "figure": "FIG. 2 M",
+        "caption": "FIG. 2 M Continuous Marking for Plate Through 10 mm and Flat Sheet over 0.30 mm (for O Temper, over 0.50 mm) in Thickness, over 150 Through 1500 mm in Width, and 1000 Through 5000 mm in Length",
+        "file": "figures/FIG-2-M.png",
+        "printed_page": 978,
+        "pdf_page": 1027
+      },
+      {
+        "figure": "FIG 2",
+        "caption": "FIG 2 Continuous Marking for Plate Through 0.375 in. and Flat Sheet 0.012 in. and over (for O Temper, 0.020 in. and over) in Thickness, 6 Through 60 in. in Width, and 36 Through 200 in. in Length",
+        "file": "figures/FIG-2.png",
+        "printed_page": 978,
+        "pdf_page": 1027
+      },
+      {
+        "figure": "FIG. 3 M",
+        "caption": "FIG. 3 M Continuous Marking for Plate Through 10 mm and Flat Sheet over 0.30 mm (for O Temper, over 0.50 mm) in Thickness, over 150 Through 1500 mm in Width, and 1000 Through 5000 mm in Length.",
+        "file": "figures/FIG-3-M.png",
+        "printed_page": 979,
+        "pdf_page": 1028
+      },
+      {
+        "figure": "FIG 3",
+        "caption": "FIG 3 Continuous Marking for Plate Through 0.375 in. and Flat Sheet 0.012 in. and over (for O Temper, 0.020 in. and over) in Thickness, 6 Through 60 in. in Width, and 36 Through 200 in. in Length.",
+        "file": "figures/FIG-3.png",
+        "printed_page": 979,
+        "pdf_page": 1028
+      },
+      {
+        "figure": "FIG. 4 M",
+        "caption": "FIG. 4 M Perimeter Marking for Plate over 10 mm in Thickness, Flat Sheet and Plate over 1500 mm in Width or over 5000 mm in Length.",
+        "file": "figures/FIG-4-M.png",
+        "printed_page": 980,
+        "pdf_page": 1029
+      },
+      {
+        "figure": "FIG 4",
+        "caption": "FIG 4 Perimeter Marking for Plate over 0.375 in. in Thickness, Flat Sheet and Plate over 60 in. in Width or over 200 in. in Length.",
+        "file": "figures/FIG-4.png",
+        "printed_page": 980,
+        "pdf_page": 1029
+      },
+      {
+        "figure": "FIG. 5 M",
+        "caption": "FIG. 5 M Continuous Marking for Rod, Bar, Profiles, and Tube in Straight Lengths",
+        "file": "figures/FIG-5-M.png",
+        "printed_page": 981,
+        "pdf_page": 1030
+      },
+      {
+        "figure": "FIG 5",
+        "caption": "FIG 5 Continuous Marking for Rod, Bar, Profiles, and Tube in Straight Lengths",
+        "file": "figures/FIG-5.png",
+        "printed_page": 981,
+        "pdf_page": 1030
+      },
+      {
+        "figure": "FIG. 6 M",
+        "caption": "FIG. 6 M Spot Marking for Structural Profiles",
+        "file": "figures/FIG-6-M.png",
+        "printed_page": 981,
+        "pdf_page": 1030
+      },
+      {
+        "figure": "FIG 6",
+        "caption": "FIG 6 Spot Marking for Structural Profiles",
+        "file": "figures/FIG-6.png",
+        "printed_page": 981,
+        "pdf_page": 1030
+      }
+    ],
+    "pages": [
+      {
+        "pdf_page": 1024,
+        "printed_page": 975,
+        "id": "/page/1024/Page/24",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1024/PageHeader/0'></content-ref><content-ref src='/page/1024/PageHeader/1'></content-ref><content-ref src='/page/1024/SectionHeader/2'></content-ref><content-ref src='/page/1024/Picture/3'></content-ref><content-ref src='/page/1024/Picture/4'></content-ref><content-ref src='/page/1024/Text/5'></content-ref><content-ref src='/page/1024/Text/6'></content-ref><content-ref src='/page/1024/PageFooter/7'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1024/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.46167755126953,
+                34.762919425964355
+              ],
+              [
+                557.9815673828125,
+                34.762919425964355
+              ],
+              [
+                557.9815673828125,
+                47.04376220703125
+              ],
+              [
+                273.46167755126953,
+                47.04376220703125
+              ]
+            ],
+            "bbox": [
+              273.46167755126953,
+              34.762919425964355,
+              557.9815673828125,
+              47.04376220703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1022/SectionHeader/16",
+              "4": "/page/1023/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1024/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                491.0384216308594,
+                35.05312156677246
+              ],
+              [
+                559.17041015625,
+                35.05312156677246
+              ],
+              [
+                559.17041015625,
+                46.18751907348633
+              ],
+              [
+                491.0384216308594,
+                46.18751907348633
+              ]
+            ],
+            "bbox": [
+              491.0384216308594,
+              35.05312156677246,
+              559.17041015625,
+              46.18751907348633
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1022/SectionHeader/16",
+              "4": "/page/1023/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1024/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>PRACTICE FOR IDENTIFICATION MARKING OF</b> <b>ALUMINUM AND MAGNESIUM PRODUCTS</b></h1>",
+            "polygon": [
+              [
+                136.04906845092773,
+                240.11803436279297
+              ],
+              [
+                491.7521209716797,
+                240.11803436279297
+              ],
+              [
+                491.7521209716797,
+                281.8807678222656
+              ],
+              [
+                136.04906845092773,
+                281.8807678222656
+              ]
+            ],
+            "bbox": [
+              136.04906845092773,
+              240.11803436279297,
+              491.7521209716797,
+              281.8807678222656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1024/Picture/3",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                151.67032527923584,
+                310.7711643218994
+              ],
+              [
+                208.53050708770752,
+                310.7711643218994
+              ],
+              [
+                208.53050708770752,
+                366.0309825897217
+              ],
+              [
+                151.67032527923584,
+                366.0309825897217
+              ]
+            ],
+            "bbox": [
+              151.67032527923584,
+              310.7711643218994,
+              208.53050708770752,
+              366.0309825897217
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/1024/Picture/4",
+            "block_type": "Picture",
+            "html": "",
+            "polygon": [
+              [
+                415.6416069030762,
+                311.2613021850586
+              ],
+              [
+                464.14414443969724,
+                311.2613021850586
+              ],
+              [
+                464.14414443969724,
+                362.0237777709961
+              ],
+              [
+                415.6416069030762,
+                362.0237777709961
+              ]
+            ],
+            "bbox": [
+              415.6416069030762,
+              311.2613021850586,
+              464.14414443969724,
+              362.0237777709961
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/1024/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>SB-666/SB-666M</b></p>",
+            "polygon": [
+              [
+                256.32618713378906,
+                333.8664093017578
+              ],
+              [
+                371.06078338623047,
+                333.8664093017578
+              ],
+              [
+                371.06078338623047,
+                351.4867858886719
+              ],
+              [
+                256.32618713378906,
+                351.4867858886719
+              ]
+            ],
+            "bbox": [
+              256.32618713378906,
+              333.8664093017578,
+              371.06078338623047,
+              351.4867858886719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1024/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">(Identical with ASTM Specification B666/B666M-15.)</p>",
+            "polygon": [
+              [
+                222.746337890625,
+                402.4946594238281
+              ],
+              [
+                412.73377990722656,
+                402.4946594238281
+              ],
+              [
+                412.73377990722656,
+                414.2983703613281
+              ],
+              [
+                222.746337890625,
+                414.2983703613281
+              ]
+            ],
+            "bbox": [
+              222.746337890625,
+              402.4946594238281,
+              412.73377990722656,
+              414.2983703613281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1024/PageFooter/7",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                304.82466888427734,
+                738.7023010253906
+              ],
+              [
+                323.4286193847656,
+                738.7023010253906
+              ],
+              [
+                323.4286193847656,
+                751.9525985717773
+              ],
+              [
+                304.82466888427734,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              304.82466888427734,
+              738.7023010253906,
+              323.4286193847656,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1024/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 1025,
+        "printed_page": 976,
+        "id": "/page/1025/Page/254",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1025/PageHeader/0'></content-ref><content-ref src='/page/1025/PageHeader/1'></content-ref><content-ref src='/page/1025/PageFooter/24'></content-ref><content-ref src='/page/1025/SectionHeader/2'></content-ref><content-ref src='/page/1025/SectionHeader/4'></content-ref><content-ref src='/page/1025/Text/5'></content-ref><content-ref src='/page/1025/Text/7'></content-ref><content-ref src='/page/1025/Text/11'></content-ref><content-ref src='/page/1025/SectionHeader/14'></content-ref><content-ref src='/page/1025/Text/15'></content-ref><content-ref src='/page/1025/Text/254'></content-ref><content-ref src='/page/1025/Text/18'></content-ref><content-ref src='/page/1025/Text/21'></content-ref><content-ref src='/page/1025/Text/3'></content-ref><content-ref src='/page/1025/Text/6'></content-ref><content-ref src='/page/1025/Text/8'></content-ref><content-ref src='/page/1025/SectionHeader/9'></content-ref><content-ref src='/page/1025/Text/10'></content-ref><content-ref src='/page/1025/Text/25'></content-ref><content-ref src='/page/1025/Text/12'></content-ref><content-ref src='/page/1025/Text/13'></content-ref><content-ref src='/page/1025/Text/16'></content-ref><content-ref src='/page/1025/Text/19'></content-ref><content-ref src='/page/1025/Text/20'></content-ref><content-ref src='/page/1025/SectionHeader/22'></content-ref><content-ref src='/page/1025/Text/23'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1025/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.19093704223633
+              ],
+              [
+                337.9464569091797,
+                35.19093704223633
+              ],
+              [
+                337.9464569091797,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.19093704223633,
+              337.9464569091797,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1025/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.35647201538086,
+                35.3353385925293
+              ],
+              [
+                117.47305297851562,
+                35.3353385925293
+              ],
+              [
+                117.47305297851562,
+                45.260799407958984
+              ],
+              [
+                51.35647201538086,
+                45.260799407958984
+              ]
+            ],
+            "bbox": [
+              51.35647201538086,
+              35.3353385925293,
+              117.47305297851562,
+              45.260799407958984
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1025/PageFooter/24",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.2348403930664,
+                738.9114990234375
+              ],
+              [
+                304.9785461425781,
+                738.9114990234375
+              ],
+              [
+                304.9785461425781,
+                751.9525985717773
+              ],
+              [
+                286.2348403930664,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.2348403930664,
+              738.9114990234375,
+              304.9785461425781,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1024/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1025/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>Practice for</b> <b>Identification Marking of Aluminum and Magnesium</b> <b>Products</b></h1>",
+            "polygon": [
+              [
+                101.69000244140625,
+                68.5821762084961
+              ],
+              [
+                434.2115478515625,
+                68.5821762084961
+              ],
+              [
+                434.2115478515625,
+                114.2711181640625
+              ],
+              [
+                101.69000244140625,
+                114.2711181640625
+              ]
+            ],
+            "bbox": [
+              101.69000244140625,
+              68.5821762084961,
+              434.2115478515625,
+              114.2711181640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1025/SectionHeader/4",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>1. Scope</b></h4>",
+            "polygon": [
+              [
+                46.96644973754883,
+                183.99594497680664
+              ],
+              [
+                85.8401870727539,
+                183.99594497680664
+              ],
+              [
+                85.8401870727539,
+                196.17144775390625
+              ],
+              [
+                46.96644973754883,
+                196.17144775390625
+              ]
+            ],
+            "bbox": [
+              46.96644973754883,
+              183.99594497680664,
+              85.8401870727539,
+              196.17144775390625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1025/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.1 This practice establishes the physical item marking requirements for identification purposes for aluminum and magnesium products. Package marking for shipment and inspection acceptance is not within the scope of this standard.</p>",
+            "polygon": [
+              [
+                46.76214122772217,
+                198.0032730102539
+              ],
+              [
+                289.85057830810547,
+                198.0032730102539
+              ],
+              [
+                289.85057830810547,
+                243.68072509765625
+              ],
+              [
+                46.76214122772217,
+                243.68072509765625
+              ]
+            ],
+            "bbox": [
+              46.76214122772217,
+              198.0032730102539,
+              289.85057830810547,
+              243.68072509765625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1025/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.2 The values stated in either SI units or inch-pound units are to be regarded separately as standard. The values stated in each system may not be exact equivalents; therefore, each system shall be used independently of the other. Combining values from the two systems may result in non-conformance with the standard.</p>",
+            "polygon": [
+              [
+                46.59326648712158,
+                245.09170532226562
+              ],
+              [
+                289.8122863769531,
+                245.09170532226562
+              ],
+              [
+                289.8122863769531,
+                312.8781433105469
+              ],
+              [
+                46.59326648712158,
+                312.8781433105469
+              ]
+            ],
+            "bbox": [
+              46.59326648712158,
+              245.09170532226562,
+              289.8122863769531,
+              312.8781433105469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1025/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">1.3 <i>This standard does not purport to address all of the</i> <i>safety concerns, if any, associated with its use. It is the</i> <i>responsibility of the user of this standard to establish appro</i><i>priate safety and health practices and determine the applica</i><i>bility of regulatory limitations prior to use.</i></p>",
+            "polygon": [
+              [
+                46.515212059020996,
+                313.13909912109375
+              ],
+              [
+                289.3311996459961,
+                313.13909912109375
+              ],
+              [
+                289.3311996459961,
+                370.1224670410156
+              ],
+              [
+                46.515212059020996,
+                370.1224670410156
+              ]
+            ],
+            "bbox": [
+              46.515212059020996,
+              313.13909912109375,
+              289.3311996459961,
+              370.1224670410156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/4"
+            }
+          },
+          {
+            "id": "/page/1025/SectionHeader/14",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>2. Referenced Documents</b></h4>",
+            "polygon": [
+              [
+                46.464792251586914,
+                376.6515655517578
+              ],
+              [
+                156.33916854858398,
+                376.6515655517578
+              ],
+              [
+                156.33916854858398,
+                389.4456481933594
+              ],
+              [
+                46.464792251586914,
+                389.4456481933594
+              ]
+            ],
+            "bbox": [
+              46.464792251586914,
+              376.6515655517578,
+              156.33916854858398,
+              389.4456481933594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.1 The following documents of the issue in effect on the date of material purchase form a part of this specification to the extent referenced herein:</p>",
+            "polygon": [
+              [
+                46.15649700164795,
+                390.8568420410156
+              ],
+              [
+                289.6874313354492,
+                390.8568420410156
+              ],
+              [
+                289.6874313354492,
+                426.0539245605469
+              ],
+              [
+                46.15649700164795,
+                426.0539245605469
+              ]
+            ],
+            "bbox": [
+              46.15649700164795,
+              390.8568420410156,
+              289.6874313354492,
+              426.0539245605469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/254",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.2 <i>ASTM Standards:</i> B361 Specification for Factory-Made Wrought Aluminum and Aluminum-Alloy Welding Fittings B404/B404M Specification for Aluminum and Aluminum-Alloy Seamless Condenser and Heat-Exchanger Tubes with Integral Fins (Withdrawn 2006) B547/B547M Specification for Aluminum and Aluminum-</p>",
+            "polygon": [
+              [
+                55.113779067993164,
+                428.3411407470703
+              ],
+              [
+                289.8527526855469,
+                428.3411407470703
+              ],
+              [
+                289.8527526855469,
+                515.8966827392578
+              ],
+              [
+                55.113779067993164,
+                515.8966827392578
+              ]
+            ],
+            "bbox": [
+              55.113779067993164,
+              428.3411407470703,
+              289.8527526855469,
+              515.8966827392578
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                55.98058891296387,
+                438.2688903808594
+              ],
+              [
+                289.47530364990234,
+                438.2688903808594
+              ],
+              [
+                289.47530364990234,
+                462.2449951171875
+              ],
+              [
+                55.98058891296387,
+                462.2449951171875
+              ]
+            ],
+            "bbox": [
+              55.98058891296387,
+              438.2688903808594,
+              289.47530364990234,
+              462.2449951171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">Alloy Formed and Arc-Welded Round Tube</p>",
+            "polygon": [
+              [
+                55.42325019836426,
+                491.8713684082031
+              ],
+              [
+                288.7497253417969,
+                491.8713684082031
+              ],
+              [
+                288.7497253417969,
+                517.0517272949219
+              ],
+              [
+                55.42325019836426,
+                517.0517272949219
+              ]
+            ],
+            "bbox": [
+              55.42325019836426,
+              491.8713684082031,
+              288.7497253417969,
+              517.0517272949219
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">B881 Terminology Relating to Aluminum- and Magnesium-Alloy Products</p>",
+            "polygon": [
+              [
+                311.4233093261719,
+                182.87635803222656
+              ],
+              [
+                545.2499084472656,
+                182.87635803222656
+              ],
+              [
+                545.2499084472656,
+                207.18463134765625
+              ],
+              [
+                311.4233093261719,
+                207.18463134765625
+              ]
+            ],
+            "bbox": [
+              311.4233093261719,
+              182.87635803222656,
+              545.2499084472656,
+              207.18463134765625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.3 <i>ANSI Standards:</i> H35.1/H35.1(M) Alloy and Temper Designation Systems for Aluminum</p>",
+            "polygon": [
+              [
+                312.87213134765625,
+                212.89154052734375
+              ],
+              [
+                545.3748779296875,
+                212.89154052734375
+              ],
+              [
+                545.3748779296875,
+                243.37628173828125
+              ],
+              [
+                312.87213134765625,
+                243.37628173828125
+              ]
+            ],
+            "bbox": [
+              312.87213134765625,
+              212.89154052734375,
+              545.3748779296875,
+              243.37628173828125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">2.4 <i>Military Standards:</i> MIL-STD-409 Alloy Nomenclature and Temper Designation System for Magnesium Base Alloys</p>",
+            "polygon": [
+              [
+                313.06615447998047,
+                249.0816650390625
+              ],
+              [
+                545.1074523925781,
+                249.0816650390625
+              ],
+              [
+                545.1074523925781,
+                279.56640625
+              ],
+              [
+                313.06615447998047,
+                279.56640625
+              ]
+            ],
+            "bbox": [
+              313.06615447998047,
+              249.0816650390625,
+              545.1074523925781,
+              279.56640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/14"
+            }
+          },
+          {
+            "id": "/page/1025/SectionHeader/9",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>3. Terminology</b></h4>",
+            "polygon": [
+              [
+                303.07308197021484,
+                288.46783447265625
+              ],
+              [
+                368.9764709472656,
+                288.46783447265625
+              ],
+              [
+                368.9764709472656,
+                301.518310546875
+              ],
+              [
+                303.07308197021484,
+                301.518310546875
+              ]
+            ],
+            "bbox": [
+              303.07308197021484,
+              288.46783447265625,
+              368.9764709472656,
+              301.518310546875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.1 <i>Definitions</i>—Refer to Terminology B881 for definitions of product terms used in this specification.</p>",
+            "polygon": [
+              [
+                304.8410339355469,
+                303.5851135253906
+              ],
+              [
+                546.3032684326172,
+                303.5851135253906
+              ],
+              [
+                546.3032684326172,
+                327.29756927490234
+              ],
+              [
+                304.8410339355469,
+                327.29756927490234
+              ]
+            ],
+            "bbox": [
+              304.8410339355469,
+              303.5851135253906,
+              546.3032684326172,
+              327.29756927490234
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/25",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2 <i>Definitions of Terms Specific to This Standard:</i></p>",
+            "polygon": [
+              [
+                314.8667297363281,
+                329.4436950683594
+              ],
+              [
+                512.9467163085938,
+                329.4436950683594
+              ],
+              [
+                512.9467163085938,
+                338.1265563964844
+              ],
+              [
+                314.8667297363281,
+                338.1265563964844
+              ]
+            ],
+            "bbox": [
+              314.8667297363281,
+              329.4436950683594,
+              512.9467163085938,
+              338.1265563964844
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2.1 <i>Marking:</i> 3.2.2 <i>spot marking—</i>marking the identification only once on the product.</p>",
+            "polygon": [
+              [
+                303.98345947265625,
+                340.3446960449219
+              ],
+              [
+                546.4403686523438,
+                340.3446960449219
+              ],
+              [
+                546.4403686523438,
+                370.8294677734375
+              ],
+              [
+                303.98345947265625,
+                370.8294677734375
+              ]
+            ],
+            "bbox": [
+              303.98345947265625,
+              340.3446960449219,
+              546.4403686523438,
+              370.8294677734375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2.3 <i>continuous marking—</i>recurring marking of the identification in intervals not greater than 40 in. [1000 mm] throughout the length of the product.</p>",
+            "polygon": [
+              [
+                303.60340118408203,
+                370.8119201660156
+              ],
+              [
+                546.2809295654297,
+                370.8119201660156
+              ],
+              [
+                546.2809295654297,
+                406.3760681152344
+              ],
+              [
+                303.60340118408203,
+                406.3760681152344
+              ]
+            ],
+            "bbox": [
+              303.60340118408203,
+              370.8119201660156,
+              546.2809295654297,
+              406.3760681152344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2.4 <i>perimeter marking—</i>marking continuously the identification in one or two rows adjacent to the four edges of the product.</p>",
+            "polygon": [
+              [
+                302.0369567871094,
+                406.74037170410156
+              ],
+              [
+                546.0517730712891,
+                406.74037170410156
+              ],
+              [
+                546.0517730712891,
+                441.9226989746094
+              ],
+              [
+                302.0369567871094,
+                441.9226989746094
+              ]
+            ],
+            "bbox": [
+              302.0369567871094,
+              406.74037170410156,
+              546.0517730712891,
+              441.9226989746094
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">3.2.5 <i>tagging—</i>attaching tags bearing the required identification markings to coils, bundles, or containers of items which are too small to mark or whose configuration preclude marking otherwise.</p>",
+            "polygon": [
+              [
+                301.8622055053711,
+                442.28150939941406
+              ],
+              [
+                546.8810119628906,
+                442.28150939941406
+              ],
+              [
+                546.8810119628906,
+                488.3702697753906
+              ],
+              [
+                301.8622055053711,
+                488.3702697753906
+              ]
+            ],
+            "bbox": [
+              301.8622055053711,
+              442.28150939941406,
+              546.8810119628906,
+              488.3702697753906
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                55.33897018432617,
+                459.92005920410156
+              ],
+              [
+                289.7593231201172,
+                459.92005920410156
+              ],
+              [
+                289.7593231201172,
+                492.33164978027344
+              ],
+              [
+                55.33897018432617,
+                492.33164978027344
+              ]
+            ],
+            "bbox": [
+              55.33897018432617,
+              459.92005920410156,
+              289.7593231201172,
+              492.33164978027344
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1025/SectionHeader/22",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>4. Basic Marking Requirements and Application</b></h4>",
+            "polygon": [
+              [
+                301.94689178466797,
+                497.4913787841797
+              ],
+              [
+                507.82704162597656,
+                497.4913787841797
+              ],
+              [
+                507.82704162597656,
+                510.32196044921875
+              ],
+              [
+                301.94689178466797,
+                510.32196044921875
+              ]
+            ],
+            "bbox": [
+              301.94689178466797,
+              497.4913787841797,
+              507.82704162597656,
+              510.32196044921875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1025/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1 When this practice is required by the material specification or specified in the contract or purchase order, wrought aluminum and magnesium mill products shall be marked for identification purposes only with the following information on the product or on tags attached to the product:</p>",
+            "polygon": [
+              [
+                302.30248260498047,
+                511.55836486816406
+              ],
+              [
+                546.9891815185547,
+                511.55836486816406
+              ],
+              [
+                546.9891815185547,
+                568.7321929931641
+              ],
+              [
+                302.30248260498047,
+                568.7321929931641
+              ]
+            ],
+            "bbox": [
+              302.30248260498047,
+              511.55836486816406,
+              546.9891815185547,
+              568.7321929931641
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1025/SectionHeader/2",
+          "4": "/page/1025/SectionHeader/22"
+        }
+      },
+      {
+        "pdf_page": 1026,
+        "printed_page": 977,
+        "id": "/page/1026/Page/377",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1026/PageHeader/0'></content-ref><content-ref src='/page/1026/PageHeader/1'></content-ref><content-ref src='/page/1026/PageFooter/29'></content-ref><content-ref src='/page/1026/Text/3'></content-ref><content-ref src='/page/1026/Text/5'></content-ref><content-ref src='/page/1026/Text/7'></content-ref><content-ref src='/page/1026/Text/10'></content-ref><content-ref src='/page/1026/Text/12'></content-ref><content-ref src='/page/1026/Text/13'></content-ref><content-ref src='/page/1026/Text/15'></content-ref><content-ref src='/page/1026/Text/16'></content-ref><content-ref src='/page/1026/Text/17'></content-ref><content-ref src='/page/1026/Text/18'></content-ref><content-ref src='/page/1026/Text/19'></content-ref><content-ref src='/page/1026/Text/20'></content-ref><content-ref src='/page/1026/Text/21'></content-ref><content-ref src='/page/1026/Text/22'></content-ref><content-ref src='/page/1026/Text/24'></content-ref><content-ref src='/page/1026/Text/27'></content-ref><content-ref src='/page/1026/SectionHeader/2'></content-ref><content-ref src='/page/1026/Text/4'></content-ref><content-ref src='/page/1026/Text/6'></content-ref><content-ref src='/page/1026/Text/8'></content-ref><content-ref src='/page/1026/Text/9'></content-ref><content-ref src='/page/1026/Text/11'></content-ref><content-ref src='/page/1026/Text/14'></content-ref><content-ref src='/page/1026/Text/23'></content-ref><content-ref src='/page/1026/PictureGroup/377'></content-ref><content-ref src='/page/1026/Caption/28'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1026/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.7979965209961,
+                34.66952991485596
+              ],
+              [
+                557.981689453125,
+                34.66952991485596
+              ],
+              [
+                557.981689453125,
+                47.0418701171875
+              ],
+              [
+                273.7979965209961,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.7979965209961,
+              34.66952991485596,
+              557.981689453125,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                490.9490203857422,
+                34.79556655883789
+              ],
+              [
+                558.4385375976562,
+                34.79556655883789
+              ],
+              [
+                558.4385375976562,
+                45.11253547668457
+              ],
+              [
+                490.9490203857422,
+                45.11253547668457
+              ]
+            ],
+            "bbox": [
+              490.9490203857422,
+              34.79556655883789,
+              558.4385375976562,
+              45.11253547668457
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/PageFooter/29",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                304.68800354003906,
+                738.2598724365234
+              ],
+              [
+                322.4333190917969,
+                738.2598724365234
+              ],
+              [
+                322.4333190917969,
+                751.9525985717773
+              ],
+              [
+                304.68800354003906,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              304.68800354003906,
+              738.2598724365234,
+              322.4333190917969,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.1 <i>Name or Registered Trademark of the Company,</i> which performs the final processing or finishing operation such as rolling, stretching, thermal treatment, etc., prior to marketing the product;</p>",
+            "polygon": [
+              [
+                64.71766662597656,
+                67.82937240600586
+              ],
+              [
+                307.83055114746094,
+                67.82937240600586
+              ],
+              [
+                307.83055114746094,
+                113.78802490234375
+              ],
+              [
+                64.71766662597656,
+                113.78802490234375
+              ]
+            ],
+            "bbox": [
+              64.71766662597656,
+              67.82937240600586,
+              307.83055114746094,
+              113.78802490234375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 1—The company that performs nothing more than a simple shearing or sawing operation may be excluded from marking the product with its name.</p>",
+            "polygon": [
+              [
+                64.55878257751465,
+                116.68927001953125
+              ],
+              [
+                307.0125503540039,
+                116.68927001953125
+              ],
+              [
+                307.0125503540039,
+                147.412109375
+              ],
+              [
+                64.55878257751465,
+                147.412109375
+              ]
+            ],
+            "bbox": [
+              64.55878257751465,
+              116.68927001953125,
+              307.0125503540039,
+              147.412109375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.2 <i>Alloy and Temper of the Product—</i>Designations shall be in accordance with ANSI H35.1/H35.1M for aluminum and MIL-STD-409 for magnesium;</p>",
+            "polygon": [
+              [
+                64.3011589050293,
+                148.77080154418945
+              ],
+              [
+                307.3600845336914,
+                148.77080154418945
+              ],
+              [
+                307.3600845336914,
+                183.55047607421875
+              ],
+              [
+                64.3011589050293,
+                183.55047607421875
+              ]
+            ],
+            "bbox": [
+              64.3011589050293,
+              148.77080154418945,
+              307.3600845336914,
+              183.55047607421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.3 <i>Basic Number of the Specification to which the Prod</i><i>uct was Produced—</i>The basic number does not include the revision indicator;</p>",
+            "polygon": [
+              [
+                64.5293197631836,
+                181.50394821166992
+              ],
+              [
+                306.7075653076172,
+                181.50394821166992
+              ],
+              [
+                306.7075653076172,
+                216.53582763671875
+              ],
+              [
+                64.5293197631836,
+                216.53582763671875
+              ]
+            ],
+            "bbox": [
+              64.5293197631836,
+              181.50394821166992,
+              306.7075653076172,
+              216.53582763671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.4 <i>Specified (Ordered) Dimensions of the Following</i> <i>Products:</i></p>",
+            "polygon": [
+              [
+                64.8980655670166,
+                214.84039306640625
+              ],
+              [
+                306.6713333129883,
+                214.84039306640625
+              ],
+              [
+                306.6713333129883,
+                238.506591796875
+              ],
+              [
+                64.8980655670166,
+                238.506591796875
+              ]
+            ],
+            "bbox": [
+              64.8980655670166,
+              214.84039306640625,
+              306.6713333129883,
+              238.506591796875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.4.1 <i>Sheet and Plate—</i>Thickness in inches [millimetres], 4.1.4.2 <i>Coiled Wire and Spooled Wire—</i>Diameter in inches [millimetres],</p>",
+            "polygon": [
+              [
+                64.22355079650879,
+                236.4869613647461
+              ],
+              [
+                306.8353500366211,
+                236.4869613647461
+              ],
+              [
+                306.8353500366211,
+                271.88812255859375
+              ],
+              [
+                64.22355079650879,
+                271.88812255859375
+              ]
+            ],
+            "bbox": [
+              64.22355079650879,
+              236.4869613647461,
+              306.8353500366211,
+              271.88812255859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.4.3 <i>Tube:</i></p>",
+            "polygon": [
+              [
+                70.42369079589844,
+                270.4229049682617
+              ],
+              [
+                128.98411560058594,
+                270.4229049682617
+              ],
+              [
+                128.98411560058594,
+                283.0715637207031
+              ],
+              [
+                70.42369079589844,
+                283.0715637207031
+              ]
+            ],
+            "bbox": [
+              70.42369079589844,
+              270.4229049682617,
+              128.98411560058594,
+              283.0715637207031
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><i>(1) Straight Lengths</i>—Outside diameter and wall thickness, in inches [millimetres],</p>",
+            "polygon": [
+              [
+                65.0266170501709,
+                280.0912170410156
+              ],
+              [
+                306.4205322265625,
+                280.0912170410156
+              ],
+              [
+                306.4205322265625,
+                304.8735046386719
+              ],
+              [
+                65.0266170501709,
+                304.8735046386719
+              ]
+            ],
+            "bbox": [
+              65.0266170501709,
+              280.0912170410156,
+              306.4205322265625,
+              304.8735046386719
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><i>(2) Coiled</i>—Wall thickness, in inches [millimetres], 4.1.4.4 <i>Pipe—</i>Nominal pipe size and ANSI schedule number;</p>",
+            "polygon": [
+              [
+                64.17612075805664,
+                307.0916442871094
+              ],
+              [
+                306.4745788574219,
+                307.0916442871094
+              ],
+              [
+                306.4745788574219,
+                337.8589172363281
+              ],
+              [
+                64.17612075805664,
+                337.8589172363281
+              ]
+            ],
+            "bbox": [
+              64.17612075805664,
+              307.0916442871094,
+              306.4745788574219,
+              337.8589172363281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.5 Lot number shall be included in the product marking. The definition of lot shall be that as defined in the material specification.</p>",
+            "polygon": [
+              [
+                64.26894950866699,
+                336.4109344482422
+              ],
+              [
+                306.58827209472656,
+                336.4109344482422
+              ],
+              [
+                306.58827209472656,
+                370.93902587890625
+              ],
+              [
+                64.26894950866699,
+                370.93902587890625
+              ]
+            ],
+            "bbox": [
+              64.26894950866699,
+              336.4109344482422,
+              306.58827209472656,
+              370.93902587890625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.6 For magnesium products, the applicable lot number shall be marked on each piece in at least one location.</p>",
+            "polygon": [
+              [
+                64.18408012390137,
+                369.41510009765625
+              ],
+              [
+                306.8155746459961,
+                369.41510009765625
+              ],
+              [
+                306.8155746459961,
+                393.1765594482422
+              ],
+              [
+                64.18408012390137,
+                393.1765594482422
+              ]
+            ],
+            "bbox": [
+              64.18408012390137,
+              369.41510009765625,
+              306.8155746459961,
+              393.1765594482422
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.1.7 When required by the material specification, the word \"seamless\" on certain tube or pipe.</p>",
+            "polygon": [
+              [
+                64.74074935913086,
+                391.1799774169922
+              ],
+              [
+                306.95848846435547,
+                391.1799774169922
+              ],
+              [
+                306.95848846435547,
+                415.29742431640625
+              ],
+              [
+                64.74074935913086,
+                415.29742431640625
+              ]
+            ],
+            "bbox": [
+              64.74074935913086,
+              391.1799774169922,
+              306.95848846435547,
+              415.29742431640625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 2—The requirements specified in 4.1 are minimum; marking systems that involve additional information shall be as agreed upon between the producer and the purchaser.</p>",
+            "polygon": [
+              [
+                63.93033027648926,
+                418.23394775390625
+              ],
+              [
+                307.4908676147461,
+                418.23394775390625
+              ],
+              [
+                307.4908676147461,
+                449.01568603515625
+              ],
+              [
+                63.93033027648926,
+                449.01568603515625
+              ]
+            ],
+            "bbox": [
+              63.93033027648926,
+              418.23394775390625,
+              307.4908676147461,
+              449.01568603515625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/22",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.2 When this practice is required by the material specification or specified in the contract or purchase order, marking of cast aluminum products shall be in accordance with Section 6.</p>",
+            "polygon": [
+              [
+                63.766971588134766,
+                449.66986083984375
+              ],
+              [
+                307.32627868652344,
+                449.66986083984375
+              ],
+              [
+                307.32627868652344,
+                485.2484436035156
+              ],
+              [
+                63.766971588134766,
+                485.2484436035156
+              ]
+            ],
+            "bbox": [
+              63.766971588134766,
+              449.66986083984375,
+              307.32627868652344,
+              485.2484436035156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/24",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.3 Product marking shall be such that it shall not rub off or be otherwise obliterated by contact arising from normal handling, exposure to the elements, shipment, and storage. The height of the characters shall be commensurate with the size of the product being marked; for example, not less than 0.375 in. [9 mm] for flat sheet and plate, not less than 0.250 in. [6 mm] for hand forgings and not less than 0.125 in. [3 mm] for tubular products. Legibility of all markings shall be such as required for ready readability and the required permanency of identification.</p>",
+            "polygon": [
+              [
+                63.945499420166016,
+                485.8052215576172
+              ],
+              [
+                307.63501739501953,
+                485.8052215576172
+              ],
+              [
+                307.63501739501953,
+                598.4268188476562
+              ],
+              [
+                63.945499420166016,
+                598.4268188476562
+              ]
+            ],
+            "bbox": [
+              63.945499420166016,
+              485.8052215576172,
+              307.63501739501953,
+              598.4268188476562
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/Text/27",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">4.4 Product marking shall be accomplished in a manner that will not adversely affect the subsequent fabrication of the material, or produce stresses that would be deleterious to the functioning of the finished product. Marking on the product shall be with marking fluid applied by printing, stamping, or stenciling. Ghost images of the characters may remain upon the removal of marking applied. Impression stamping is considered detrimental and shall not be used except on ingot, castings, forging, and certain tube products, or when required by prior agreement between the producer and purchaser.</p>",
+            "polygon": [
+              [
+                64.50745010375977,
+                599.2142944335938
+              ],
+              [
+                307.9142532348633,
+                599.2142944335938
+              ],
+              [
+                307.9142532348633,
+                711.6053771972656
+              ],
+              [
+                64.50745010375977,
+                711.6053771972656
+              ]
+            ],
+            "bbox": [
+              64.50745010375977,
+              599.2142944335938,
+              307.9142532348633,
+              711.6053771972656
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1025/SectionHeader/22"
+            }
+          },
+          {
+            "id": "/page/1026/SectionHeader/2",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>5. Marking of Wrought Aluminum and Magnesium Mill</b> <b>Products</b></h4>",
+            "polygon": [
+              [
+                319.8263854980469,
+                67.42068672180176
+              ],
+              [
+                558.8572998046875,
+                67.42068672180176
+              ],
+              [
+                558.8572998046875,
+                91.870361328125
+              ],
+              [
+                319.8263854980469,
+                91.870361328125
+              ]
+            ],
+            "bbox": [
+              319.8263854980469,
+              67.42068672180176,
+              558.8572998046875,
+              91.870361328125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1 When this practice is required by the material specification or specified in the contract or purchase order, wrought aluminum and magnesium mill products shall be marked as follows:</p>",
+            "polygon": [
+              [
+                320.42191314697266,
+                93.18305969238281
+              ],
+              [
+                563.3214111328125,
+                93.18305969238281
+              ],
+              [
+                563.3214111328125,
+                139.37957763671875
+              ],
+              [
+                320.42191314697266,
+                139.37957763671875
+              ]
+            ],
+            "bbox": [
+              320.42191314697266,
+              93.18305969238281,
+              563.3214111328125,
+              139.37957763671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.1 <i>Lot Number, All Products—</i>Spot marking the product. 5.1.2 <i>Coiled Sheet—</i>Spot marking in one or more rows near</p>",
+            "polygon": [
+              [
+                320.63758850097656,
+                137.25199127197266
+              ],
+              [
+                563.1829833984375,
+                137.25199127197266
+              ],
+              [
+                563.1829833984375,
+                170.5400619506836
+              ],
+              [
+                320.63758850097656,
+                170.5400619506836
+              ]
+            ],
+            "bbox": [
+              320.63758850097656,
+              137.25199127197266,
+              563.1829833984375,
+              170.5400619506836
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">the outside end as shown in Fig. 1 [Fig. 1M]. 5.1.3 <i>Flat Sheet and Plate:</i></p>",
+            "polygon": [
+              [
+                320.7601089477539,
+                163.39959716796875
+              ],
+              [
+                563.086669921875,
+                163.39959716796875
+              ],
+              [
+                563.086669921875,
+                187.76637268066406
+              ],
+              [
+                320.7601089477539,
+                187.76637268066406
+              ]
+            ],
+            "bbox": [
+              320.7601089477539,
+              163.39959716796875,
+              563.086669921875,
+              187.76637268066406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.3.1 Flat sheet less than 0.012 in. [up through 0.30 mm] (for O temper, less than 0.020 in. [up through 0.50 mm]) in thickness—Spot marking near one end,</p>",
+            "polygon": [
+              [
+                320.22928619384766,
+                181.1077423095703
+              ],
+              [
+                563.4239959716797,
+                181.1077423095703
+              ],
+              [
+                563.4239959716797,
+                215.68780517578125
+              ],
+              [
+                320.22928619384766,
+                215.68780517578125
+              ]
+            ],
+            "bbox": [
+              320.22928619384766,
+              181.1077423095703,
+              563.4239959716797,
+              215.68780517578125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.3.2 Plate and flat sheet 0.012 in. and over [over 0.30 mm] (for O temper, 0.020 in. and over [over 0.50 mm]) in thickness and less than 6 in. [up through 150 mm] wide— Continuous marking in one row,</p>",
+            "polygon": [
+              [
+                320.43983459472656,
+                213.12217712402344
+              ],
+              [
+                563.7681427001953,
+                213.12217712402344
+              ],
+              [
+                563.7681427001953,
+                259.29168701171875
+              ],
+              [
+                320.43983459472656,
+                259.29168701171875
+              ]
+            ],
+            "bbox": [
+              320.43983459472656,
+              213.12217712402344,
+              563.7681427001953,
+              259.29168701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.3.3 Plate up through 0.375 in. [10 mm] and flat sheet 0.012 in. and over [over 0.30 mm] (for O temper, 0.020 in. and over [over 0.50 mm]) in thickness, 6 through 60 in. [over 150 through 1500 mm] in width, and 36 through 200 in. [over 1000 through 5000 mm] in length—Continuous marking in rows running the direction of rolling on 6 in. [150 mm] centers across the width on one surface as shown in Fig. 2 [Fig. 2M] and Fig. 3[Fig. 3M]. Using the marking pattern of Fig. 2 [Fig. 2M], every third row shall contain the producer's name or trademark and the ordered thickness. The other two rows shall each contain the alloy and temper and the specification number, and shall be staggered. Using the marking pattern of Fig. 3[Fig. 3M], there are two alternating rows. One row shall contain the producer's name or trademark and the ordered thickness, and the alternating row shall contain the alloy and temper and the specification number. Both the marking patterns shown in Fig. 2[Fig. 2M] and Fig. 3[Fig. 3M] provide the same information and either can be used.</p>",
+            "polygon": [
+              [
+                320.5472717285156,
+                257.00706481933594
+              ],
+              [
+                564.0813903808594,
+                257.00706481933594
+              ],
+              [
+                564.0813903808594,
+                455.50787353515625
+              ],
+              [
+                320.5472717285156,
+                455.50787353515625
+              ]
+            ],
+            "bbox": [
+              320.5472717285156,
+              257.00706481933594,
+              564.0813903808594,
+              455.50787353515625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Text/23",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.3.4 Plate over 0.375 in. [10 mm] in thickness, flat sheet and plate over 60 in. [1500 mm] in width or over 200 in. [5000</p>",
+            "polygon": [
+              [
+                319.9532775878906,
+                452.2726135253906
+              ],
+              [
+                563.9026794433594,
+                452.2726135253906
+              ],
+              [
+                563.9026794433594,
+                477.3097839355469
+              ],
+              [
+                319.9532775878906,
+                477.3097839355469
+              ]
+            ],
+            "bbox": [
+              319.9532775878906,
+              452.2726135253906,
+              563.9026794433594,
+              477.3097839355469
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/PictureGroup/377",
+            "block_type": "PictureGroup",
+            "html": "<content-ref src='/page/1026/Picture/25'></content-ref><content-ref src='/page/1026/Caption/26'></content-ref>",
+            "polygon": [
+              [
+                321.13568115234375,
+                498.15623474121094
+              ],
+              [
+                558.7131042480469,
+                498.15623474121094
+              ],
+              [
+                558.7131042480469,
+                683.8257293701172
+              ],
+              [
+                321.13568115234375,
+                683.8257293701172
+              ]
+            ],
+            "bbox": [
+              321.13568115234375,
+              498.15623474121094,
+              558.7131042480469,
+              683.8257293701172
+            ],
+            "children": [
+              {
+                "id": "/page/1026/Picture/25",
+                "block_type": "Picture",
+                "html": "",
+                "polygon": [
+                  [
+                    321.13568115234375,
+                    498.15623474121094
+                  ],
+                  [
+                    558.7131042480469,
+                    498.15623474121094
+                  ],
+                  [
+                    558.7131042480469,
+                    683.8257293701172
+                  ],
+                  [
+                    321.13568115234375,
+                    683.8257293701172
+                  ]
+                ],
+                "bbox": [
+                  321.13568115234375,
+                  498.15623474121094,
+                  558.7131042480469,
+                  683.8257293701172
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/1025/SectionHeader/2",
+                  "4": "/page/1026/SectionHeader/2"
+                },
+                "has_image": true
+              },
+              {
+                "id": "/page/1026/Caption/26",
+                "block_type": "Caption",
+                "html": "<p></p>",
+                "polygon": [
+                  [
+                    378.15662384033203,
+                    589.6468963623047
+                  ],
+                  [
+                    503.5732727050781,
+                    589.6468963623047
+                  ],
+                  [
+                    503.5732727050781,
+                    600.1730804443359
+                  ],
+                  [
+                    378.15662384033203,
+                    600.1730804443359
+                  ]
+                ],
+                "bbox": [
+                  378.15662384033203,
+                  589.6468963623047,
+                  503.5732727050781,
+                  600.1730804443359
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/1025/SectionHeader/2",
+                  "4": "/page/1026/SectionHeader/2"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1026/Caption/28",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 1 M Spot Marking for Coiled Sheet</b></p>",
+            "polygon": [
+              [
+                365.3624725341797,
+                698.3309326171875
+              ],
+              [
+                517.6650695800781,
+                698.3309326171875
+              ],
+              [
+                517.6650695800781,
+                711.2602615356445
+              ],
+              [
+                365.3624725341797,
+                711.2602615356445
+              ]
+            ],
+            "bbox": [
+              365.3624725341797,
+              698.3309326171875,
+              517.6650695800781,
+              711.2602615356445
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1025/SectionHeader/2",
+          "4": "/page/1026/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 1027,
+        "printed_page": 978,
+        "id": "/page/1027/Page/69",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1027/PageHeader/0'></content-ref><content-ref src='/page/1027/PageHeader/1'></content-ref><content-ref src='/page/1027/Figure/2'></content-ref><content-ref src='/page/1027/PageFooter/9'></content-ref><content-ref src='/page/1027/Text/7'></content-ref><content-ref src='/page/1027/Text/8'></content-ref><content-ref src='/page/1027/Text/3'></content-ref><content-ref src='/page/1027/Caption/4'></content-ref><content-ref src='/page/1027/Text/5'></content-ref><content-ref src='/page/1027/Caption/6'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1027/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                34.961666107177734
+              ],
+              [
+                338.08206939697266,
+                34.961666107177734
+              ],
+              [
+                338.08206939697266,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              34.961666107177734,
+              338.08206939697266,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.02032470703125,
+                35.293304443359375
+              ],
+              [
+                117.6775131225586,
+                35.293304443359375
+              ],
+              [
+                117.6775131225586,
+                45.19016933441162
+              ],
+              [
+                51.02032470703125,
+                45.19016933441162
+              ]
+            ],
+            "bbox": [
+              51.02032470703125,
+              35.293304443359375,
+              117.6775131225586,
+              45.19016933441162
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Figure/2",
+            "block_type": "Figure",
+            "html": "",
+            "polygon": [
+              [
+                72.59536743164062,
+                60.974578857421875
+              ],
+              [
+                513.6228332519531,
+                60.974578857421875
+              ],
+              [
+                513.6228332519531,
+                318.4486083984375
+              ],
+              [
+                72.59536743164062,
+                318.4486083984375
+              ]
+            ],
+            "bbox": [
+              72.59536743164062,
+              60.974578857421875,
+              513.6228332519531,
+              318.4486083984375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/1027/PageFooter/9",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.3828125,
+                739.2048797607422
+              ],
+              [
+                304.8013687133789,
+                739.2048797607422
+              ],
+              [
+                304.8013687133789,
+                751.9525985717773
+              ],
+              [
+                286.3828125,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.3828125,
+              739.2048797607422,
+              304.8013687133789,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\" class=\"has-continuation\">mm] in length—Same marking as 5.1.3.3 or perimeter marking on one surface. When perimeter marking of two rows is chosen, one row shall contain the producer's name or trade-</p>",
+            "polygon": [
+              [
+                46.04499435424805,
+                673.4702453613281
+              ],
+              [
+                290.18982696533203,
+                673.4702453613281
+              ],
+              [
+                290.18982696533203,
+                708.672004699707
+              ],
+              [
+                46.04499435424805,
+                708.672004699707
+              ]
+            ],
+            "bbox": [
+              46.04499435424805,
+              673.4702453613281,
+              290.18982696533203,
+              708.672004699707
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">mark and the ordered thickness, and the second row shall contain alloy and temper, and the specification number as shown in Fig. 4 [Fig. 4M].</p>",
+            "polygon": [
+              [
+                302.1243438720703,
+                673.8517913818359
+              ],
+              [
+                547.5328674316406,
+                673.8517913818359
+              ],
+              [
+                547.5328674316406,
+                708.672004699707
+              ],
+              [
+                302.1243438720703,
+                708.672004699707
+              ]
+            ],
+            "bbox": [
+              302.1243438720703,
+              673.8517913818359,
+              547.5328674316406,
+              708.672004699707
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 1—Marking pattern is three staggered rows: two rows contain alloy, temper, and specification number, and every third row contains producer's name and ordered thickness. Figure shows spot marking of the lot number.</p>",
+            "polygon": [
+              [
+                46.61209774017334,
+                318.4486083984375
+              ],
+              [
+                546.1313781738281,
+                318.4486083984375
+              ],
+              [
+                546.1313781738281,
+                339.6009216308594
+              ],
+              [
+                46.61209774017334,
+                339.6009216308594
+              ]
+            ],
+            "bbox": [
+              46.61209774017334,
+              318.4486083984375,
+              546.1313781738281,
+              339.6009216308594
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Caption/4",
+            "block_type": "Caption",
+            "html": "<p><b>FIG 2 Continuous Marking for Plate Through 0.375 in. and Flat Sheet 0.012 in. and over (for O Temper, 0.020 in. and over) in Thickness, 6 Through 60 in.</b> <b>in Width, and 36 Through 200 in. in Length</b></p>",
+            "polygon": [
+              [
+                48.33260536193848,
+                338.57752990722656
+              ],
+              [
+                543.1130218505859,
+                338.57752990722656
+              ],
+              [
+                543.1130218505859,
+                358.3197326660156
+              ],
+              [
+                48.33260536193848,
+                358.3197326660156
+              ]
+            ],
+            "bbox": [
+              48.33260536193848,
+              338.57752990722656,
+              543.1130218505859,
+              358.3197326660156
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 1—Marking pattern is three staggered rows: two rows contain alloy, temper, and specification number, and every third row contains producer's name and ordered thickness. Figure shows spot marking of the lot number.</p>",
+            "polygon": [
+              [
+                46.61348533630371,
+                607.1911926269531
+              ],
+              [
+                546.4892120361328,
+                607.1911926269531
+              ],
+              [
+                546.4892120361328,
+                627.4140625
+              ],
+              [
+                46.61348533630371,
+                627.4140625
+              ]
+            ],
+            "bbox": [
+              46.61348533630371,
+              607.1911926269531,
+              546.4892120361328,
+              627.4140625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1027/Caption/6",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 2 M Continuous Marking for Plate Through 10 mm and Flat Sheet over 0.30 mm (for O Temper, over 0.50 mm) in Thickness, over</b> <b>150 Through 1500 mm in Width, and 1000 Through 5000 mm in Length</b></p>",
+            "polygon": [
+              [
+                46.52863597869873,
+                632.7987213134766
+              ],
+              [
+                545.5639343261719,
+                632.7987213134766
+              ],
+              [
+                545.5639343261719,
+                654.3193511962891
+              ],
+              [
+                46.52863597869873,
+                654.3193511962891
+              ]
+            ],
+            "bbox": [
+              46.52863597869873,
+              632.7987213134766,
+              545.5639343261719,
+              654.3193511962891
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1025/SectionHeader/2",
+          "4": "/page/1026/SectionHeader/2"
+        }
+      },
+      {
+        "pdf_page": 1028,
+        "printed_page": 979,
+        "id": "/page/1028/Page/57",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1028/PageHeader/1'></content-ref><content-ref src='/page/1028/PageHeader/2'></content-ref><content-ref src='/page/1028/SectionHeader/0'></content-ref><content-ref src='/page/1028/PageFooter/8'></content-ref><content-ref src='/page/1028/Text/7'></content-ref><content-ref src='/page/1028/Text/3'></content-ref><content-ref src='/page/1028/Caption/4'></content-ref><content-ref src='/page/1028/Text/5'></content-ref><content-ref src='/page/1028/Caption/6'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1028/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.6486511230469,
+                35.082364082336426
+              ],
+              [
+                356.1920471191406,
+                35.082364082336426
+              ],
+              [
+                356.1920471191406,
+                45.393218994140625
+              ],
+              [
+                273.6486511230469,
+                45.393218994140625
+              ]
+            ],
+            "bbox": [
+              273.6486511230469,
+              35.082364082336426,
+              356.1920471191406,
+              45.393218994140625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1028/PageHeader/2",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                490.7658233642578,
+                35.31572341918945
+              ],
+              [
+                558.5195617675781,
+                35.31572341918945
+              ],
+              [
+                558.5195617675781,
+                45.11099052429199
+              ],
+              [
+                490.7658233642578,
+                45.11099052429199
+              ]
+            ],
+            "bbox": [
+              490.7658233642578,
+              35.31572341918945,
+              558.5195617675781,
+              45.11099052429199
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1026/SectionHeader/2"
+            }
+          },
+          {
+            "id": "/page/1028/SectionHeader/0",
+            "block_type": "SectionHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.6486511230469,
+                35.082364082336426
+              ],
+              [
+                557.981689453125,
+                35.082364082336426
+              ],
+              [
+                557.981689453125,
+                47.0418701171875
+              ],
+              [
+                273.6486511230469,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.6486511230469,
+              35.082364082336426,
+              557.981689453125,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/PageFooter/8",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                304.75000762939453,
+                738.9294891357422
+              ],
+              [
+                322.61329650878906,
+                738.9294891357422
+              ],
+              [
+                322.61329650878906,
+                751.9525985717773
+              ],
+              [
+                304.75000762939453,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              304.75000762939453,
+              738.9294891357422,
+              322.61329650878906,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 3—If perimeter marking is applied to a full piece as produced but partial sheets or plates are supplied, an arrow shall be applied near one corner of each partial sheet or plate indicating the direction of rolling. 5.1.4 <i>Circles:</i></p>",
+            "polygon": [
+              [
+                63.86377143859863,
+                662.6878967285156
+              ],
+              [
+                386.4659423828125,
+                662.6878967285156
+              ],
+              [
+                386.4659423828125,
+                693.130485534668
+              ],
+              [
+                63.86377143859863,
+                693.130485534668
+              ]
+            ],
+            "bbox": [
+              63.86377143859863,
+              662.6878967285156,
+              386.4659423828125,
+              693.130485534668
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 1—Marking pattern is two alternating rows: one row contains alloy, temper, and specification number, and the alternating row contains the producer's name and ordered thickness. Figure shows spot marking of the lot number.</p>",
+            "polygon": [
+              [
+                63.84401321411133,
+                317.0622253417969
+              ],
+              [
+                563.4239959716797,
+                317.0622253417969
+              ],
+              [
+                563.4239959716797,
+                337.77923583984375
+              ],
+              [
+                63.84401321411133,
+                337.77923583984375
+              ]
+            ],
+            "bbox": [
+              63.84401321411133,
+              317.0622253417969,
+              563.4239959716797,
+              337.77923583984375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/Caption/4",
+            "block_type": "Caption",
+            "html": "<p><b>FIG 3 Continuous Marking for Plate Through 0.375 in. and Flat Sheet 0.012 in. and over (for O Temper, 0.020 in. and over) in Thickness, 6 Through 60 in.</b> <b>in Width, and 36 Through 200 in. in Length.</b></p>",
+            "polygon": [
+              [
+                66.68961524963379,
+                336.61685943603516
+              ],
+              [
+                561.5850677490234,
+                336.61685943603516
+              ],
+              [
+                561.5850677490234,
+                356.49810791015625
+              ],
+              [
+                66.68961524963379,
+                356.49810791015625
+              ]
+            ],
+            "bbox": [
+              66.68961524963379,
+              336.61685943603516,
+              561.5850677490234,
+              356.49810791015625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 1—Marking pattern is two alternating rows: one row contains alloy, temper, and specification number, and the alternating row contains the producer's name and ordered thickness. Figure shows spot marking of the lot number.</p>",
+            "polygon": [
+              [
+                63.40199089050293,
+                605.2712860107422
+              ],
+              [
+                564.3262023925781,
+                605.2712860107422
+              ],
+              [
+                564.3262023925781,
+                625.5924987792969
+              ],
+              [
+                63.40199089050293,
+                625.5924987792969
+              ]
+            ],
+            "bbox": [
+              63.40199089050293,
+              605.2712860107422,
+              564.3262023925781,
+              625.5924987792969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1028/Caption/6",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 3 M Continuous Marking for Plate Through 10 mm and Flat Sheet over 0.30 mm (for O Temper, over 0.50 mm) in Thickness, over</b> <b>150 Through 1500 mm in Width, and 1000 Through 5000 mm in Length.</b></p>",
+            "polygon": [
+              [
+                67.63609313964844,
+                630.8454895019531
+              ],
+              [
+                560.2223510742188,
+                630.8454895019531
+              ],
+              [
+                560.2223510742188,
+                652.4976959228516
+              ],
+              [
+                67.63609313964844,
+                652.4976959228516
+              ]
+            ],
+            "bbox": [
+              67.63609313964844,
+              630.8454895019531,
+              560.2223510742188,
+              652.4976959228516
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1025/SectionHeader/2",
+          "4": "/page/1028/SectionHeader/0"
+        }
+      },
+      {
+        "pdf_page": 1029,
+        "printed_page": 980,
+        "id": "/page/1029/Page/222",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1029/PageHeader/0'></content-ref><content-ref src='/page/1029/PageHeader/1'></content-ref><content-ref src='/page/1029/Figure/2'></content-ref><content-ref src='/page/1029/PageFooter/22'></content-ref><content-ref src='/page/1029/Text/10'></content-ref><content-ref src='/page/1029/Text/11'></content-ref><content-ref src='/page/1029/Text/12'></content-ref><content-ref src='/page/1029/Text/13'></content-ref><content-ref src='/page/1029/Text/15'></content-ref><content-ref src='/page/1029/Text/17'></content-ref><content-ref src='/page/1029/Text/20'></content-ref><content-ref src='/page/1029/Text/9'></content-ref><content-ref src='/page/1029/Text/14'></content-ref><content-ref src='/page/1029/Text/16'></content-ref><content-ref src='/page/1029/Text/18'></content-ref><content-ref src='/page/1029/Text/19'></content-ref><content-ref src='/page/1029/Text/21'></content-ref><content-ref src='/page/1029/Caption/3'></content-ref><content-ref src='/page/1029/FigureGroup/222'></content-ref><content-ref src='/page/1029/Caption/7'></content-ref><content-ref src='/page/1029/SectionHeader/8'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1029/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.14924240112305,
+                34.835835456848145
+              ],
+              [
+                117.39779663085938,
+                34.835835456848145
+              ],
+              [
+                117.39779663085938,
+                44.94443321228027
+              ],
+              [
+                51.14924240112305,
+                44.94443321228027
+              ]
+            ],
+            "bbox": [
+              51.14924240112305,
+              34.835835456848145,
+              117.39779663085938,
+              44.94443321228027
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                34.9660120010376
+              ],
+              [
+                337.88509368896484,
+                34.9660120010376
+              ],
+              [
+                337.88509368896484,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              34.9660120010376,
+              337.88509368896484,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Figure/2",
+            "block_type": "Figure",
+            "html": "",
+            "polygon": [
+              [
+                138.1072883605957,
+                61.85040435791016
+              ],
+              [
+                449.61607360839844,
+                61.85040435791016
+              ],
+              [
+                449.61607360839844,
+                229.2339614868164
+              ],
+              [
+                138.1072883605957,
+                229.2339614868164
+              ]
+            ],
+            "bbox": [
+              138.1072883605957,
+              61.85040435791016,
+              449.61607360839844,
+              229.2339614868164
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            },
+            "has_image": true
+          },
+          {
+            "id": "/page/1029/PageFooter/22",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.2695617675781,
+                739.6960601806641
+              ],
+              [
+                304.4616394042969,
+                739.6960601806641
+              ],
+              [
+                304.4616394042969,
+                751.9525985717773
+              ],
+              [
+                286.2695617675781,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.2695617675781,
+              739.6960601806641,
+              304.4616394042969,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.4.1 Circles 24 in. and over [over 600 mm] in diameter— Spot marking on each circle unless the circle was cut from sheet or plate having continuous marking, and</p>",
+            "polygon": [
+              [
+                46.29751110076904,
+                493.8631896972656
+              ],
+              [
+                289.8563003540039,
+                493.8631896972656
+              ],
+              [
+                289.8563003540039,
+                528.5193786621094
+              ],
+              [
+                46.29751110076904,
+                528.5193786621094
+              ]
+            ],
+            "bbox": [
+              46.29751110076904,
+              493.8631896972656,
+              289.8563003540039,
+              528.5193786621094
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/11",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.4.2 Circles less than 24 in. [up through 600 mm] in diameter—Tagging or marking of shipping container.</p>",
+            "polygon": [
+              [
+                46.147504806518555,
+                525.9582824707031
+              ],
+              [
+                289.54676055908203,
+                525.9582824707031
+              ],
+              [
+                289.54676055908203,
+                550.3212738037109
+              ],
+              [
+                46.147504806518555,
+                550.3212738037109
+              ]
+            ],
+            "bbox": [
+              46.147504806518555,
+              525.9582824707031,
+              289.54676055908203,
+              550.3212738037109
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">NOTE 4—Alclad one side flat sheet, plate, circles, and coiled sheet shall be marked on the bare side.</p>",
+            "polygon": [
+              [
+                46.24757480621338,
+                553.1134643554688
+              ],
+              [
+                289.30176544189453,
+                553.1134643554688
+              ],
+              [
+                289.30176544189453,
+                574.65771484375
+              ],
+              [
+                46.24757480621338,
+                574.65771484375
+              ]
+            ],
+            "bbox": [
+              46.24757480621338,
+              553.1134643554688,
+              289.30176544189453,
+              574.65771484375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.5 <i>Tread Plate—</i>Spot marking near one end on the back side.</p>",
+            "polygon": [
+              [
+                46.44843864440918,
+                575.2268371582031
+              ],
+              [
+                288.78936767578125,
+                575.2268371582031
+              ],
+              [
+                288.78936767578125,
+                599.6122283935547
+              ],
+              [
+                46.44843864440918,
+                599.6122283935547
+              ]
+            ],
+            "bbox": [
+              46.44843864440918,
+              575.2268371582031,
+              288.78936767578125,
+              599.6122283935547
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.6 <i>Foil—</i>Marking of this product is not required. Package marking only.</p>",
+            "polygon": [
+              [
+                46.21403217315674,
+                596.9270782470703
+              ],
+              [
+                289.14601135253906,
+                596.9270782470703
+              ],
+              [
+                289.14601135253906,
+                621.4141387939453
+              ],
+              [
+                46.21403217315674,
+                621.4141387939453
+              ]
+            ],
+            "bbox": [
+              46.21403217315674,
+              596.9270782470703,
+              289.14601135253906,
+              621.4141387939453
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/17",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.7 <i>Rod, Bar, and Extruded Profiles—</i>Continuous marking of straight lengths as shown in Fig. 5 [Fig. 5M], of sizes having an accessible flat surface of 1⁄2 in. or more [over 12.5 mm] in width (with less than 1⁄8 in. [3 mm and less] indented surface), or a diameter of 1⁄2 in. [over 12.5 mm] or more. Tagging is applicable to smaller sizes, lengths under 3 ft [1 m] and coils.</p>",
+            "polygon": [
+              [
+                45.7532958984375,
+                618.6816101074219
+              ],
+              [
+                289.83670806884766,
+                618.6816101074219
+              ],
+              [
+                289.83670806884766,
+                686.8194808959961
+              ],
+              [
+                45.7532958984375,
+                686.8194808959961
+              ]
+            ],
+            "bbox": [
+              45.7532958984375,
+              618.6816101074219,
+              289.83670806884766,
+              686.8194808959961
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/20",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.8 <i>Structural Profiles—</i>Spot marking near one end as shown in Fig. 6 [Fig. 6M].</p>",
+            "polygon": [
+              [
+                46.172372817993164,
+                684.2193145751953
+              ],
+              [
+                288.7590637207031,
+                684.2193145751953
+              ],
+              [
+                288.7590637207031,
+                708.6213989257812
+              ],
+              [
+                46.172372817993164,
+                708.6213989257812
+              ]
+            ],
+            "bbox": [
+              46.172372817993164,
+              684.2193145751953,
+              288.7590637207031,
+              708.6213989257812
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/9",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.9 <i>Tube and Pipe—</i>Continuous marking of non-round straight lengths in a single row of sizes having both a wall thickness of 0.029 in. and greater [over 0.72 mm] and a flat surface of 1⁄2 in. or more [over 12.5 mm] in width. Continuous marking of round straight lengths in a single row of sizes having both a wall thickness of 0.029 in. and greater [over 0.72 mm] and a diameter of 1⁄2 in. or more [over 12.5 mm]. Tagging is applicable to each coil or bundle of smaller sizes and lengths under 3 ft [1 m].</p>",
+            "polygon": [
+              [
+                302.70574951171875,
+                493.5205535888672
+              ],
+              [
+                545.8833160400391,
+                493.5205535888672
+              ],
+              [
+                545.8833160400391,
+                593.9248504638672
+              ],
+              [
+                302.70574951171875,
+                593.9248504638672
+              ]
+            ],
+            "bbox": [
+              302.70574951171875,
+              493.5205535888672,
+              545.8833160400391,
+              593.9248504638672
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.10 <i>Wire—</i>Tagging of coils and straight lengths, and spot marking on one flange of spools.</p>",
+            "polygon": [
+              [
+                303.1212158203125,
+                592.8147125244141
+              ],
+              [
+                545.1087341308594,
+                592.8147125244141
+              ],
+              [
+                545.1087341308594,
+                616.8576507568359
+              ],
+              [
+                303.1212158203125,
+                616.8576507568359
+              ]
+            ],
+            "bbox": [
+              303.1212158203125,
+              592.8147125244141,
+              545.1087341308594,
+              616.8576507568359
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.11 <i>Bus Bar—</i>Spot marking near one end except that specification number shall not be required to be marked on this product.</p>",
+            "polygon": [
+              [
+                302.3345260620117,
+                615.4700317382812
+              ],
+              [
+                545.2049102783203,
+                615.4700317382812
+              ],
+              [
+                545.2049102783203,
+                650.6913909912109
+              ],
+              [
+                302.3345260620117,
+                650.6913909912109
+              ]
+            ],
+            "bbox": [
+              302.3345260620117,
+              615.4700317382812,
+              545.2049102783203,
+              650.6913909912109
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.12 <i>Forgings:</i></p>",
+            "polygon": [
+              [
+                311.5073547363281,
+                649.7099761962891
+              ],
+              [
+                380.5086364746094,
+                649.7099761962891
+              ],
+              [
+                380.5086364746094,
+                662.7232208251953
+              ],
+              [
+                311.5073547363281,
+                662.7232208251953
+              ]
+            ],
+            "bbox": [
+              311.5073547363281,
+              649.7099761962891,
+              380.5086364746094,
+              662.7232208251953
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/19",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.12.1 <i>Hand Forging—</i>Spot marking on one place of each piece.</p>",
+            "polygon": [
+              [
+                301.56605529785156,
+                661.6550903320312
+              ],
+              [
+                545.2429504394531,
+                661.6550903320312
+              ],
+              [
+                545.2429504394531,
+                685.656005859375
+              ],
+              [
+                301.56605529785156,
+                685.656005859375
+              ]
+            ],
+            "bbox": [
+              301.56605529785156,
+              661.6550903320312,
+              545.2429504394531,
+              685.656005859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Text/21",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">5.1.12.2 <i>Die Forging—</i>Marking in accordance with the requirements of the forging drawing.</p>",
+            "polygon": [
+              [
+                302.61600494384766,
+                684.6470031738281
+              ],
+              [
+                545.4467010498047,
+                684.6470031738281
+              ],
+              [
+                545.4467010498047,
+                708.6835861206055
+              ],
+              [
+                302.61600494384766,
+                708.6835861206055
+              ]
+            ],
+            "bbox": [
+              302.61600494384766,
+              684.6470031738281,
+              545.4467010498047,
+              708.6835861206055
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Caption/3",
+            "block_type": "Caption",
+            "html": "<p>NOTE 1—Figure shows spot marking of the lot number. Arrow indicates the rolling direction.</p>",
+            "polygon": [
+              [
+                145.2780303955078,
+                231.08956146240234
+              ],
+              [
+                455.14801025390625,
+                231.08956146240234
+              ],
+              [
+                455.14801025390625,
+                243.04461669921875
+              ],
+              [
+                145.2780303955078,
+                243.04461669921875
+              ]
+            ],
+            "bbox": [
+              145.2780303955078,
+              231.08956146240234,
+              455.14801025390625,
+              243.04461669921875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/FigureGroup/222",
+            "block_type": "FigureGroup",
+            "html": "<content-ref src='/page/1029/Caption/4'></content-ref><content-ref src='/page/1029/Figure/5'></content-ref><content-ref src='/page/1029/Caption/6'></content-ref>",
+            "polygon": [
+              [
+                87.77826118469238,
+                250.7527313232422
+              ],
+              [
+                504.0936584472656,
+                250.7527313232422
+              ],
+              [
+                504.0936584472656,
+                443.91168212890625
+              ],
+              [
+                87.77826118469238,
+                443.91168212890625
+              ]
+            ],
+            "bbox": [
+              87.77826118469238,
+              250.7527313232422,
+              504.0936584472656,
+              443.91168212890625
+            ],
+            "children": [
+              {
+                "id": "/page/1029/Caption/4",
+                "block_type": "Caption",
+                "html": "<p><b>FIG 4 Perimeter Marking for Plate over 0.375 in. in Thickness, Flat Sheet and Plate over 60 in. in Width or over 200 in. in Length.</b></p>",
+                "polygon": [
+                  [
+                    87.77826118469238,
+                    250.7527313232422
+                  ],
+                  [
+                    504.0936584472656,
+                    250.7527313232422
+                  ],
+                  [
+                    504.0936584472656,
+                    262.7109375
+                  ],
+                  [
+                    87.77826118469238,
+                    262.7109375
+                  ]
+                ],
+                "bbox": [
+                  87.77826118469238,
+                  250.7527313232422,
+                  504.0936584472656,
+                  262.7109375
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/1025/SectionHeader/2",
+                  "4": "/page/1028/SectionHeader/0"
+                }
+              },
+              {
+                "id": "/page/1029/Figure/5",
+                "block_type": "Figure",
+                "html": "",
+                "polygon": [
+                  [
+                    137.22711181640625,
+                    262.50894927978516
+                  ],
+                  [
+                    449.5313186645508,
+                    262.50894927978516
+                  ],
+                  [
+                    449.5313186645508,
+                    425.18749237060547
+                  ],
+                  [
+                    137.22711181640625,
+                    425.18749237060547
+                  ]
+                ],
+                "bbox": [
+                  137.22711181640625,
+                  262.50894927978516,
+                  449.5313186645508,
+                  425.18749237060547
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/1025/SectionHeader/2",
+                  "4": "/page/1028/SectionHeader/0"
+                },
+                "has_image": true
+              },
+              {
+                "id": "/page/1029/Caption/6",
+                "block_type": "Caption",
+                "html": "<p>NOTE 1—Figure shows spot marking of the lot number. Arrow indicates the rolling direction.</p>",
+                "polygon": [
+                  [
+                    144.03979110717773,
+                    432.2054901123047
+                  ],
+                  [
+                    455.14801025390625,
+                    432.2054901123047
+                  ],
+                  [
+                    455.14801025390625,
+                    443.91168212890625
+                  ],
+                  [
+                    144.03979110717773,
+                    443.91168212890625
+                  ]
+                ],
+                "bbox": [
+                  144.03979110717773,
+                  432.2054901123047,
+                  455.14801025390625,
+                  443.91168212890625
+                ],
+                "children": null,
+                "section_hierarchy": {
+                  "1": "/page/1025/SectionHeader/2",
+                  "4": "/page/1028/SectionHeader/0"
+                }
+              }
+            ],
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/Caption/7",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 4 M Perimeter Marking for Plate over 10 mm in Thickness, Flat Sheet and Plate over 1500 mm in Width or over 5000 mm in</b> <b>Length.</b></p>",
+            "polygon": [
+              [
+                59.098989486694336,
+                459.12176513671875
+              ],
+              [
+                532.3477020263672,
+                459.12176513671875
+              ],
+              [
+                532.3477020263672,
+                479.82177734375
+              ],
+              [
+                59.098989486694336,
+                479.82177734375
+              ]
+            ],
+            "bbox": [
+              59.098989486694336,
+              459.12176513671875,
+              532.3477020263672,
+              479.82177734375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "4": "/page/1028/SectionHeader/0"
+            }
+          },
+          {
+            "id": "/page/1029/SectionHeader/8",
+            "block_type": "SectionHeader",
+            "html": "",
+            "polygon": [
+              [
+                59.098989486694336,
+                459.12176513671875
+              ],
+              [
+                532.3477020263672,
+                459.12176513671875
+              ],
+              [
+                532.3477020263672,
+                477.9302215576172
+              ],
+              [
+                59.098989486694336,
+                477.9302215576172
+              ]
+            ],
+            "bbox": [
+              59.098989486694336,
+              459.12176513671875,
+              532.3477020263672,
+              477.9302215576172
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "2": "/page/1029/SectionHeader/8"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1025/SectionHeader/2",
+          "2": "/page/1029/SectionHeader/8"
+        }
+      },
+      {
+        "pdf_page": 1030,
+        "printed_page": 981,
+        "id": "/page/1030/Page/141",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1030/PageHeader/0'></content-ref><content-ref src='/page/1030/PageHeader/1'></content-ref><content-ref src='/page/1030/PageFooter/17'></content-ref><content-ref src='/page/1030/SectionHeader/6'></content-ref><content-ref src='/page/1030/Text/7'></content-ref><content-ref src='/page/1030/SectionHeader/9'></content-ref><content-ref src='/page/1030/Text/10'></content-ref><content-ref src='/page/1030/Text/14'></content-ref><content-ref src='/page/1030/Text/15'></content-ref><content-ref src='/page/1030/Text/16'></content-ref><content-ref src='/page/1030/Text/5'></content-ref><content-ref src='/page/1030/Text/8'></content-ref><content-ref src='/page/1030/SectionHeader/11'></content-ref><content-ref src='/page/1030/Text/141'></content-ref><content-ref src='/page/1030/Text/13'></content-ref><content-ref src='/page/1030/Text/18'></content-ref><content-ref src='/page/1030/Caption/2'></content-ref><content-ref src='/page/1030/Caption/3'></content-ref><content-ref src='/page/1030/Caption/4'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1030/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                273.70003509521484,
+                34.82530975341797
+              ],
+              [
+                557.981689453125,
+                34.82530975341797
+              ],
+              [
+                557.981689453125,
+                47.0418701171875
+              ],
+              [
+                273.70003509521484,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              273.70003509521484,
+              34.82530975341797,
+              557.981689453125,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "2": "/page/1029/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/1030/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                491.1861877441406,
+                35.02650833129883
+              ],
+              [
+                558.2476501464844,
+                35.02650833129883
+              ],
+              [
+                558.2476501464844,
+                45.159685134887695
+              ],
+              [
+                491.1861877441406,
+                45.159685134887695
+              ]
+            ],
+            "bbox": [
+              491.1861877441406,
+              35.02650833129883,
+              558.2476501464844,
+              45.159685134887695
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "2": "/page/1029/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/1030/PageFooter/17",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                305.12789154052734,
+                739.3796997070312
+              ],
+              [
+                322.4333190917969,
+                739.3796997070312
+              ],
+              [
+                322.4333190917969,
+                751.9525985717773
+              ],
+              [
+                305.12789154052734,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              305.12789154052734,
+              739.3796997070312,
+              322.4333190917969,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1025/SectionHeader/2",
+              "2": "/page/1029/SectionHeader/8"
+            }
+          },
+          {
+            "id": "/page/1030/SectionHeader/6",
+            "block_type": "SectionHeader",
+            "html": "<h1><b>6. Marking of Cast Aluminum Products</b></h1>",
+            "polygon": [
+              [
+                63.325178146362305,
+                534.8858184814453
+              ],
+              [
+                234.56531524658203,
+                534.8858184814453
+              ],
+              [
+                234.56531524658203,
+                548.3111877441406
+              ],
+              [
+                63.325178146362305,
+                548.3111877441406
+              ]
+            ],
+            "bbox": [
+              63.325178146362305,
+              534.8858184814453,
+              234.56531524658203,
+              548.3111877441406
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6"
+            }
+          },
+          {
+            "id": "/page/1030/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.1 <i>Castings—</i>Marking shall be that as specified by the applicable material specification or as agreed upon between the producer and the purchaser.</p>",
+            "polygon": [
+              [
+                63.69912528991699,
+                549.7136535644531
+              ],
+              [
+                307.50709533691406,
+                549.7136535644531
+              ],
+              [
+                307.50709533691406,
+                584.9194641113281
+              ],
+              [
+                63.69912528991699,
+                584.9194641113281
+              ]
+            ],
+            "bbox": [
+              63.69912528991699,
+              549.7136535644531,
+              307.50709533691406,
+              584.9194641113281
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6"
+            }
+          },
+          {
+            "id": "/page/1030/SectionHeader/9",
+            "block_type": "SectionHeader",
+            "html": "<h4>6.2 <i>Remelt Ingot for Castings:</i></h4>",
+            "polygon": [
+              [
+                74.75331115722656,
+                587.0309600830078
+              ],
+              [
+                196.6058807373047,
+                587.0309600830078
+              ],
+              [
+                196.6058807373047,
+                599.6120758056641
+              ],
+              [
+                74.75331115722656,
+                599.6120758056641
+              ]
+            ],
+            "bbox": [
+              74.75331115722656,
+              587.0309600830078,
+              196.6058807373047,
+              599.6120758056641
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.2.1 <i>Marking of Aluminum Ingot—</i>The producer's name or trademark (see 4.1.1), alloy designation (see 4.1.2) and cast number shall be impressioned-stamped or otherwise permanently marked on each ingot or if strapped together, not less than four ingots in each bundle, two in the top layer and two in the bottom layer. Specification number shall not be required to be marked on this product.</p>",
+            "polygon": [
+              [
+                64.22620582580566,
+                596.1357879638672
+              ],
+              [
+                308.75193786621094,
+                596.1357879638672
+              ],
+              [
+                308.75193786621094,
+                675.91845703125
+              ],
+              [
+                64.22620582580566,
+                675.91845703125
+              ]
+            ],
+            "bbox": [
+              64.22620582580566,
+              596.1357879638672,
+              308.75193786621094,
+              675.91845703125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/14",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.2.2 <i>Marking of Magnesium Ingot—</i>The producer's name or trademark (see 4.1.1), alloy designation (see 4.1.2), and cast number shall be impression-stamped or otherwise permanently</p>",
+            "polygon": [
+              [
+                63.945905685424805,
+                673.1382293701172
+              ],
+              [
+                307.35205078125,
+                673.1382293701172
+              ],
+              [
+                307.35205078125,
+                708.6210556030273
+              ],
+              [
+                63.945905685424805,
+                708.6210556030273
+              ]
+            ],
+            "bbox": [
+              63.945905685424805,
+              673.1382293701172,
+              307.35205078125,
+              708.6210556030273
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/15",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                329.50286865234375,
+                673.7190856933594
+              ],
+              [
+                500.3262634277344,
+                673.7190856933594
+              ],
+              [
+                500.3262634277344,
+                686.2394256591797
+              ],
+              [
+                329.50286865234375,
+                686.2394256591797
+              ]
+            ],
+            "bbox": [
+              329.50286865234375,
+              673.7190856933594,
+              500.3262634277344,
+              686.2394256591797
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/16",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                321.80907440185547,
+                684.4990539550781
+              ],
+              [
+                562.7417449951172,
+                684.4990539550781
+              ],
+              [
+                562.7417449951172,
+                707.723876953125
+              ],
+              [
+                321.80907440185547,
+                707.723876953125
+              ]
+            ],
+            "bbox": [
+              321.80907440185547,
+              684.4990539550781,
+              562.7417449951172,
+              707.723876953125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">marked on each ingot or bundle, if strapped together. Specification number shall not be required to be marked on this product.</p>",
+            "polygon": [
+              [
+                320.4792709350586,
+                534.8813781738281
+              ],
+              [
+                563.7177886962891,
+                534.8813781738281
+              ],
+              [
+                563.7177886962891,
+                570.2262115478516
+              ],
+              [
+                320.4792709350586,
+                570.2262115478516
+              ]
+            ],
+            "bbox": [
+              320.4792709350586,
+              534.8813781738281,
+              563.7177886962891,
+              570.2262115478516
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">6.3 <i>Ingot or Billet for Fabricating—</i>When specified in the contract or purchase order, marking shall include the producer's name or trademark, alloy and cast number. Specification data shall not be required to be marked on these products.</p>",
+            "polygon": [
+              [
+                320.4758834838867,
+                571.3740692138672
+              ],
+              [
+                563.8226623535156,
+                571.3740692138672
+              ],
+              [
+                563.8226623535156,
+                617.6217041015625
+              ],
+              [
+                320.4758834838867,
+                617.6217041015625
+              ]
+            ],
+            "bbox": [
+              320.4758834838867,
+              571.3740692138672,
+              563.8226623535156,
+              617.6217041015625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1030/SectionHeader/11",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>7. Marking of Unalloyed Aluminum and Magnesium</b> <b>Ingot</b></h4>",
+            "polygon": [
+              [
+                320.33777618408203,
+                626.2541198730469
+              ],
+              [
+                542.7592163085938,
+                626.2541198730469
+              ],
+              [
+                542.7592163085938,
+                650.19189453125
+              ],
+              [
+                320.33777618408203,
+                650.19189453125
+              ]
+            ],
+            "bbox": [
+              320.33777618408203,
+              626.2541198730469,
+              542.7592163085938,
+              650.19189453125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Text/141",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1 When specified in the contract or purchase order, unalloyed aluminum ingot shall be marked as follows: 7.1.1 Producer's name, logo, or trademark, 7.1.2 Production location either permanently cast in, impression stamped, or otherwise marked,</p>",
+            "polygon": [
+              [
+                320.5810775756836,
+                650.064697265625
+              ],
+              [
+                564.22119140625,
+                650.064697265625
+              ],
+              [
+                564.22119140625,
+                708.6020889282227
+              ],
+              [
+                320.5810775756836,
+                708.6020889282227
+              ]
+            ],
+            "bbox": [
+              320.5810775756836,
+              650.064697265625,
+              564.22119140625,
+              708.6020889282227
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Text/13",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"></p>",
+            "polygon": [
+              [
+                320.26050567626953,
+                651.1864471435547
+              ],
+              [
+                563.742919921875,
+                651.1864471435547
+              ],
+              [
+                563.742919921875,
+                674.3040618896484
+              ],
+              [
+                320.26050567626953,
+                674.3040618896484
+              ]
+            ],
+            "bbox": [
+              320.26050567626953,
+              651.1864471435547,
+              563.742919921875,
+              674.3040618896484
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Text/18",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\"><b>FIG 5 Continuous Marking for Rod, Bar, Profiles, and Tube in Straight Lengths</b></p>",
+            "polygon": [
+              [
+                190.3721466064453,
+                174.1630859375
+              ],
+              [
+                439.84124755859375,
+                174.1630859375
+              ],
+              [
+                439.84124755859375,
+                180.49322509765625
+              ],
+              [
+                190.3721466064453,
+                180.49322509765625
+              ]
+            ],
+            "bbox": [
+              190.3721466064453,
+              174.1630859375,
+              439.84124755859375,
+              180.49322509765625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Caption/2",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 5 M Continuous Marking for Rod, Bar, Profiles, and Tube in Straight Lengths</b></p>",
+            "polygon": [
+              [
+                162.08485794067383,
+                284.9561233520508
+              ],
+              [
+                466.28013610839844,
+                284.9561233520508
+              ],
+              [
+                466.28013610839844,
+                296.99957275390625
+              ],
+              [
+                162.08485794067383,
+                296.99957275390625
+              ]
+            ],
+            "bbox": [
+              162.08485794067383,
+              284.9561233520508,
+              466.28013610839844,
+              296.99957275390625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Caption/3",
+            "block_type": "Caption",
+            "html": "<p><b>FIG 6 Spot Marking for Structural Profiles</b></p>",
+            "polygon": [
+              [
+                243.9653778076172,
+                408.409423828125
+              ],
+              [
+                384.0407409667969,
+                408.409423828125
+              ],
+              [
+                384.0407409667969,
+                419.63739013671875
+              ],
+              [
+                243.9653778076172,
+                419.63739013671875
+              ]
+            ],
+            "bbox": [
+              243.9653778076172,
+              408.409423828125,
+              384.0407409667969,
+              419.63739013671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1030/Caption/4",
+            "block_type": "Caption",
+            "html": "<p><b>FIG. 6 M Spot Marking for Structural Profiles</b></p>",
+            "polygon": [
+              [
+                226.89374542236328,
+                504.9466552734375
+              ],
+              [
+                399.3849334716797,
+                504.9466552734375
+              ],
+              [
+                399.3849334716797,
+                516.5339050292969
+              ],
+              [
+                226.89374542236328,
+                516.5339050292969
+              ]
+            ],
+            "bbox": [
+              226.89374542236328,
+              504.9466552734375,
+              399.3849334716797,
+              516.5339050292969
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1030/SectionHeader/6",
+          "4": "/page/1030/SectionHeader/11"
+        }
+      },
+      {
+        "pdf_page": 1031,
+        "printed_page": 982,
+        "id": "/page/1031/Page/100",
+        "block_type": "Page",
+        "html": "<content-ref src='/page/1031/PageHeader/0'></content-ref><content-ref src='/page/1031/PageHeader/1'></content-ref><content-ref src='/page/1031/PageFooter/13'></content-ref><content-ref src='/page/1031/Text/3'></content-ref><content-ref src='/page/1031/Text/4'></content-ref><content-ref src='/page/1031/Text/6'></content-ref><content-ref src='/page/1031/Text/7'></content-ref><content-ref src='/page/1031/Text/8'></content-ref><content-ref src='/page/1031/SectionHeader/11'></content-ref><content-ref src='/page/1031/Text/12'></content-ref><content-ref src='/page/1031/Text/2'></content-ref><content-ref src='/page/1031/Text/5'></content-ref><content-ref src='/page/1031/SectionHeader/9'></content-ref><content-ref src='/page/1031/Text/10'></content-ref>",
+        "polygon": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            612.0,
+            0.0
+          ],
+          [
+            612.0,
+            792.0
+          ],
+          [
+            0.0,
+            792.0
+          ]
+        ],
+        "bbox": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "children": [
+          {
+            "id": "/page/1031/PageHeader/0",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                54.0290641784668,
+                35.33595943450928
+              ],
+              [
+                338.40394592285156,
+                35.33595943450928
+              ],
+              [
+                338.40394592285156,
+                47.0418701171875
+              ],
+              [
+                54.0290641784668,
+                47.0418701171875
+              ]
+            ],
+            "bbox": [
+              54.0290641784668,
+              35.33595943450928,
+              338.40394592285156,
+              47.0418701171875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/PageHeader/1",
+            "block_type": "PageHeader",
+            "html": "",
+            "polygon": [
+              [
+                51.5657901763916,
+                35.5480899810791
+              ],
+              [
+                117.89472198486328,
+                35.5480899810791
+              ],
+              [
+                117.89472198486328,
+                45.55872631072998
+              ],
+              [
+                51.5657901763916,
+                45.55872631072998
+              ]
+            ],
+            "bbox": [
+              51.5657901763916,
+              35.5480899810791,
+              117.89472198486328,
+              45.55872631072998
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/PageFooter/13",
+            "block_type": "PageFooter",
+            "html": "",
+            "polygon": [
+              [
+                286.41856384277344,
+                739.4019927978516
+              ],
+              [
+                304.5820083618164,
+                739.4019927978516
+              ],
+              [
+                304.5820083618164,
+                751.9525985717773
+              ],
+              [
+                286.41856384277344,
+                751.9525985717773
+              ]
+            ],
+            "bbox": [
+              286.41856384277344,
+              739.4019927978516,
+              304.5820083618164,
+              751.9525985717773
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/3",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1.3 Metal grade or aluminum designation impression stamped or otherwise marked with legible characters, and</p>",
+            "polygon": [
+              [
+                48.1021728515625,
+                68.56907844543457
+              ],
+              [
+                289.89054107666016,
+                68.56907844543457
+              ],
+              [
+                289.89054107666016,
+                94.14163398742676
+              ],
+              [
+                48.1021728515625,
+                94.14163398742676
+              ]
+            ],
+            "bbox": [
+              48.1021728515625,
+              68.56907844543457,
+              289.89054107666016,
+              94.14163398742676
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/4",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.1.4 Cast number, or other identification, by convention which allows traceability of specific ingot to a specific chemical composition.</p>",
+            "polygon": [
+              [
+                46.854477882385254,
+                91.70574188232422
+              ],
+              [
+                289.5673370361328,
+                91.70574188232422
+              ],
+              [
+                289.5673370361328,
+                124.614013671875
+              ],
+              [
+                46.854477882385254,
+                124.614013671875
+              ]
+            ],
+            "bbox": [
+              46.854477882385254,
+              91.70574188232422,
+              289.5673370361328,
+              124.614013671875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/6",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2 When specified in the contract or purchase order, unalloyed magnesium ingot shall be permanently marked on each ingot, pig, billet, or pallet as follows:</p>",
+            "polygon": [
+              [
+                46.311856269836426,
+                126.5811996459961
+              ],
+              [
+                290.0547637939453,
+                126.5811996459961
+              ],
+              [
+                290.0547637939453,
+                161.1085205078125
+              ],
+              [
+                46.311856269836426,
+                161.1085205078125
+              ]
+            ],
+            "bbox": [
+              46.311856269836426,
+              126.5811996459961,
+              290.0547637939453,
+              161.1085205078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/7",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2.1 Producer's name or trademark,</p>",
+            "polygon": [
+              [
+                57.27085304260254,
+                159.42271041870117
+              ],
+              [
+                201.97915649414062,
+                159.42271041870117
+              ],
+              [
+                201.97915649414062,
+                172.009521484375
+              ],
+              [
+                57.27085304260254,
+                172.009521484375
+              ]
+            ],
+            "bbox": [
+              57.27085304260254,
+              159.42271041870117,
+              201.97915649414062,
+              172.009521484375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/8",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">7.2.2 Cast number, or other identification by convention which allows traceability of the product to a specific chemical composition.</p>",
+            "polygon": [
+              [
+                46.889596939086914,
+                169.19003677368164
+              ],
+              [
+                289.6556396484375,
+                169.19003677368164
+              ],
+              [
+                289.6556396484375,
+                204.71234130859375
+              ],
+              [
+                46.889596939086914,
+                204.71234130859375
+              ]
+            ],
+            "bbox": [
+              46.889596939086914,
+              169.19003677368164,
+              289.6556396484375,
+              204.71234130859375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1030/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/SectionHeader/11",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>8. Marking of Special Products</b></h4>",
+            "polygon": [
+              [
+                46.1638298034668,
+                210.30674743652344
+              ],
+              [
+                180.78416061401367,
+                210.30674743652344
+              ],
+              [
+                180.78416061401367,
+                223.0828857421875
+              ],
+              [
+                46.1638298034668,
+                223.0828857421875
+              ]
+            ],
+            "bbox": [
+              46.1638298034668,
+              210.30674743652344,
+              180.78416061401367,
+              223.0828857421875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/12",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\" class=\"has-continuation\">8.1 When specified in the contract or purchase order, marking of special products that are not covered in this</p>",
+            "polygon": [
+              [
+                46.42061519622803,
+                223.5322723388672
+              ],
+              [
+                289.3391647338867,
+                223.5322723388672
+              ],
+              [
+                289.3391647338867,
+                249.12801361083984
+              ],
+              [
+                46.42061519622803,
+                249.12801361083984
+              ]
+            ],
+            "bbox": [
+              46.42061519622803,
+              223.5322723388672,
+              289.3391647338867,
+              249.12801361083984
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/2",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">specification shall be in accordance with that specified by the applicable material specification.</p>",
+            "polygon": [
+              [
+                301.7178497314453,
+                67.95616149902344
+              ],
+              [
+                545.7804565429688,
+                67.95616149902344
+              ],
+              [
+                545.7804565429688,
+                92.3822021484375
+              ],
+              [
+                301.7178497314453,
+                92.3822021484375
+              ]
+            ],
+            "bbox": [
+              301.7178497314453,
+              67.95616149902344,
+              545.7804565429688,
+              92.3822021484375
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/Text/5",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">8.2 Special products that are to be marked in accordance with requirements in the applicable material specification are welding fittings (Specification B361); condenser and heat exchanger tubes with integral fins (Specifications B404/ B404M); and formed and arc-welded round tube (Specification B547/B547M).</p>",
+            "polygon": [
+              [
+                302.7891311645508,
+                96.57651901245117
+              ],
+              [
+                546.1288146972656,
+                96.57651901245117
+              ],
+              [
+                546.1288146972656,
+                166.29205322265625
+              ],
+              [
+                302.7891311645508,
+                166.29205322265625
+              ]
+            ],
+            "bbox": [
+              302.7891311645508,
+              96.57651901245117,
+              546.1288146972656,
+              166.29205322265625
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/11"
+            }
+          },
+          {
+            "id": "/page/1031/SectionHeader/9",
+            "block_type": "SectionHeader",
+            "html": "<h4><b>9. Keywords</b></h4>",
+            "polygon": [
+              [
+                302.42310333251953,
+                175.95343780517578
+              ],
+              [
+                359.1594543457031,
+                175.95343780517578
+              ],
+              [
+                359.1594543457031,
+                188.90350341796875
+              ],
+              [
+                302.42310333251953,
+                188.90350341796875
+              ]
+            ],
+            "bbox": [
+              302.42310333251953,
+              175.95343780517578,
+              359.1594543457031,
+              188.90350341796875
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/9"
+            }
+          },
+          {
+            "id": "/page/1031/Text/10",
+            "block_type": "Text",
+            "html": "<p block-type=\"Text\">9.1 aluminum products; identification markings; magnesium products</p>",
+            "polygon": [
+              [
+                303.04492950439453,
+                190.52400970458984
+              ],
+              [
+                544.3524780273438,
+                190.52400970458984
+              ],
+              [
+                544.3524780273438,
+                215.55303955078125
+              ],
+              [
+                303.04492950439453,
+                215.55303955078125
+              ]
+            ],
+            "bbox": [
+              303.04492950439453,
+              190.52400970458984,
+              544.3524780273438,
+              215.55303955078125
+            ],
+            "children": null,
+            "section_hierarchy": {
+              "1": "/page/1030/SectionHeader/6",
+              "4": "/page/1031/SectionHeader/9"
+            }
+          }
+        ],
+        "section_hierarchy": {
+          "1": "/page/1030/SectionHeader/6",
+          "4": "/page/1031/SectionHeader/9"
+        }
+      }
+    ]
+  }
+}
