@@ -583,3 +583,126 @@ class TestApendiceBCorregido:
             am = self._tabla(f)["extraction_amendments"]
             assert am["folios_impresos"] and am["fuente"]
             assert "valores NO se tocan" in am["alcance"]
+
+
+# ---------------------------------------------------------------------------
+# La costura de las paginas enfrentadas del Apendice A
+# ---------------------------------------------------------------------------
+# A-1 y A-1C se imprimen a doble pagina: identificacion a la izquierda, numero de
+# linea y rejilla de esfuerzos a la derecha. Al fusionarlas se colaron tres
+# defectos, y uno perdia dato: en el bloque de niquel de A-1C la palabra "Metal"
+# del titulo de banda se pego al encabezado "200" y el esfuerzo a 200 F acabo en
+# un campo de identificacion inventado, fuera de la curva.
+class TestApendiceACorregido:
+    """Desplazamientos de columna del Apendice A, contra los folios 166-398."""
+
+    @staticmethod
+    def _tabla(archivo):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
+                "ASME B31.3" / "APPEX" / "appendix_a" / archivo)
+        with open(ruta, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def test_a1c_no_pierde_el_punto_de_200F(self):
+        d = self._tabla("table_a_1c.json")
+        assert not any("metal_200" in r for r in d["rows"])
+        assert "Metal 200" not in (d.get("columns_identification") or [])
+        # 197 filas lo tenian fuera de la curva y otras 21 lo habian perdido con
+        # su pagina izquierda: las 218 del bloque de niquel tienen que tenerlo.
+        niquel = [r for r in d["rows"] if r.get("block") == 6]
+        con200 = [r for r in niquel if (r.get("values") or {}).get("200") is not None]
+        assert len(niquel) == 218 and len(con200) == 218, (len(niquel), len(con200))
+        # Y la curva tiene que decrecer: 200 F no puede valer menos que 300 F.
+        for r in con200:
+            v = r["values"]
+            if v.get("300") is not None:
+                assert v["200"] >= v["300"], (r.get("spec_no"), v["200"], v["300"])
+
+    def test_a3_separa_clase_y_descripcion(self):
+        filas = self._tabla("table_a_3.json")["rows"]
+        assert all(r.get("description") for r in filas), "ninguna descripcion vacia"
+        # La elipsis del codigo significa "sin valor": no puede quedar en el campo.
+        assert not any("…" in str(r.get("class_or_type") or "") for r in filas)
+        # Las tres separaciones que no eran mecanicas (folios 366 y 368).
+        def fila(spec, desc):
+            return next(r for r in filas
+                        if r.get("spec_no") == spec and r.get("description") == desc)
+        assert fila("A53", "Seamless pipe")["class_or_type"] == "Type S"
+        assert fila("B675", "Welded pipe")["class_or_type"] == "All"
+        assert fila("API 5L", "Electric welded pipe")["class_or_type"] is None
+        # Y el primer registro del codigo: API 5L, sin clase, Ej = 1.00
+        assert fila("API 5L", "Seamless pipe")["ej"] == 1.0
+
+    def test_ninguna_elipsis_suelta_en_la_identificacion(self):
+        campos = ("material", "nominal_composition", "product_form", "spec_no",
+                  "type_grade", "uns_no", "class_condition_temper", "p_no")
+        for f in ("table_a_1.json", "table_a_1c.json", "table_a_4.json",
+                  "table_a_4c.json"):
+            for r in self._tabla(f)["rows"]:
+                for k in campos:
+                    v = r.get(k)
+                    if isinstance(v, str):
+                        assert "…" not in v, (f, k, v)
+
+    def test_la_enmienda_queda_declarada(self):
+        for f in ("table_a_1.json", "table_a_1c.json", "table_a_3.json",
+                  "table_a_4.json", "table_a_4c.json"):
+            am = self._tabla(f)["extraction_amendments"]
+            assert am["folios_impresos"] and am["fuente"]
+            assert "Ningun valor tabulado se altera" in am["alcance"]
+
+    def test_no_queda_ninguna_pagina_derecha_huerfana(self):
+        # En 21 lineas del bloque 6 de A-1C la fusion de paginas enfrentadas
+        # perdio la pagina IZQUIERDA entera. Se recuperaron leyendo los folios
+        # 336, 338, 340, 342, 344 y 346. Ninguna fila puede volver a quedarse sin
+        # identificacion ni sin su punto de 200 F.
+        d = self._tabla("table_a_1c.json")
+        b6 = [r for r in d["rows"] if r.get("block") == 6]
+        assert not [r for r in b6 if not r.get("spec_no")]
+        assert not [r for r in b6 if (r.get("values") or {})
+                    and "200" not in r["values"]]
+        assert all(r.get("min_temp_to_100") is not None for r in b6)
+
+    def test_las_21_recuperadas_llevan_lo_que_imprime_el_folio(self):
+        d = {(r.get("block"), r.get("line_no")): r for r in
+             self._tabla("table_a_1c.json")["rows"]}
+        # Folio 344: la linea 203 de A-1C NO es la 203 de A-1 -las ediciones no
+        # numeran igual-, por eso cada fila se leyo en su propia pagina US.
+        r = d[(6, 203)]
+        assert (r["spec_no"], r["uns_no"], r["class_condition_temper"]) == \
+            ("B649", "N08031", "Annealed")
+        assert r["min_temp_to_100"] == 26.7 and r["values"]["200"] == 26.7
+        # Folio 336: B804 en <=3/16 corta en 800 F donde B675 y B690 llegan a 900.
+        assert d[(6, 64)]["max_temp_f"] == 900 and d[(6, 66)]["max_temp_f"] == 800
+        assert d[(6, 66)]["values"]["300"] == 29.9
+        # Folio 346: la unica fundicion del grupo, con su grado.
+        assert (d[(6, 216)]["spec_no"], d[(6, 216)]["type_grade"]) == ("A494", "CX2MW")
+        # La discrepancia entre ediciones queda declarada, no armonizada.
+        texto = " ".join(self._tabla("table_a_1c.json")["observaciones_del_codigo"])
+        assert "numeran igual" in texto and "N08367" in texto
+
+    def test_el_uns_no_arrastra_la_clase(self):
+        # El folio 336 imprime "UNS No." y "Class/Condition/Temper" en columnas
+        # separadas; en 186 filas del bloque de niquel quedaron pegadas.
+        import re
+        for f in ("table_a_1.json", "table_a_1c.json"):
+            for r in self._tabla(f)["rows"]:
+                v = r.get("uns_no")
+                if isinstance(v, str) and v.strip():
+                    assert re.fullmatch(r"[A-Z]\d{5}", v.strip()), (f, v)
+
+    def test_a2_sigue_intacta(self):
+        # A-2 se cotejo fila a fila contra el folio 364 y no tenia ni un defecto:
+        # esta prueba es la que avisara si una reextraccion futura la estropea.
+        d = self._tabla("table_a_2.json")
+        assert d["row_count"] == len(d["rows"]) == 24
+        f = {r["spec_no"]: r for r in d["rows"]}
+        assert f["A47"]["ec"] == 1.0 and f["A47"]["material_group"] == "Iron"
+        assert f["A451"]["ec"] == 0.9 and f["A451"]["notes"] == "(4), (5)"
+        assert f["B26, Temper F"]["ec"] == 1.0
+        assert f["B367"]["material_group"] == "Titanium and Titanium Alloy"
+        # Las Notas (1)..(5) y las dos GENERAL NOTES, repartidas en dos bloques.
+        texto = " ".join(d["notes"])
+        for marca in ("(1)", "(2)", "(3)", "(4)", "(5)", "GENERAL NOTES"):
+            assert marca in texto, marca

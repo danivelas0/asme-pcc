@@ -5880,7 +5880,7 @@
       "spec_no": "B160",
       "type_grade": null,
       "uns_no": "N02201",
-      "class_condition_temper": "Hot fin./ ann.",
+      "class_condition_temper": "Hot fin./ann.",
       "size_range_dia_mm": null,
       "notes": "(5a)",
       "min_temp_c": -198,
@@ -7172,5 +7172,16 @@
         "825": null
       }
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_a.py",
+    "fuente": "appendix_a/fuente/APENDICE_A_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      372,
+      387
+    ],
+    "alcance": "Solo desplazamientos de columna de la fusion de paginas enfrentadas. Ningun valor tabulado se altera; el esfuerzo a 200 F de A-1C se MUEVE al punto de la curva donde lo imprime el codigo.",
+    "cambios": []
+  }
 }

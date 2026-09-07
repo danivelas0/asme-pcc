@@ -613,7 +613,7 @@
     {
       "block": 1,
       "line_no": 14,
-      "nominal_composition": "… Alloy Steel",
+      "nominal_composition": "Alloy Steel",
       "product_form": "Nuts, hvy. hex",
       "spec_no": "A563",
       "type_grade": "A",
@@ -4836,7 +4836,7 @@
       "spec_no": "B160",
       "type_grade": null,
       "uns_no": "N02201",
-      "class_condition_temper": "Hot fin./ann. …",
+      "class_condition_temper": "Hot fin./ann.",
       "size_range_dia_in": null,
       "notes": "(5a)",
       "min_temp_f": -325,
@@ -4988,7 +4988,7 @@
       "spec_no": "B164",
       "type_grade": null,
       "uns_no": "N04400",
-      "class_condition_temper": "C.D./str. rel. …",
+      "class_condition_temper": "C.D./str. rel.",
       "size_range_dia_in": null,
       "notes": "(14)",
       "min_temp_f": -325,
@@ -5816,5 +5816,16 @@
         "1,300": null
       }
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_a.py",
+    "fuente": "appendix_a/fuente/APENDICE_A_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      388,
+      397
+    ],
+    "alcance": "Solo desplazamientos de columna de la fusion de paginas enfrentadas. Ningun valor tabulado se altera; el esfuerzo a 200 F de A-1C se MUEVE al punto de la curva donde lo imprime el codigo.",
+    "cambios": []
+  }
 }

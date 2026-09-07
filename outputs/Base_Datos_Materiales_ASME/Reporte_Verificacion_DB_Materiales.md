@@ -36,13 +36,13 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 | DB_BPVC_IID_B | 1655 | 25596 | 0 |
 | DB_Su | 2473 | 30312 | 0 |
 | DB_Sy | 2462 | 42543 | 0 |
-| DB_B31_3C | 1265 | 14971 | 0 |
+| DB_B31_3C | 1265 | 15231 | 0 |
 | DB_BPVC_IIDC | 1799 | 24810 | 0 |
 | DB_BPVC_IID_BC | 1655 | 19349 | 0 |
 | DB_SuC | 2426 | 27114 | 0 |
 | DB_SyC | 2452 | 34439 | 0 |
 
-**Total: 271276 valores tabulados auditados, 0 filas sin correspondencia exacta en la hoja.**
+**Total: 271536 valores tabulados auditados, 0 filas sin correspondencia exacta en la hoja.**
 
 ## 3b. Auditoria de las bases por familia, auxiliares y no metalicos
 

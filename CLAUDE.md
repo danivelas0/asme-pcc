@@ -78,8 +78,12 @@ python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
 #      (2)..(6) y grupo impreso de C-2/C-3.
 #   B: celdas fusionadas de B-1, las 6 especificaciones de B-3, las columnas
 #      minimo/maximo de B-4 y B-5, y el material a dos lineas de B-6.
+#   A: la costura de las paginas enfrentadas — devuelve a la curva los 197
+#      esfuerzos a 200 F del bloque de niquel de A-1C, separa Class/Description
+#      en A-3 y Spec/Grade en A-1C, y limpia la elipsis de columna vacia.
 python completar_apendice_c.py --resources ..\..\..\resources
 python completar_apendice_b.py --resources ..\..\..\resources
+python completar_apendice_a.py --resources ..\..\..\resources
 
 python build_db_materiales.py --resources ..\..\..\resources `
     --in ..\..\..\templates\maestro_con_macros.xlsm `

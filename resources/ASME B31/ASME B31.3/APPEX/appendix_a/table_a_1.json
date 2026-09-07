@@ -48347,5 +48347,16 @@
         "225": 24.1
       }
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_a.py",
+    "fuente": "appendix_a/fuente/APENDICE_A_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      174,
+      283
+    ],
+    "alcance": "Solo desplazamientos de columna de la fusion de paginas enfrentadas. Ningun valor tabulado se altera; el esfuerzo a 200 F de A-1C se MUEVE al punto de la curva donde lo imprime el codigo.",
+    "cambios": []
+  }
 }

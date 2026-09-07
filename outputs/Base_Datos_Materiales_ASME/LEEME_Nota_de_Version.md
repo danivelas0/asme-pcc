@@ -5,6 +5,109 @@
 
 ---
 
+## Apéndice A del B31.3 — la costura de las páginas enfrentadas (2026-09-07)
+
+El Apéndice A se imprime **a doble página**: la izquierda lleva la identificación del
+material y la derecha el número de línea con la rejilla de esfuerzos admisibles. La
+extracción tiene que fusionarlas por `Line No.`, y en esa costura se colaron tres defectos.
+
+### Se recuperan 197 esfuerzos admisibles que estaban fuera de la curva
+
+En el bloque de **aleaciones de níquel de la Tabla A-1C** (folios 334–347) la página
+izquierda termina con las columnas `Min. Temp. to 100 | 200 | 300`. El extractor pegó la
+palabra **`Metal`** del título de banda —*Basic Allowable Stress, S, ksi, at Metal
+Temperature, °F*— al encabezado `200`, inventó un campo de identificación `metal_200` y
+metió ahí el esfuerzo. Consecuencia: **la curva de 197 filas empezaba en 300 °F** y el
+punto de 200 °F, que sí está impreso, no se podía consultar. En modo US, `B161 / N02201`
+devolvía 6,3 ksi a 200 °F cuando el código imprime **6,4**.
+
+Los 197 valores vuelven a su punto de la curva. Auditoría de balance: A-1C pasa de 12 488
+a **12 685** valores no nulos, `+197` exactos, y **ninguna otra tabla se mueve**.
+
+### El enlace SI ↔ US del B31.3 sube de 1 065 a 1 208 materiales
+
+En 142 filas de A-1C la especificación y el grado quedaron pegados en un solo campo
+(`"A139 A"`, `"A524 II"`). Se separan **solo** cuando el valor coincide **exactamente** con
+`spec + " " + grado` de la misma línea en A-1: eso demuestra por sí solo que son dos celdas
+pegadas. No se usa A-1 como referencia general —las dos ediciones nombran distinto el
+grado, la SI imprime `API 5L L245` donde la US imprime `API 5L B`— sino solo como prueba
+del pegado. Al recomponer la clave bilingüe, **143 materiales más** encuentran su homólogo
+en la otra edición.
+
+### Y lo demás
+
+- **A-3 fusionaba `Class (or Type)` con `Description` en 38 filas** (`"… Seamless pipe"`,
+  `"Type S Seamless pipe"`, `"All Welded pipe"`). Separadas; las tres que no eran
+  mecánicas van verificadas contra los folios 366 y 368.
+- **220 celdas** de A-1C, A-4 y A-4C arrastraban la **elipsis de una columna vacía
+  contigua** (`spec_no = "A179 …"`, `p_no = "1 …"`). En el código `…` significa «sin
+  valor»: se retira.
+- **Un título de sección absorbido**: A-1C bloque 3 línea 86 guardaba
+  `"A353 … Low and Intermediate Alloy Steel — Forgings and Fittings"` en `spec_no`.
+  A-1 confirma que esa línea es `A353`, forma `Plate`, mismo UNS K81340.
+
+### La Tabla A-2 estaba impecable
+
+Cotejada fila a fila contra el folio 364: 24 filas, 8 grupos, factores `Ec` y Notas (1)–(5)
+completas. **0 defectos.** `TestApendiceACorregido::test_a2_sigue_intacta` la fija para que
+una reextracción futura no la estropee.
+
+### Lo que NO se ha tocado
+
+Los nombres de columna que el propio código escribe de dos maneras —`Min. Tensile
+Strength, ksi` en unos bloques y `Minimum Tensile Strength, ksi` en otros, `Class/
+Condition/ Temper` y `Class/ Condi- tion/ Temper`— **se conservan como claves distintas**:
+es lo que está impreso, y el builder ya las resuelve con sus alias. Normalizarlas sería
+reescribir el código, no corregir la extracción.
+
+### 21 páginas derechas huérfanas, recuperadas del folio
+
+La revisión de las propias correcciones encontró un segundo fallo de la misma costura: en
+**21 líneas del bloque 6 de A-1C** la fusión perdió la página **izquierda entera**. Esas
+filas no tenían identificación alguna —ni spec, ni UNS, ni composición— y su curva
+**empezaba en 400 °F**, sin los puntos impresos de `Min. Temp. to 100`, `200` y `300` °F.
+
+Se han recuperado leyendo los folios **336, 338, 340, 342, 344 y 346** ampliados, y
+contrastando cada fila con la edición SI por composición, especificación, UNS, P-No. y
+resistencias convertidas. Son B366, B435, B564, B572, B619, B622, B625, B626, B649, B675,
+B688, B690, B804 y una fundición A494 CX2MW. **+63 datos**: 42 esfuerzos y 21 valores de
+`Min. Temp. to 100`.
+
+No se rellenaron desde A-1 —habría sido convertir unidades e inferir identidad—, y la
+lectura directa demostró por qué: **las dos ediciones no numeran igual sus líneas**. La
+línea 203 de A-1C es `B649 / N08031`; la 203 de A-1 es `B164 / N04400`. Copiar por posición
+habría metido el material equivocado.
+
+Queda declarada, sin armonizar (regla 9), una discrepancia del propio código: para el
+`46Fe–24Ni–21Cr–6Mo–Cu–N` (N08367), **A-1 publica 427 °C** de temperatura máxima —unos
+800 °F— mientras que **A-1C publica 900 °F** en las líneas 61 a 65, 125 y 126, y 800 °F en
+la 66.
+
+### Y el UNS dejaba de arrastrar la clase
+
+Al transcribir apareció un tercer defecto del mismo bloque: **186 filas con el `UNS No.` y
+el `Class/Condition/Temper` pegados** (`"N08031 Annealed"`), que dejaban la columna de clase
+vacía en 208 de las 218 filas del bloque. El folio 336 las imprime en columnas separadas y
+un UNS es una letra con cinco dígitos, así que el corte es determinista. Dos casos llevaban
+el nombre de la clase partido en dos líneas (`"N08810 Sol. tr. or"` + `"ann."`) y se
+recomponen uniéndolos. Un UNS traía además un carácter espurio de otra columna
+(`">F33100"` → `F33100`). Las filas con clase declarada pasan de 322 a **526**.
+
+**Alcance de la verificación:** A-2 y A-3 se cotejaron **completas** contra el impreso, y las
+correcciones de A-1C se verificaron contra los folios 286 y 334–347. A-1, A-1C, A-4 y A-4C
+—2 570 filas sobre 233 folios— se auditaron por **clases de defecto** y por **contraste entre
+las dos ediciones**, no fila a fila. Lo corregido está verificado; no se afirma que no quede
+nada por encontrar.
+
+Se corrige con `scripts/completar_apendice_a.py`. En el libro: `DB_B31_3C` pasa de 14 971 a
+**15 231** valores auditados y el total de 271 276 a **271 536**. Es la única línea que se
+mueve en el protocolo de aceptación. `TestApendiceACorregido`, 8 pruebas.
+
+**El enlace SI ↔ US del B31.3 acaba en 1 228** de 1 288 materiales, desde los 1 065 de
+partida: +143 por separar spec y grado, +20 por recuperar las huérfanas.
+
+---
+
 ## Apéndice B del B31.3 — identificación y estructura corregidas (2026-09-07)
 
 Cotejadas las 7 tablas y las 28 entradas del índice contra los folios impresos 399–405:
