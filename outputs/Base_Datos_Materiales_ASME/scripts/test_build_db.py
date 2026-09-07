@@ -105,7 +105,7 @@ class TestNotasDeGrupoEnResources:
     """Las Notas de TM-1 y TE-1 deben estar completas en resources/."""
 
     @staticmethod
-    def _notas(archivo, edicion="bpvc_ii_d_metric_2025"):
+    def _notas(archivo, edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" /
                 edicion / archivo)
@@ -166,7 +166,7 @@ class TestNotasEnLasDosEdiciones:
     # staticmethod() explicito: al reasignar la funcion como atributo de clase
     # se pierde el descriptor y Python volveria a inyectar `self` como 1er arg.
     _N = staticmethod(TestNotasDeGrupoEnResources._notas)
-    US = "bpvc_ii_d_customary_2025"
+    US = "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
 
     def test_la_edicion_us_trae_sus_notas(self):
         assert {n["grupo"] for n in self._N("table_tm_1.json", self.US)
@@ -199,7 +199,7 @@ class TestNotasEnLasDosEdiciones:
                     "table_tm_1.json")
             with open(ruta, encoding="utf-8") as fh:
                 return B.notas_referenciadas(json.load(fh))
-        assert tabla("bpvc_ii_d_metric_2025")["Material Group H"] == "(9)"
+        assert tabla("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025")["Material Group H"] == "(9)"
         assert tabla(self.US)["Material Group H"] == "(8)"
 
     def test_la_pertenencia_es_la_misma_en_ambas_ediciones(self):
@@ -312,7 +312,7 @@ class TestColumnasNombradasTE1:
     """TE-1 publica dilatacion en columnas que se autodescriben, no solo por Grupo."""
 
     @staticmethod
-    def _cols(edicion="bpvc_ii_d_metric_2025"):
+    def _cols(edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" / edicion /
                 "table_te_1.json")
@@ -345,7 +345,7 @@ class TestColumnasNombradasTE1:
         # La metrica rotula «7% Nickel Steel» y la US «7Ni Steels»: es la misma
         # columna. Sin unificarlo, el mismo material tendria dilatacion en una
         # hoja y no en la otra.
-        si, us = self._cols(), self._cols("bpvc_ii_d_customary_2025")
+        si, us = self._cols(), self._cols("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")
         assert set(si) == set(us)
         for k in si:
             assert (si[k][1] or "") == (us[k][1] or ""), k

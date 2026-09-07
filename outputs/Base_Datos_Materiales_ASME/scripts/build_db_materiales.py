@@ -458,7 +458,7 @@ def build_b313(res, wb, system):
 
 def build_iid(res, wb, system, group):
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     t = ([("1A", f"{ed}/table_1a.json")] if group == "1A"
          else [("1B", f"{ed}/table_1b.json"), ("3", f"{ed}/table_3.json")])
     base = "DB_BPVC_IID" if group == "1A" else "DB_BPVC_IID_B"
@@ -482,7 +482,7 @@ def build_iid(res, wb, system, group):
 
 def build_prop(res, wb, system, kind):
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     fn = "table_u.json" if kind == "U" else "table_y_1.json"
     tag = "U" if kind == "U" else "Y-1"
     base = "DB_Su" if kind == "U" else "DB_Sy"
@@ -520,7 +520,7 @@ GRP_COLS = ["clave", "Tabla", "clave_sf", "Grupo / material", "Detalle",
 
 def build_modulo(res, wb, system):
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     temps, recs = set(), []
     for i in range(1, 6):
         d = res.load(f"{ed}/table_tm_{i}.json")
@@ -570,7 +570,7 @@ def build_modulo(res, wb, system):
 
 def build_prd(res, wb, system):
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     d = res.load(f"{ed}/table_prd.json")
     rows = sorted(d["rows"], key=lambda r: (txt(g(r, "material_group")).upper(),
                                             txt(g(r, "material")).upper()))
@@ -603,7 +603,7 @@ def build_te(res, wb, system):
     """TE-1..5 se imprimen indexadas por temperatura con bloques de grupos.
     Se escriben tal como estan impresas (hoja de consulta con autofiltro)."""
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     name = "DB_TE" if si else "DB_TEC"
     unit = "10^-6 mm/mm/C" if si else "10^-6 in/in/F"
     ws = new_sheet(wb, name,
@@ -1139,7 +1139,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     # Las dos ediciones se mapean por separado contra SUS PROPIAS Notas: no
     # numeran igual y son extracciones independientes (ver extraer_notas_ii_d).
     si = system == "SI"
-    ed = "bpvc_ii_d_metric_2025" if si else "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     nombre = "MAP_Grupo" if si else "MAP_GrupoC"
     tm_index = {}
     for i in range(1, 6):
@@ -1563,11 +1563,11 @@ def build_notas(res, wb):
     n = write_headers(ws, ["Fuente", "Tabla", "Seccion", "Nota", "Texto"])
     srcs = [("B31.3", "A-1/A-1C", f"{APX}/appendix_a/notes_tables_a_1_a_1c.json"),
             ("B31.3", "A-4/A-4C", f"{APX}/appendix_a/notes_tables_a_4_a_4c.json"),
-            ("II-D", "1A", "bpvc_ii_d_metric_2025/notes_table_1a.json"),
-            ("II-D", "1B", "bpvc_ii_d_metric_2025/notes_table_1b.json"),
-            ("II-D", "3", "bpvc_ii_d_metric_2025/notes_table_3.json"),
-            ("II-D", "U", "bpvc_ii_d_metric_2025/notes_table_u.json"),
-            ("II-D", "Y-1", "bpvc_ii_d_metric_2025/notes_table_y_1.json")]
+            ("II-D", "1A", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_1a.json"),
+            ("II-D", "1B", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_1b.json"),
+            ("II-D", "3", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_3.json"),
+            ("II-D", "U", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_u.json"),
+            ("II-D", "Y-1", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_y_1.json")]
     recs = []
     total = 0
     for code, tab, f in srcs:
@@ -3599,14 +3599,14 @@ def main(argv=None):
         "A-1 + A-4 -> DB_B31_3":
             f"{len(res.rows(f'{APX}/appendix_a/table_a_1.json')) + len(res.rows(f'{APX}/appendix_a/table_a_4.json'))}"
             f" -> {b313['last_row'] - R_DATA + 1}",
-        "1A -> DB_BPVC_IID": f"{len(res.rows('bpvc_ii_d_metric_2025/table_1a.json'))}"
+        "1A -> DB_BPVC_IID": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1a.json'))}"
                              f" -> {iid['last_row'] - R_DATA + 1}",
         "1B + 3 -> DB_BPVC_IID_B":
-            f"{len(res.rows('bpvc_ii_d_metric_2025/table_1b.json')) + len(res.rows('bpvc_ii_d_metric_2025/table_3.json'))}"
+            f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1b.json')) + len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_3.json'))}"
             f" -> {iidb['last_row'] - R_DATA + 1}",
-        "U -> DB_Su": f"{len(res.rows('bpvc_ii_d_metric_2025/table_u.json'))}"
+        "U -> DB_Su": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_u.json'))}"
                       f" -> {su['last_row'] - R_DATA + 1}",
-        "Y-1 -> DB_Sy": f"{len(res.rows('bpvc_ii_d_metric_2025/table_y_1.json'))}"
+        "Y-1 -> DB_Sy": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json'))}"
                         f" -> {sy['last_row'] - R_DATA + 1}",
         "MAP_Grupo": " · ".join(f"{k}={v}" for k, v in map_stats.items()),
         "MAP_GrupoC": " · ".join(f"{k}={v}" for k, v in mapc_stats.items()),

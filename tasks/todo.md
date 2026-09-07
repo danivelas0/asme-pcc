@@ -87,7 +87,7 @@ subcadena heredada de la Rev. 2. No alimenta ningún cálculo. Sin tocar.
 
 ## Segunda tanda — cierre del vacío en la edición U.S. Customary
 
-`bpvc_ii_d_customary_2025` tenía el mismo vacío que la métrica: TM-1 y TE-1 sin
+`ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025` tenía el mismo vacío que la métrica: TM-1 y TE-1 sin
 `note_members`. El libro construye bandas de propiedades en ambas ediciones
 (`DB_E`/`DB_EC`, `DB_TE`/`DB_TEC`), así que media tabla quedaba sin vía trazable
 para saber a qué grupo pertenece un material.

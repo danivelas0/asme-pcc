@@ -189,13 +189,13 @@ def auditar():
     checks = [("A-1 + A-4 -> DB_B31_3",
                len(RES.rows(f"{APX}/appendix_a/table_a_1.json")) +
                len(RES.rows(f"{APX}/appendix_a/table_a_4.json")), "DB_B31_3"),
-              ("1A -> DB_BPVC_IID", len(RES.rows("bpvc_ii_d_metric_2025/table_1a.json")),
+              ("1A -> DB_BPVC_IID", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1a.json")),
                "DB_BPVC_IID"),
               ("1B + 3 -> DB_BPVC_IID_B",
-               len(RES.rows("bpvc_ii_d_metric_2025/table_1b.json")) +
-               len(RES.rows("bpvc_ii_d_metric_2025/table_3.json")), "DB_BPVC_IID_B"),
-              ("U -> DB_Su", len(RES.rows("bpvc_ii_d_metric_2025/table_u.json")), "DB_Su"),
-              ("Y-1 -> DB_Sy", len(RES.rows("bpvc_ii_d_metric_2025/table_y_1.json")), "DB_Sy")]
+               len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1b.json")) +
+               len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_3.json")), "DB_BPVC_IID_B"),
+              ("U -> DB_Su", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_u.json")), "DB_Su"),
+              ("Y-1 -> DB_Sy", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json")), "DB_Sy")]
     # Las filas descartadas son ruido de extraccion conocido y documentado en
     # ISSUES por el builder, pero no pueden crecer sin que nadie se entere: se
     # tolera hasta MAX_DESCARTE por base y por encima de ahi es un fallo.
@@ -295,18 +295,18 @@ def auditar():
 
     audits = [("DB_B31_3", [(f"{APX}/appendix_a/table_a_1.json", 40),
                             (f"{APX}/appendix_a/table_a_4.json", 40)]),
-              ("DB_BPVC_IID", [("bpvc_ii_d_metric_2025/table_1a.json", None)]),
-              ("DB_BPVC_IID_B", [("bpvc_ii_d_metric_2025/table_1b.json", None),
-                                 ("bpvc_ii_d_metric_2025/table_3.json", None)]),
-              ("DB_Su", [("bpvc_ii_d_metric_2025/table_u.json", None)]),
-              ("DB_Sy", [("bpvc_ii_d_metric_2025/table_y_1.json", None)]),
+              ("DB_BPVC_IID", [("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1a.json", None)]),
+              ("DB_BPVC_IID_B", [("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1b.json", None),
+                                 ("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_3.json", None)]),
+              ("DB_Su", [("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_u.json", None)]),
+              ("DB_Sy", [("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json", None)]),
               ("DB_B31_3C", [(f"{APX}/appendix_a/table_a_1c.json", 100),
                              (f"{APX}/appendix_a/table_a_4c.json", 100)]),
-              ("DB_BPVC_IIDC", [("bpvc_ii_d_customary_2025/table_1a.json", None)]),
-              ("DB_BPVC_IID_BC", [("bpvc_ii_d_customary_2025/table_1b.json", None),
-                                  ("bpvc_ii_d_customary_2025/table_3.json", None)]),
-              ("DB_SuC", [("bpvc_ii_d_customary_2025/table_u.json", None)]),
-              ("DB_SyC", [("bpvc_ii_d_customary_2025/table_y_1.json", None)])]
+              ("DB_BPVC_IIDC", [("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/table_1a.json", None)]),
+              ("DB_BPVC_IID_BC", [("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/table_1b.json", None),
+                                  ("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/table_3.json", None)]),
+              ("DB_SuC", [("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/table_u.json", None)]),
+              ("DB_SyC", [("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/table_y_1.json", None)])]
     bad_tot = tot = 0
     from collections import Counter
     for sh, srcs in audits:
@@ -367,8 +367,8 @@ def auditar():
         log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {npts} | {falt} |")
         return falt
 
-    ed = "bpvc_ii_d_metric_2025"
-    edc = "bpvc_ii_d_customary_2025"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"
+    edc = "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     extra_bad = 0
     extra_bad += audita_grupo("DB_E", [f"{ed}/table_tm_{k}.json" for k in range(1, 6)], 4)
     extra_bad += audita_grupo("DB_EC", [f"{edc}/table_tm_{k}.json" for k in range(1, 6)], 4)
@@ -700,8 +700,8 @@ def auditar():
 
     estados = Counter()
     sin_cita = huerfanas = validado_sin_marca = prestada_sin_origen = 0
-    for hoja, ed in (("MAP_Grupo", "bpvc_ii_d_metric_2025"),
-                     ("MAP_GrupoC", "bpvc_ii_d_customary_2025")):
+    for hoja, ed in (("MAP_Grupo", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"),
+                     ("MAP_GrupoC", "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")):
         ws_map = wb0[hoja]
         cm = col_map(ws_map)
         respaldo = respaldo_de(ed)
@@ -750,7 +750,7 @@ def auditar():
     # trazable para saber a que grupo pertenece un material, y el hueco no se
     # nota al construir. Se audita aqui para que no pueda reabrirse en silencio.
     completas, faltan = [], []
-    for ed in ("bpvc_ii_d_metric_2025", "bpvc_ii_d_customary_2025"):
+    for ed in ("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025", "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"):
         for archivo in ("table_tm_1.json", "table_te_1.json"):
             grupos = [n for n in RES.load(f"{ed}/{archivo}").get("note_members", [])
                       if n.get("tipo") == "grupo"]

@@ -20,7 +20,7 @@ Cada base entrega `S(T)` **interpolado linealmente** entre temperaturas tabulada
 
 Este ciclo incluye además la **Fase 2 de propiedades de material** (confirmada): resistencia a la tracción `Su`, fluencia `Sy`, módulo `E`, dilatación térmica y Poisson/densidad, todas desde `resources/`, para habilitar los cálculos que las requieren (p. ej. PCC-2 Art. 202/205 y análisis de dilatación). El alcance del B31.3 abarca los **Apéndices A, B y C completos** (metales y no metales) y reemplaza el factor `E_j` fijo por *lookup* (A-2/A-3).
 
-Cada base es **interactiva y dual SI/US**: una hoja-consulta con **buscador dinámico** (Excel 365/2021) permite escribir una especificación, conmutar entre **unidades SI y US Customary** y ver al instante todos los datos del material tal como los organiza el código, ahorrando el recorrido manual de miles de filas (§6, §3.4). Ambos códigos tienen doble unidad **nativa**: B31.3 con sus tablas "C" y la II-D con las carpetas métrica y `bpvc_ii_d_customary_2025`. La pestaña `Instrucciones` se reescribe para explicar en detalle cómo usar cada base (§7).
+Cada base es **interactiva y dual SI/US**: una hoja-consulta con **buscador dinámico** (Excel 365/2021) permite escribir una especificación, conmutar entre **unidades SI y US Customary** y ver al instante todos los datos del material tal como los organiza el código, ahorrando el recorrido manual de miles de filas (§6, §3.4). Ambos códigos tienen doble unidad **nativa**: B31.3 con sus tablas "C" y la II-D con las carpetas métrica y `ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025`. La pestaña `Instrucciones` se reescribe para explicar en detalle cómo usar cada base (§7).
 
 **Recomendación de ubicación (tu pregunta abierta): alojar ambas bases como hojas nuevas dentro del mismo libro** (`DB_B31_3`, `DB_BPVC_IID`), no como archivos externos. Razones:
 
@@ -84,11 +84,11 @@ D41 (Sa)   = MIN(D39,D40)
 >
 > **Unidades duales SI/US, nativas en ambos códigos (confirmado):**
 > - **B31.3** — SI + companion "C": `table_a_1c`, `table_a_4c`, `table_b_1c`, `table_c_1c`, `table_c_3c` (+ notas `a_1_a_1c` / `a_4_a_4c`).
-> - **BPVC II-D** — dos carpetas nativas: `resources/bpvc_ii_d_metric_2025/` (°C, MPa) y **`resources/bpvc_ii_d_customary_2025/`** (°F, ksi), añadida por el usuario. Misma estructura (1808 filas en 1A, campos con sufijo `_ksi`/`_in`). **El gap de US en la II-D queda cerrado — ya no se usa conversión.**
+> - **BPVC II-D** — dos carpetas nativas: `resources/ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/` (°C, MPa) y **`resources/ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/`** (°F, ksi), añadida por el usuario. Misma estructura (1808 filas en 1A, campos con sufijo `_ksi`/`_in`). **El gap de US en la II-D queda cerrado — ya no se usa conversión.**
 >
 > Los valores se cargan tal como están impresos en cada edición (no por conversión). Material con especificación dual (`SA-516/SA-516M`) aplica indistintamente en ambas ediciones.
 
-**ASME BPVC II-D 2025 — dual: Métrico (`resources/bpvc_ii_d_metric_2025/`) y U.S. Customary (`resources/bpvc_ii_d_customary_2025/`, misma estructura, °F/ksi):**
+**ASME BPVC II-D 2025 — dual: Métrico (`resources/ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/`) y U.S. Customary (`resources/ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/`, misma estructura, °F/ksi):**
 
 | Archivo | Contenido | Filas | Uso en la DB |
 |---|---|---|---|
@@ -273,7 +273,7 @@ Reemplazo de `D39`/`D40` en `Parche_PCC2_Art212` (y patrón replicable a futuros
 Cada base tiene una **hoja-consulta** asociada (`Buscar_B31_3`, `Buscar_BPVC_IID`, `Buscar_B31_B`, y análogas para propiedades), con esta estructura:
 
 - **Celda de búsqueda** (texto libre): el usuario teclea parte de una especificación, grado, UNS o composición (p. ej. `A106`, `304`, `SA-516`, `F11501`).
-- **Conmutador de unidades SI ↔ US** (§3.4): cambia la banda leída, los encabezados (°C/°F, MPa/ksi) y las unidades de la ficha. **Nativo en ambos códigos:** B31.3 usa sus tablas "C"; II-D usa la carpeta `bpvc_ii_d_customary_2025`.
+- **Conmutador de unidades SI ↔ US** (§3.4): cambia la banda leída, los encabezados (°C/°F, MPa/ksi) y las unidades de la ficha. **Nativo en ambos códigos:** B31.3 usa sus tablas "C"; II-D usa la carpeta `ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025`.
 - **Filtros de columna** (listas desplegables): Código/Tabla, forma de producto, P-No./grupo, aplicabilidad (I/III/VIII-1/XII), rango de temperatura.
 - **Resultados derramados:** `FILTER(<DB>, (búsqueda en varias columnas) * (filtros))` devuelve todas las filas coincidentes; se ordenan con `SORT`. Si no hay coincidencias, mensaje "sin resultados".
 - **Ficha del material seleccionado:** al elegir un `material_id` de los resultados, un bloque con `XLOOKUP` muestra automáticamente la fila completa —identificación + curva `S(T)` completa + `Su`, `Sy`, `E`, dilatación, notas y trazabilidad de tabla/edición—. Incluye el valor **interpolado a una temperatura que el usuario teclee** (reusa el motor de §5).
@@ -392,7 +392,7 @@ Nota de versión; commit de la memoria de cambios.
 - **Factores `Ej`/`Ec`:** ✅ reemplazan el `E_j=1` fijo por *lookup* (§4.5).
 - **Fase 2 (propiedades):** ✅ incluida en este ciclo.
 - **Consulta interactiva:** ✅ buscador con fórmulas dinámicas Excel 365/2021 (§6); guía detallada por base en `Instrucciones` (§7).
-- **Unidades duales SI/US:** ✅ cada buscador conmuta SI ↔ US (§3.4), **nativo en ambos códigos**: B31.3 tablas "C" y II-D carpeta `bpvc_ii_d_customary_2025` (añadida por el usuario). Sin conversiones.
+- **Unidades duales SI/US:** ✅ cada buscador conmuta SI ↔ US (§3.4), **nativo en ambos códigos**: B31.3 tablas "C" y II-D carpeta `ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025` (añadida por el usuario). Sin conversiones.
 - **`knowledge/claude.md`:** ✅ corregido (A-4/Apéndice B), regla de unidades dual, II-D US integrada y guía de lectura de la Subparte 1 (NP/SPT, creep, interpolación, no extrapolar) — entregado.
 
 **Alcance totalmente cerrado, sin gaps abiertos. Listo para ejecutar la Fase 1 a tu orden.**

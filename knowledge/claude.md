@@ -18,7 +18,7 @@ Estas instrucciones establecen las reglas, criterios de diseño y fórmulas fund
 
 **Bases de datos y buscadores (dual SI/US):** las bases de datos de materiales almacenan y muestran los valores en **ambos sistemas de unidades**, y cada buscador (motor de consulta) incluye un **conmutador SI ↔ US**. Fuentes:
 - **ASME B31.3** — tablas nativas en ambos sistemas: SI (A-1, A-4, B-1, C-1, C-3) y US Customary (sufijo C: A-1C, A-4C, B-1C, C-1C, C-3C). Se cargan las dos versiones tal como están impresas.
-- **ASME BPVC II-D** — tablas nativas en **ambos sistemas**: Métrica/SI en `resources/bpvc_ii_d_metric_2025/` (°C, MPa) y **U.S. Customary** en `resources/bpvc_ii_d_customary_2025/` (°F, ksi). Ambas ediciones son técnicamente equivalentes (un material = una sola curva de diseño); se cargan tal como están impresas. Nota: un material con especificación dual (p. ej. `SA-516/SA-516M`) es aplicable indistintamente en cualquiera de las dos ediciones (`SA-516 Gr.70` ↔ `SA-516M Gr.485`).
+- **ASME BPVC II-D** — tablas nativas en **ambos sistemas**: Métrica/SI en `resources/ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/` (°C, MPa) y **U.S. Customary** en `resources/ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/` (°F, ksi). Ambas ediciones son técnicamente equivalentes (un material = una sola curva de diseño); se cargan tal como están impresas. Nota: un material con especificación dual (p. ej. `SA-516/SA-516M`) es aplicable indistintamente en cualquiera de las dos ediciones (`SA-516 Gr.70` ↔ `SA-516M Gr.485`).
 - Al leer o citar un valor tabulado, respetar la unidad y el redondeo **tal como están impresos** en la tabla del sistema elegido; no mezclar SI y US en un mismo cálculo.
 
 ---
@@ -204,8 +204,8 @@ Reglas de aplicación:
      - **Apéndice A** — esfuerzos admisibles básicos en tracción de metales (Tabla A-1 / A-1C), esfuerzos de diseño de **pernería** (Tabla A-4), y factores de calidad: fundición `Ec` (Tabla A-2) y junta longitudinal soldada `Ej` (Tabla A-3).
      - **Apéndice B** — esfuerzos de diseño hidrostático (HDS) y tablas de presión admisible para **tuberías NO metálicas** (termoplásticos / RTR), Tablas B-1 a B-6. (No trata factores de fatiga en soldadura.)
      - **Apéndice C** — propiedades físicas de materiales: dilatación térmica de metales (C-1) y no metales (C-2), y módulo de elasticidad de metales (C-3) y no metales (C-4).
-   - `resources/bpvc_ii_d_metric_2025/` — BPVC Sección II-D **(Metric/SI)** 2025 (°C, MPa): tablas de materiales (1A, 1B, 2A, 2B, 3, 4, 5A, 5B, 6A-6D, U, Y-1, Y-2, TE, TM, PRD, TCD), notas, apéndices y Subparte 3 (presión externa).
-   - `resources/bpvc_ii_d_customary_2025/` — BPVC Sección II-D **(U.S. Customary)** 2025 (°F, ksi): mismas tablas y estructura que la métrica. Se usa como fuente nativa cuando el buscador está en modo US.
+   - `resources/ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/` — BPVC Sección II-D **(Metric/SI)** 2025 (°C, MPa): tablas de materiales (1A, 1B, 2A, 2B, 3, 4, 5A, 5B, 6A-6D, U, Y-1, Y-2, TE, TM, PRD, TCD), notas, apéndices y Subparte 3 (presión externa).
+   - `resources/ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025/` — BPVC Sección II-D **(U.S. Customary)** 2025 (°F, ksi): mismas tablas y estructura que la métrica. Se usa como fuente nativa cuando el buscador está en modo US.
 ### Lectura de tablas de esfuerzos de la Subparte 1 (II-D, Tablas 1A/1B/2A/2B/3/5x/6x, U, Y-1)
 Las extracciones JSON ya fusionan las "páginas enfrentadas" del PDF en una sola fila por material (identificación + aplicabilidad + valores + notas). Reglas al leer o calcular:
 - **Localizar la fila** por: Nominal Composition, Product Form, Spec. No., Type/Grade, UNS No. y Size/Thickness; el `line_no` es el ancla de la fila.

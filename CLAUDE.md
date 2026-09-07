@@ -28,8 +28,9 @@ knowledge/     Instrucciones de cálculo ASME PCC-2 en SI. Leer antes de cualqui
 resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ ASME B31/ASME B31.3/APPEX/   Apéndices A, B y C
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
-               ├─ bpvc_ii_d_metric_2025/       II-D métrica (MPa, °C)
-               └─ bpvc_ii_d_customary_2025/    II-D U.S. Customary (ksi, °F)
+               └─ ASME_BPVC/Sec_II/
+                  ├─ bpvc_ii_d_metric_2025/    II-D métrica (MPa, °C)
+                  └─ bpvc_ii_d_customary_2025/ II-D U.S. Customary (ksi, °F)
 outputs/       Entregables.
 templates/     maestro_con_macros.xlsm — Rev. 0 + proyecto VBA, entrada del builder.
                Se genera con scripts/make_vba_seed.py; no se edita a mano.
