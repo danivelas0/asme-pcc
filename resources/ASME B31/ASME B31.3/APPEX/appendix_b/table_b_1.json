@@ -45,8 +45,8 @@
   ],
   "rows": [
     {
-      "astm_spec_no": "… PR",
-      "pipe_designation": null,
+      "astm_spec_no": null,
+      "pipe_designation": "PR",
       "material_designation": "ABS",
       "cell_class": 43232,
       "minimum": -40,
@@ -285,7 +285,7 @@
       "93_c": null
     },
     {
-      "astm_spec_no": "F2788/ F2788M",
+      "astm_spec_no": "F2788/F2788M",
       "pipe_designation": "SDR/DR-PR",
       "material_designation": "PEX0006",
       "cell_class": null,
@@ -297,7 +297,7 @@
       "93_c": 2.17
     },
     {
-      "astm_spec_no": "F2788/ F2788M",
+      "astm_spec_no": "F2788/F2788M",
       "pipe_designation": "SDR/DR-PR",
       "material_designation": "PEX0008",
       "cell_class": null,
@@ -309,8 +309,8 @@
       "93_c": 2.17
     },
     {
-      "astm_spec_no": "F2389 PR",
-      "pipe_designation": null,
+      "astm_spec_no": "F2389",
+      "pipe_designation": "PR",
       "material_designation": "PP-R",
       "cell_class": null,
       "minimum": -18,
@@ -321,8 +321,8 @@
       "93_c": null
     },
     {
-      "astm_spec_no": "F2389 PR",
-      "pipe_designation": null,
+      "astm_spec_no": "F2389",
+      "pipe_designation": "PR",
       "material_designation": "PP-RCT",
       "cell_class": null,
       "minimum": -18,
@@ -476,5 +476,26 @@
       "82_c": null,
       "93_c": null
     }
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      400,
+      401
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "fila 0 (ABS): astm_spec_no '… PR' -> None, pipe_designation None -> 'PR'",
+      "fila 20: astm_spec_no 'F2788/ F2788M' -> 'F2788/F2788M'",
+      "fila 21: astm_spec_no 'F2788/ F2788M' -> 'F2788/F2788M'",
+      "fila 22 (PP-R): astm_spec_no 'F2389 PR' -> 'F2389', pipe_designation None -> 'PR'",
+      "fila 23 (PP-RCT): astm_spec_no 'F2389 PR' -> 'F2389', pipe_designation None -> 'PR'"
+    ]
+  },
+  "observaciones_del_codigo": [
+    "B-1 imprime \"...\" (sin valor) como temperatura minima de D2846 / CPVC4120, mientras que B-1C imprime 73 F para esa misma fila. Asimetria del codigo; se conserva lo impreso en cada edicion (folios 400 y 402).",
+    "F2389 (PP-R y PP-RCT): B-1 imprime 110 C de temperatura maxima y B-1C imprime 210 F, que equivale a 98,9 C. Las dos ediciones no se corresponden. Ademas la designacion de tuberia es \"PR\" en B-1 e \"IPS Sch. 80\" en B-1C. Se conservan las dos tal como estan impresas (folios 400 y 402)."
   ]
 }

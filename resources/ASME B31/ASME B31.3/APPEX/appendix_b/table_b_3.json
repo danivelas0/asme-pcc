@@ -15,7 +15,7 @@
     436
   ],
   "companion_table": null,
-  "row_count": 2,
+  "row_count": 6,
   "legend": [
     "Listed Specifications for Filament Wound and",
     "Centrifugally Cast Reinforced Thermosetting Resin and",
@@ -31,10 +31,34 @@
   "column_groups": [],
   "rows": [
     {
-      "spec_nos_astm_except_as_noted": "D2517 D2997 D3754"
+      "spec_nos_astm_except_as_noted": "D2517"
     },
     {
-      "spec_nos_astm_except_as_noted": "D2996 D3517 AWWA C950"
+      "spec_nos_astm_except_as_noted": "D2996"
+    },
+    {
+      "spec_nos_astm_except_as_noted": "D2997"
+    },
+    {
+      "spec_nos_astm_except_as_noted": "D3517"
+    },
+    {
+      "spec_nos_astm_except_as_noted": "D3754"
+    },
+    {
+      "spec_nos_astm_except_as_noted": "AWWA C950"
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      403
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "las 3 columnas impresas se leen por columnas: 2 celdas con tres especificaciones cada una -> 6 filas, una por especificacion (D2517, D2996, D2997, D3517, D3754, AWWA C950)"
+    ]
+  }
 }

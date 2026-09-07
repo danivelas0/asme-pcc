@@ -63,7 +63,7 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 | DB_TEC | 544 | 580 | OK |
 | MAP_Factores | 151 | 151 | OK |
 | Notas_Codigo | 325 | 325 | OK |
-| DB_NoMetalicos (pares campo/valor) | 931 | 931 | OK |
+| DB_NoMetalicos (pares campo/valor) | 944 | 944 | OK |
 
 ## 4. Contiguidad de los bloques de la cascada
 

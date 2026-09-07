@@ -3,3 +3,10 @@ __pycache__/
 
 # Archivos temporales de Excel al abrir un libro
 ~$*.xls*
+
+# Fuentes de auditoria del B31.3: paginas escaneadas del codigo y su OCR.
+# Las enmiendas de resources/ las citan por folio impreso, pero el material no
+# se versiona (copyright de ASME). Tienen que estar en disco para reejecutar
+# completar_apendice_c.py; se le pasa la ruta con --ocr.
+**/appendix_*/fuente/
+**/ocr_apendice_*.json

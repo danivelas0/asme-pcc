@@ -380,3 +380,206 @@ class TestFormulas:
         f = B.interp_value("A1", "B1", "C1", "D1", "$C$10", "$C$11")
         for bad in ("_xlfn", "FILTER(", "XLOOKUP(", "UNIQUE(", "SORT("):
             assert bad not in f
+
+
+# ---------------------------------------------------------------------------
+# La capa de metadatos del Apendice C del B31.3
+# ---------------------------------------------------------------------------
+# Los VALORES del Apendice C siempre estuvieron bien; lo que faltaba era todo lo
+# que rodea al numero, y sin eso el motor de propiedades no puede ni rotularse:
+#   - C-1/C-1C no declaraban la unidad de sus coeficientes A y B;
+#   - las Notas (2)..(6) de C-1 se imprimen a tres columnas y se habian leido por
+#     filas, dejando los miembros de los Grupos 1..4 intercalados;
+#   - C-2 y C-3 perdieron la indentacion del impreso y cinco filas quedaron
+#     colgando de un subgrupo que no es el suyo ("Gray iron" como austenitico).
+# `completar_apendice_c.py` lo repara desde el OCR del escaneo. Estas pruebas
+# impiden que una reextraccion futura vuelva a dejarlo a medias.
+class TestApendiceCCompletado:
+    """Metadatos del Apendice C, contra los folios impresos 408-428."""
+
+    @staticmethod
+    def _tabla(archivo):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
+                "ASME B31.3" / "APPEX" / "appendix_c" / archivo)
+        with open(ruta, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def test_c1_declara_la_unidad_de_sus_coeficientes(self):
+        # Folios 408 y 414. Sin esto el KPI del motor muestra un numero desnudo.
+        si = self._tabla("table_c_1.json")["coefficient_defs"]
+        us = self._tabla("table_c_1c.json")["coefficient_defs"]
+        assert si["A"]["unidad"] == "10^-6 mm/mm/°C"
+        assert si["B"]["unidad"] == "mm/m"
+        assert us["A"]["unidad"] == "10^-6 in./in./°F"
+        assert us["B"]["unidad"] == "in./100 ft"
+        assert "20°C" in si["referencia"] and "70°F" in us["referencia"]
+
+    def test_las_notas_de_c1_traen_sus_miembros(self):
+        notas = {n["nota"]: n for n in self._tabla("table_c_1.json")["note_members"]}
+        assert {k: len(v["miembros"]) for k, v in notas.items()} == {
+            "(2)": 51, "(3)": 6, "(4)": 13, "(5)": 14, "(6)": 18}
+        assert notas["(2)"]["grupo"] == "Group 1"
+        # La Nota (6) no define un Grupo: enumera aleaciones de aluminio por UNS.
+        assert notas["(6)"]["tipo"] == "alias_uns" and notas["(6)"]["grupo"] is None
+
+    def test_las_notas_se_leyeron_por_columnas(self):
+        # Leidas por filas, el segundo miembro seria el primero de la 2a columna.
+        # El impreso lista la 1a columna entera antes de pasar a la 2a.
+        m = self._tabla("table_c_1.json")["note_members"][0]["miembros"]
+        assert m[:3] == ["Carbon steel", "C-Mn-Cb", "C-Mn-Si-Cb"]
+        assert m[17] == "1Cr-1/2Mo-V"     # inicio de la 2a columna
+        assert m[34] == "1/2Ni-1/2Cr-1/4Mo-V"   # inicio de la 3a
+
+    def test_las_dos_ediciones_listan_los_mismos_miembros(self):
+        # A diferencia de TM-1 de la II-D, el Apendice C NO tiene errata de
+        # numeracion: C-1 y C-1C imprimen las mismas Notas (folios 412 y 418).
+        si = self._tabla("table_c_1.json")["note_members"]
+        us = self._tabla("table_c_1c.json")["note_members"]
+        assert [n["nota"] for n in si] == [n["nota"] for n in us]
+        assert [n["miembros"] for n in si] == [n["miembros"] for n in us]
+
+    def test_c2_reparte_sus_44_filas_como_el_impreso(self):
+        from collections import Counter
+        filas = self._tabla("table_c_2.json")["rows"]
+        assert Counter(r.get("material_group") for r in filas) == Counter({
+            "Thermoplastics": 38,
+            "Reinforced Thermosetting Resins and Reinforced Plastic Mortars": 5,
+            "Other Nonmetallic Materials": 1})
+        # El titulo llegaba partido por la mitad ("and Reinforced Plastic Mortars").
+        assert all(not (r.get("material_group") or "").startswith("and ") for r in filas)
+        # Ninguna fila sin grupo: nueve lo perdieron al cruzar el corte de pagina.
+        assert all(r.get("material_group") for r in filas)
+
+    def test_ninguna_fila_cuelga_de_un_subgrupo_ajeno(self):
+        # Las cinco del folio 419-421 mas las siete del 420 van A RAS del margen.
+        a_ras = {"Polybutylene PB 2110", "Polyether, chlorinated",
+                 "Polyphenylene POP 2125", "Poly(vinylidene fluoride)",
+                 "Poly(tetrafluoroethylene)", "Poly(perfluoroalkoxy alkane)"}
+        for r in self._tabla("table_c_2.json")["rows"]:
+            if r["material_description"] in a_ras:
+                assert r.get("material_subgroup") is None, r["material_description"]
+        for f in ("table_c_3.json", "table_c_3c.json"):
+            for r in self._tabla(f)["rows"]:
+                if r["material"] in ("Gray iron",
+                                     "Straight chromium stainless steels "
+                                     "(12Cr, 17Cr, 27Cr)"):
+                    assert r.get("material_subgroup") is None, (f, r["material"])
+        # Y "Austenitic stainless steels:" cubre solo los seis Type ...
+        aust = [r["material"] for r in self._tabla("table_c_3.json")["rows"]
+                if r.get("material_subgroup") == "Austenitic stainless steels:"]
+        assert len(aust) == 6 and all(m.startswith("Type ") for m in aust)
+
+    def test_los_cont_d_no_son_un_grupo_distinto(self):
+        for f in ("table_c_3.json", "table_c_3c.json"):
+            grupos = {r.get("material_group") for r in self._tabla(f)["rows"]}
+            assert not any("Cont" in (g or "") for g in grupos), f
+
+    def test_los_factores_de_escala_estan_declarados(self):
+        # Confundir 10^3 con 10^6 en el modulo E son tres ordenes de magnitud.
+        esperado = {"table_c_2.json": ("dividir", 6),
+                    "table_c_3.json": ("multiplicar", 3),
+                    "table_c_3c.json": ("multiplicar", 6)}
+        for f, (op, exp) in esperado.items():
+            sf = self._tabla(f)["scale_factor"]
+            assert (sf["operacion"], sf["exponente"]) == (op, exp), f
+            assert "impreso" in sf, f   # debe trazar al encabezado del codigo
+
+    def test_la_enmienda_queda_declarada(self):
+        for f in ("table_c_1.json", "table_c_1c.json", "table_c_2.json",
+                  "table_c_3.json", "table_c_3c.json", "table_c_4.json"):
+            am = self._tabla(f)["extraction_amendments"]
+            assert am["folios_impresos"] and am["fuente"]
+            # Regla 9: la enmienda no puede haber tocado valores ni nombres.
+            assert "valores y los nombres" in am["alcance"]
+
+
+# ---------------------------------------------------------------------------
+# La identificacion y la estructura del Apendice B del B31.3
+# ---------------------------------------------------------------------------
+# Los VALORES del Apendice B estaban bien; lo que fallaba era como quedaron
+# identificadas y estructuradas las filas. El caso peligroso es B-5: la cabecera
+# se desalineo y el MAXIMO de 232 C quedo guardado en un campo llamado `c`, de
+# modo que quien lo leyese como temperatura minima se llevaba 232 C de minimo en
+# un tubo de vidrio. `completar_apendice_b.py` lo repara desde el impreso.
+class TestApendiceBCorregido:
+    """Identificacion y estructura del Apendice B, contra los folios 399-405."""
+
+    @staticmethod
+    def _tabla(archivo):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
+                "ASME B31.3" / "APPEX" / "appendix_b" / archivo)
+        with open(ruta, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def test_b1_separa_la_especificacion_de_la_designacion(self):
+        # La extraccion pegaba la elipsis del codigo y la designacion de tuberia
+        # en un mismo campo. B-1C nunca lo hizo: es defecto solo de B-1.
+        filas = {r["material_designation"]: r for r in self._tabla("table_b_1.json")["rows"]}
+        assert filas["ABS"]["astm_spec_no"] is None
+        assert filas["ABS"]["pipe_designation"] == "PR"
+        for m in ("PP-R", "PP-RCT"):
+            assert filas[m]["astm_spec_no"] == "F2389"
+            assert filas[m]["pipe_designation"] == "PR"
+
+    def test_la_spec_partida_en_dos_lineas_se_recompone(self):
+        # El indice la escribe "F2788/F2788M"; con el espacio no emparejaba.
+        for f in ("table_b_1.json", "table_b_1c.json"):
+            specs = {r["astm_spec_no"] for r in self._tabla(f)["rows"]}
+            assert "F2788/F2788M" in specs, f
+            assert not any(s and " " in s for s in specs), f
+
+    def test_b3_lista_sus_seis_especificaciones(self):
+        # El impreso es una rejilla de 3 columnas: se lee por columnas y quedan
+        # en orden ascendente, igual que en el indice.
+        filas = self._tabla("table_b_3.json")["rows"]
+        assert [r["spec_nos_astm_except_as_noted"] for r in filas] == [
+            "D2517", "D2996", "D2997", "D3517", "D3754", "AWWA C950"]
+        assert self._tabla("table_b_3.json")["row_count"] == 6
+
+    def test_b4_y_b5_reparten_minimo_y_maximo(self):
+        for f in ("table_b_4.json", "table_b_5.json"):
+            d = self._tabla(f)
+            assert [c for c in d["columns"] if "°" in c] == [
+                "Minimum °C", "Minimum °F", "Maximum °C", "Maximum °F"], f
+            for r in d["rows"]:
+                assert "c" not in r and "f" not in r, f
+                assert {"minimum_c", "minimum_f", "maximum_c", "maximum_f"} <= set(r), f
+
+    def test_b5_guarda_los_232C_como_maximo(self):
+        # Es el fallo que hacia dano: 232 C es el MAXIMO del vidrio borosilicato.
+        for r in self._tabla("table_b_5.json")["rows"]:
+            assert r["maximum_c"] == 232 and r["maximum_f"] == 450
+            assert r["minimum_c"] is None and r["minimum_f"] is None
+
+    def test_b6_recompone_el_material_de_dos_lineas(self):
+        filas = self._tabla("table_b_6.json")["rows"]
+        mats = [r["material"] for r in filas]
+        assert "Metal insert fittings for PE-AL-PE systems" in mats
+        assert "Metal insert fittings for" not in mats   # nombre truncado
+        assert "PE-AL-PE systems" not in mats            # segunda linea suelta
+        # La tabla solo publica limites maximos.
+        assert all("f" not in r and "maximum_f" in r for r in filas)
+
+    def test_el_indice_trae_sus_notas(self):
+        d = self._tabla("spec_index_b.json")
+        assert d["entry_count"] == len(d["entries"]) == 28
+        texto = " ".join(d["notes"])
+        assert "A326.4" in texto            # Nota (1)
+        assert "fiberglass RTR" in texto    # Nota (2), normativa
+
+    def test_las_rarezas_del_codigo_quedan_declaradas(self):
+        # No se corrigen (regla 9), pero no pueden pasar desapercibidas.
+        assert any("D2846" in o for o in
+                   self._tabla("table_b_1.json")["observaciones_del_codigo"])
+        assert any("100 psi" in o for o in
+                   self._tabla("table_b_6.json")["observaciones_del_codigo"])
+
+    def test_la_enmienda_queda_declarada(self):
+        for f in ("table_b_1.json", "table_b_1c.json", "table_b_3.json",
+                  "table_b_4.json", "table_b_5.json", "table_b_6.json",
+                  "spec_index_b.json"):
+            am = self._tabla(f)["extraction_amendments"]
+            assert am["folios_impresos"] and am["fuente"]
+            assert "valores NO se tocan" in am["alcance"]

@@ -1682,6 +1682,17 @@ UNIT_F = Font(name="Calibri", size=9, italic=True, color="7F7F7F")
 KPI_TIT_F = Font(name="Calibri", size=9, bold=True, color="FFFFFF")
 KPI_VAL_F = Font(name="Calibri", size=18, bold=True, color="1F3864")
 
+# Celda unica de escritura (temperatura de consulta): relleno propio, distinto
+# del amarillo IN_FILL de las listas desplegables, para que salte a la vista
+# cual es la unica celda que se teclea en todo el buscador.
+TEMP_INPUT_FILL = PatternFill("solid", fgColor="CCC0DA")
+# Semaforo de cascada completa/incompleta (formato condicional sobre el
+# indicador de seleccion, ver build_buscador/finish_buscador).
+SEL_OK_FILL = PatternFill("solid", fgColor="C6EFCE")
+SEL_OK_FONT = Font(name="Calibri", size=11, bold=True, color="006100")
+SEL_BAD_FILL = PatternFill("solid", fgColor="FFEB9C")
+SEL_BAD_FONT = Font(name="Calibri", size=11, bold=True, color="9C6500")
+
 
 def banda(ws, r, texto, n=NCOLS):
     ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=n)
@@ -1784,7 +1795,7 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
                "valor.")
     _nota(e, com_temp)
     c = _mrg(ws, 12, 4, 5, 25)
-    c.font, c.fill = IN_F, IN_FILL
+    c.font, c.fill = IN_F, TEMP_INPUT_FILL
     c.border = Border(*[Side("medium", color="C00000")] * 4)
     _nota(c, com_temp)
     ws.cell(12, 6).value = f"={U_TMP}"
@@ -1810,13 +1821,22 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     _nota(ay, "Aviso automatico: confirma que hoja base de datos y que unidades esta "
               "leyendo el buscador, segun el selector 'Sistema de unidades' (D5). No "
               "se edita.")
-    ay2 = _mrg(ws, 12, 7, NCOLS)
-    ay2.value = ('=IF($D$10="","Complete la cascada hasta el paso 4 para ver el resultado",'
-                 '"Seleccion completa")')
-    ay2.font = Font(italic=True, color="C00000")
-    _nota(ay2, "Aviso automatico: indica si la cascada de seleccion (pasos 0 a 4) esta "
-               "completa o si falta elegir algun nivel para poder mostrar un resultado. "
+    ay2 = _mrg(ws, 12, 7, 9)
+    ay2.value = '=IF($D$10="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
+    ay2.font = SEL_BAD_FONT
+    ay2.fill = SEL_BAD_FILL
+    ay2.border = BOX
+    ay2.alignment = Alignment(horizontal="center", vertical="center")
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (fondo verde) si la cascada de "
+               "seleccion (pasos 0 a 4) esta completa; SELECCION INCOMPLETA (fondo "
+               "amarillo) si falta elegir algun nivel para poder mostrar un resultado. "
                "No se edita.")
+    ws.conditional_formatting.add(
+        "G12:I12",
+        FormulaRule(formula=['$D$10<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
+    ws.conditional_formatting.add(
+        "G12:I12",
+        FormulaRule(formula=['$D$10=""'], fill=SEL_BAD_FILL, font=SEL_BAD_FONT))
 
     dv_list(ws, "D5", '"SI,US"', filas[0][3])
     dv_list(ws, "D13", '"Interpolado,Tabulado-conservador"', com_modo)
@@ -2148,7 +2168,7 @@ def finish_buscador(ctx, wb, curvas, cidx):
     ch = ScatterChart()
     ch.title = f"{ctx['valor_lbl']} frente a la temperatura"
     ch.style = 13
-    ch.scatterStyle = "lineMarker"
+    ch.scatterStyle = "line"
     ch.x_axis.title = (f"Temperatura  [{ctx['temp_si']} en SI  ·  "
                        f"{ctx['temp_us']} en US]")
     ch.y_axis.title = (f"{ctx['valor_lbl']}  [{ctx['unit_si']} en SI  ·  "
@@ -2165,11 +2185,14 @@ def finish_buscador(ctx, wb, curvas, cidx):
     xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
     ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
     s1 = Series(ys, xs, title_from_data=True)
-    s1.marker = Marker(symbol="circle", size=5)
+    # Linea continua, sin marcadores de punto: la curva del material se lee
+    # como trazo, no como nube de puntos. Mismo azul que la banda del buscador
+    # (BLUE), para que se identifique con la hoja en la que vive.
+    s1.marker = Marker(symbol="none")
     # Linea recta (no suavizada) entre puntos: la interpolacion del codigo es
     # lineal (seccion 4), una curva suavizada la representaria mal.
     s1.smooth = False
-    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(w=19050))
+    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
     ch.series.append(s1)
     xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
     yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
@@ -2216,7 +2239,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
                "C-1, modulo C-3 y Poisson/densidad).")
     _nota(e, com_temp)
     c = _mrg(ws, 5, 4, 5, 25)
-    c.font, c.fill = IN_F, IN_FILL
+    c.font, c.fill = IN_F, TEMP_INPUT_FILL
     c.border = Border(*[Side("medium", color="C00000")] * 4)
     _nota(c, com_temp)
     ws.cell(5, 6, "°C").font = UNIT_F
@@ -2348,7 +2371,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
             from openpyxl.drawing.line import LineProperties
             ch = ScatterChart()
             ch.title = f'{b["valor_lbl"]} frente a la temperatura'
-            ch.scatterStyle = "lineMarker"
+            ch.scatterStyle = "line"
             ch.x_axis.title = "Temperatura  [°C]"
             ch.y_axis.title = f'{b["valor_lbl"]}  [{b["unidad"]}]'
             ch.height, ch.width = 7.5, 20
@@ -2359,9 +2382,11 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
             xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
             ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
             se = Series(ys, xs, title_from_data=True)
-            se.marker = Marker(symbol="circle", size=5)
+            # Linea continua sin marcadores, mismo azul de la banda del buscador
+            # (BLUE) — mismo estilo que finish_buscador.
+            se.marker = Marker(symbol="none")
             se.smooth = False
-            se.graphicalProperties = GraphicalProperties(ln=LineProperties(w=19050))
+            se.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
             ch.series.append(se)
             xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
             yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)

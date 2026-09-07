@@ -285,7 +285,7 @@
       "200_f": null
     },
     {
-      "astm_spec_no": "F2788/ F2788M",
+      "astm_spec_no": "F2788/F2788M",
       "pipe_designation": "SDR/DR-PR",
       "material_designation": "PEX0006",
       "cell_class": null,
@@ -297,7 +297,7 @@
       "200_f": 0.31
     },
     {
-      "astm_spec_no": "F2788/ F2788M",
+      "astm_spec_no": "F2788/F2788M",
       "pipe_designation": "SDR/DR-PR",
       "material_designation": "PEX0008",
       "cell_class": null,
@@ -476,5 +476,22 @@
       "180_f": null,
       "200_f": null
     }
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      402,
+      403
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "fila 20: astm_spec_no 'F2788/ F2788M' -> 'F2788/F2788M'",
+      "fila 21: astm_spec_no 'F2788/ F2788M' -> 'F2788/F2788M'"
+    ]
+  },
+  "observaciones_del_codigo": [
+    "F2389 (PP-R y PP-RCT): B-1C imprime 210 F de maximo (= 98,9 C) frente a los 110 C de B-1, y designa la tuberia \"IPS Sch. 80\" donde B-1 dice \"PR\". Se conservan las dos tal como estan impresas (folios 400 y 402)."
   ]
 }

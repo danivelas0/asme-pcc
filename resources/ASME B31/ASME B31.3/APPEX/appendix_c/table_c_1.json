@@ -2251,5 +2251,189 @@
         "825": null
       }
     }
-  ]
+  ],
+  "scale_factor": {
+    "operacion": "ninguna",
+    "exponente": 0,
+    "nota": "el 10^-6 va en la unidad del coeficiente A",
+    "impreso": "Temperature Range 20°C to"
+  },
+  "reference_temperature": {
+    "valor": 20,
+    "unidad": "C"
+  },
+  "coefficient_defs": {
+    "A": {
+      "magnitud": "Mean Coefficient of Thermal Expansion",
+      "unidad": "10^-6 mm/mm/°C",
+      "impreso": "A = Mean Coefficient of Thermal Expansion, 10^-6 mm/mm/°C"
+    },
+    "B": {
+      "magnitud": "Linear Thermal Expansion",
+      "unidad": "mm/m",
+      "impreso": "B = Linear Thermal Expansion, mm/m"
+    },
+    "referencia": "in Going From 20°C to Indicated Temperature Note [(1)]"
+  },
+  "note_members": [
+    {
+      "nota": "(2)",
+      "encabezado": "Group 1 alloys",
+      "miembros": [
+        "Carbon steel",
+        "C-Mn-Cb",
+        "C-Mn-Si-Cb",
+        "C-Mn-Si-V",
+        "C-Mn-Ti",
+        "C-Si-Ti",
+        "C-1/4Mo",
+        "C-1/2Mo",
+        "1/2Cr-1/5Mo",
+        "1/2Cr-1/5Mo-V",
+        "1/2Cr-1/4Mo-Si",
+        "1/2Cr-1/2Mo",
+        "3/4Cr-1/2Ni-Cu",
+        "3/4Cr-3/4Ni-Cu-Al",
+        "1Cr-1/5Mo",
+        "1Cr-1/5Mo-Si",
+        "1Cr-1/2Mo",
+        "1Cr-1/2Mo-V",
+        "11/4Cr-1/2Mo",
+        "11/4Cr-1/2Mo-Si",
+        "13/4Cr-1/2Mo-Cu",
+        "13/4Cr-1/2Mo-Ti",
+        "2Cr-1/2Mo",
+        "21/4Cr-1Mo",
+        "3Cr-1Mo",
+        "3Cr-1Mo-1/4V-Cb-Ca",
+        "3Cr-1Mo-1/4V-Ti-B",
+        "Mn-1/4Mo",
+        "Mn-1/2Mo",
+        "Mn-1/2Mo-1/4Ni",
+        "Mn-1/2Mo-1/2Ni",
+        "Mn-1/2Mo-3/4Ni",
+        "Mn-V",
+        "1/2Ni-1/2Cr-1/4Mo",
+        "1/2Ni-1/2Cr-1/4Mo-V",
+        "1/2Ni-1/2Mo-V",
+        "3/4Ni-1/2Cr-1/2Mo-V",
+        "3/4Ni-1/2Cu-Mo",
+        "3/4Ni-1/2Mo-1/3Cr-V",
+        "3/4Ni-1/2Mo-Cr-V",
+        "3/4Ni-1Mo-3/4Cr",
+        "1Ni-1/2Cr-1/2Mo",
+        "11/4Ni-1Cr-1/2Mo",
+        "13/4Ni-3/4Cr-1/4Mo",
+        "2Ni-3/4Cr-1/4Mo",
+        "2Ni-11/2Cr-1/4Mo-V",
+        "21/2Ni",
+        "23/4Ni-11/2Cr-1/2Mo-V",
+        "31/2Ni",
+        "31/2Ni-13/4Cr-1/2Mo-V",
+        "4Ni-11/2Cr-1/2Mo-V"
+      ],
+      "grupo": "Group 1",
+      "tipo": "grupo"
+    },
+    {
+      "nota": "(3)",
+      "encabezado": "Group 2 alloys",
+      "miembros": [
+        "18Cr-5Ni-3Mo-N",
+        "22Cr-2Ni-Mo-N",
+        "22Cr-5Ni-3Mo-N",
+        "23Cr-4Ni-Mo-Cu",
+        "25Cr-6Ni-Mo-N",
+        "25Cr-7Ni-4Mo-N"
+      ],
+      "grupo": "Group 2",
+      "tipo": "grupo"
+    },
+    {
+      "nota": "(4)",
+      "encabezado": "Group 3 alloys",
+      "miembros": [
+        "16Cr-12Ni-2Mo",
+        "16Cr-12Ni-2Mo-N",
+        "16Cr-12Ni-2Mo-Ti",
+        "18Cr-8Ni",
+        "18Cr-8Ni-N",
+        "18Cr-10Ni-Cb",
+        "18Cr-10Ni-Ti",
+        "18Cr-11Ni",
+        "18Cr-13Ni-3Mo",
+        "18Cr-15Ni-4Si",
+        "18Cr-18Ni-2Si",
+        "19Cr-9Ni-Mo-W",
+        "21Cr-11Ni-N"
+      ],
+      "grupo": "Group 3",
+      "tipo": "grupo"
+    },
+    {
+      "nota": "(5)",
+      "encabezado": "Group 4 alloys",
+      "miembros": [
+        "14Cr-16Ni-6Si-Cu-Mo",
+        "25Ni-15Cr-2Ti",
+        "29Ni-20Cr-3Cu-2Mo",
+        "18Cr-20Ni-5.5Si",
+        "20Cr-18Ni-6Mo",
+        "22Cr-13Ni-5Mn",
+        "23Cr-12Ni",
+        "24Cr-22Ni-6Mo-2W-Cu-N",
+        "25Cr-12Ni",
+        "25Cr-20Ni",
+        "25Cr-20Ni-2Mo",
+        "31Ni-31Fe-29Cr-Mo",
+        "44Fe-25Ni-21Cr-Mo",
+        "47Fe-25Ni-23Cr-5.5Mo-N"
+      ],
+      "grupo": "Group 4",
+      "tipo": "grupo"
+    },
+    {
+      "nota": "(6)",
+      "encabezado": "Aluminum alloys represented by these thermal expansion coefficients include the following",
+      "miembros": [
+        "A03560",
+        "A24430",
+        "A91060",
+        "A91100",
+        "A92014",
+        "A92024",
+        "A93003",
+        "A93004",
+        "A95052",
+        "A95083",
+        "A95086",
+        "A95154",
+        "A95254",
+        "A95454",
+        "A95456",
+        "A95652",
+        "A96061",
+        "A96063"
+      ],
+      "grupo": null,
+      "tipo": "alias_uns"
+    }
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_c.py",
+    "fuente": "appendix_c/fuente/APENDICE_C_ASME_B31_3_2024.pdf (escaneo, sin capa de texto) y su OCR estructurado appendix_c/ocr_apendice_c_datalab.json",
+    "folios_impresos": [
+      408,
+      409,
+      410,
+      411,
+      412
+    ],
+    "alcance": "Solo metadatos: unidades, definicion de coeficientes, miembros de las Notas, grupo/subgrupo impreso y factor de escala. Los valores y los nombres de material NO se tocan: se conservan tal como estaban cargados, que es como los imprime el codigo (regla 9 del proyecto).",
+    "cambios": [
+      "note_members: (2)->51, (3)->6, (4)->13, (5)->14, (6)->18"
+    ],
+    "excepciones_declaradas": []
+  }
 }

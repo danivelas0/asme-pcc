@@ -27,7 +27,7 @@
     "Pressure kPa",
     "psi",
     "Maximum [Note (1)] °C",
-    "°F"
+    "Maximum [Note (1)] °F"
   ],
   "value_axis": null,
   "column_groups": [
@@ -43,7 +43,7 @@
       "pressure_kpa": 1379,
       "psi": 200,
       "maximum_c": 23,
-      "f": 73.4
+      "maximum_f": 73.4
     },
     {
       "astm_spec_no": "F1281",
@@ -53,7 +53,7 @@
       "pressure_kpa": 1103,
       "psi": 160,
       "maximum_c": 60,
-      "f": 140
+      "maximum_f": 140
     },
     {
       "astm_spec_no": "F1281",
@@ -63,7 +63,7 @@
       "pressure_kpa": 862,
       "psi": 125,
       "maximum_c": 82.2,
-      "f": 180
+      "maximum_f": 180
     },
     {
       "astm_spec_no": "F1282",
@@ -73,7 +73,7 @@
       "pressure_kpa": 1379,
       "psi": 200,
       "maximum_c": 23,
-      "f": 73.4
+      "maximum_f": 73.4
     },
     {
       "astm_spec_no": "F1282",
@@ -83,7 +83,7 @@
       "pressure_kpa": 1103,
       "psi": 160,
       "maximum_c": 60,
-      "f": 140
+      "maximum_f": 140
     },
     {
       "astm_spec_no": "F1282",
@@ -93,7 +93,7 @@
       "pressure_kpa": 862,
       "psi": 100,
       "maximum_c": 82.2,
-      "f": 180
+      "maximum_f": 180
     },
     {
       "astm_spec_no": "F1974",
@@ -103,27 +103,44 @@
       "pressure_kpa": 862,
       "psi": 125,
       "maximum_c": 82,
-      "f": 180
+      "maximum_f": 180
     },
     {
       "astm_spec_no": "F1974",
-      "material": "Metal insert fittings for",
+      "material": "Metal insert fittings for PE-AL-PE systems",
       "mm": "12.16–25.32",
       "size_range_in": "1∕2–1",
       "pressure_kpa": 1103,
       "psi": 160,
       "maximum_c": 60,
-      "f": 140
+      "maximum_f": 140
     },
     {
       "astm_spec_no": "F1974",
-      "material": "PE-AL-PE systems",
+      "material": null,
       "mm": null,
       "size_range_in": null,
       "pressure_kpa": 862,
       "psi": 125,
       "maximum_c": 82,
-      "f": 180
+      "maximum_f": 180
     }
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      405
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "fila 7: material 'Metal insert fittings for' -> 'Metal insert fittings for PE-AL-PE systems' (el impreso lo escribe a dos lineas)",
+      "fila 8: material 'PE-AL-PE systems' -> None (era la segunda linea del nombre de la fila anterior, no un material propio)",
+      "columna '°F' renombrada a 'Maximum [Note (1)] °F' y campo `f` -> `maximum_f`: la tabla solo publica limites maximos"
+    ]
+  },
+  "observaciones_del_codigo": [
+    "F1282 a 862 kPa: el codigo imprime 100 psi donde sus filas gemelas de F1281 y F1974 imprimen 125 psi para la misma presion (862 kPa = 125 psi). Se conserva el 100 tal como esta impreso (folio 405)."
   ]
 }

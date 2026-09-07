@@ -23,16 +23,17 @@
     "Spec. No.",
     "Material",
     "Class",
-    "Pressure kPa",
+    "kPa",
     "psi",
-    "°C",
-    "°F"
+    "Minimum °C",
+    "Minimum °F",
+    "Maximum °C",
+    "Maximum °F"
   ],
-  "value_axis": "Recommended Temperature",
+  "value_axis": "Recommended Temperature Limits [Note (1)]",
   "column_groups": [
-    "Recommended Temperature",
-    "Limits [Note (1)]",
-    "Allowable Gage",
+    "Allowable Gage Pressure",
+    "Recommended Temperature Limits [Note (1)]",
     "Minimum",
     "Maximum"
   ],
@@ -43,8 +44,10 @@
       "class": 25,
       "pressure_kpa": 69,
       "psi": 10,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "ASTM C361",
@@ -52,8 +55,10 @@
       "class": 50,
       "pressure_kpa": 138,
       "psi": 20,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "ASTM C361",
@@ -61,8 +66,10 @@
       "class": 75,
       "pressure_kpa": 205,
       "psi": 30,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "ASTM C361",
@@ -70,8 +77,10 @@
       "class": 100,
       "pressure_kpa": 275,
       "psi": 40,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "ASTM C361",
@@ -79,8 +88,10 @@
       "class": 125,
       "pressure_kpa": 345,
       "psi": 50,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "AWWA C300",
@@ -88,8 +99,10 @@
       "class": null,
       "pressure_kpa": 1795,
       "psi": 260,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "AWWA C301",
@@ -97,8 +110,10 @@
       "class": "Lined cylinder",
       "pressure_kpa": 1725,
       "psi": 250,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "AWWA C301",
@@ -106,8 +121,10 @@
       "class": "Embedded cylinder",
       "pressure_kpa": 2415,
       "psi": 350,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     },
     {
       "spec_no": "AWWA C302",
@@ -115,8 +132,22 @@
       "class": null,
       "pressure_kpa": 310,
       "psi": 45,
-      "c": null,
-      "f": null
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": null,
+      "maximum_f": null
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      404
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "columnas de temperatura: ['°C','°F'] -> ['Minimum °C','Minimum °F','Maximum °C','Maximum °F'] (el impreso reparte Recommended Temperature Limits en minimo y maximo, cada uno con sus dos unidades)"
+    ]
+  }
 }

@@ -111,8 +111,7 @@
       "range_f": null,
       "mm_mm_c": 130,
       "range_c": null,
-      "material_group": "Thermoplastics",
-      "material_subgroup": "Chlorinated poly(vinyl chloride)"
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Polyether, chlorinated",
@@ -120,8 +119,7 @@
       "range_f": null,
       "mm_mm_c": 81,
       "range_c": null,
-      "material_group": "Thermoplastics",
-      "material_subgroup": "Chlorinated poly(vinyl chloride)"
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "PE2606",
@@ -210,8 +208,7 @@
       "range_f": null,
       "mm_mm_c": 54,
       "range_c": null,
-      "material_group": "Thermoplastics",
-      "material_subgroup": "Cross-linked polyethylene"
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "PP1110",
@@ -299,63 +296,74 @@
       "in_in_f": 40,
       "range_f": "37–45",
       "mm_mm_c": 72,
-      "range_c": "3–7"
+      "range_c": "3–7",
+      "material_group": "Thermoplastics",
+      "material_subgroup": "Poly(vinyl chloride)"
     },
     {
       "material_description": "PVC2120",
       "in_in_f": 30,
       "range_f": null,
       "mm_mm_c": 54,
-      "range_c": null
+      "range_c": null,
+      "material_group": "Thermoplastics",
+      "material_subgroup": "Poly(vinyl chloride)"
     },
     {
       "material_description": "Poly(vinylidene fluoride)",
       "in_in_f": 79,
       "range_f": null,
       "mm_mm_c": 142,
-      "range_c": null
+      "range_c": null,
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(vinylidene chloride)",
       "in_in_f": 100,
       "range_f": null,
       "mm_mm_c": 180,
-      "range_c": null
+      "range_c": null,
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(tetrafluoroethylene)",
       "in_in_f": 55,
       "range_f": "73–140",
       "mm_mm_c": 99,
-      "range_c": "23–60"
+      "range_c": "23–60",
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(fluorinated ethylene propylene)",
       "in_in_f": "46–58",
       "range_f": "73–140",
       "mm_mm_c": "83–104",
-      "range_c": "23–60"
+      "range_c": "23–60",
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(perfluoroalkoxy alkane)",
       "in_in_f": 67,
       "range_f": "70–212",
       "mm_mm_c": 121,
-      "range_c": "21–100"
+      "range_c": "21–100",
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(perfluoroalkoxy alkane)",
       "in_in_f": 94,
       "range_f": "212–300",
       "mm_mm_c": 169,
-      "range_c": "100–149"
+      "range_c": "100–149",
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Poly(perfluoroalkoxy alkane)",
       "in_in_f": 111,
       "range_f": "300–408",
       "mm_mm_c": 200,
-      "range_c": "149–209"
+      "range_c": "149–209",
+      "material_group": "Thermoplastics"
     },
     {
       "material_description": "Glass–epoxy, centrifugally cast",
@@ -363,7 +371,7 @@
       "range_f": null,
       "mm_mm_c": "16–23.5",
       "range_c": null,
-      "material_group": "and Reinforced Plastic Mortars"
+      "material_group": "Reinforced Thermosetting Resins and Reinforced Plastic Mortars"
     },
     {
       "material_description": "Glass–polyester, centrifugally cast",
@@ -371,7 +379,7 @@
       "range_f": null,
       "mm_mm_c": "16–27",
       "range_c": null,
-      "material_group": "and Reinforced Plastic Mortars"
+      "material_group": "Reinforced Thermosetting Resins and Reinforced Plastic Mortars"
     },
     {
       "material_description": "Glass–polyester, filament-wound",
@@ -379,7 +387,7 @@
       "range_f": null,
       "mm_mm_c": "16–20",
       "range_c": null,
-      "material_group": "and Reinforced Plastic Mortars"
+      "material_group": "Reinforced Thermosetting Resins and Reinforced Plastic Mortars"
     },
     {
       "material_description": "Glass–polyester, hand lay-up",
@@ -387,7 +395,7 @@
       "range_f": null,
       "mm_mm_c": "21.5–27",
       "range_c": null,
-      "material_group": "and Reinforced Plastic Mortars"
+      "material_group": "Reinforced Thermosetting Resins and Reinforced Plastic Mortars"
     },
     {
       "material_description": "Glass–epoxy, filament-wound",
@@ -395,7 +403,7 @@
       "range_f": null,
       "mm_mm_c": "16–23.5",
       "range_c": null,
-      "material_group": "and Reinforced Plastic Mortars"
+      "material_group": "Reinforced Thermosetting Resins and Reinforced Plastic Mortars"
     },
     {
       "material_description": "Borosilicate glass",
@@ -405,5 +413,63 @@
       "range_c": null,
       "material_group": "Other Nonmetallic Materials"
     }
-  ]
+  ],
+  "scale_factor": {
+    "operacion": "dividir",
+    "exponente": 6,
+    "impreso": "Mean Coefficients (Divide Table Values by 106)"
+  },
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_c.py",
+    "fuente": "appendix_c/fuente/APENDICE_C_ASME_B31_3_2024.pdf (escaneo, sin capa de texto) y su OCR estructurado appendix_c/ocr_apendice_c_datalab.json",
+    "folios_impresos": [
+      419,
+      420
+    ],
+    "alcance": "Solo metadatos: unidades, definicion de coeficientes, miembros de las Notas, grupo/subgrupo impreso y factor de escala. Los valores y los nombres de material NO se tocan: se conservan tal como estaban cargados, que es como los imprime el codigo (regla 9 del proyecto).",
+    "cambios": [],
+    "excepciones_declaradas": [
+      {
+        "fila": "Polybutylene PB 2110",
+        "folio": 419,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Polyether, chlorinated",
+        "folio": 419,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Polyphenylene POP 2125",
+        "folio": 419,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Poly(vinylidene fluoride)",
+        "folio": 420,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Poly(vinylidene chloride)",
+        "folio": 420,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Poly(tetrafluoroethylene)",
+        "folio": 420,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Poly(fluorinated ethylene propylene)",
+        "folio": 420,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      },
+      {
+        "fila": "Poly(perfluoroalkoxy alkane)",
+        "folio": 420,
+        "motivo": "en el impreso va a ras del margen, no indentada bajo el subgrupo anterior; el HTML del OCR no conserva la indentacion"
+      }
+    ]
+  }
 }

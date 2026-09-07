@@ -26,16 +26,18 @@
     "NPS",
     "kPa",
     "Allowable psi",
-    "°C",
-    "°F",
+    "Minimum °C",
+    "Minimum °F",
+    "Maximum °C",
     "Maximum °F"
   ],
-  "value_axis": "Temperature Limits [Note (1)]",
+  "value_axis": "Recommended Temperature Limits [Note (1)]",
   "column_groups": [
-    "Recommended",
-    "Temperature Limits [Note (1)]",
-    "Gage Pressure",
-    "Minimum"
+    "Size Range",
+    "Allowable Gage Pressure",
+    "Recommended Temperature Limits [Note (1)]",
+    "Minimum",
+    "Maximum"
   ],
   "rows": [
     {
@@ -45,8 +47,9 @@
       "nps": "1∕4–1∕2",
       "kpa": 690,
       "allowable_psi": 100,
-      "c": 232,
-      "f": null,
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": 232,
       "maximum_f": 450
     },
     {
@@ -56,8 +59,9 @@
       "nps": "3∕4",
       "kpa": 515,
       "allowable_psi": 75,
-      "c": 232,
-      "f": null,
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": 232,
       "maximum_f": 450
     },
     {
@@ -67,8 +71,9 @@
       "nps": "1–3",
       "kpa": 345,
       "allowable_psi": 50,
-      "c": 232,
-      "f": null,
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": 232,
       "maximum_f": 450
     },
     {
@@ -78,8 +83,9 @@
       "nps": 4,
       "kpa": 240,
       "allowable_psi": 35,
-      "c": 232,
-      "f": null,
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": 232,
       "maximum_f": 450
     },
     {
@@ -89,9 +95,22 @@
       "nps": 6,
       "kpa": 138,
       "allowable_psi": 20,
-      "c": 232,
-      "f": null,
+      "minimum_c": null,
+      "minimum_f": null,
+      "maximum_c": 232,
       "maximum_f": 450
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_b.py",
+    "fuente": "appendix_b/fuente/APENDICE_B_ASME_B31_3_2024.pdf (escaneo, sin capa de texto; correcciones transcritas y verificadas a ojo sobre la pagina ampliada)",
+    "folios_impresos": [
+      404
+    ],
+    "alcance": "Solo identificacion y estructura: celdas fusionadas, columnas colapsadas, cabeceras desalineadas y notas. Los valores NO se tocan: se cotejaron fila a fila contra el impreso y son correctos.",
+    "cambios": [
+      "cabecera desalineada: ['°C','°F','Maximum °F'] -> ['Minimum °C','Minimum °F','Maximum °C','Maximum °F']. El campo `c` guardaba el MAXIMO (232 C), no el minimo"
+    ]
+  }
 }

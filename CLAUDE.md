@@ -70,6 +70,17 @@ python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
 python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
     --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 
+# Solo si se repone la extraccion de los Apendices B o C del B31.3. Los dos son
+# idempotentes y NO tocan ningun valor: solo la capa de metadatos. El PDF del
+# codigo y su OCR NO estan en el repo (copyright de ASME, ver .gitignore): el de
+# la C hay que tenerlo en disco y pasarlo con --ocr si no esta en su sitio.
+#   C: unidades de los coeficientes A y B de C-1/C-1C, miembros de sus Notas
+#      (2)..(6) y grupo impreso de C-2/C-3.
+#   B: celdas fusionadas de B-1, las 6 especificaciones de B-3, las columnas
+#      minimo/maximo de B-4 y B-5, y el material a dos lineas de B-6.
+python completar_apendice_c.py --resources ..\..\..\resources
+python completar_apendice_b.py --resources ..\..\..\resources
+
 python build_db_materiales.py --resources ..\..\..\resources `
     --in ..\..\..\templates\maestro_con_macros.xlsm `
     --out ..\..\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
@@ -140,6 +151,47 @@ Dos trampas ya pagadas, documentadas en el código:
    composición impresa. **No es dato normativo** y no entra en ningún cálculo.
 9. Los valores se cargan **tal como están impresos**; SI y US son extracciones
    independientes, nunca conversiones.
+10. **Conmutador de unidades en todo motor.** Todo motor de búsqueda y todo motor
+    de cálculo del libro lleva un conmutador **SI ↔ US**. Es corolario de la
+    regla 9: los dos sistemas se leen de la edición correspondiente del código,
+    nunca por conversión. Cuando el código publica los dos sistemas en la **misma
+    tabla** —C-2 y C-4 del B31.3— el conmutador cambia la **columna** leída;
+    cuando publica **una tabla por edición** —A-1/A-1C, C-1/C-1C, C-3/C-3C, II-D
+    métrica y US— cambia la **hoja**. Si un material no tiene homólogo en la otra
+    edición, el motor muestra «sin equivalente en la edicion US», nunca un valor
+    convertido.
+
+### Estilo de diseño de los buscadores — no romper
+
+Vive en `build_buscador` / `finish_buscador` (los 5 buscadores de cascada: B31_3,
+BPVC_IID, BPVC_IID_B, Su, Sy) y se replica en `build_buscador_grupo`. Tocar el
+estilo de un buscador significa tocar las tres constantes de módulo
+(`TEMP_INPUT_FILL`, `SEL_OK_FILL`/`SEL_OK_FONT`, `SEL_BAD_FILL`/`SEL_BAD_FONT`,
+declaradas junto a `CARD_FILL`/`KPI_FILL`) para que cambien a la vez en todos.
+
+1. **Celda única de escritura (temperatura de consulta): relleno propio
+   `TEMP_INPUT_FILL` (lavanda, `CCC0DA`)**, distinto del amarillo `IN_FILL` de las
+   celdas de lista desplegable. Es la única celda que se teclea en todo el
+   buscador; su color debe diferenciarla a simple vista de las que solo aceptan
+   una lista. Aplica también a `build_buscador_grupo`.
+2. **Semáforo de cascada completa/incompleta**, exclusivo de los 5 buscadores de
+   cascada (`build_buscador`/`finish_buscador`): la celda de aviso junto a la
+   temperatura (`G12:I12`) lleva formato condicional — verde `SEL_OK_FILL`
+   (`C6EFCE`/`006100`) con "SELECCION COMPLETA" cuando la cascada (pasos 0 a 4)
+   está resuelta; amarillo `SEL_BAD_FILL` (`FFEB9C`/`9C6500`) con "SELECCION
+   INCOMPLETA" mientras falte un paso. El texto va en mayúsculas y sin tilde
+   ("SELECCION", no "SELECCIÓN"): todo el texto de celda del libro evita acentos
+   (ver "SELECCION DEL MATERIAL", "Composicion nominal") para no arrastrar
+   problemas de codificación fuera de Excel 365. `build_buscador_grupo` no lleva
+   este semáforo: no tiene una única cascada que completar, cada bloque ya avisa
+   "(elija grupo)" en su propia celda de valor.
+3. **Curva del material: línea continua, sin marcadores, del mismo azul de la
+   banda del buscador (`BLUE = 2F5597`)** — `ch.scatterStyle = "line"`, serie del
+   valor tabulado con `marker="none"` y `smooth=False` (la interpolación del
+   código es lineal — regla 3 de esta lista arriba — una curva suavizada la
+   representaría mal). El punto consultado sigue siendo un rombo rojo (`FF0000`)
+   sin línea, para distinguir el valor puntual de la curva. Aplica a
+   `finish_buscador` y a `build_buscador_grupo`.
 
 ### `MAP_Grupo` — pertenencia a grupo de propiedades
 

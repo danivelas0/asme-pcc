@@ -211,5 +211,31 @@
       "e_mpa_23_c": 67570,
       "material_group": "Other"
     }
-  ]
+  ],
+  "scale_factor": {
+    "operacion": "ninguna",
+    "exponente": 0,
+    "unidad_resultante": "ksi (73.4 F) / MPa (23 C)"
+  },
+  "reference_temperature": [
+    {
+      "valor": 73.4,
+      "unidad": "F"
+    },
+    {
+      "valor": 23,
+      "unidad": "C"
+    }
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-07",
+    "script": "completar_apendice_c.py",
+    "fuente": "appendix_c/fuente/APENDICE_C_ASME_B31_3_2024.pdf (escaneo, sin capa de texto) y su OCR estructurado appendix_c/ocr_apendice_c_datalab.json",
+    "folios_impresos": [
+      428
+    ],
+    "alcance": "Solo metadatos: unidades, definicion de coeficientes, miembros de las Notas, grupo/subgrupo impreso y factor de escala. Los valores y los nombres de material NO se tocan: se conservan tal como estaban cargados, que es como los imprime el codigo (regla 9 del proyecto).",
+    "cambios": [],
+    "excepciones_declaradas": []
+  }
 }

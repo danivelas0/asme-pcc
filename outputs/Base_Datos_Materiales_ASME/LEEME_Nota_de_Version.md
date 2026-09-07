@@ -5,6 +5,94 @@
 
 ---
 
+## Apéndice B del B31.3 — identificación y estructura corregidas (2026-09-07)
+
+Cotejadas las 7 tablas y las 28 entradas del índice contra los folios impresos 399–405:
+**ni un solo valor mal**. Lo que fallaba era cómo quedaron identificadas y estructuradas
+las filas. Seis defectos, uno de ellos peligroso:
+
+- **B-5 tenía la cabecera desalineada.** El código imprime `Mín °C · Mín °F · Máx °C ·
+  Máx °F`; el JSON declaraba `°C · °F · Maximum °F`, y **los 232 °C —que son el máximo
+  del vidrio borosilicato— quedaban en un campo llamado `c`**. Quien lo leyera como
+  temperatura mínima se llevaba 232 °C de mínimo. Corregido a `minimum_c/f` y
+  `maximum_c/f`. Mismo reparto aplicado a **B-4**.
+- **B-1 fusionaba dos columnas.** La fila del ABS guardaba `"… PR"` en `astm_spec_no`
+  con la designación de tubería vacía, y la F2389 guardaba `"F2389 PR"`. B-1C separaba
+  bien esas mismas filas, lo que confirmaba el defecto.
+- **`F2788/F2788M` llevaba un espacio espurio** en las dos ediciones, del salto de línea
+  del impreso; así no emparejaba con el índice de especificaciones.
+- **B-3 tenía tres columnas colapsadas en una celda.** El impreso es una rejilla 3 × 2
+  con seis especificaciones; ahora son **6 filas** —`D2517, D2996, D2997, D3517, D3754,
+  AWWA C950`—, leídas por columnas, que es como quedan en orden ascendente.
+- **B-6 partía un nombre de material a dos líneas entre dos filas**: la F1974 quedaba con
+  un `"Metal insert fittings for"` truncado y un `"PE-AL-PE systems"` suelto como si
+  fuera otro material. Y su columna `°F` pasa a `maximum_f`: la tabla solo publica
+  límites máximos.
+- **El índice no traía sus notas.** Se añaden las del folio 399, incluida la **Nota (2)**,
+  que es normativa: *el término «fiberglass RTR» sustituye a la designación ASTM
+  «fiberglass»*.
+
+### Tres rarezas del propio código, conservadas y declaradas
+
+Van en `observaciones_del_codigo` de cada archivo, no se corrigen (regla 9):
+
+1. **B-1 imprime `…` como mínimo** para D2846 / CPVC4120; **B-1C imprime 73 °F** para esa
+   misma fila.
+2. **F2389**: máximo **110 °C** en B-1 frente a **210 °F** (= 98,9 °C) en B-1C, y
+   designación de tubería `PR` en SI frente a `IPS Sch. 80` en US.
+3. **B-6, F1282 a 862 kPa**: imprime **100 psi** donde sus filas gemelas imprimen 125 psi
+   (862 kPa = 125 psi).
+
+Se corrige con `scripts/completar_apendice_b.py`. El PDF queda versionado en
+`resources/.../appendix_b/fuente/`; es un escaneo sin capa de texto y sin OCR
+estructurado, así que las correcciones van en el script como tabla literal, cada una
+citando su folio. **Ningún valor numérico se ha tocado**: 0 filas alteradas en las 5
+tablas con números. `DB_NoMetalicos` pasa de 939 a **944** pares campo/valor.
+`test_build_db.py::TestApendiceBCorregido` lo protege con 9 pruebas.
+
+---
+
+## Apéndice C del B31.3 — capa de metadatos completada (2026-09-07)
+
+Los **valores** del Apéndice C siempre estuvieron bien. Lo que faltaba era todo lo que
+rodea al número, y sin eso no se puede montar un motor de propiedades físicas:
+
+- **C-1 y C-1C no declaraban la unidad de sus coeficientes.** Ahora sí, leída del folio
+  impreso: `A = Mean Coefficient of Thermal Expansion, 10⁻⁶ mm/mm/°C` y
+  `B = Linear Thermal Expansion, mm/m` desde 20 °C; en la edición US, `10⁻⁶ in./in./°F`
+  y `in./100 ft` desde 70 °F.
+- **Las Notas (2)–(6) de C-1 se imprimen a tres columnas** y se habían leído por filas,
+  dejando los miembros de los Grupos 1 a 4 intercalados. Ahora están desintercaladas en
+  `note_members` —**51, 6, 13, 14 y 18** miembros—, con la misma estructura y la misma
+  convención de composición que las Notas de TM-1 / TE-1 de la II-D. Sin esto no se
+  puede decir si un 1¼Cr–½Mo pertenece al Grupo 1, que es para lo que sirve la tabla.
+- **C-2 y C-3 habían perdido la indentación del impreso.** Cinco filas colgaban de un
+  subgrupo que no es el suyo —`Gray iron` figuraba como **acero inoxidable
+  austenítico**—, nueve filas de C-2 se quedaron sin grupo al cruzar el corte de página
+  y un título llegó partido por la mitad (`"and Reinforced Plastic Mortars"`). C-2
+  reparte ahora sus 44 filas como el código: **38 / 5 / 1**.
+- **Factores de escala explícitos**, con el texto impreso al lado: ×10³ MPa (C-3),
+  ×10⁶ psi (C-3C), ÷10⁶ (C-2). El superíndice se había perdido y confundir 10³ con 10⁶
+  son tres órdenes de magnitud en el módulo E.
+
+Se corrige con `scripts/completar_apendice_c.py`, a partir del PDF del Apéndice C y su
+OCR estructurado, ambos versionados en `resources/.../appendix_c/`. El PDF es un
+escaneo sin capa de texto, así que lo que se parsea es el OCR.
+
+**Ningún valor ni ningún nombre de material se ha tocado** (regla 9): comprobado fila a
+fila contra la versión anterior, 0 alteraciones en las 6 tablas. El script audita además
+cada número del OCR contra `resources/` y **para si discrepan** en vez de elegir. Caso
+real: la C-3 imprime `Type 309.` con **punto** donde sus cinco hermanas llevan coma —una
+errata del código, verificada ampliando el escaneo—; el OCR la "corrige" y `resources/`
+la conserva.
+
+En el libro solo cambia `DB_NoMetalicos`, que pasa de **931 a 939** pares campo/valor.
+Todo lo demás del protocolo de aceptación queda idéntico: 271 276 valores auditados, 22
+casos de interpolación, caso semilla `Sa` 138 MPa **APTO**, 0 fallos.
+`test_build_db.py::TestApendiceCCompletado` lo protege con 9 pruebas.
+
+---
+
 ## Rev. 3 — Dashboard único de navegación
 
 El libro pasa de **37 pestañas planas y todas visibles** a **38 hojas con una sola a la
