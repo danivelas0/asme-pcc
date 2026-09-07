@@ -38,6 +38,7 @@ from openpyxl.workbook.defined_name import DefinedName
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.comments import Comment
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db_lib import (Resources, bilingual_key, build_material_id, clean, disambiguate,
@@ -150,11 +151,24 @@ def add_name(wb, name, ref):
     wb.defined_names.add(DefinedName(name, attr_text=ref))
 
 
-def dv_list(ws, cell, formula):
+AUTOR_NOTA = "ASME PCC — Motor de calculo"
+
+
+def _nota(cell, texto, ancho=260, alto=90):
+    """Adjunta un comentario de Excel (el que se ve al pasar el mouse, no texto
+    de celda) explicando que calcula la celda o que hay que ingresar en ella."""
+    c = Comment(texto, AUTOR_NOTA)
+    c.width, c.height = ancho, alto
+    cell.comment = c
+
+
+def dv_list(ws, cell, formula, comentario=None):
     dv = DataValidation(type="list", formula1=formula, allow_blank=True,
                         showErrorMessage=False)
     ws.add_data_validation(dv)
     dv.add(ws[cell])
+    if comentario:
+        _nota(ws[cell], comentario)
 
 
 def cascade_formula(val_name, key_name, key_expr):
@@ -1686,18 +1700,25 @@ def _mrg(ws, r, c1, c2, value=None):
     return cell
 
 
-def campo(ws, r, c1, etiqueta, formula, unidad=None):
+def campo(ws, r, c1, etiqueta, formula, unidad=None,
+         com_etq=None, com_val=None, com_uni=None):
     """etiqueta (2 col) | valor (2 col) | unidad (1 col)."""
     e = _mrg(ws, r, c1, c1 + 1, etiqueta)
     e.font = LBL2_F
     e.alignment = Alignment(vertical="center", indent=1)
+    if com_etq:
+        _nota(e, com_etq)
     v = _mrg(ws, r, c1 + 2, c1 + 3, formula)
     v.font = VAL_F
     v.alignment = Alignment(vertical="center", wrap_text=True)
+    if com_val:
+        _nota(v, com_val)
     u = ws.cell(r, c1 + 4)
     if unidad:
         u.value = unidad
     u.font = UNIT_F
+    if com_uni:
+        _nota(u, com_uni)
     for cc in range(c1, c1 + 5):
         ws.cell(r, cc).fill = CARD_FILL
         ws.cell(r, cc).border = CARD_BORDER
@@ -1719,31 +1740,66 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     U_TMP = f'IF($D$5="SI","{temp_si}","{temp_us}")'
 
     banda(ws, 4, "1 · SELECCION DEL MATERIAL   —   todo por lista desplegable")
-    filas = [(5, "Sistema de unidades", "SI"),
-             (6, "0 · Familia de material", ""),
-             (7, "1 · Composicion nominal", ""),
-             (8, "2 · Forma de producto", ""),
-             (9, "3 · Especificacion (Spec. No.)", ""),
-             (10, "4 · Tipo / Grado", ""),
-             (11, "5 · Variante (clase / tamano) — opcional", "")]
-    for r, et, val in filas:
+    filas = [(5, "Sistema de unidades", "SI",
+              "Entrada: elija SI (metrico, valores en {u_si}, temperatura en {t_si}) "
+              "o US (U.S. Customary, {u_us} / {t_us}). Cambia que hoja de base de datos "
+              "y que edicion del codigo lee todo el buscador.".format(
+                  u_si=unit_si, t_si=temp_si, u_us=unit_us, t_us=temp_us)),
+             (6, "0 · Familia de material", "",
+              "Entrada: paso 0 de la cascada. Elija la familia de material de la lista "
+              "desplegable (agrupacion de navegacion derivada del codigo, no es un dato "
+              "normativo). Habilita la lista del paso 1."),
+             (7, "1 · Composicion nominal", "",
+              "Entrada: paso 1 de la cascada, dependiente del paso 0. Lista solo con las "
+              "composiciones que existen dentro de la familia elegida arriba."),
+             (8, "2 · Forma de producto", "",
+              "Entrada: paso 2 de la cascada, dependiente de los pasos 0 y 1 (forma de "
+              "producto impresa por el codigo: placa, tubo, forjado, etc.)."),
+             (9, "3 · Especificacion (Spec. No.)", "",
+              "Entrada: paso 3 de la cascada, dependiente de los pasos 0 a 2. Spec. No. "
+              "tal como lo imprime la tabla del codigo."),
+             (10, "4 · Tipo / Grado", "",
+              "Entrada: paso 4 de la cascada, dependiente de los pasos 0 a 3. Al "
+              "completar este paso el buscador ya resuelve un material_id (salvo que "
+              "existan varias variantes, ver paso 5)."),
+             (11, "5 · Variante (clase / tamano) — opcional", "",
+              "Entrada opcional: solo hace falta si el paso 4 deja mas de una fila "
+              "posible (mismo material_id repetido por clase, condicion o tamano). Si "
+              "se deja en blanco, el buscador toma la primera variante encontrada.")]
+    for r, et, val, com in filas:
         e = _mrg(ws, r, 1, 3, et)
         e.font = LBL_F
         e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, com)
         c = _mrg(ws, r, 4, 6, val)
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
         ws.row_dimensions[r].height = 17
     e = _mrg(ws, 12, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
     e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
     e.alignment = Alignment(vertical="center", indent=1)
+    com_temp = ("Entrada: la UNICA celda de escritura libre de todo el buscador. "
+               "Temperatura a la que se necesita el valor, en la unidad que muestra la "
+               "celda de la derecha (segun el selector SI/US de arriba). Todo el "
+               "resultado, la ficha tecnica y la curva se recalculan a partir de este "
+               "valor.")
+    _nota(e, com_temp)
     c = _mrg(ws, 12, 4, 5, 25)
     c.font, c.fill = IN_F, IN_FILL
     c.border = Border(*[Side("medium", color="C00000")] * 4)
+    _nota(c, com_temp)
     ws.cell(12, 6).value = f"={U_TMP}"
     ws.cell(12, 6).font = UNIT_F
+    _nota(ws.cell(12, 6), "Calculo: unidad de la temperatura de consulta; cambia entre "
+                          "°C y °F segun el selector 'Sistema de unidades' (D5).")
     e = _mrg(ws, 13, 1, 3, "Modo de lectura")
     e.font = LBL_F
     e.alignment = Alignment(vertical="center", indent=1)
+    com_modo = ("Entrada: 'Interpolado' aplica la interpolacion lineal del codigo "
+               "S = S1 + (S2-S1)*(T-T1)/(T2-T1) entre los dos puntos tabulados que "
+               "rodean la temperatura de consulta. 'Tabulado-conservador' ignora la "
+               "interpolacion y adopta directamente el valor tabulado en T2 (el "
+               "escalon superior), mas conservador.")
+    _nota(e, com_modo)
     c = _mrg(ws, 13, 4, 6, "Interpolado")
     c.font, c.fill, c.border = IN_F, IN_FILL, BOX
     ay = _mrg(ws, 5, 7, NCOLS)
@@ -1751,24 +1807,32 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
                 f'temperatura en {temp_si}","Leyendo {us["sheet"]} — valores en {unit_us}, '
                 f'temperatura en {temp_us}")')
     ay.font = Font(italic=True, color=BLUE)
+    _nota(ay, "Aviso automatico: confirma que hoja base de datos y que unidades esta "
+              "leyendo el buscador, segun el selector 'Sistema de unidades' (D5). No "
+              "se edita.")
     ay2 = _mrg(ws, 12, 7, NCOLS)
     ay2.value = ('=IF($D$10="","Complete la cascada hasta el paso 4 para ver el resultado",'
                  '"Seleccion completa")')
     ay2.font = Font(italic=True, color="C00000")
+    _nota(ay2, "Aviso automatico: indica si la cascada de seleccion (pasos 0 a 4) esta "
+               "completa o si falta elegir algun nivel para poder mostrar un resultado. "
+               "No se edita.")
 
-    dv_list(ws, "D5", '"SI,US"')
-    dv_list(ws, "D13", '"Interpolado,Tabulado-conservador"')
-    dv_list(ws, "D6", "=" + rng["FAM"])
+    dv_list(ws, "D5", '"SI,US"', filas[0][3])
+    dv_list(ws, "D13", '"Interpolado,Tabulado-conservador"', com_modo)
+    dv_list(ws, "D6", "=" + rng["FAM"], filas[1][3])
     hl = get_column_letter
-    levels = [("C", "D7", rng["CK"], rng["CV"], "$D$6", rng.get("maxC", 60)),
-              ("F", "D8", rng["FK"], rng["FV"], '$D$6&"|"&$D$7', rng.get("maxF", 30)),
+    levels = [("C", "D7", rng["CK"], rng["CV"], "$D$6", rng.get("maxC", 60), filas[2][3]),
+              ("F", "D8", rng["FK"], rng["FV"], '$D$6&"|"&$D$7', rng.get("maxF", 30),
+               filas[3][3]),
               ("S", "D9", rng["SK"], rng["SV"], '$D$6&"|"&$D$7&"|"&$D$8',
-               rng.get("maxS", 40)),
+               rng.get("maxS", 40), filas[4][3]),
               ("G", "D10", rng["GK"], rng["GV"],
-               '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9', rng.get("maxG", 40)),
+               '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9', rng.get("maxG", 40), filas[5][3]),
               ("V", "D11", rng["K4"], rng["ID"],
-               '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9&"|"&$D$10', rng.get("maxV", 40))]
-    for tag, cell, kr, vr, key, mx in levels:
+               '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9&"|"&$D$10', rng.get("maxV", 40),
+               filas[6][3])]
+    for tag, cell, kr, vr, key, mx, com in levels:
         col = CASC_COL[tag]
         L = hl(col)
         mx = max(1, min(int(mx), 250))
@@ -1778,7 +1842,7 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
                 f'=IF(COUNTIF({kr},{key})<{i2},"",'
                 f'INDEX({vr},MATCH({key},{kr},0)+{i2}-1))')
         ws.column_dimensions[L].hidden = True
-        dv_list(ws, cell, f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}")
+        dv_list(ws, cell, f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}", com)
 
     # --- auxiliares de resolucion (columnas ocultas) -----------------------
     A = AUX_COL
@@ -1877,20 +1941,35 @@ def finish_buscador(ctx, wb, curvas, cidx):
     mid.font = Font(name="Calibri", size=12, bold=True, color=NAVY)
     mid.alignment = Alignment(vertical="center", indent=1)
     mid.fill = CARD_FILL
+    _nota(mid, "Calculo: nombre del material_id resuelto por la cascada de "
+              "seleccion, o el aviso de que falta completarla.")
     ws.row_dimensions[16].height = 20
     kpis = [(1, ctx["valor_lbl"].upper() + " A LA TEMPERATURA DE CONSULTA",
-             "=" + VALC, f"={U_VAL}"),
-            (4, "TEMPERATURA DE CONSULTA", "=$D$12", f"={U_TMP}"),
-            (7, "MODO DE LECTURA", "=$D$13", '="segun MODO_S"'),
+             "=" + VALC, f"={U_VAL}",
+             f"Calculo: {ctx['valor_lbl']} interpolado (o tabulado-conservador, "
+             "segun el Modo de lectura) a la temperatura de consulta, entre los dos "
+             "puntos tabulados T1/T2 de la seccion 4. NA() si el material esta fuera "
+             "de rango."),
+            (4, "TEMPERATURA DE CONSULTA", "=$D$12", f"={U_TMP}",
+             "Calculo: repite la temperatura tecleada en la celda D12, para dejarla "
+             "junto al resultado."),
+            (7, "MODO DE LECTURA", "=$D$13", '="segun MODO_S"',
+             "Calculo: repite el modo de lectura elegido en D13 (Interpolado o "
+             "Tabulado-conservador)."),
             (10, "ESTADO DEL RANGO", "=" + EST,
-             f'=IF({FIL}="","","variantes de este grado: "&{ctx["NVAR"]})')]
-    for c1, tit, val, uni in kpis:
+             f'=IF({FIL}="","","variantes de este grado: "&{ctx["NVAR"]})',
+             "Calculo: EN RANGO si T esta entre el primer punto tabulado y la Temp. "
+             "max. del material; FUERA DE RANGO si no hay valor tabulado o si T "
+             "supera la Temp. max. (el codigo prohibe extrapolar); SIN SELECCION si "
+             "falta completar la cascada.")]
+    for c1, tit, val, uni, com in kpis:
         t = _mrg(ws, 17, c1, c1 + 2, tit)
         t.font, t.fill = KPI_TIT_F, BAND_FILL
         t.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
         v = _mrg(ws, 18, c1, c1 + 2, val)
         v.font, v.fill = KPI_VAL_F, KPI_FILL
         v.alignment = Alignment(horizontal="center", vertical="center")
+        _nota(v, com)
         u = _mrg(ws, 19, c1, c1 + 2, uni)
         u.font, u.fill = UNIT_F, KPI_FILL
         u.alignment = Alignment(horizontal="center")
@@ -1913,59 +1992,111 @@ def finish_buscador(ctx, wb, curvas, cidx):
         idx = f'INDEX({ctx["ident"](colname)},{FIL})'
         return f'=IF({FIL}="","—",IF({idx}="","—",{idx}))'
 
-    izq = [("Tabla del codigo", val_of("Tabla"), None),
-           ("Familia de material", val_of("Familia"), '="agrupacion de navegacion"'),
-           ("Composicion nominal", val_of("Composicion nominal"), None),
-           ("Forma de producto", val_of("Forma de producto"), None),
-           ("Especificacion (Spec. No.)", val_of("Spec. No."), None),
-           ("Tipo / Grado", val_of("Tipo/Grado"), None),
-           ("UNS / Alloy No.", val_of("UNS / Alloy"), None),
-           ("Clase / Condicion / Temple", val_of("Clase/Cond./Temple"), None),
+    izq = [("Tabla del codigo", val_of("Tabla"), None,
+            "Calculo: tabla del codigo (A-1/A-4, 1A, 1B/3, U o Y-1 segun el buscador) "
+            "de la que proviene la fila resuelta por la cascada de seleccion."),
+           ("Familia de material", val_of("Familia"), '="agrupacion de navegacion"',
+            "Calculo: familia de material tal como quedo clasificada en la base "
+            "(agrupacion de navegacion derivada del UNS y la composicion impresa; no "
+            "es un dato normativo y no entra en ningun calculo)."),
+           ("Composicion nominal", val_of("Composicion nominal"), None,
+            "Calculo: composicion nominal impresa por el codigo para el material "
+            "resuelto por la cascada."),
+           ("Forma de producto", val_of("Forma de producto"), None,
+            "Calculo: forma de producto (placa, tubo, forjado, etc.) impresa por el "
+            "codigo para el material resuelto."),
+           ("Especificacion (Spec. No.)", val_of("Spec. No."), None,
+            "Calculo: numero de especificacion (Spec. No.) impreso por el codigo para "
+            "el material resuelto."),
+           ("Tipo / Grado", val_of("Tipo/Grado"), None,
+            "Calculo: tipo o grado impreso por el codigo para el material resuelto."),
+           ("UNS / Alloy No.", val_of("UNS / Alloy"), None,
+            "Calculo: numero UNS o Alloy No. impreso por el codigo; identifica la "
+            "composicion del material, no su grupo de propiedades (ver MAP_Grupo)."),
+           ("Clase / Condicion / Temple", val_of("Clase/Cond./Temple"), None,
+            "Calculo: clase, condicion de tratamiento termico o temple impresos por "
+            "el codigo, cuando aplica a esta fila."),
            ("Tamano / Espesor", val_of("Tamano/Espesor"),
-            f'=IF($D$5="SI","mm","in")'),
-           ("Notas del codigo", val_of("Notas"), '="ver Notas_Codigo"')]
+            f'=IF($D$5="SI","mm","in")',
+            "Calculo: rango de tamano o espesor al que aplica el admisible de esta "
+            "fila, en la unidad de la celda de la derecha."),
+           ("Notas del codigo", val_of("Notas"), '="ver Notas_Codigo"',
+            "Calculo: numero(s) de nota al pie del codigo que restringen este "
+            "material (soldadura, PWHT, servicio). Texto completo en Notas_Codigo.")]
     der = [("Edicion consultada",
             f'=IF({FIL}="","—",IF($D$5="SI","{master["sheet"]} — metrica",'
             f'IF({ctx["FUS"]}="","sin equivalente en la edicion US",'
-            f'"{us["sheet"]} — U.S. Customary")))', None),
-           ("P-No.", val_of("P-No."), '="adimensional"'),
-           ("Group No.", val_of("Group No."), '="adimensional"'),
+            f'"{us["sheet"]} — U.S. Customary")))', None,
+            "Calculo: confirma si la fila activa viene de la edicion SI o US, y avisa "
+            "si el material no tiene equivalente publicado en la otra edicion."),
+           ("P-No.", val_of("P-No."), '="adimensional"',
+            "Calculo: P-No. (numero de material para WPS/PQR segun ASME IX) impreso "
+            "por el codigo."),
+           ("Group No.", val_of("Group No."), '="adimensional"',
+            "Calculo: Group No. (subgrupo del P-No. para WPS/PQR) impreso por el "
+            "codigo."),
            ("Temp. min. / curva de impacto", val_of("Temp. min. / curva impacto"),
-            f'=IF(ISNUMBER({FIL}),{U_TMP},"")'),
+            f'=IF(ISNUMBER({FIL}),{U_TMP},"")',
+            "Calculo: temperatura minima de diseno o curva de impacto aplicable, "
+            "impresa por el codigo para este material."),
            ("Resistencia a la traccion min.", val_of("Resist. traccion min."),
-            f"={U_VAL}"),
-           ("Limite de fluencia min.", val_of("Fluencia min."), f"={U_VAL}"),
+            f"={U_VAL}",
+            "Calculo: Su minima especificada por la norma del material (valor de "
+            "fabricacion; no es el esfuerzo admisible a la temperatura de consulta)."),
+           ("Limite de fluencia min.", val_of("Fluencia min."), f"={U_VAL}",
+            "Calculo: Sy minimo especificado por la norma del material (valor de "
+            "fabricacion; no es el esfuerzo admisible a la temperatura de consulta)."),
            ("Temp. max. admisible / limite", val_of("Temp. max. / limite"),
-            f"={U_TMP}"),
+            f"={U_TMP}",
+            "Calculo: temperatura maxima admisible o limite de aplicabilidad de esta "
+            "fila. Por encima de este valor el ESTADO DEL RANGO marca FUERA DE RANGO "
+            "y el resultado queda bloqueado — el codigo prohibe extrapolar."),
            ("Aplicabilidad  I / III",
             f'=IF({FIL}="","—",IF(INDEX({ctx["ident"]("I")},{FIL})&'
             f'INDEX({ctx["ident"]("III")},{FIL})="","no aplica (tabla del B31.3)",'
             f'INDEX({ctx["ident"]("I")},{FIL})&"  /  "&'
-            f'INDEX({ctx["ident"]("III")},{FIL})))', '="NP = no permitido"'),
+            f'INDEX({ctx["ident"]("III")},{FIL})))', '="NP = no permitido"',
+            "Calculo: aplicabilidad del material en las Divisiones I y III de la "
+            "ASME BPVC, segun las columnas impresas por el codigo (NP = no "
+            "permitido). No aplica en tablas del B31.3."),
            ("Aplicabilidad  VIII-1 / VIII-2 / XII",
             f'=IF({FIL}="","—",IF(INDEX({ctx["ident"]("VIII-1")},{FIL})&'
             f'INDEX({ctx["ident"]("VIII-2")},{FIL})&INDEX({ctx["ident"]("XII")},{FIL})="",'
             f'"no aplica (tabla del B31.3)",'
             f'INDEX({ctx["ident"]("VIII-1")},{FIL})&"  /  "&'
             f'INDEX({ctx["ident"]("VIII-2")},{FIL})&"  /  "&'
-            f'INDEX({ctx["ident"]("XII")},{FIL})))', f'={U_TMP}&" max."'),
+            f'INDEX({ctx["ident"]("XII")},{FIL})))', f'={U_TMP}&" max."',
+            "Calculo: aplicabilidad del material en VIII-1, VIII-2 y XII de la ASME "
+            "BPVC, segun las columnas impresas por el codigo. No aplica en tablas "
+            "del B31.3."),
            ("Grafico de presion externa", val_of("Grafico presion externa"),
-            '="Subparte 3 II-D"')]
+            '="Subparte 3 II-D"',
+            "Calculo: referencia a la grafica de presion externa (Subparte 3 de la "
+            "Seccion II-D) aplicable a este material.")]
     for k in range(max(len(izq), len(der))):
         r2 = 22 + k
         if k < len(izq):
-            campo(ws, r2, 1, izq[k][0], izq[k][1], izq[k][2])
+            campo(ws, r2, 1, izq[k][0], izq[k][1], izq[k][2], com_val=izq[k][3])
         if k < len(der):
-            campo(ws, r2, 7, der[k][0], der[k][1], der[k][2])
+            campo(ws, r2, 7, der[k][0], der[k][1], der[k][2], com_val=der[k][3])
 
     # ------------------ 4 · TRAZABILIDAD DEL CALCULO ----------------------
     rt = 22 + max(len(izq), len(der)) + 1
     banda(ws, rt, "4 · TRAZABILIDAD DEL CALCULO   —   puntos tabulados usados en la "
                   "interpolacion")
-    campo(ws, rt + 1, 1, "T1 — temperatura tabulada inferior", f"={T1C}", f"={U_TMP}")
-    campo(ws, rt + 2, 1, "Valor en T1", f"={S1C}", f"={U_VAL}")
-    campo(ws, rt + 1, 7, "T2 — temperatura tabulada superior", f"={T2C}", f"={U_TMP}")
-    campo(ws, rt + 2, 7, "Valor en T2", f"={S2C}", f"={U_VAL}")
+    campo(ws, rt + 1, 1, "T1 — temperatura tabulada inferior", f"={T1C}", f"={U_TMP}",
+         com_val="Calculo: temperatura tabulada inmediatamente inferior (o igual) a "
+                "la temperatura de consulta, tomada de la banda compacta del "
+                "material resuelto.")
+    campo(ws, rt + 2, 1, "Valor en T1", f"={S1C}", f"={U_VAL}",
+         com_val="Calculo: valor tabulado del codigo en T1, para el material "
+                "resuelto.")
+    campo(ws, rt + 1, 7, "T2 — temperatura tabulada superior", f"={T2C}", f"={U_TMP}",
+         com_val="Calculo: temperatura tabulada inmediatamente superior a la "
+                "temperatura de consulta. Vacia si T1 es el ultimo punto tabulado.")
+    campo(ws, rt + 2, 7, "Valor en T2", f"={S2C}", f"={U_VAL}",
+         com_val="Calculo: valor tabulado del codigo en T2, para el material "
+                "resuelto. Vacio si T1 es el ultimo punto tabulado.")
     ec = _mrg(ws, rt + 3, 1, NCOLS)
     ec.value = (f'=IF({FIL}="","",IF($D$13="Tabulado-conservador",'
                 f'"Modo tabulado-conservador: se adopta el valor de T2.",'
@@ -1975,10 +2106,16 @@ def finish_buscador(ctx, wb, curvas, cidx):
                 f'"Interpolacion lineal:  S = S1 + (S2-S1)*(T-T1)/(T2-T1)")))')
     ec.font = SRC_F
     ec.alignment = Alignment(vertical="center", indent=1)
+    _nota(ec, "Calculo: explica en texto cual de los tres casos aplico para obtener "
+              "el KPI de la seccion 2 — interpolacion lineal, ultimo valor tabulado "
+              "(sin extrapolar), o modo tabulado-conservador.")
     av = _mrg(ws, rt + 4, 1, NCOLS)
     av.value = ('="Verifique siempre la Temp. max. del material y sus notas antes de '
                 'emitir el calculo."')
     av.font = SRC_F
+    _nota(av, "Aviso fijo: recordatorio de verificar la Temp. max. del material "
+              "(seccion 3) y sus notas del codigo antes de usar el resultado. No se "
+              "edita.")
 
     # --------------------------- 5 · CURVA --------------------------------
     rg = rt + 6
@@ -2005,10 +2142,13 @@ def finish_buscador(ctx, wb, curvas, cidx):
 
     from openpyxl.chart import Reference, Series, ScatterChart
     from openpyxl.chart.marker import Marker
+    from openpyxl.chart.shapes import GraphicalProperties
+    from openpyxl.chart.layout import Layout, ManualLayout
     from openpyxl.drawing.line import LineProperties
     ch = ScatterChart()
     ch.title = f"{ctx['valor_lbl']} frente a la temperatura"
     ch.style = 13
+    ch.scatterStyle = "lineMarker"
     ch.x_axis.title = (f"Temperatura  [{ctx['temp_si']} en SI  ·  "
                        f"{ctx['temp_us']} en US]")
     ch.y_axis.title = (f"{ctx['valor_lbl']}  [{ctx['unit_si']} en SI  ·  "
@@ -2016,15 +2156,27 @@ def finish_buscador(ctx, wb, curvas, cidx):
     ch.height, ch.width = 9.5, 26
     ch.x_axis.delete = False
     ch.y_axis.delete = False
+    # Margen manual del area de trazado: sin esto, el titulo de eje rotado puede
+    # quedar dibujado encima de las etiquetas numericas del eje (choque visual).
+    # Va en ch.layout (no en ch.plot_area.layout): el escritor de openpyxl
+    # sobreescribe plot_area.layout = ch.layout al guardar (ChartBase._write).
+    ch.layout = Layout(manualLayout=ManualLayout(
+        xMode="edge", yMode="edge", x=0.13, y=0.15, w=0.80, h=0.65))
     xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
     ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
     s1 = Series(ys, xs, title_from_data=True)
     s1.marker = Marker(symbol="circle", size=5)
+    # Linea recta (no suavizada) entre puntos: la interpolacion del codigo es
+    # lineal (seccion 4), una curva suavizada la representaria mal.
+    s1.smooth = False
+    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(w=19050))
     ch.series.append(s1)
     xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
     yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
     s2 = Series(yq, xq, title_from_data=True)
-    s2.marker = Marker(symbol="diamond", size=10)
+    s2.marker = Marker(symbol="diamond", size=10,
+                       spPr=GraphicalProperties(
+                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
     s2.graphicalProperties.line = LineProperties(noFill=True)
     ch.series.append(s2)
     ws.add_chart(ch, chart_anchor)
@@ -2059,16 +2211,26 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
     e = _mrg(ws, 5, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
     e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
     e.alignment = Alignment(vertical="center", indent=1)
+    com_temp = ("Entrada: la UNICA celda de escritura libre de toda la hoja, en °C. "
+               "Se aplica por igual a los 4 bloques de abajo (modulo E, dilatacion "
+               "C-1, modulo C-3 y Poisson/densidad).")
+    _nota(e, com_temp)
     c = _mrg(ws, 5, 4, 5, 25)
     c.font, c.fill = IN_F, IN_FILL
     c.border = Border(*[Side("medium", color="C00000")] * 4)
+    _nota(c, com_temp)
     ws.cell(5, 6, "°C").font = UNIT_F
     e = _mrg(ws, 6, 1, 3, "Modo de lectura")
     e.font = LBL_F
     e.alignment = Alignment(vertical="center", indent=1)
+    com_modo = ("Entrada: 'Interpolado' aplica la interpolacion lineal del codigo "
+               "entre los dos puntos tabulados que rodean la temperatura de "
+               "consulta. 'Tabulado-conservador' adopta directamente el valor "
+               "tabulado superior (T2), sin interpolar.")
+    _nota(e, com_modo)
     c = _mrg(ws, 6, 4, 6, "Interpolado")
     c.font, c.fill, c.border = IN_F, IN_FILL, BOX
-    dv_list(ws, "D6", '"Interpolado,Tabulado-conservador"')
+    dv_list(ws, "D6", '"Interpolado,Tabulado-conservador"', com_modo)
 
     r = 8
     for i2, b in enumerate(bloques):
@@ -2077,14 +2239,22 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
         e = _mrg(ws, r, 1, 3, "Tabla / familia del codigo")
         e.font = LBL_F
         e.alignment = Alignment(vertical="center", indent=1)
+        com_tabla = (f'Entrada: elija la tabla/familia del codigo dentro de '
+                    f'"{b["titulo"]}". Habilita la lista de grupos de esa tabla.')
+        _nota(e, com_tabla)
         c = _mrg(ws, r, 4, 6, b["default_tabla"])
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
-        dv_list(ws, f"D{r}", "=" + rangos[b["lst_tabla"]])
+        dv_list(ws, f"D{r}", "=" + rangos[b["lst_tabla"]], com_tabla)
         tcell = f"$D${r}"
         r += 1
         e = _mrg(ws, r, 1, 3, "Grupo / material")
         e.font = LBL_F
         e.alignment = Alignment(vertical="center", indent=1)
+        com_grupo = ("Entrada: elija el GRUPO de material tal como lo imprime el "
+                    "codigo (p. ej. «Material Group C», «Group 3»), no la familia de "
+                    "navegacion. Para saber que grupo corresponde a un material "
+                    "especifico, consulte MAP_Grupo.")
+        _nota(e, com_grupo)
         c = _mrg(ws, r, 4, 8, "")
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
         lc = 50 + i2
@@ -2097,7 +2267,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
                 f'=IF(COUNTIF({kr},{tcell})<{k},"",'
                 f'INDEX({vr2},MATCH({tcell},{kr},0)+{k}-1))')
         ws.column_dimensions[LL].hidden = True
-        dv_list(ws, f"D{r}", f"=${LL}${R_DATA}:${LL}${R_DATA + mx - 1}")
+        dv_list(ws, f"D{r}", f"=${LL}${R_DATA}:${LL}${R_DATA + mx - 1}", com_grupo)
         gcell = f"$D${r}"
         r += 1
         info = b["info"]
@@ -2129,16 +2299,28 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
                        interp_value(T1C, S1C, T2C, S2C, "$D$5", "$D$6")[1:] + ')')
             v.font, v.fill = KPI_VAL_F, KPI_FILL
             v.alignment = Alignment(horizontal="center", vertical="center")
+            _nota(v, f'Calculo: {b["valor_lbl"]} interpolado (o tabulado-conservador, '
+                     'segun el Modo de lectura de D6) a la temperatura de consulta '
+                     '(D5), entre los puntos tabulados T1/T2 de abajo, para el grupo '
+                     'elegido arriba.')
             u = _mrg(ws, r, 6, 8, b["unidad"])
             u.font, u.fill = UNIT_F, KPI_FILL
             ws.row_dimensions[r].height = 26
             valr = r
             r += 1
-            campo(ws, r, 1, "T1 — tabulada inferior", f"={T1C}", "°C")
-            campo(ws, r, 7, "Valor en T1", f"={S1C}", b["unidad"])
+            campo(ws, r, 1, "T1 — tabulada inferior", f"={T1C}", "°C",
+                 com_val="Calculo: temperatura tabulada inmediatamente inferior (o "
+                        "igual) a la temperatura de consulta, para el grupo elegido.")
+            campo(ws, r, 7, "Valor en T1", f"={S1C}", b["unidad"],
+                 com_val=f'Calculo: {b["valor_lbl"]} tabulado en T1 para el grupo '
+                        'elegido.')
             r += 1
-            campo(ws, r, 1, "T2 — tabulada superior", f"={T2C}", "°C")
-            campo(ws, r, 7, "Valor en T2", f"={S2C}", b["unidad"])
+            campo(ws, r, 1, "T2 — tabulada superior", f"={T2C}", "°C",
+                 com_val="Calculo: temperatura tabulada inmediatamente superior a la "
+                        "de consulta. Vacia si T1 es el ultimo punto tabulado.")
+            campo(ws, r, 7, "Valor en T2", f"={S2C}", b["unidad"],
+                 com_val=f'Calculo: {b["valor_lbl"]} tabulado en T2 para el grupo '
+                        'elegido. Vacio si T1 es el ultimo punto tabulado.')
             r += 1
             n2 = _mrg(ws, r, 1, NCOLS, b.get("nota", ""))
             n2.font = SRC_F
@@ -2154,20 +2336,42 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
             for k in range(1, npack + 1):
                 curvas.cell(2 + k, c0).value = f'=IFERROR(INDEX({trq},{k}),NA())'
                 curvas.cell(2 + k, c0 + 1).value = f'=IFERROR(INDEX({vrq},{k}),NA())'
+            curvas.cell(2, c0 + 3, "T consulta").font = HDR_F
+            curvas.cell(2, c0 + 4, "Punto consultado").font = HDR_F
+            curvas.cell(3, c0 + 3).value = f"={q}$D$5"
+            curvas.cell(3, c0 + 4).value = f"={q}$D${valr}"
+
             from openpyxl.chart import Reference, Series, ScatterChart
             from openpyxl.chart.marker import Marker
+            from openpyxl.chart.shapes import GraphicalProperties
+            from openpyxl.chart.layout import Layout, ManualLayout
+            from openpyxl.drawing.line import LineProperties
             ch = ScatterChart()
             ch.title = f'{b["valor_lbl"]} frente a la temperatura'
+            ch.scatterStyle = "lineMarker"
             ch.x_axis.title = "Temperatura  [°C]"
             ch.y_axis.title = f'{b["valor_lbl"]}  [{b["unidad"]}]'
             ch.height, ch.width = 7.5, 20
             ch.x_axis.delete = False
             ch.y_axis.delete = False
+            ch.layout = Layout(manualLayout=ManualLayout(
+                xMode="edge", yMode="edge", x=0.15, y=0.16, w=0.78, h=0.62))
             xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
             ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
             se = Series(ys, xs, title_from_data=True)
             se.marker = Marker(symbol="circle", size=5)
+            se.smooth = False
+            se.graphicalProperties = GraphicalProperties(ln=LineProperties(w=19050))
             ch.series.append(se)
+            xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
+            yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
+            sq = Series(yq, xq, title_from_data=True)
+            sq.marker = Marker(symbol="diamond", size=10,
+                               spPr=GraphicalProperties(
+                                   solidFill="FF0000",
+                                   ln=LineProperties(solidFill="FF0000")))
+            sq.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
+            ch.series.append(sq)
             ws.add_chart(ch, f"A{r}")
             r += 15
         else:
@@ -2175,7 +2379,10 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
                 campo(ws, r, 1, lbl,
                       f'=IF({frow}="","—",INDEX({info["sheet"]}!'
                       f'${get_column_letter(col)}${R_DATA}:'
-                      f'${get_column_letter(col)}${info["last_row"]},{frow}))', uni)
+                      f'${get_column_letter(col)}${info["last_row"]},{frow}))', uni,
+                      com_val=f"Calculo: {lbl} impreso por la Tabla PRD para el grupo "
+                              "elegido arriba. No depende de la temperatura de "
+                              "consulta (la Tabla PRD no tabula frente a T).")
                 r += 1
             r += 1
     for cc, w in zip("ABCDEFGHIJKL", [22, 22, 18, 16, 12, 12, 22, 22, 16, 12, 12, 4]):
@@ -2194,15 +2401,21 @@ def build_buscador_nm(wb, info, rangos, max_mat=60):
     _mrg(ws, 2, 1, NCOLS)
     ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
     banda(ws, 4, "1 · SELECCION")
+    coms = {5: "Entrada: elija la tabla del Apendice B o C del B31.3 (B-1, B-1C, "
+              "C-1, C-3, etc.). Habilita la lista de materiales de esa tabla.",
+           6: "Entrada: elija el material dentro de la tabla elegida arriba. "
+              "Muestra en la seccion 2 todos los campos que imprime esa fila del "
+              "codigo."}
     for r, et, val, ref in ((5, "Tabla del Apendice", None, rangos["NM_TABLA"]),
                             (6, "Material", "", None)):
         e = _mrg(ws, r, 1, 3, et)
         e.font = LBL_F
         e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, coms[r])
         c = _mrg(ws, r, 4, 8, val)
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
     ws["D5"] = wb["DB_NoMetalicos"].cell(R_DATA, 2).value
-    dv_list(ws, "D5", "=" + rangos["NM_TABLA"])
+    dv_list(ws, "D5", "=" + rangos["NM_TABLA"], coms[5])
     mx = max(1, min(int(max_mat), 250))
     ws.cell(R_HDR, 50, "lista material").font = SRC_F
     for k in range(1, mx + 1):
@@ -2210,7 +2423,7 @@ def build_buscador_nm(wb, info, rangos, max_mat=60):
             f'=IF(COUNTIF({rangos["NM_MATK"]},$D$5)<{k},"",'
             f'INDEX({rangos["NM_MATV"]},MATCH($D$5,{rangos["NM_MATK"]},0)+{k}-1))')
     ws.column_dimensions["AX"].hidden = True
-    dv_list(ws, "D6", f"=$AX${R_DATA}:$AX${R_DATA + mx - 1}")
+    dv_list(ws, "D6", f"=$AX${R_DATA}:$AX${R_DATA + mx - 1}", coms[6])
     last = info["last_row"]
     sf = f'DB_NoMetalicos!$C${R_DATA}:$C${last}'
     key = '$D$5&"|"&$D$6'
@@ -2224,13 +2437,20 @@ def build_buscador_nm(wb, info, rangos, max_mat=60):
     t.font = Font(name="Calibri", size=11, bold=True, color=NAVY)
     t.fill = CARD_FILL
     t.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+    _nota(t, "Calculo: confirma la tabla y el material seleccionados, o pide "
+             "completar la seleccion.")
     ws.row_dimensions[9].height = 26
     for k in range(1, 17):
         r = 9 + k
         cond = f'IF(OR($BH$1=0,{k}>$BH$2),""'
         campo(ws, r, 1,
               f'={cond},INDEX(DB_NoMetalicos!$E${R_DATA}:$E${last},$BH$1+{k}-1))',
-              f'={cond},INDEX(DB_NoMetalicos!$F${R_DATA}:$F${last},$BH$1+{k}-1))')
+              f'={cond},INDEX(DB_NoMetalicos!$F${R_DATA}:$F${last},$BH$1+{k}-1))',
+              com_etq="Calculo: nombre del campo tal como lo imprime la tabla del "
+                     "Apendice B/C para el material elegido (fila k de la ficha; "
+                     "vacio si el material tiene menos campos que k).",
+              com_val="Calculo: valor de ese campo, en la unidad que imprime la "
+                     "propia tabla del codigo (no se convierte de unidades).")
         _mrg(ws, r, 6, NCOLS)
     av = _mrg(ws, 27, 1, NCOLS)
     av.value = ('="Las unidades son las que imprime cada tabla: HDS en MPa (B-1) o ksi '
@@ -2269,17 +2489,22 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
     VANC = 'CHOOSE({i},' + ",".join(pk[k]["v_anchor"] for k in (1, 2, 3)) + ')'
     hl = get_column_letter
 
-    def lab(r, text, note=None):
-        ws.cell(r, 1, text).font = Font(name="Calibri", size=10)
+    def lab(r, text, note=None, com=None):
+        cl = ws.cell(r, 1, text)
+        cl.font = Font(name="Calibri", size=10)
         if note:
             ws.cell(r, 7, note).font = Font(name="Calibri", size=9, italic=True,
                                             color="595959")
+        if com:
+            _nota(cl, com)
 
-    def inp(cell, value=""):
+    def inp(cell, value="", com=None):
         c = ws[cell]
         c.value = value
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
         c.protection = Protection(locked=False)
+        if com:
+            _nota(c, com)
 
     ws.cell(105, 1, "7.  RESOLUCION DE MATERIAL — BASE DE DATOS ASME "
                     "(cascada de listas desplegables)")
@@ -2290,20 +2515,44 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
         c = ws.cell(106, j2, h)
         c.font = Font(bold=True)
         c.fill = PatternFill("solid", fgColor=GREY)
-    lab(107, "Modo de lectura de S(T)   [MODO_S]", "Interpolado | Tabulado-conservador")
-    inp("D107", "Interpolado")
-    dv_list(ws, "D107", '"Interpolado,Tabulado-conservador"')
-    lab(108, "Temperatura de evaluacion", "= T de la hoja de proceso (D25)")
+    com_modo212 = ("Entrada: 'Interpolado' aplica la interpolacion lineal del "
+                  "codigo entre T1 y T2 (fila 120/121). 'Tabulado-conservador' "
+                  "adopta directamente el valor tabulado en T2, sin interpolar. "
+                  "Rige el S(T) resuelto de metal base y collar (fila 126).")
+    lab(107, "Modo de lectura de S(T)   [MODO_S]", "Interpolado | Tabulado-conservador",
+       com_modo212)
+    inp("D107", "Interpolado", com_modo212)
+    dv_list(ws, "D107", '"Interpolado,Tabulado-conservador"', com_modo212)
+    lab(108, "Temperatura de evaluacion", "= T de la hoja de proceso (D25)",
+       "Calculo: repite automaticamente la Temperatura de operacion de la seccion 1 "
+       "(D25). No se edita aqui — para cambiar la temperatura de evaluacion, edite "
+       "D25.")
     ws.cell(108, 4).value = "=$D$25"
     ws.cell(108, 3).value = "°C"
-    niveles = [(109, "0 · Familia de material"), (110, "1 · Composicion nominal"),
-               (111, "2 · Forma de producto"), (112, "3 · Especificacion (Spec. No.)"),
-               (113, "4 · Tipo / Grado"),
-               (114, "5 · Variante (clase / tamano) — opcional")]
-    for r, t in niveles:
-        lab(r, t, "Lista desplegable en cascada")
-        inp(f"D{r}")
-        inp(f"E{r}")
+    niveles = [(109, "0 · Familia de material",
+                "Entrada: paso 0 de la cascada, para el metal base (D) y el collar/"
+                "parche (E). Elija la familia de material de la lista desplegable. "
+                "Habilita la lista del paso 1 de esa misma columna."),
+               (110, "1 · Composicion nominal",
+                "Entrada: paso 1 de la cascada, dependiente del paso 0 de la misma "
+                "columna (metal base en D, collar/parche en E)."),
+               (111, "2 · Forma de producto",
+                "Entrada: paso 2 de la cascada, dependiente de los pasos 0-1 de la "
+                "misma columna."),
+               (112, "3 · Especificacion (Spec. No.)",
+                "Entrada: paso 3 de la cascada, dependiente de los pasos 0-2 de la "
+                "misma columna."),
+               (113, "4 · Tipo / Grado",
+                "Entrada: paso 4 de la cascada, dependiente de los pasos 0-3. Al "
+                "completarlo ya se resuelve un material_id (salvo variantes, ver "
+                "paso 5)."),
+               (114, "5 · Variante (clase / tamano) — opcional",
+                "Entrada opcional: solo hace falta si el paso 4 deja mas de una fila "
+                "posible. En blanco, se toma la primera variante encontrada.")]
+    for r, t, com in niveles:
+        lab(r, t, "Lista desplegable en cascada", com)
+        inp(f"D{r}", com=com)
+        inp(f"E{r}", com=com)
 
     # --- listas materializadas (columnas ocultas) --------------------------
     FAM_COL = 11
@@ -2314,8 +2563,8 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
             f'IFERROR(INDEX({ri["FAM"]},{k}),""))')
     ws.column_dimensions[hl(FAM_COL)].hidden = True
     fam_ref = f'=${hl(FAM_COL)}${R_DATA}:${hl(FAM_COL)}${R_DATA + 39}'
-    dv_list(ws, "D109", fam_ref)
-    dv_list(ws, "E109", fam_ref)
+    dv_list(ws, "D109", fam_ref, niveles[0][2])
+    dv_list(ws, "E109", fam_ref, niveles[0][2])
 
     lv = [("C", "CK", "CV", 110, '{c}$109'),
           ("F", "FK", "FV", 111, '{c}$109&"|"&{c}$110'),
@@ -2323,6 +2572,8 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
           ("G", "GK", "GV", 113, '{c}$109&"|"&{c}$110&"|"&{c}$111&"|"&{c}$112'),
           ("V", "K4", "ID", 114,
            '{c}$109&"|"&{c}$110&"|"&{c}$111&"|"&{c}$112&"|"&{c}$113')]
+    niv_com = {110: niveles[1][2], 111: niveles[2][2], 112: niveles[3][2],
+              113: niveles[4][2], 114: niveles[5][2]}
     col = FAM_COL + 1
     for who, cl in (("base", "$D"), ("collar", "$E")):
         for tag, kk, vv, target, keyfmt in lv:
@@ -2340,7 +2591,7 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
                     f'INDEX({ri[vv]},MATCH({key},{ri[kk]},0)+{k}-1)))')
             ws.column_dimensions[L].hidden = True
             dv_list(ws, f'{"D" if cl == "$D" else "E"}{target}',
-                    f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}")
+                    f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}", niv_com[target])
             col += 1
 
     aux = {"D": "W", "E": "X"}
@@ -2351,6 +2602,38 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
                           f'IFERROR(MATCH(${ac}$109,{ri["K4"]},0),0))')
         ws.column_dimensions[ac].hidden = True
 
+    com_etiq = {
+        115: "Calculo: material_id resuelto por la cascada de esta columna "
+             "(o el pegado a mano en la celda 'Variante' si la cascada no alcanza "
+             "a identificar el material).",
+        116: "Calculo: hoja base de datos (B31.3, II-D 1A o II-D 1B/3) donde se "
+             "encontro el material_id resuelto.",
+        117: "Calculo: indice de la base de datos activa (1=B31.3, 2=II-D 1A, "
+             "3=II-D 1B/3), derivado del selector de aplicacion (D11, seccion 1) "
+             "o del prefijo del material_id.",
+        118: "Calculo: numero de fila de la base de datos activa donde se localizo "
+             "el material_id. Vacio si no se encuentra.",
+        119: "Calculo: cantidad de puntos tabulados (n_pts) que tiene esa fila en la "
+             "banda compacta del codigo; determina el rango de la busqueda de T1/T2.",
+        120: "Calculo: temperatura tabulada inmediatamente inferior (o igual) a la "
+             "temperatura de evaluacion (D108), tomada de la banda compacta.",
+        121: "Calculo: temperatura tabulada inmediatamente superior a la de "
+             "evaluacion. Vacia si T1 es el ultimo punto tabulado.",
+        122: "Calculo: esfuerzo admisible S tabulado en T1, para el material "
+             "resuelto.",
+        123: "Calculo: esfuerzo admisible S tabulado en T2. Vacio si T1 es el "
+             "ultimo punto tabulado.",
+        124: "Calculo: temperatura maxima admisible o limite de aplicabilidad del "
+             "material. Por encima de este valor, el Dictamen de rango marca FUERA "
+             "DE RANGO (el codigo prohibe extrapolar).",
+        125: "Calculo: SIN MATERIAL SELECCIONADO si falta completar la cascada; "
+             "MATERIAL NO ENCONTRADO si el material_id no aparece en la base; FUERA "
+             "DE RANGO si no hay valor tabulado a esa T o si T supera la Temp. max.; "
+             "OK en cualquier otro caso.",
+        126: "Calculo: S(T) resuelto para esta columna — interpolacion lineal o "
+             "valor tabulado-conservador segun el Modo de lectura (D107), o NA() si "
+             "el Dictamen de rango no es OK. Alimenta D39/D40 de la seccion 3.",
+    }
     etiquetas = [(115, "material_id resuelto", None), (116, "Base de datos activa", None),
                  (117, "Indice de base (1/2/3)", None), (118, "Fila localizada", None),
                  (119, "n_pts (puntos tabulados) / p1", None),
@@ -2361,7 +2644,7 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
                  (125, "Dictamen de rango", None),
                  (126, "S(T) resuelto", "MPa")]
     for r, t, u in etiquetas:
-        lab(r, t)
+        lab(r, t, com=com_etiq[r])
         if u:
             ws.cell(r, 3).value = u
     for col2 in (4, 5):
@@ -2397,40 +2680,296 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
             f'IF($D$107="Tabulado-conservador",{L}123,'
             f'{L}122+({L}123-{L}122)*($D$108-{L}120)/({L}121-{L}120)))))')
         ws.cell(126, col2).font = Font(bold=True)
+        for rr in (115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126):
+            _nota(ws.cell(rr, col2), com_etiq[rr])
 
     fl, fa = fac_info["sheet"], fac_info["last_row"]
-    lab(128, "Clave de junta longitudinal (Tabla A-3) -> Ej",
-        "Lista desplegable de MAP_Factores")
-    inp("D128", "A106 | Seamless pipe")
-    dv_list(ws, "D128", f"={fl}!$A${R_DATA}:$A${fa}")
+    com_ej = ("Entrada: elija la clave de junta longitudinal impresa en la Tabla "
+             "A-3 del B31.3 (tipo de junta/costura). Determina el factor de "
+             "eficiencia de junta longitudinal Ej (columna G de MAP_Factores) que "
+             "usa la ecuacion de espesor de pared requerido (seccion 3, D65/E65/F65) "
+             "via D44.")
+    lab(128, "Clave de junta longitudinal (Tabla A-3) -> Ej", "Lista desplegable de "
+       "MAP_Factores", com_ej)
+    inp("D128", "A106 | Seamless pipe", com_ej)
+    dv_list(ws, "D128", f"={fl}!$A${R_DATA}:$A${fa}", com_ej)
     ws.cell(128, 3).value = "adimensional"
     ws.cell(128, 5).value = (f'=IFERROR(INDEX({fl}!$G${R_DATA}:$G${fa},'
                              f'MATCH($D$128,{fl}!$A${R_DATA}:$A${fa},0)),1)')
-    lab(129, "Ec (fundicion, Tabla A-2) — informativo")
-    inp("D129")
-    dv_list(ws, "D129", f"={fl}!$A${R_DATA}:$A${fa}")
+    _nota(ws.cell(128, 5), "Calculo: Ej por lookup de la clave elegida en D128 contra "
+                          "la Tabla A-3 de MAP_Factores; 1 si no se encuentra.")
+    com_ec = ("Entrada informativa: clave de fundicion (Tabla A-2 del B31.3) para "
+             "consultar su factor de eficiencia Ec. No alimenta ningun calculo de "
+             "esta hoja; se deja como referencia si el metal base o el collar es de "
+             "fundicion.")
+    lab(129, "Ec (fundicion, Tabla A-2) — informativo", com=com_ec)
+    inp("D129", com=com_ec)
+    dv_list(ws, "D129", f"={fl}!$A${R_DATA}:$A${fa}", com_ec)
     ws.cell(129, 3).value = "adimensional"
     ws.cell(129, 5).value = (f'=IFERROR(INDEX({fl}!$G${R_DATA}:$G${fa},'
                              f'MATCH($D$129,{fl}!$A${R_DATA}:$A${fa},0)),"")')
+    _nota(ws.cell(129, 5), "Calculo: Ec por lookup de la clave elegida en D129 contra "
+                          "la Tabla A-2 de MAP_Factores; vacio si no se encuentra.")
 
     ws["D39"] = '=IF($E$125="OK",$E$126,NA())'
     ws["G39"] = "S(T) del collar — base de datos ASME (seccion 7)"
+    _nota(ws["D39"], "Calculo: trae el S(T) del collar/parche resuelto en la seccion "
+                    "7 (E126) si su Dictamen de rango es OK; NA() si no. Alimenta "
+                    "'Esf. admisible del collar' de la seccion 1 (D39 original del "
+                    "maestro queda sustituido por este valor).")
     ws["D40"] = '=IF($D$125="OK",$D$126,NA())'
     ws["G40"] = "S(T) del metal base — base de datos ASME (seccion 7)"
+    _nota(ws["D40"], "Calculo: trae el S(T) del metal base resuelto en la seccion 7 "
+                    "(D126) si su Dictamen de rango es OK; NA() si no.")
     ws["D44"] = "=$E$128"
     ws["G44"] = "Ej por lookup (B31.3 Tabla A-3) — seccion 7"
     ws["D44"].font = Font(name="Calibri", size=10)
     ws["D44"].fill = PatternFill(fill_type=None)
     ws["D44"].protection = Protection(locked=True)
+    _nota(ws["D44"], "Calculo: repite el Ej resuelto en la seccion 7 (E128) a partir "
+                    "de la clave de junta longitudinal elegida en D128. No se edita "
+                    "aqui.")
     ws["F90"] = ('=IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
                  'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),"APTO","REVISAR"))')
-    ws.cell(131, 1, "La cascada filtra la base ASME por familia, composicion nominal, "
-                    "forma de producto, especificacion y tipo/grado. Si un material no "
-                    "aparece, localicelo en el buscador correspondiente y pegue su "
-                    "material_id en la celda 'Variante'. La lista corta de Datos_Ref queda "
-                    "como respaldo historico y ya no alimenta el calculo.").font = SRC_F
+    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. REVISAR — MATERIAL FUERA "
+                    "DE RANGO si el metal base o el collar quedaron fuera de rango "
+                    "en la seccion 7; APTO solo si ademas las 4 verificaciones de la "
+                    "seccion 5 (filete, excentricidad, conformado en frio, espesor "
+                    "de pared) dan CUMPLE; REVISAR en cualquier otro caso.")
+    nota131 = ws.cell(131, 1, "La cascada filtra la base ASME por familia, composicion "
+                    "nominal, forma de producto, especificacion y tipo/grado. Si un "
+                    "material no aparece, localicelo en el buscador correspondiente y "
+                    "pegue su material_id en la celda 'Variante'. La lista corta de "
+                    "Datos_Ref queda como respaldo historico y ya no alimenta el "
+                    "calculo.")
+    nota131.font = SRC_F
+    _nota(nota131, "Aviso fijo: como usar la cascada de la seccion 7 y que hacer si "
+                  "un material no aparece en ella. No se edita.")
+
+    comentar_art212_base(ws)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
+
+
+def comentar_art212_base(ws):
+    """Comentarios para las secciones 1-6 de Parche_PCC2_Art212 (geometria,
+    presion de diseno, verificaciones): vienen ya escritas en el maestro
+    sembrado, esta funcion NO las escribe ni las cambia, solo documenta lo que
+    ya esta ahi con un comentario de Excel. Los textos describen fielmente la
+    formula o el dato tal como esta en el maestro (Regla nº 1: no se inventa
+    nada; ver el dump de referencia en Revision_MAP_Grupo si hace falta
+    auditar)."""
+    simples = {
+        5: "Entrada: identificador del documento de este calculo (numero de MC).",
+        6: "Entrada: descripcion del componente y el servicio reparado.",
+        10: "Entrada: selector que conmuta el modo geometrico (tuberia, virola "
+            "cilindrica o cabezal/esfera) y por tanto el codigo de construccion, "
+            "la fuente del esfuerzo admisible y el factor kf de toda la hoja.",
+        11: "Calculo: MODO = 1 si D10 es 'Tuberia (B31.3)', 3 si es 'Cabezal/"
+            "esfera (VIII-1)', 2 en cualquier otro caso (virola cilindrica).",
+        12: "Calculo: ASME B31.3 si MODO=1 (tuberia); ASME BPVC VIII-1 en los "
+            "demas casos (virola o cabezal/esfera).",
+        13: "Calculo: cita la tabla del codigo activo de la que sale el esfuerzo "
+            "admisible S — Tabla A-1 del B31.3 si MODO=1, Tabla 1A de ASME II-D "
+            "en los demas casos.",
+        14: "Calculo: factor de geometria de la ecuacion de membrana, kf = 0,25 "
+            "para esfera (MODO=3) o 0,5 para cilindro (tuberia o virola).",
+        18: "Entrada: diametro nominal (NPS) en pulgadas, de la lista de B36.10M "
+            "en Datos_Ref. Alimenta el lookup de OD y espesor de pared.",
+        19: "Entrada: cedula (Schedule) segun B36.10M, en Datos_Ref, para el NPS "
+            "elegido arriba.",
+        20: "Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
+            "tabla B36.10M de Datos_Ref.",
+        21: "Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
+            "(D19) en la tabla B36.10M de Datos_Ref.",
+        22: "Entrada: material del componente reparado (metal base), de la "
+            "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
+            "cascada de la seccion 7.",
+        23: "Entrada: material del parche o collar de refuerzo, de la lista "
+            "corta de Datos_Ref. Para el S(T) por temperatura use la cascada de "
+            "la seccion 7.",
+        24: "Entrada informativa: fluido de servicio. No alimenta ningun "
+            "calculo de esta hoja.",
+        25: "Entrada: temperatura de operacion, en °C. Alimenta la Temperatura "
+            "de evaluacion de la seccion 7 (D108) y por tanto todo el S(T) "
+            "resuelto.",
+        26: "Entrada: presion de operacion, en kg/cm². Es el caso 'Operacion' "
+            "evaluado en la seccion 3.",
+        27: "Entrada: presion de diseno tipica, en kg/cm². Es el caso 'Diseno "
+            "tipico' de la seccion 3; se compara contra la presion maxima "
+            "admisible del parche en la verificacion de la seccion 5 (fila 89).",
+        28: "Entrada: presion envolvente (cota superior / rating), en kg/cm². "
+            "Es el caso mas exigente, evaluado en la seccion 3.",
+        29: "Entrada: espesor adoptado del parche o collar, en mm (debe ser >= "
+            "espesor de pared). Alimenta la fuerza de membrana, el esfuerzo de "
+            "soldadura y el peso estimado.",
+        30: "Entrada: altura o dimension del parche, en mm, tomada del plano. "
+            "Alimenta el peso estimado (seccion 4).",
+        31: "Entrada: luz radial entre el parche y el componente, en mm (<=2 "
+            "mm tipico). Alimenta el radio de conformado (Rf) y el desarrollo "
+            "de la media carcasa.",
+        32: "Entrada: cateto adoptado del filete perimetral, en mm. Se compara "
+            "contra el filete minimo requerido en la verificacion de la "
+            "seccion 5 (fila 84).",
+        33: "Entrada: solape minimo del parche sobre metal sano, en mm, "
+            "exigido por el Art. 212. Solo informativo en esta hoja.",
+        34: "Entrada: diametro del defecto, caracterizado por UT/PT, en mm. "
+            "Solo informativo en esta hoja.",
+        35: "Entrada: distancia del defecto a la discontinuidad mas cercana "
+            "(cordon o boquilla), en mm. Se compara contra L_min en la "
+            "verificacion de la seccion 5 (fila 88) para decidir entre "
+            "refuerzo 360° y parche local.",
+        41: "Calculo: menor entre el esfuerzo admisible del collar (D39) y el "
+            "del metal base (D40) — rige el diseno por criterio conservador.",
+        42: "Entrada: eficiencia de junta de filete adoptada (Art. 212 ec. 4); "
+            "verificar contra el WPS/PQR calificado.",
+        43: "Entrada: factor Y de la Tabla 304.1.1 del B31.3, segun material y "
+            "temperatura; se ingresa a mano, no se interpola automaticamente.",
+        45: "Entrada: densidad del acero adoptada para el calculo de peso del "
+            "parche/collar (seccion 4).",
+        46: "Entrada: factor multiplicador de la presion de diseno para la "
+            "prueba hidrostatica (tipico 1,5x, B31.3 345.4.2). Alimenta la "
+            "especificacion de prueba de hermeticidad (fila 99).",
+        47: "Constante: factor de conversion de kg/cm² a MPa (1 kg/cm² = "
+            "0,0980665 MPa). No cambiar salvo error de unidades.",
+        48: "Calculo: 1,5 veces el esfuerzo admisible gobernante (D41) — limite "
+            "de la ecuacion 5 del Art. 212 para el esfuerzo de soldadura total.",
+        52: "Calculo: diametro a media pared, Dm = OD − t.",
+        53: "Calculo: radio medio, Rm = Dm/2.",
+        54: "Calculo: radio interior, Ri = OD/2 − t.",
+        55: "Calculo: excentricidad de la carga, e = (T_parche + t_pared)/2.",
+        56: "Calculo: radio de conformado de la fibra media, Rf = OD/2 + luz + "
+            "T_parche/2; se usa en la deformacion por conformado (ec. 7).",
+        57: "Calculo: coeficiente C_sw tal que S_w = P·C_sw; relaciona la "
+            "presion evaluada con el esfuerzo de soldadura (ec. 1 y 5 "
+            "combinadas).",
+        73: "Calculo: distancia minima a una discontinuidad, L_min = "
+            "2·RAIZ(Rm·t) (ec. 3). Por debajo de esta distancia el defecto "
+            "exige refuerzo de 360° en vez de parche local (verificacion de la "
+            "seccion 5, fila 88).",
+        74: "Calculo: presion maxima admisible del parche, en MPa: 1,5·Sa / "
+            "C_sw.",
+        75: "Calculo: igual que D74, convertido a kg/cm² con el factor D47.",
+        76: "Calculo: relacion entre la presion maxima admisible del parche y "
+            "la presion de operacion (D26); entre mas alto, mayor margen.",
+        77: "Calculo: deformacion por conformado en frio, 50·T_parche/Rf "
+            "(ec. 7), en %; debe ser <=5% (verificacion de la seccion 5, fila "
+            "86) para no requerir tratamiento termico de conformado.",
+        78: "Calculo: desarrollo de la media carcasa del collar, "
+            "(π/2)·(OD + 2·luz + T_parche).",
+        79: "Calculo: longitud real de corte de la plancha, igual al "
+            "desarrollo menos 3 mm de luz de raiz.",
+        80: "Calculo: peso estimado del parche/collar (dos mitades), a partir "
+            "de la longitud de corte, la altura, el espesor y la densidad del "
+            "acero.",
+    }
+    for r, com in simples.items():
+        c = ws.cell(r, 4)
+        if c.value is not None:
+            _nota(c, com)
+
+    trip = {
+        61: "Calculo: repite, para este caso (Operacion / Diseno tipico / "
+            "Envolvente), la presion correspondiente de la seccion 1, en "
+            "kg/cm².",
+        62: "Calculo: conversion a MPa de la presion de este caso, "
+            "multiplicando por el factor de conversion D47.",
+        63: "Calculo: fuerza de membrana de este caso (ec. 1 del Art. 212): "
+            "kf · P(MPa) · Dm.",
+        64: "Calculo: cateto de filete minimo requerido para este caso "
+            "(ec. 4): F_m / (E · Sa).",
+        65: "Calculo: espesor de pared requerido para este caso, por B31.3 "
+            "(modo tuberia) o por VIII-1 UG-27 (modo esfera/cilindro), segun "
+            "la presion evaluada de este caso.",
+        66: "Calculo: componente de membrana del esfuerzo de soldadura para "
+            "este caso (ec. 5): F_m / T_parche.",
+        67: "Calculo: componente de flexion del esfuerzo de soldadura para "
+            "este caso (ec. 5): 6·F_m·e / T_parche².",
+        68: "Calculo: esfuerzo de soldadura total de este caso (membrana + "
+            "flexion); se compara contra el limite 1,5·Sa en la fila 69.",
+        69: "Calculo: CUMPLE si el esfuerzo de soldadura total de este caso "
+            "(fila 68) no supera 1,5 veces el esfuerzo admisible gobernante "
+            "(D48).",
+    }
+    for r, com in trip.items():
+        for col in (4, 5, 6):
+            c = ws.cell(r, col)
+            if c.value is not None:
+                _nota(c, com)
+
+    verif = {
+        84: ("Calculo: cateto de filete minimo requerido, el mayor de los tres "
+             "casos de presion (fila 64).",
+             "Entrada: cateto adoptado (repite D32).",
+             "Calculo: CUMPLE si el cateto adoptado es mayor o igual al "
+             "requerido."),
+        85: ("Calculo: limite de esfuerzo por excentricidad, 1,5·Sa (repite "
+             "D48).",
+             "Calculo: esfuerzo de soldadura total adoptado para el diseno "
+             "(repite E68, caso Diseno tipico).",
+             "Calculo: CUMPLE si el esfuerzo adoptado no supera el limite."),
+        86: ("Entrada: limite normativo de deformacion por conformado en "
+             "frio, 5 % (ec. 7).",
+             "Calculo: deformacion por conformado calculada (repite D77).",
+             "Calculo: CUMPLE si la deformacion calculada no supera el 5 %."),
+        87: ("Calculo: espesor de pared requerido, caso Envolvente (repite "
+             "F65, el mas exigente).",
+             "Entrada: espesor de pared real adoptado (repite D21).",
+             "Calculo: CUMPLE si el espesor real es mayor o igual al "
+             "requerido."),
+        88: ("Calculo: distancia minima a la discontinuidad, L_min (repite "
+             "D73).",
+             "Entrada: distancia real del defecto a la discontinuidad (repite "
+             "D35).",
+             "Calculo: 'Refuerzo 360°' si la distancia real es menor que "
+             "L_min; 'Parche local' en otro caso."),
+        89: ("Calculo: presion maxima admisible del parche, en kg/cm² "
+             "(repite D75).",
+             "Entrada: presion de diseno adoptada (repite D27).",
+             "Calculo: 'OK — parche' si la presion de diseno no supera la "
+             "maxima admisible del parche; 'Migrar (Art.206)' si la supera."),
+    }
+    for r, (cd, ce, cf) in verif.items():
+        for col, com in ((4, cd), (5, ce), (6, cf)):
+            c = ws.cell(r, col)
+            if c.value is not None:
+                _nota(c, com)
+
+    _nota(ws.cell(90, 1), "Resultado global del diseno: ver el dictamen calculado "
+                         "en la celda F90 (a la derecha).")
+
+    textos = {
+        93: "Calculo: redacta automaticamente la especificacion de metodo de "
+            "reparacion, citando la aplicacion (D10), el codigo (D12), el "
+            "espesor del parche/collar (D29) y el peso estimado (D80).",
+        94: "Entrada/texto estandar: especificacion de juntas de cierre "
+            "(preparacion, proceso y consumibles de soldadura). Editable si "
+            "el WPS del proyecto exige otra cosa.",
+        95: "Calculo: redacta la especificacion de filetes perimetrales "
+            "citando el cateto adoptado (D32) y el solape minimo (D33) de la "
+            "seccion 1.",
+        96: "Entrada/texto estandar: especificacion de soldadura en servicio "
+            "(Art. 210) — electrodo, precalentamiento y END diferido. "
+            "Editable segun el procedimiento calificado del proyecto.",
+        97: "Entrada/texto estandar: especificacion de ensayos no "
+            "destructivos. Editable segun el criterio de aceptacion del "
+            "codigo de construccion activo (D12).",
+        98: "Entrada/texto de ejemplo: especificacion de recubrimiento "
+            "(esquema de un propietario de referencia). Ajustar a la "
+            "especificacion real del propietario del equipo.",
+        99: "Calculo: redacta la especificacion de prueba de hermeticidad, "
+            "citando el factor de prueba hidrostatica (D46) y la presion de "
+            "diseno (D27).",
+    }
+    for r, com in textos.items():
+        c = ws.cell(r, 2)
+        if c.value is not None:
+            _nota(c, com)
+
+    if ws.cell(101, 1).value is not None:
+        _nota(ws.cell(101, 1), "Aviso fijo: alcance y limitaciones de la "
+                              "herramienta. No se edita.")
 
 
 def deprecate_datos_ref(wb):
