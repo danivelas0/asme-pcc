@@ -1,20 +1,28 @@
 # -*- coding: utf-8 -*-
-"""verificar.py — Protocolo de aceptacion (seccion 10 del PLAN-DB-MAT-001, Rev. 3).
+"""verificar.py — Protocolo de aceptacion (seccion 10 del PLAN-DB-MAT-001, Rev. 4).
 
 1. Conteos JSON -> hoja.
 2. Unicidad de material_id.
 3. Auditoria fila a fila de los valores contra el JSON fuente.
+   3b. Bases por grupo, Apendice C y factores de calidad.
 4. Contigüidad de los bloques de la cascada (condicion de las listas dependientes).
 5. Ausencia de funciones de matriz dinamica y de validaciones no portables.
 6. Interpolacion con huecos interiores, modo tabulado y bordes: recalculo real en
    hoja (Excel) contra un motor de referencia independiente en Python.
+   6b. Apendice C: bloqueo en los dos extremos y rama de dato puntual.
+   6c. Factores de calidad Ec y Ej, y el incremento por examen suplementario.
 7. Regresion del caso semilla, leida del propio libro recalculado.
 8. Capa de navegacion: visibilidad grabada y proyecto VBA intacto.
+9. Mapeo de grupos de propiedades contra las Notas de TM-1 / TE-1.
+
+Las §6b y §6c recalculan la MISMA expresion que lleva el motor: las funciones que
+la generan viven en build_db_materiales.py y las emiten los dos. La prueba ejerce
+el original, no una copia.
 
 Devuelve 0 solo si todo pasa.
 
     python verificar.py --resources ..\\..\\..\\resources \\
-                        --wb ..\\..\\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
+                        --wb ..\\..\\Motor_de_Calculo_ASME_PCC_Rev4.xlsm
 """
 from __future__ import annotations
 
@@ -43,6 +51,10 @@ WB: str = ""
 OUTDIR: Path = None         # type: ignore[assignment]
 REPORTE: Path = None        # type: ignore[assignment]
 APX = "ASME B31/ASME B31.3/APPEX"
+# Archivo CANONICO de la Tabla 302.3.3-1. Su gemelo table_table_302_3_3_1.json
+# quedo declarado duplicado por completar_tabla_302_3_3.py; citarlo seria citar
+# una fuente ambigua.
+TABLA_302331 = "ASME B31/ASME B31.3/CHAPTERS/tables/table_302_3_3_1.json"
 R_DATA, R_HDR = 4, 3
 
 XL_XLSX = 51                # xlOpenXMLWorkbook
@@ -195,7 +207,23 @@ def auditar():
                len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1b.json")) +
                len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_3.json")), "DB_BPVC_IID_B"),
               ("U -> DB_Su", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_u.json")), "DB_Su"),
-              ("Y-1 -> DB_Sy", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json")), "DB_Sy")]
+              ("Y-1 -> DB_Sy", len(RES.rows("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json")), "DB_Sy"),
+              # Apendice C entero: las cuatro tablas en una sola base por edicion.
+              ("C-1 + C-2 + C-3 + C-4 -> DB_B31_C",
+               sum(len(RES.rows(f"{APX}/appendix_c/{f}.json"))
+                   for f in ("table_c_1", "table_c_2", "table_c_3", "table_c_4")),
+               "DB_B31_C"),
+              ("C-1C + C-2 + C-3C + C-4 -> DB_B31_CC",
+               sum(len(RES.rows(f"{APX}/appendix_c/{f}.json"))
+                   for f in ("table_c_1c", "table_c_2", "table_c_3c", "table_c_4")),
+               "DB_B31_CC"),
+              # Factores de calidad: Ec (A-2), Ej (A-3) y el Ec incrementado.
+              ("A-2 -> DB_A2_Ec", len(RES.rows(f"{APX}/appendix_a/table_a_2.json")),
+               "DB_A2_Ec"),
+              ("A-3 -> DB_A3_Ej", len(RES.rows(f"{APX}/appendix_a/table_a_3.json")),
+               "DB_A3_Ej"),
+              ("302.3.3-1 -> DB_Ec_Incremento",
+               len(RES.rows(TABLA_302331)), "DB_Ec_Incremento")]
     # Las filas descartadas son ruido de extraccion conocido y documentado en
     # ISSUES por el builder, pero no pueden crecer sin que nadie se entere: se
     # tolera hasta MAX_DESCARTE por base y por encima de ahi es un fallo.
@@ -221,8 +249,12 @@ def auditar():
     log("")
     log("| Hoja | Filas | Claves unicas | Estado |")
     log("|---|---|---|---|")
+    # DB_B31_C y DB_B31_CC entran aqui sin ningun cambio en el codigo de las
+    # secciones 2 y 4: es exactamente lo que compra el contrato de las 8
+    # primeras columnas (material_id, Tabla, k0..k4, clave_bi) con STRESS_COLS.
     bases = ["DB_B31_3", "DB_B31_3C", "DB_BPVC_IID", "DB_BPVC_IIDC",
-             "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_Sy"]
+             "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_Sy",
+             "DB_B31_C", "DB_B31_CC", "DB_A2_Ec", "DB_A3_Ej"]
     # material_id es la clave con la que el motor localiza cada material: un
     # duplicado significa que el motor puede tomar el admisible equivocado.
     # Es un fallo, no una nota informativa como estaba escrito.
@@ -367,15 +399,144 @@ def auditar():
         log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {npts} | {falt} |")
         return falt
 
+    def audita_apendice_c(sh, si):
+        """Auditoria fila a fila de las 4 tablas del Apendice C contra la hoja.
+
+        No es un conteo: de cada fila del JSON se localiza su gemela en la hoja
+        por (Tabla, Linea impresa) y se comparan el NOMBRE del material y el
+        vector completo de valores —o el valor unico y su rango de validez en
+        las tablas de dato puntual—. Un desplazamiento de una fila, que es el
+        modo tipico de romper un enlace posicional, salta aqui.
+        """
+        w = wb[sh]
+        cm = col_map(w)
+        temps = printed_temps(w)
+        ni = n_ident(w)
+        idx = {}
+        for r in range(R_DATA, w.max_row + 1):
+            k = (txt(w.cell(r, cm["Tabla"]).value), w.cell(r, cm["Linea"]).value)
+            idx[k] = r
+
+        def _nm(s):
+            return re.sub(r"\s+", "", txt(s)).upper()
+
+        ap = f"{APX}/appendix_c"
+        tablas = [
+            ("C-1" if si else "C-1C", f"{ap}/table_c_1{'' if si else 'c'}.json",
+             "material_uns_no", None, None),
+            ("C-2", f"{ap}/table_c_2.json", "material_description",
+             "mm_mm_c" if si else "in_in_f", "range_c" if si else "range_f"),
+            ("C-3" if si else "C-3C", f"{ap}/table_c_3{'' if si else 'c'}.json",
+             "material", None, None),
+            ("C-4", f"{ap}/table_c_4.json", "material_description",
+             "e_mpa_23_c" if si else "e_ksi_73_4_f", None),
+        ]
+        njson = nval = mal = 0
+        for tag, rel, kmat, kval, krng in tablas:
+            for i, row in enumerate(RES.rows(rel), start=1):
+                njson += 1
+                r = idx.get((tag, i))
+                if r is None:
+                    mal += 1
+                    continue
+                # El nombre se compara plegando espacios y guiones: la propia
+                # extraccion duplica el rotulo en 21 de las 26 filas de C-1 y el
+                # builder lo colapsa; eso es un artefacto declarado, no un valor.
+                esperado = _nm(row.get(kmat))
+                visto = _nm(w.cell(r, cm["Material"]).value)
+                if esperado != visto and not esperado.startswith(visto):
+                    mal += 1
+                if kval is None:                       # tabla de curva
+                    for k, v in (row.get("values") or {}).items():
+                        if num(v) is None:
+                            continue
+                        t = temp_to_number(k)
+                        j = temps.index(t) if t in temps else None
+                        nval += 1
+                        if j is None or w.cell(r, ni + 1 + j).value != num(v):
+                            mal += 1
+                else:                                   # tabla de dato puntual
+                    v = row.get(kval)
+                    nval += 1
+                    if isinstance(v, str):
+                        if txt(w.cell(r, cm["Valor unico (texto)"]).value) != txt(v):
+                            mal += 1
+                    elif v is not None:
+                        if w.cell(r, cm["Valor unico"]).value != v:
+                            mal += 1
+                    if krng:
+                        rg = txt(w.cell(r, cm["Rango de validez"]).value)
+                        imp = txt(row.get(krng))
+                        nval += 1
+                        if imp and not rg.startswith(imp):
+                            mal += 1
+                        if not imp and rg:
+                            mal += 1
+        log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {nval} | {mal} |")
+        return mal
+
     ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"
     edc = "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     extra_bad = 0
     extra_bad += audita_grupo("DB_E", [f"{ed}/table_tm_{k}.json" for k in range(1, 6)], 4)
     extra_bad += audita_grupo("DB_EC", [f"{edc}/table_tm_{k}.json" for k in range(1, 6)], 4)
-    extra_bad += audita_grupo("DB_C_dilatacion", [f"{APX}/appendix_c/table_c_1.json"], 4)
-    extra_bad += audita_grupo("DB_C_dilatacionC", [f"{APX}/appendix_c/table_c_1c.json"], 4)
-    extra_bad += audita_grupo("DB_C_modulo", [f"{APX}/appendix_c/table_c_3.json"], 4)
-    extra_bad += audita_grupo("DB_C_moduloC", [f"{APX}/appendix_c/table_c_3c.json"], 4)
+    extra_bad += audita_apendice_c("DB_B31_C", True)
+    extra_bad += audita_apendice_c("DB_B31_CC", False)
+
+    def audita_factores(sh, rel, campo, con_clase):
+        """Fila a fila: factor, notas citadas y descripcion contra el JSON.
+
+        Ec y Ej multiplican directamente el esfuerzo admisible: un factor
+        desplazado una fila cambia el espesor requerido sin que nada falle.
+        """
+        w = wb[sh]
+        cm = col_map(w)
+        idx = {w.cell(r, cm["Linea"]).value: r
+               for r in range(R_DATA, w.max_row + 1)}
+        njson = nval = mal = 0
+        for i, row in enumerate(RES.rows(rel), start=1):
+            njson += 1
+            r = idx.get(i)
+            if r is None:
+                mal += 1
+                continue
+            comparaciones = [(row.get(campo), w.cell(r, cm["Factor"]).value),
+                             (txt(row.get("notes")),
+                              txt(w.cell(r, cm["Notas citadas"]).value)),
+                             (txt(row.get("description")),
+                              txt(w.cell(r, cm["Descripcion"]).value)),
+                             (txt(row.get("spec_no")),
+                              txt(w.cell(r, cm["Spec. No."]).value))]
+            if con_clase:
+                comparaciones.append((txt(row.get("class_or_type")),
+                                      txt(w.cell(r, cm["Clase o tipo"]).value)))
+            for esperado, visto in comparaciones:
+                nval += 1
+                if esperado != visto:
+                    mal += 1
+        log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {nval} | {mal} |")
+        return mal
+
+    extra_bad += audita_factores("DB_A2_Ec", f"{APX}/appendix_a/table_a_2.json",
+                                 "ec", False)
+    extra_bad += audita_factores("DB_A3_Ej", f"{APX}/appendix_a/table_a_3.json",
+                                 "ej", True)
+
+    # Tabla 302.3.3-1: los seis examenes y su Ec, contra el archivo CANONICO.
+    # Las columnas se localizan por posicion porque sus rotulos no son impresos
+    # sino derivados del para. 302.3.3(c) (el impreso no se capturo).
+    wec = wb["DB_Ec_Incremento"]
+    filas_ec = RES.rows(TABLA_302331)
+    mal_ec = 0
+    for i, row in enumerate(filas_ec, start=1):
+        r = R_DATA + i - 1
+        if txt(wec.cell(r, 4).value) != txt(row.get("column_1")):
+            mal_ec += 1
+        if wec.cell(r, 5).value != row.get("column_2"):
+            mal_ec += 1
+    log(f"| DB_Ec_Incremento | {len(filas_ec)} | {wec.max_row - R_DATA + 1} | "
+        f"{2 * len(filas_ec)} | {mal_ec} |")
+    extra_bad += mal_ec
     log("")
     log("| Hoja | Filas JSON | Filas en la hoja | Estado |")
     log("|---|---|---|---|")
@@ -404,9 +565,9 @@ def auditar():
         log(f"| {sh} | {njson} | {nsheet} | {'OK' if ok else 'REVISAR'} |")
     wnm = wb["DB_NoMetalicos"]
     nm_json = 0
+    # Solo Apendice B: C-2 y C-4 salieron de esta hoja a DB_B31_C / DB_B31_CC.
     for rel in [f"{APX}/appendix_b/table_b_{k}.json" for k in
-                ("1", "1c", "2", "3", "4", "5", "6")] + \
-               [f"{APX}/appendix_c/table_c_2.json", f"{APX}/appendix_c/table_c_4.json"]:
+                ("1", "1c", "2", "3", "4", "5", "6")]:
         for row in RES.rows(rel):
             nm_json += sum(1 for v in row.values() if v is not None)
     nm_sheet = sum(1 for r in range(R_DATA, wnm.max_row + 1)
@@ -498,6 +659,9 @@ def auditar():
     for T, m in [(25, "Interpolado"), (180, "Interpolado"), (263, "Interpolado"),
                  (263, "Tabulado-conservador"), (900, "Interpolado")]:
         cases.append(("DB_BPVC_IID", sa, T, m))
+    # La rejilla de referencia se resuelve por hoja, no con un ternario de dos
+    # ramas: cada base nueva que entre en `cases` necesita la suya.
+    grids = {"DB_B31_3": (tb, ib), "DB_BPVC_IID": (ti, ii)}
 
     qa = wb.create_sheet("_QA")
     for j, h in enumerate(["hoja", "material_id", "T", "modo", "fila", "T1", "S1",
@@ -532,6 +696,204 @@ def auditar():
             f'IF(OR($I{r}="",$J{r}=""),$G{r},'
             f'IF($D{r}="Tabulado-conservador",$J{r},'
             f'$G{r}+($J{r}-$G{r})*($C{r}-$F{r})/($I{r}-$F{r})))))')
+
+    # ---- 6b. Apendice C: bloqueo en los dos extremos y rama de dato puntual --
+    # Se recalcula la MISMA expresion que lleva el motor —la emiten las funciones
+    # formula_estado_apxc / formula_valor_apxc de build_db_materiales— resolviendo
+    # la fila por material_id en vez de por la cascada. Asi la prueba ejerce el
+    # original y no una copia de la logica.
+    def _id_de(sh, pref):
+        w = wb[sh]
+        for r in range(R_DATA, w.max_row + 1):
+            v = w.cell(r, 1).value
+            if isinstance(v, str) and v.startswith(pref):
+                return v
+        raise SystemExit(f"{sh}: no existe ninguna fila que empiece por {pref!r}")
+
+    CS = "Carbon steels with carbon content 0.30% or less"
+    G1 = "Group 1 carbon and low alloy steels"
+    casos_c = [
+        # (hoja, material_id, T, modo)  — los cuatro primeros son el mismo
+        # material a 4 temperaturas: punto exacto, interpolacion y los dos bordes.
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-3 | {CS}"), 25, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-3 | {CS}"), 375, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-3 | {CS}"), 700, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-3 | {CS}"), -300, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-1 | {G1}"), 400, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", f"C-1 | {G1}"), 412, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", "C-4 | Acetal"), 25, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", "C-4 | Acetal"), 300, "Interpolado"),
+        ("DB_B31_C", _id_de("DB_B31_C", "C-2 | Glass-epoxy, filament-wound"), 25,
+         "Interpolado"),
+        # El mismo material en la edicion US: se lee su tabla nativa (C-3C), no
+        # una conversion de la metrica.
+        ("DB_B31_CC", _id_de("DB_B31_CC", f"C-3C | {CS}"), 662, "Interpolado"),
+    ]
+    qc = wb.create_sheet("_QA_C")
+    for j, h in enumerate(["hoja", "material_id", "T", "modo", "fila", "T1", "V1",
+                           "n_pts", "T2", "V2", "tipo", "T prim", "T ult", "factor",
+                           "valor unico", "valor texto", "V(T)", "estado",
+                           "valor aplicado"], 1):
+        qc.cell(2, j, h)
+    for i, (sh, mid, T, modo) in enumerate(casos_c):
+        r = 3 + i
+        w = wb[sh]
+        cm = col_map(w)
+        ni = n_ident(w)
+        npr = len(printed_temps(w))
+        t0 = ni + npr + 1
+        npack = (w.max_column - t0 + 1) // 2
+        v0 = t0 + npack
+
+        def col(nombre, _w=w, _cm=cm, _sh=sh):
+            L = get_column_letter(_cm[nombre])
+            return f"{_sh}!${L}${R_DATA}:${L}${_w.max_row}"
+
+        TA = f"{sh}!${get_column_letter(t0)}${R_DATA}"
+        VA = f"{sh}!${get_column_letter(v0)}${R_DATA}"
+        IDS = f"{sh}!$A${R_DATA}:$A${w.max_row}"
+        qc.cell(r, 1, sh); qc.cell(r, 2, mid); qc.cell(r, 3, T); qc.cell(r, 4, modo)
+        qc.cell(r, 5).value = f'=IFERROR(MATCH($B{r},{IDS},0),"")'
+        FIL = f"$E{r}"
+        NP = f"IFERROR(INDEX({col('n_pts')},{FIL}),0)"
+        tr = f"OFFSET({TA},{FIL}-1,0,1,MAX(1,{NP}))"
+        vr = f"OFFSET({VA},{FIL}-1,0,1,MAX(1,{NP}))"
+        p1 = f"IFERROR(MATCH($C{r},{tr},1),1)"
+        # Mismo envoltorio que el motor: INDEX sobre celda vacia devuelve 0, y
+        # sin el las filas de tipo PUNTO entrarian con ceros inventados.
+        def vac(expr):
+            return f'IF({expr}="","",{expr})'
+
+        for j, expr in ((6, f"INDEX({tr},{p1})"), (7, f"INDEX({vr},{p1})"),
+                        (9, f"INDEX({tr},{p1}+1)"), (10, f"INDEX({vr},{p1}+1)")):
+            qc.cell(r, j).value = f'=IFERROR({vac(expr)},"")'
+        qc.cell(r, 8).value = f"={NP}"
+        for j, nombre in ((11, "Tipo de dato"), (12, "T primera tabulada"),
+                          (13, "T ultima tabulada"), (14, "Factor de escala"),
+                          (15, "Valor unico"), (16, "Valor unico (texto)")):
+            qc.cell(r, j).value = f'=IFERROR({vac(f"INDEX({col(nombre)},{FIL})")},"")'
+        qc.cell(r, 17).value = (
+            f'=IF($G{r}="","",IF($C{r}<=$F{r},$G{r},'
+            f'IF(OR($I{r}="",$J{r}=""),$G{r},'
+            f'IF($D{r}="Tabulado-conservador",$J{r},'
+            f'$G{r}+($J{r}-$G{r})*($C{r}-$F{r})/($I{r}-$F{r})))))')
+        qc.cell(r, 18).value = B.formula_estado_apxc(
+            FIL, f"$K{r}", f"$H{r}", f"$L{r}", f"$M{r}", f"$C{r}")
+        qc.cell(r, 19).value = B.formula_valor_apxc(
+            FIL, f"$K{r}", f"$O{r}", f"$P{r}", f"$N{r}", f"$R{r}", f"$Q{r}")
+
+    # ---- 6c. los dos motores de factores de calidad ------------------------
+    # Aqui no hay interpolacion que recalcular: Ec y Ej son escalares. Lo que se
+    # comprueba es que el motor muestra EXACTAMENTE el factor de la fila —sin
+    # redondeo— y que el bloque de incremento aplica el de la Tabla 302.3.3-1
+    # solo donde la fila lo admite. Se conduce escribiendo la cascada, igual que
+    # el caso semilla del motor de calculo.
+    def _fila_de(sh, **campos):
+        """Fila de una base de factores que casa con todos los campos dados."""
+        w = wb[sh]
+        cm = col_map(w)
+        for r in range(R_DATA, w.max_row + 1):
+            if all(txt(w.cell(r, cm[k]).value) == txt(v) for k, v in campos.items()):
+                return r, cm, w
+        raise SystemExit(f"{sh}: ninguna fila casa con {campos}")
+
+    EXA_MAX = "(1) and (3)(a) or (3)(b)"        # la que habilita Ec = 1,00
+    # Cada motor solo puede conducirse una vez por recalculo: la cascada vive en
+    # celdas concretas de su hoja. Asi que el barrido de casos se hace sobre una
+    # hoja _QA_F que reemite la MISMA expresion del motor resolviendo la fila por
+    # material_id, y ademas se conduce un caso vivo por motor a traves de la
+    # cascada real, que es lo que comprueba el cableado de las listas.
+    wi = wb["DB_Ec_Incremento"]
+    inc_tab = {txt(wi.cell(rr, 4).value): wi.cell(rr, 5).value
+               for rr in range(R_DATA, wi.max_row + 1)}
+    casos_f = [
+        ("DB_A2_Ec", {"Spec. No.": "A395",
+                      "Descripcion": "Ductile and ferritic ductile iron castings"},
+         EXA_MAX),
+        ("DB_A2_Ec", {"Spec. No.": "A451", "Grupo impreso": "Stainless Steel"}, "(1)"),
+        ("DB_A2_Ec", {"Spec. No.": "A451", "Grupo impreso": "Stainless Steel"},
+         EXA_MAX),
+        ("DB_A2_Ec", {"Spec. No.": "A426"}, EXA_MAX),
+        ("DB_A2_Ec", {"Spec. No.": "A47"}, EXA_MAX),
+        ("DB_A3_Ej", {"Spec. No.": "API 5L",
+                      "Descripcion": "Continuous welded (furnace butt welded) pipe"},
+         None),
+        ("DB_A3_Ej", {"Spec. No.": "API 5L", "Descripcion": "Seamless pipe"}, None),
+        ("DB_A3_Ej", {"Spec. No.": "A312",
+                      "Descripcion": "Electric fusion welded pipe, single butt seam"},
+         None),
+        ("DB_A3_Ej", {"Spec. No.": "A312",
+                      "Descripcion": "Electric fusion welded pipe, double butt seam"},
+         None),
+    ]
+    qf = wb.create_sheet("_QA_F")
+    for j, h in enumerate(["hoja", "material_id", "examen", "fila", "factor basico",
+                           "admite", "factor del examen", "factor aplicable"], 1):
+        qf.cell(2, j, h)
+    esperado_f = []
+    EXA = (f"DB_Ec_Incremento!$D${R_DATA}:"
+           f"$D${wb['DB_Ec_Incremento'].max_row}")
+    FAC = (f"DB_Ec_Incremento!$E${R_DATA}:"
+           f"$E${wb['DB_Ec_Incremento'].max_row}")
+    for i, (base, filtros, examen) in enumerate(casos_f):
+        r0, cm, w = _fila_de(base, **filtros)
+        mid = w.cell(r0, 1).value
+        r = 3 + i
+
+        def col(nombre, _w=w, _cm=cm, _b=base):
+            L = get_column_letter(_cm[nombre])
+            return f"{_b}!${L}${R_DATA}:${L}${_w.max_row}"
+
+        qf.cell(r, 1, base); qf.cell(r, 2, mid); qf.cell(r, 3, examen or "")
+        qf.cell(r, 4).value = (f'=IFERROR(MATCH($B{r},{base}!$A${R_DATA}:'
+                               f'$A${w.max_row},0),"")')
+        FIL = f"$D{r}"
+        qf.cell(r, 5).value = f'=IF({FIL}="","",INDEX({col("Factor")},{FIL}))'
+        qf.cell(r, 6).value = (f'=IF({FIL}="","",'
+                               f'INDEX({col("Admite incremento")},{FIL}))')
+        qf.cell(r, 7).value = (f'=IF($C{r}="","",'
+                               f'IFERROR(INDEX({FAC},MATCH($C{r},{EXA},0)),""))')
+        qf.cell(r, 8).value = B.formula_factor_aplicable(
+            FIL, f"$F{r}", f"$E{r}", f"$G{r}")
+        basico = w.cell(r0, cm["Factor"]).value
+        admite = str(w.cell(r0, cm["Admite incremento"]).value or "")
+        if examen is None:
+            aplicable = basico
+        else:
+            aplicable = (min(1, max(basico, inc_tab[txt(examen)]))
+                         if admite.startswith("SI") else basico)
+        esperado_f.append((base, filtros, examen, basico, admite, aplicable))
+
+    # Un caso vivo por motor, conducido por la cascada real. La cascada arranca
+    # en D6 y ocupa un nivel por fila; el resto del layout se deriva de ahi.
+    vivos = [("Buscar_Ec_A2", "DB_A2_Ec",
+              {"Spec. No.": "A395",
+               "Descripcion": "Ductile and ferritic ductile iron castings"},
+              EXA_MAX, ("Grupo impreso", "Spec. No.", "Descripcion")),
+             ("Buscar_Ej_A3", "DB_A3_Ej",
+              {"Spec. No.": "API 5L",
+               "Descripcion": "Continuous welded (furnace butt welded) pipe"},
+              None, ("Grupo impreso", "Spec. No.", "Clase o tipo", "Descripcion"))]
+    esperado_vivo = []
+    for motor, base, filtros, examen, niveles in vivos:
+        r0, cm, w = _fila_de(base, **filtros)
+        ws_m = wb[motor]
+        for k, nombre in enumerate(niveles):
+            v = w.cell(r0, cm[nombre]).value
+            ws_m.cell(6 + k, 4).value = v if v not in (None, "") else B.NO_APLICA
+        r_ult = 5 + len(niveles)
+        fila_val = r_ult + 4          # banda 2 en r_ult+2; valores dos filas mas
+        fila_apl = r_ult + 9          # banda 3 en r_ult+7; examen +1; campos +2
+        if examen is not None:
+            ws_m.cell(fila_apl - 1, 4).value = examen
+        basico = w.cell(r0, cm["Factor"]).value
+        admite = str(w.cell(r0, cm["Admite incremento"]).value or "")
+        aplicable = (None if examen is None else
+                     (min(1, max(basico, inc_tab[txt(examen)]))
+                      if admite.startswith("SI") else basico))
+        esperado_vivo.append((motor, filtros, fila_val, fila_apl,
+                              basico, admite, aplicable))
+
     # Caso semilla de la seccion 7. Se carga aqui, antes del unico recalculo,
     # para no abrir Excel dos veces.
     #
@@ -563,7 +925,7 @@ def auditar():
     for i, (sh, mid, T, modo) in enumerate(cases):
         r = 3 + i
         got = rb.cell(r, 11).value
-        temps, idx = (tb, ib) if sh == "DB_B31_3" else (ti, ii)
+        temps, idx = grids[sh]
         exp = interp(temps, idx[mid][1], T, modo)
         ok = (abs(got - exp) < 1e-6) if isinstance(got, (int, float)) and exp is not None \
             else (got == "SIN VALOR" and exp is None)
@@ -576,6 +938,127 @@ def auditar():
         "salto de huecos interiores: la Tabla A-1 no imprime ese punto para ese material y "
         "la hoja interpola entre 100 y 150 C, no entre celdas vacias.")
     log("")
+
+    # ---- 6b. Apendice C: los dos extremos y el dato puntual ---------------
+    log("### 6b. Apendice C — bloqueo en los dos extremos y rama de dato puntual")
+    log("")
+    log("El Apendice C no publica columna «Temp. max.»: el limite es el primer y el "
+        "ultimo punto que tabula la propia fila. Estos casos comprueban, recalculando "
+        "en Excel la misma expresion que lleva el motor, que por encima y por debajo "
+        "de esa banda el resultado queda BLOQUEADO en vez de sostener el valor del "
+        "extremo, y que C-2 y C-4 se resuelven por su valor unico impreso.")
+    log("")
+    rc = recalc["_QA_C"]
+    log("| Hoja | material_id | T | Tipo | Estado hoja | Estado referencia | "
+        "Valor hoja | Valor referencia | Estado |")
+    log("|---|---|---|---|---|---|---|---|---|")
+    nbad_c = 0
+    for i, (sh, mid, T, modo) in enumerate(casos_c):
+        r = 3 + i
+        w = wb[sh]
+        cm = col_map(w)
+        temps_p = printed_temps(w)
+        ni = n_ident(w)
+        fila = next(rr for rr in range(R_DATA, w.max_row + 1)
+                    if w.cell(rr, 1).value == mid)
+        tipo = w.cell(fila, cm["Tipo de dato"]).value
+        tprim = w.cell(fila, cm["T primera tabulada"]).value
+        tult = w.cell(fila, cm["T ultima tabulada"]).value
+        fac = w.cell(fila, cm["Factor de escala"]).value
+        vu = w.cell(fila, cm["Valor unico"]).value
+        vt = w.cell(fila, cm["Valor unico (texto)"]).value
+        npts = w.cell(fila, cm["n_pts"]).value or 0
+        vals = {}
+        for k, t in enumerate(temps_p):
+            v = w.cell(fila, ni + 1 + k).value
+            if v is not None:
+                vals[t] = v
+        if tipo == "PUNTO":
+            est_ref = B.EST_PUNTO
+        elif npts == 0:
+            est_ref = B.EST_SIN_TAB
+        elif T < tprim:
+            est_ref = B.EST_BAJO
+        elif T > tult:
+            est_ref = B.EST_ALTO
+        else:
+            est_ref = B.EST_OK
+        if tipo == "PUNTO":
+            val_ref = vu * fac if isinstance(vu, (int, float)) else (vt or "")
+        elif est_ref.startswith("FUERA DE RANGO"):
+            val_ref = B.VAL_BLOQUEADO
+        elif est_ref == B.EST_SIN_TAB:
+            val_ref = B.EST_SIN_TAB
+        else:
+            v = interp(temps_p, vals, T, modo)
+            val_ref = v * fac if v is not None else ""
+        got_e, got_v = rc.cell(r, 18).value, rc.cell(r, 19).value
+        if isinstance(got_v, (int, float)) and isinstance(val_ref, (int, float)):
+            ok_v = abs(got_v - val_ref) <= abs(val_ref) * 1e-9 + 1e-9
+        else:
+            ok_v = got_v == val_ref
+        ok = (got_e == est_ref) and ok_v
+        nbad_c += 0 if ok else 1
+        corto = lambda s: str(s)[:34] if s is not None else "—"
+        log(f"| {sh} | `{str(mid)[:34]}` | {T} | {tipo} | {corto(got_e)} | "
+            f"{corto(est_ref)} | {corto(got_v)} | {corto(val_ref)} | "
+            f"{'OK' if ok else 'FALLO'} |")
+    log("")
+    log(f"**{len(casos_c)} casos del Apendice C, {nbad_c} fallos.**")
+    log("")
+    nbad += nbad_c
+
+    # ---- 6c. factores de calidad Ec y Ej ----------------------------------
+    log("### 6c. Factores de calidad — el motor muestra el factor de la fila, sin "
+        "redondeo")
+    log("")
+    log("Ec y Ej son escalares: no hay interpolacion que recalcular. Lo que se "
+        "comprueba, conduciendo la cascada y recalculando en Excel, es que el KPI "
+        "es EXACTAMENTE el valor impreso y que el incremento de la Tabla 302.3.3-1 "
+        "solo se aplica donde la fila lo admite.")
+    log("")
+    log("| Base | Fila | Examen | Factor hoja | Factor codigo | Admite | "
+        "Aplicable hoja | Aplicable referencia | Estado |")
+    log("|---|---|---|---|---|---|---|---|---|")
+    rf = recalc["_QA_F"]
+    nbad_f = 0
+    for i, (base, filtros, examen, basico, admite, aplicable) in enumerate(esperado_f):
+        r = 3 + i
+        got_b, got_a, got_ap = (rf.cell(r, 5).value, rf.cell(r, 6).value,
+                                rf.cell(r, 8).value)
+        ok = (got_b == basico and txt(got_a) == txt(admite)
+              and isinstance(got_ap, (int, float))
+              and abs(got_ap - aplicable) <= 1e-12)
+        nbad_f += 0 if ok else 1
+        etiq = " · ".join(f"{k}={v}" for k, v in filtros.items())
+        log(f"| {base} | {etiq[:46]} | {examen or '—'} | {got_b} | {basico} | "
+            f"{str(got_a)[:20]} | {got_ap} | {aplicable} | "
+            f"{'OK' if ok else 'FALLO'} |")
+    log("")
+    log("Y el mismo calculo conducido por la cascada real de cada motor, que es lo "
+        "que comprueba el cableado de las listas desplegables:")
+    log("")
+    log("| Motor | Fila | Factor hoja | Factor codigo | Admite hoja | "
+        "Aplicable hoja | Aplicable referencia | Estado |")
+    log("|---|---|---|---|---|---|---|---|")
+    for motor, filtros, fila_val, fila_apl, basico, admite, aplicable in esperado_vivo:
+        rm = recalc[motor]
+        got_b = rm.cell(fila_val, 1).value
+        got_a = rm.cell(fila_val, 10).value
+        got_ap = rm.cell(fila_apl, 3).value if aplicable is not None else None
+        ok = got_b == basico and txt(got_a) == txt(admite)
+        if aplicable is not None:
+            ok = ok and isinstance(got_ap, (int, float)) and \
+                abs(got_ap - aplicable) <= 1e-12
+        nbad_f += 0 if ok else 1
+        etiq = " · ".join(f"{k}={v}" for k, v in filtros.items())
+        log(f"| {motor} | {etiq[:46]} | {got_b} | {basico} | {str(got_a)[:20]} | "
+            f"{got_ap} | {aplicable} | {'OK' if ok else 'FALLO'} |")
+    log("")
+    log(f"**{len(esperado_f) + len(esperado_vivo)} casos de factores, "
+        f"{nbad_f} fallos.**")
+    log("")
+    nbad += nbad_f
 
     # ---- 7. regresion del caso semilla -----------------------------------
     # Antes se leia de lo2/test_v2.xlsx, un archivo que no esta en el repo, y
@@ -631,8 +1114,8 @@ def auditar():
 
     filas = [
         ("Unica hoja visible es el Dashboard", visibles == [B.DASH], ", ".join(visibles)),
-        ("Las 9 hojas navegables estan hidden", ocultas == set(B.NAVEGABLES),
-         f"{len(ocultas)} hojas"),
+        (f"Las {len(B.NAVEGABLES)} hojas navegables estan hidden",
+         ocultas == set(B.NAVEGABLES), f"{len(ocultas)} hojas"),
         ("El resto esta veryHidden", very == esperadas_very, f"{len(very)} hojas"),
         ("Ninguna base de datos alcanzable desde la UI",
          not [n for n in estados if estados[n] != "veryHidden"
@@ -644,7 +1127,7 @@ def auditar():
     dash = wb0[B.DASH]
     claves = [dash.cell(c.row, B.COL_CLAVE_BASE + c.column).value
               for row in dash.iter_rows() for c in row if c.hyperlink is not None]
-    filas.append(("Los botones cubren las 9 hojas navegables",
+    filas.append((f"Los botones cubren las {len(B.NAVEGABLES)} hojas navegables",
                   sorted(k for k in claves if k) == sorted(B.NAVEGABLES),
                   f"{len(claves)} botones"))
     filas.append(("Cada hoja navegable tiene enlace de retorno",

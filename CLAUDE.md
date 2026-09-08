@@ -27,6 +27,7 @@ concreto de `resources/` del que procede, para permitir auditoría posterior.
 knowledge/     Instrucciones de cálculo ASME PCC-2 en SI. Leer antes de cualquier tarea.
 resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ ASME B31/ASME B31.3/APPEX/   Apéndices A, B y C
+               │  └─ CHAPTERS/tables/          Tablas del cuerpo normativo
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
                └─ ASME_BPVC/Sec_II/
                   ├─ bpvc_ii_a_1/, a_2/, b/, c/  Partes A, B y C: texto íntegro
@@ -93,13 +94,34 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 
 ## Motor de cálculo — estado actual
 
-Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev3.xlsm`
-(39 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
+Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
+(43 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación a los
-nueve motores (Art. 212, los 7 buscadores, `Instrucciones`) la hace un proyecto VBA de
+doce motores (Art. 212, los 10 buscadores, `Instrucciones`) la hace un proyecto VBA de
 dos componentes. Los estados de visibilidad van **grabados en el archivo**, así que con
 las macros bloqueadas no se expone ninguna base de datos.
+
+### Los diez buscadores
+
+| Hoja | Qué responde | Fuente |
+|---|---|---|
+| `Buscar_B31_3` | S admisible | B31.3 Apéndice A, A-1/A-4 y A-1C/A-4C |
+| `Buscar_BPVC_IID` | S admisible, ferrosos | II-D Tabla 1A |
+| `Buscar_BPVC_IID_B` | S admisible, no ferrosos y pernería | II-D Tablas 1B y 3 |
+| `Buscar_Su` · `Buscar_Sy` | Su y Sy frente a T | II-D Tablas U y Y-1 |
+| `Buscar_Prop_IID` | Módulo E, Poisson y densidad **por grupo** | II-D TM-1..5 y PRD |
+| `Buscar_Prop_B31_3` | Dilatación y módulo, metales y no metálicos | B31.3 Apéndice C, C-1..C-4 |
+| `Buscar_NoMetalicos` | Esfuerzo de diseño hidrostático y presión admisible | B31.3 Apéndice B |
+| `Buscar_Ec_A2` | Factor de calidad de fundición **Ec** | B31.3 Tabla A-2 + 302.3.3-1 |
+| `Buscar_Ej_A3` | Factor de calidad de junta longitudinal **Ej** | B31.3 Tabla A-3 |
+
+**Un dato, un motor.** El Apéndice C salió de `Buscar_Propiedades` (que pasó a
+llamarse `Buscar_Prop_IID`) y de `Buscar_NoMetalicos`, y tiene motor propio con
+conmutador SI ↔ US. `Buscar_Prop_IID` **no expone la dilatación de la II-D**:
+`DB_TE`/`DB_TEC` se siguen construyendo y auditando, pero TE-1 se indexa por
+temperatura × columnas de grupo, no por material, y ningún motor la consulta
+todavía. Es un pendiente declarado, no un olvido.
 
 ### Reconstruir
 
@@ -134,12 +156,23 @@ python completar_apendice_c.py --resources ..\..\..\resources
 python completar_apendice_b.py --resources ..\..\..\resources
 python completar_apendice_a.py --resources ..\..\..\resources
 
+# Solo si se repone la extraccion de las tablas del cuerpo del B31.3.
+# Declara cual de los dos archivos de la Tabla 302.3.3-1 es el canonico y
+# recupera sus rotulos de columna del para. 302.3.3(c). Idempotente, solo
+# metadatos. El builder ABORTA si no se ha corrido.
+python completar_tabla_302_3_3.py --resources ..\..\..\resources
+
 python build_db_materiales.py --resources ..\..\..\resources `
     --in ..\..\..\templates\maestro_con_macros.xlsm `
-    --out ..\..\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
-python -m pytest test_build_db.py test_dashboard.py -q
+    --out ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm
+python -m pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q
 python verificar.py --resources ..\..\..\resources `
-    --wb ..\..\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
+    --wb ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm
+
+# No entra en el libro: mide la reconstruccion de las tablas de la Seccion II
+# partes A/B/C y escribe Revision_Tablas_SecII.md. Ver la seccion de abajo.
+python secii_tablas.py --resources ..\..\..\resources `
+    --informe ..\Revision_Tablas_SecII.md
 ```
 
 La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale de
@@ -147,10 +180,17 @@ La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale
 (3 hojas). El `Motor_de_Calculo_ASME_PCC.xlsx` de la raíz **no está en el repo**.
 
 `verificar.py` devuelve 0 solo si todo pasa. Audita **fila a fila** cada valor
-tabulado contra el JSON del código (271 276 valores), la contigüidad de la cascada,
+tabulado contra el JSON del código (271 276 valores de esfuerzos, más 4 726 del
+Apéndice C y 743 de los factores de calidad), la contigüidad de la cascada,
 la ausencia de fórmulas de matriz dinámica, la interpolación recalculada en hoja, el
 caso semilla y la capa de navegación. **Requiere Excel instalado**: recalcula con el
 motor real, no con LibreOffice. **Ejecútalo siempre después de tocar el builder.**
+
+Sus §6b y §6c **recalculan en Excel la misma expresión que lleva el motor**, no una
+copia: las funciones que la generan (`formula_estado_apxc`, `formula_valor_apxc`,
+`formula_factor_aplicable`) viven en `build_db_materiales.py` y las emiten los dos.
+Si alguien cambia la lógica en el motor, la prueba la ejerce cambiada; si cambia solo
+el texto de un estado, el literal se lee de la misma constante y no puede divergir.
 
 ### Capa de navegación — dos fuentes de verdad que no pueden divergir
 
@@ -214,6 +254,27 @@ Dos trampas ya pagadas, documentadas en el código:
     edición, el motor muestra «sin equivalente en la edicion US», nunca un valor
     convertido.
 
+    **Excepción declarada (Rev. 4): los factores adimensionales.** `Ec` (Tabla A-2)
+    y `Ej` (Tabla A-3) no tienen unidad y el código publica **una sola tabla** para
+    los dos sistemas: no existen A-2C ni A-3C. Ahí `Buscar_Ec_A2` y `Buscar_Ej_A3`
+    ponen una **celda fija y rotulada** —«FACTOR ADIMENSIONAL — identico en SI y en
+    US (el codigo publica una sola tabla)»— en el sitio donde los demás ponen el
+    conmutador. Se cumple el espíritu de la regla —el usuario ve siempre en qué
+    sistema lee y nunca un valor convertido— sin fabricar un interruptor que no
+    gobierna nada. `TXT_ADIMENSIONAL` en el builder, con su prueba.
+
+11. **El factor publicado es un MÍNIMO, y el motor tiene que decirlo.** Las Notas
+    (4) y (5) de la Tabla A-2 dicen cosas opuestas con el mismo formato: la (4)
+    —*«can be enhanced by supplementary examination»*— permite subir el factor con
+    la Tabla 302.3.3-1; la (5) —*«applicable only when proper supplementary
+    examination has been performed»*— avisa de que el factor **ya supone** ese
+    examen. Confundirlas mueve el espesor requerido. `Buscar_Ec_A2` deriva el
+    estado de las notas que cita **la propia fila**, nunca de una suposición, y
+    contempla los cuatro casos: solo (4), solo (5), **las dos** —A451 es la única
+    fila que las cita juntas— y ninguna. Para `Ej` el mecanismo existe
+    (para. 302.3.4(b) y Tabla 302.3.4-1) pero la extracción de esa tabla está
+    inservible, así que el motor **declara el hueco y no ofrece número**.
+
 ### Estilo de diseño de los buscadores — no romper
 
 Vive en `build_buscador` / `finish_buscador` (los 5 buscadores de cascada: B31_3,
@@ -245,6 +306,63 @@ declaradas junto a `CARD_FILL`/`KPI_FILL`) para que cambien a la vez en todos.
    representaría mal). El punto consultado sigue siendo un rombo rojo (`FF0000`)
    sin línea, para distinguir el valor puntual de la curva. Aplica a
    `finish_buscador` y a `build_buscador_grupo`.
+
+### `DB_B31_C` / `DB_B31_CC` — el Apéndice C entero en una base por edición
+
+201 filas por edición: C-1/C-1C (52), C-2 (44), C-3/C-3C (75) y C-4 (30). El nivel
+0 de la cascada es la **propiedad**, no la tabla: el ingeniero pregunta «quiero el
+módulo E», no «quiero la Tabla C-3».
+
+Tres cosas que este motor hace distinto de los cinco de esfuerzos, y por qué:
+
+- **Bloquea en los DOS extremos.** El Apéndice C no publica columna «Temp. máx.»:
+  el límite es el primer y el último punto que tabula la propia fila. Sostener el
+  último valor por encima —que es lo correcto en los buscadores de esfuerzos,
+  donde el tope lo pone una columna del código— aquí sería extrapolar.
+- **Rama de dato puntual.** C-2 y C-4 no dependen de la temperatura: publican un
+  valor único, la gráfica queda vacía **a propósito** y el estado dice VALOR ÚNICO.
+- **El conmutador cambia de columna en dos tablas y de hoja en las otras dos**
+  (regla 10). Nunca convierte.
+
+El **factor de escala se lee del JSON**, jamás se codifica: confundir el ×10³ de
+C-3 con el ×10⁶ de C-3C son tres órdenes de magnitud en el módulo E. Va en columna
+propia junto con su texto impreso, y el KPI muestra el valor con el factor aplicado
+mientras la sección 4 muestra el impreso sin él.
+
+**El enlace SI↔US es posicional** (`clave_bi = propiedad#fila impresa`), porque los
+nombres divergen entre ediciones por artefactos de impresión: «Type 309.» con punto
+en C-3 y con coma en C-3C, «25Cr–20Ni» con raya en una y guion en la otra. Un enlace
+posicional sin red es una bomba silenciosa, así que el build **aborta** si el número
+de filas por propiedad no coincide o si un nombre normalizado difiere fuera de
+`DIVERGENCIAS_NOMBRE_C`, que hoy tiene **una sola entrada**.
+
+### Sección II partes A, B y C — medida, todavía no volcada al libro
+
+`secii_tablas.py` reconstruye las tablas de las 368 especificaciones desde los
+bloques `Line` y sus `bbox`. **No escribe nada** en `resources/` ni en el libro:
+mide y reporta a `Revision_Tablas_SecII.md`.
+
+El JSON no trae tablas: el `html` de todo bloque `Table` es `<p></p>` y los `Span`
+no se conservan, así que el bloque más fino es `Line`. El reparto de cada fila
+tiene tres resultados y **ninguno adivina**: `EXACTA` (≥2 `Line`, cada uno a su
+columna por el punto medio de su `bbox`), `POR CONTEO` (un solo `Line`, partido
+desde la derecha y solo si el conteo cuadra con las columnas que la tabla ya
+demostró tener) y `AMBIGUA` (el texto se conserva **entero** en una celda y se
+declara). Sin `Span`, repartir por interpolación sobre el ancho del `bbox` sería
+inventar estructura con una fuente proporcional: la geometría **confirma** un
+reparto, nunca lo produce.
+
+La garantía que sí se puede dar sin el PDF es la **comprobación sin pérdida**: la
+concatenación de las celdas de cada fila coincide carácter a carácter con la de sus
+`Line` de origen. Pasa sobre las 54 198 filas y los 124 115 `Line`.
+
+**Estado: parado en el punto de decisión de la Fase 2 del plan.** Medido sobre las
+cuatro partes: 2 572 tablas lógicas, 54 198 filas, 5 233 notas al pie, y un
+**38,7 % de las filas de dato en AMBIGUA**. El plan dice que a esa escala escribir
+las filas dudosas es peor que no escribirlas, así que las nueve hojas
+(`CAT_SecII`, `IDX_SecII_Tablas`, los cuatro `DB_SecII_*`, `DB_SecII_Notas` y las
+normalizadas de química y tracción) **no están en el libro**. Seguir a las Fases 3-5
+—o acotarlas a las tablas que sí se reparten— es decisión del ingeniero.
 
 ### `MAP_Grupo` — pertenencia a grupo de propiedades
 

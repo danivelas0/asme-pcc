@@ -6,6 +6,57 @@
 
 ---
 
+## ✅ EJECUTADO — 2026-09-07
+
+Ejecutado **después** del plan del Apéndice C, como el propio plan recomienda. El
+entregable es `Motor_de_Calculo_ASME_PCC_Rev4.xlsm` con **43 hojas** y **12
+navegables** — la composición que el plan preveía (39 + 4 + 1 − 2 = 42) da 43
+porque hizo falta una hoja más de la prevista: `DB_Ec_Incremento`, la Tabla
+302.3.3-1 como base propia. Meter sus seis filas en `DB_Listas` habría sido más
+barato, pero esa hoja está rotulada «no es fuente normativa» y los seis factores Ec
+sí lo son.
+
+`verificar.py` devuelve **0 fallos**; §6c recalcula 11 casos en Excel.
+
+### Fase 0 — las tres preguntas, respondidas
+
+1. **Duplicado de la Tabla 302.3.3-1.** Confirmado y resuelto:
+   `completar_tabla_302_3_3.py` declara `table_302_3_3_1.json` como canónico y
+   registra el SHA-256 del descartado, que además queda marcado con
+   `superseded_by`. **Hallazgo adicional:** el patrón es más amplio de lo que el
+   plan suponía —**32 pares** con doble prefijo en `CHAPTERS/tables/`, de los que
+   **21 son idénticos y 11 no**—, y en los distintos el de **prefijo simple** trae
+   las filas ya recompuestas mientras el de prefijo doble conserva los fragmentos
+   del corte de línea (`table_302_3_3_2.json` tiene 8 filas legibles frente a las 19
+   partidas de su gemelo). Los otros 31 pares **no se tocan**: queda censado en la
+   enmienda para que se decida aparte.
+2. **Encabezados perdidos.** Recuperados del propio código, del para. 302.3.3(c),
+   leído de `chapter_02.json`. Van como `header_derivado` con la frase de la que
+   salen; `header` **sigue en null**, porque sigue siendo verdad que el impreso no
+   se capturó y el PDF no está en el repo.
+3. **¿Existe equivalente para `Ej`?** **Sí**, y no es una tabla aparte: son filas de
+   la propia Tabla 302.3.4-1, según el para. 302.3.4(b). **Pero su extracción está
+   inservible**: el cuerpo de la tabla se colapsó dentro de los encabezados de
+   columna. El motor de A-3 **declara el hueco**, transcribe el párrafo y la Nota
+   (1), y remite al folio impreso. No ofrece número.
+
+### Una corrección al plan, tomada de `resources/`
+
+El plan da por hecho que **A451** cita solo la Nota (5) y que su bloque de
+incremento debe salir **desactivado**. El código imprime `"(4), (5)"`: cita **las
+dos**. Es la única fila de A-2 que lo hace. Tratarla como si solo tuviera la (5)
+ocultaría que su 0,90 **también puede subirse**. El motor contempla los cuatro
+estados —solo (4), solo (5), las dos, ninguna— derivados de las notas que cita la
+fila, y la comprobación manual del plan queda así: `A451` da **0,90** con el aviso
+de que su factor ya supone examen **y** con el bloque de incremento **activo**.
+
+También se normaliza el `(Cont'd)` de los rótulos de grupo de A-3 —«Copper and
+Copper Alloy (Cont'd)» es el mismo grupo reimpreso al pasar de folio—, declarándolo
+fila a fila en la columna `Detalle del incremento`. Sin eso la cascada ofrecería 10
+grupos donde el código publica 8.
+
+---
+
 ## Contexto
 
 `Ec` y `Ej` son los dos factores de calidad que entran en la ecuación de diseño por

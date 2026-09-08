@@ -1,11 +1,11 @@
-"""Pruebas de la capa de navegacion (Dashboard + VBA) del entregable Rev. 3.
+"""Pruebas de la capa de navegacion (Dashboard + VBA) del entregable Rev. 4.
 
 A diferencia de test_build_db.py, que solo ejerce funciones puras, estas
 pruebas abren el .xlsm ya construido. Se saltan si no existe, para que el
 paquete de pruebas siga corriendo en una copia limpia del repo.
 
-    python build_db_materiales.py --resources ... --in ... --out ...\\Rev3.xlsm
-    set MOTOR_XLSM=..\\..\\Motor_de_Calculo_ASME_PCC_Rev3.xlsm
+    python build_db_materiales.py --resources ... --in ... --out ...\\Rev4.xlsm
+    set MOTOR_XLSM=..\\..\\Motor_de_Calculo_ASME_PCC_Rev4.xlsm
     python -m pytest test_dashboard.py -q
 """
 from __future__ import annotations
@@ -24,7 +24,7 @@ import build_db_materiales as B
 
 AQUI = Path(__file__).resolve().parent
 # scripts -> Base_Datos_Materiales_ASME -> outputs, donde vive el entregable.
-POR_DEFECTO = AQUI.parents[1] / "Motor_de_Calculo_ASME_PCC_Rev3.xlsm"
+POR_DEFECTO = AQUI.parents[1] / "Motor_de_Calculo_ASME_PCC_Rev4.xlsm"
 RUTA = Path(os.environ.get("MOTOR_XLSM", POR_DEFECTO))
 
 # Funciones de matriz dinamica prohibidas por la regla 1 del libro. La capa de

@@ -17,12 +17,16 @@
   {
    "key": "column_1",
    "header": null,
-   "banners": []
+   "banners": [],
+   "header_derivado": "Various combinations of supplementary examination",
+   "fuente_derivacion": "CHAPTERS/chapter_02.json, para. 302.3.3(c): (c) Increased Quality Factors. Casting quality factors may be increased when supplementary examinations are performed on each casting. Table 302.3.3-1 states the increased casting quality factors, Ec, that may be used for various combinations of supplementary examination. Table 302.3.3-2 states the acceptance criteria for the examination methods specified in the Notes to Table 302.3.3-1. Quality factors higher than those shown in Table 302.3.3-1 do not result from combining tests (2)(a) and (2)(b), or (3)(a) and (3)(b). In no case shall the quality factor exceed 1.00."
   },
   {
    "key": "column_2",
    "header": null,
-   "banners": []
+   "banners": [],
+   "header_derivado": "Increased casting quality factors, Ec",
+   "fuente_derivacion": "CHAPTERS/chapter_02.json, para. 302.3.3(c): (c) Increased Quality Factors. Casting quality factors may be increased when supplementary examinations are performed on each casting. Table 302.3.3-1 states the increased casting quality factors, Ec, that may be used for various combinations of supplementary examination. Table 302.3.3-2 states the acceptance criteria for the examination methods specified in the Notes to Table 302.3.3-1. Quality factors higher than those shown in Table 302.3.3-1 do not result from combining tests (2)(a) and (2)(b), or (3)(a) and (3)(b). In no case shall the quality factor exceed 1.00."
   }
  ],
  "row_count": 6,
@@ -59,5 +63,30 @@
    "column_1": "(2)(a) or (2)(b) and (3)(a) or (3)(b)",
    "column_2": 1.0
   }
- ]
+ ],
+ "extraction_amendments": {
+  "fecha": "2026-09-07",
+  "script": "completar_tabla_302_3_3.py",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera: los seis factores Ec y sus combinaciones de examen se conservan tal como estaban cargados (regla 9 del proyecto).",
+  "archivo_canonico": "table_302_3_3_1.json",
+  "duplicado_descartado": {
+   "archivo": "table_table_302_3_3_1.json",
+   "sha256": "201ca426567f41ea280731b7e5327264b1d947933d76a0af12ab50d0668d922d",
+   "motivo": "mismo contenido, prefijo 'table_' aplicado dos veces por la extraccion. Se cita SIEMPRE el de prefijo simple."
+  },
+  "encabezados": "columns[].header sigue en null porque el impreso no se capturo y el PDF del codigo no esta en el repositorio. Los rotulos van en header_derivado, con la frase del codigo de la que salen en fuente_derivacion.",
+  "incremento_de_ej": {
+   "existe": true,
+   "donde": "para. 302.3.4(b) y Table 302.3.4-1",
+   "texto": "(b) Increased Quality Factors. Table 302.3.4-1 also indicates higher joint quality factors that may be substituted for those in Table A-3 for certain kinds of welds if additional examination is performed beyond that required by the product specification.",
+   "extraccion_utilizable": false,
+   "nota": "El cuerpo de table_302_3_4_1.json se colapso dentro de los encabezados de columna: el motor de A-3 declara el hueco y remite al folio impreso en vez de ofrecer un factor."
+  },
+  "censo_doble_prefijo": {
+   "pares": 32,
+   "identicos": 20,
+   "distintos": 12,
+   "criterio": "el archivo de prefijo SIMPLE es la extraccion recompuesta; el de prefijo doble conserva los fragmentos del corte de linea. Solo se declara el par de la 302.3.3-1."
+  }
+ }
 }

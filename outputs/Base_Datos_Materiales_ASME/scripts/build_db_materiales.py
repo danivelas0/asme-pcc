@@ -656,67 +656,413 @@ def _dedup_frase(t):
     return w
 
 
-def build_appendix_c(res, wb, system):
-    si = system == "SI"
-    suf = "" if si else "C"
+# ---------------------------------------------------------------------------
+# Apendice C del B31.3 — base unificada de propiedades fisicas
+# ---------------------------------------------------------------------------
+# Las cuatro tablas del Apendice C (C-1/C-1C dilatacion de metales, C-2
+# dilatacion de no metalicos, C-3/C-3C modulo de metales y C-4 modulo de no
+# metalicos) viven en UNA sola base por edicion. El nivel 0 de la cascada es la
+# PROPIEDAD: es la pregunta que hace el ingeniero ("quiero el modulo E"), no la
+# tabla en la que el codigo la publica.
+#
+# Contrato de columnas: las OCHO primeras posiciones son identicas a
+# STRESS_COLS. Eso es lo que permite que build_listas y las secciones §2
+# (unicidad) y §4 (contiguidad) de verificar.py funcionen sobre esta base sin
+# tocar una linea.
+#
+# El plan PLAN-BUSC-APXC-001 enumeraba 25 columnas; aqui son 27 porque la
+# definicion impresa del coeficiente y el texto impreso del factor de escala se
+# guardan en columna propia en vez de componerse dentro de una formula: la
+# ficha del motor los cita verbatim y asi siguen siendo auditables desde la
+# hoja.
+APXC_COLS = [
+    "material_id", "Tabla", "k0", "k1", "k2", "k3", "k4", "clave_bi",
+    "Propiedad", "Grupo impreso", "Subgrupo impreso", "Material",
+    "Variante / coeficiente", "Definicion impresa", "Tipo de dato",
+    "Unidad impresa", "Factor de escala", "Factor impreso",
+    "Valor unico", "Valor unico (texto)", "Rango de validez",
+    "T primera tabulada", "T ultima tabulada", "Notas", "Observacion",
+    "Linea", "n_pts"]
+CC = {n: i + 1 for i, n in enumerate(APXC_COLS)}
+N_IDENT_C = len(APXC_COLS)
+CLC = {n: get_column_letter(i) for n, i in CC.items()}
+assert APXC_COLS[:8] == STRESS_COLS[:8], \
+    "el contrato de las 8 primeras columnas es lo que reutiliza build_listas"
+
+PROP_C1 = "DILATACION TERMICA - METALES"
+PROP_C2 = "DILATACION TERMICA - NO METALICOS"
+PROP_C3 = "MODULO DE ELASTICIDAD - METALES"
+PROP_C4 = "MODULO ELASTICIDAD CORTO PLAZO - NO METALICOS"
+# El orden alfabetico de estos cuatro rotulos coincide con el orden de las
+# tablas en el codigo (C-1, C-2, C-3, C-4); la base se ordena por k0 y por eso
+# no hace falta un criterio aparte.
+SIN_GRUPO = "(sin grupo impreso)"
+SIN_SUBGRUPO = "(sin subgrupo impreso)"
+VAR_UNICA = "(unico)"
+VARIANTE_COEF = {"A": "A - coeficiente medio", "B": "B - expansion total"}
+TIPO_CURVA, TIPO_PUNTO = "CURVA", "PUNTO"
+
+# Rotulos de estado del motor del Apendice C. Viven aqui, y no dentro de la
+# formula, porque verificar.py §6 recalcula esa misma logica en Excel y compara
+# el texto: si el motor y el verificador escribiesen cada uno su literal, una
+# divergencia de redaccion pasaria desapercibida.
+EST_SIN_SEL = "SIN SELECCION"
+EST_PUNTO = "VALOR UNICO — no depende de T; vea el rango de validez"
+EST_SIN_TAB = "SIN VALOR TABULADO"
+EST_BAJO = "FUERA DE RANGO — T por debajo del primer punto tabulado"
+EST_ALTO = "FUERA DE RANGO — T por encima del ultimo punto tabulado"
+EST_OK = "EN RANGO"
+VAL_BLOQUEADO = "BLOQUEADO"
+
+_RE_NOTA_REF = re.compile(r"\[Note \((\d+[A-Za-z]?)\)\]")
+
+
+def _notas_ref(*textos) -> str:
+    """Referencias [Note (n)] que el codigo imprime en un rotulo, como '(1), (2)'."""
+    vistas = []
+    for t in textos:
+        for n in _RE_NOTA_REF.findall(str(t or "")):
+            if n not in vistas:
+                vistas.append(n)
+    return ", ".join(f"({n})" for n in vistas)
+
+
+def _factor_escala(sf):
+    """Multiplicador impreso -> valor fisico, LEIDO del JSON (nunca codificado).
+
+    El codigo publica el factor en el encabezado de cada tabla: 'Multiply
+    Tabulated Values by 10^3' (C-3), 'Divide Table Values by 10^6' (C-2). Se
+    confundir 10^3 con 10^6 es un error de tres ordenes de magnitud, asi que el
+    exponente se lee y se guarda junto con su texto impreso.
+    """
+    if not sf:
+        return 1, ""
+    op = str(sf.get("operacion") or "ninguna")
+    exp = int(sf.get("exponente") or 0)
+    if op == "multiplicar":
+        f = 10 ** exp
+    elif op == "dividir":
+        f = 10 ** (-exp)
+    else:
+        f = 1
+    return f, clean(sf.get("impreso")) or ""
+
+
+def _seg(v, por_defecto=""):
+    """Segmento de una clave de cascada: el separador es '|', asi que no puede
+    aparecer dentro del valor. Ningun rotulo del Apendice C lo lleva; la
+    sustitucion es defensiva, para que una reextraccion no rompa la cascada."""
+    s = txt(v)
+    return (s.replace("|", "/") if s else por_defecto)
+
+
+def _excepciones_declaradas(d):
+    """{nombre de fila -> motivo declarado por completar_apendice_c.py}."""
     out = {}
-    for tag, fn, sheet, lbl in [
-            ("C-1", f"{APX}/appendix_c/table_c_1{'' if si else 'c'}.json",
-             f"DB_C_dilatacion{suf}", "Dilatacion termica de metales"),
-            ("C-3", f"{APX}/appendix_c/table_c_3{'' if si else 'c'}.json",
-             f"DB_C_modulo{suf}", "Modulo de elasticidad de metales")]:
-        d = res.load(fn)
-        temps, recs = set(), []
-        for row in d["rows"]:
-            mat = _dedup_frase(clean(g(row, "material_uns_no", "material")))
-            coef = clean(g(row, "coefficient", "coeffi_cient"))
-            vals = {temp_to_number(k): num(v) for k, v in (row.get("values") or {}).items()
-                    if temp_to_number(k) is not None and num(v) is not None}
-            temps |= set(vals)
-            recs.append(dict(mat=mat, coef=coef, vals=vals))
-        temps = sorted(temps)
-        recs.sort(key=lambda x: (txt(x["mat"]).upper(), txt(x["coef"])))
-        keys, _ = make_unique([build_material_id([r["mat"], r["coef"]]) for r in recs],
-                              list(range(1, len(recs) + 1)))
-        records = [([k, tag, tag, r["mat"], r["coef"], search_key(r["mat"]),
-                     len(r["vals"])], r["vals"]) for k, r in zip(keys, recs)]
-        ws = new_sheet(wb, sheet,
-                       f"PROPIEDADES B31.3 — {lbl} · Tabla {d.get('table_id')} "
-                       f"({'SI' if si else 'US'})",
-                       f"Fuente: resources/{fn} · ASME B31.3-2024 · {d.get('value_axis')}")
-        n = write_headers(ws, ["clave", "Tabla", "clave_sf", "Material / grupo",
-                               "Coef.", "Busqueda", "n_pts"], temps)
-        last = write_rows(ws, records, n, temps)
-        t0, v0, npack = append_packed(ws, records, n, temps, 7)
-        autosize(ws, {"A": 50, "B": 8, "C": 8, "D": 48, "E": 8, "F": 28})
-        for cc in ("C", "F", "G"):
-            ws.column_dimensions[cc].hidden = True
-        ws.auto_filter.ref = f"A{R_HDR}:{get_column_letter(n + len(temps))}{last}"
-        record_meta(sheet, d.get("table_id"), fn, "2024", system, last - R_DATA + 1, lbl)
-        out[tag] = dict(sheet=sheet, n_ident=n, temps=temps, last_row=last,
-                        pack_t0=t0, pack_v0=v0, npack=npack, npts_col=7)
+    for e in (d.get("extraction_amendments") or {}).get("excepciones_declaradas") or []:
+        fila = txt(e.get("fila"))
+        if fila:
+            out[fila.upper()] = f"{clean(e.get('motivo'))} (folio {e.get('folio')})"
     return out
+
+
+def _fila_apxc(**kw):
+    """Fila normalizada de la base del Apendice C, con todos los campos."""
+    d = dict(tabla="", prop="", grupo=SIN_GRUPO, subgrupo=SIN_SUBGRUPO, material="",
+             variante=VAR_UNICA, definicion="", tipo=TIPO_CURVA, unidad="",
+             factor=1, factor_txt="", vnum=None, vtxt=None, rango=None,
+             notas="", obs=[], idx=0, prop_id="", vals={})
+    d.update(kw)
+    return d
+
+
+def _carga_apendice_c(res, si):
+    """Las 4 propiedades del Apendice C, en la edicion pedida. Solo lectura."""
+    ap = f"{APX}/appendix_c"
+    filas = []
+
+    # --- C-1 / C-1C: dilatacion termica de metales, curva vs. T --------------
+    fn = f"{ap}/table_c_1{'' if si else 'c'}.json"
+    d = res.load(fn)
+    defs = d.get("coefficient_defs") or {}
+    fac, fac_txt = _factor_escala(d.get("scale_factor"))
+    exc = _excepciones_declaradas(d)
+    for i, row in enumerate(d["rows"], start=1):
+        crudo = clean(g(row, "material_uns_no"))
+        mat = _dedup_frase(crudo)
+        # C-1C parte el encabezado en 'Coeffi- cient': el lector acepta las dos
+        # claves. Un parser que asuma una sola falla en la mitad de los casos.
+        coef = txt(g(row, "coefficient", "coeffi_cient"))
+        cd = defs.get(coef) or {}
+        obs = []
+        if mat != crudo:
+            obs.append("Nombre impreso duplicado por la extraccion; colapsado "
+                       "(artefacto, el codigo lo imprime una vez)")
+        if txt(mat).upper() in exc:
+            obs.append(exc[txt(mat).upper()])
+        vals = {temp_to_number(k): num(v)
+                for k, v in (row.get("values") or {}).items()
+                if temp_to_number(k) is not None and num(v) is not None}
+        filas.append(_fila_apxc(
+            tabla=d.get("table_id", "").replace("Table ", "") or "C-1",
+            prop=PROP_C1, prop_id="C1", idx=i, material=mat,
+            variante=VARIANTE_COEF.get(coef, coef or VAR_UNICA),
+            definicion=clean(cd.get("impreso")) or "",
+            tipo=TIPO_CURVA, unidad=clean(cd.get("unidad")) or "",
+            factor=fac, factor_txt=fac_txt,
+            notas=_notas_ref(mat, cd.get("referencia")),
+            obs=obs, vals=vals))
+
+    # --- C-2: dilatacion termica de no metalicos, valor unico ----------------
+    fn = f"{ap}/table_c_2.json"
+    d = res.load(fn)
+    cols = d.get("columns") or []
+    fac, fac_txt = _factor_escala(d.get("scale_factor"))
+    exc = _excepciones_declaradas(d)
+    # El codigo publica los DOS sistemas en la misma tabla: el conmutador cambia
+    # de columna, no de hoja (regla 10). Nunca hay conversion.
+    kv, kr = ("mm_mm_c", "range_c") if si else ("in_in_f", "range_f")
+    unidad = clean(cols[3] if si else cols[1]) if len(cols) > 4 else ""
+    u_temp = "°C" if si else "°F"
+    from collections import Counter as _Cnt2
+    rep = _Cnt2(txt(r.get("material_description")) for r in d["rows"])
+    for i, row in enumerate(d["rows"], start=1):
+        mat = clean(g(row, "material_description"))
+        v = row.get(kv)
+        rng = clean(row.get(kr))
+        obs = []
+        if txt(mat).upper() in exc:
+            obs.append(exc[txt(mat).upper()])
+        if isinstance(v, str):
+            obs.append("El codigo publica un intervalo; se conserva como texto y "
+                       "el motor no opera sobre el (regla 9)")
+        # El codigo repite `Poly(perfluoroalkoxy alkane)` tres veces con rangos
+        # de validez distintos: el rango es lo que separa esas filas, asi que es
+        # la variante. En el resto no hay variante que elegir.
+        var = (clean(rng) or f"fila impresa {i}") if rep[txt(mat)] > 1 else VAR_UNICA
+        filas.append(_fila_apxc(
+            tabla="C-2", prop=PROP_C2, prop_id="C2", idx=i, material=mat,
+            grupo=clean(g(row, "material_group")) or SIN_GRUPO,
+            subgrupo=clean(g(row, "material_subgroup")) or SIN_SUBGRUPO,
+            variante=var, tipo=TIPO_PUNTO, unidad=unidad,
+            factor=fac, factor_txt=fac_txt,
+            vnum=v if isinstance(v, (int, float)) else None,
+            vtxt=clean(v) if isinstance(v, str) else None,
+            rango=f"{rng} {u_temp}" if rng else None,
+            notas=_notas_ref(g(row, "material_group")), obs=obs))
+
+    # --- C-3 / C-3C: modulo de elasticidad de metales, curva vs. T ----------
+    fn = f"{ap}/table_c_3{'' if si else 'c'}.json"
+    d = res.load(fn)
+    fac, fac_txt = _factor_escala(d.get("scale_factor"))
+    exc = _excepciones_declaradas(d)
+    unidad = clean((d.get("scale_factor") or {}).get("unidad_resultante")) or ""
+    for i, row in enumerate(d["rows"], start=1):
+        crudo = clean(g(row, "material"))
+        mat = _dedup_frase(crudo)
+        obs = []
+        if mat != crudo:
+            obs.append("Nombre impreso duplicado por la extraccion; colapsado "
+                       "(artefacto, el codigo lo imprime una vez)")
+        if txt(mat).upper() in exc:
+            obs.append(exc[txt(mat).upper()])
+        vals = {temp_to_number(k): num(v)
+                for k, v in (row.get("values") or {}).items()
+                if temp_to_number(k) is not None and num(v) is not None}
+        filas.append(_fila_apxc(
+            tabla=d.get("table_id", "").replace("Table ", "") or "C-3",
+            prop=PROP_C3, prop_id="C3", idx=i, material=mat,
+            grupo=clean(g(row, "material_group")) or SIN_GRUPO,
+            subgrupo=clean(g(row, "material_subgroup")) or SIN_SUBGRUPO,
+            tipo=TIPO_CURVA, unidad=unidad, factor=fac, factor_txt=fac_txt,
+            notas=_notas_ref(d.get("value_axis"), g(row, "material_group")),
+            obs=obs, vals=vals))
+
+    # --- C-4: modulo de elasticidad de no metalicos, valor unico ------------
+    fn = f"{ap}/table_c_4.json"
+    d = res.load(fn)
+    cols = d.get("columns") or []
+    fac, fac_txt = _factor_escala(d.get("scale_factor"))
+    exc = _excepciones_declaradas(d)
+    kv = "e_mpa_23_c" if si else "e_ksi_73_4_f"
+    # 'E, MPa (23°C)' -> 'MPa (23°C)': se quita el rotulo de la magnitud, que ya
+    # esta en el nombre de la propiedad; el resto se conserva impreso.
+    hdr = clean(cols[2] if si else cols[1]) if len(cols) > 2 else ""
+    unidad = re.sub(r"^E,\s*", "", hdr or "")
+    ref = [t for t in (d.get("reference_temperature") or [])
+           if str(t.get("unidad")) == ("C" if si else "F")]
+    rango_ref = (f"{ref[0]['valor']} °{ref[0]['unidad']}" if ref else None)
+    for i, row in enumerate(d["rows"], start=1):
+        mat = clean(g(row, "material_description"))
+        v = row.get(kv)
+        obs = []
+        if txt(mat).upper() in exc:
+            obs.append(exc[txt(mat).upper()])
+        if isinstance(v, str):
+            obs.append("El codigo publica un intervalo; se conserva como texto y "
+                       "el motor no opera sobre el (regla 9)")
+        filas.append(_fila_apxc(
+            tabla="C-4", prop=PROP_C4, prop_id="C4", idx=i, material=mat,
+            grupo=clean(g(row, "material_group")) or SIN_GRUPO,
+            subgrupo=clean(g(row, "material_subgroup")) or SIN_SUBGRUPO,
+            tipo=TIPO_PUNTO, unidad=unidad, factor=fac, factor_txt=fac_txt,
+            vnum=v if isinstance(v, (int, float)) else None,
+            vtxt=clean(v) if isinstance(v, str) else None,
+            rango=rango_ref,
+            notas=_notas_ref(g(row, "material_group")), obs=obs))
+    return filas
+
+
+def build_apendice_c(res, wb, system):
+    """DB_B31_C / DB_B31_CC — las 4 tablas del Apendice C en una sola base."""
+    si = system == "SI"
+    name = "DB_B31_C" if si else "DB_B31_CC"
+    filas = _carga_apendice_c(res, si)
+
+    # Orden: k0 -> k1 -> k2 -> material -> orden impreso. El ultimo criterio es
+    # el numero de fila del codigo, no la variante: garantiza que las dos
+    # ediciones queden en el MISMO orden aunque la variante se lea de una
+    # columna distinta en cada una (el rango de validez de C-2 va en °C o en °F).
+    filas.sort(key=lambda d: (d["prop"], _seg(d["grupo"], SIN_GRUPO).upper(),
+                              _seg(d["subgrupo"], SIN_SUBGRUPO).upper(),
+                              _seg(d["material"]).upper(), d["prop_id"], d["idx"]))
+
+    temps = sorted({t for d in filas for t in d["vals"]})
+    ids, _ = make_unique(
+        [build_material_id([d["tabla"], d["material"], d["variante"]]) for d in filas],
+        [d["idx"] for d in filas])
+    records = []
+    for mid, d in zip(ids, filas):
+        gr = _seg(d["grupo"], SIN_GRUPO)
+        sg = _seg(d["subgrupo"], SIN_SUBGRUPO)
+        mt = _seg(d["material"])
+        vr = _seg(d["variante"], VAR_UNICA)
+        k0 = d["prop"]
+        k1 = f"{k0}|{gr}"
+        k2 = f"{k1}|{sg}"
+        k3 = f"{k2}|{mt}"
+        k4 = f"{k3}|{vr}"
+        d["k"] = (k0, k1, k2, k3, k4)
+        d["mid"], d["bi"] = mid, f"{d['prop_id']}#{d['idx']}"
+        tprim = min(d["vals"]) if d["vals"] else None
+        tult = max(d["vals"]) if d["vals"] else None
+        records.append((
+            [mid, d["tabla"], k0, k1, k2, k3, k4, d["bi"],
+             d["prop"], d["grupo"], d["subgrupo"], d["material"],
+             d["variante"], d["definicion"], d["tipo"], d["unidad"],
+             d["factor"], d["factor_txt"], d["vnum"], d["vtxt"], d["rango"],
+             tprim, tult, d["notas"], " · ".join(d["obs"]) or None,
+             d["idx"], len(d["vals"])],
+            d["vals"]))
+
+    ws = new_sheet(
+        wb, name,
+        "PROPIEDADES FISICAS DE TUBERIA — ASME B31.3-2024, Apendice C · Tablas "
+        + ("C-1, C-2, C-3 y C-4 (edicion metrica)" if si
+           else "C-1C, C-2, C-3C y C-4 (edicion U.S. Customary)"),
+        "Fuente: resources/" + APX + "/appendix_c/table_c_1"
+        + ("" if si else "c") + ".json, table_c_2.json, table_c_3"
+        + ("" if si else "c") + ".json y table_c_4.json · ASME B31.3-2024 · "
+        "Valores tal como estan impresos: el factor de escala va en su columna y "
+        "lo aplica el motor a la vista, nunca la carga. C-2 y C-4 publican los dos "
+        "sistemas en la misma tabla y de ellas se lee la COLUMNA del sistema "
+        "activo; C-1/C-1C y C-3/C-3C tienen una tabla por edicion. Nunca hay "
+        "conversion.")
+    n = write_headers(ws, APXC_COLS, temps)
+    last = write_rows(ws, records, n, temps)
+    autosize(ws, {CLC["material_id"]: 52, CLC["Tabla"]: 8, CLC["clave_bi"]: 10,
+                  CLC["Propiedad"]: 34, CLC["Grupo impreso"]: 30,
+                  CLC["Subgrupo impreso"]: 28, CLC["Material"]: 46,
+                  CLC["Variante / coeficiente"]: 22, CLC["Definicion impresa"]: 44,
+                  CLC["Tipo de dato"]: 12, CLC["Unidad impresa"]: 18,
+                  CLC["Factor impreso"]: 44, CLC["Rango de validez"]: 16,
+                  CLC["Observacion"]: 50})
+    for cn in ("k0", "k1", "k2", "k3", "k4", "clave_bi", "Linea", "n_pts"):
+        ws.column_dimensions[CLC[cn]].hidden = True
+    t0, v0, npack = append_packed(ws, records, n, temps, CC["n_pts"])
+    ws.auto_filter.ref = f"A{R_HDR}:{get_column_letter(n + len(temps))}{last}"
+
+    ap = f"{APX}/appendix_c"
+    for tag, fn, tbl in (("C-1", f"{ap}/table_c_1{'' if si else 'c'}.json", PROP_C1),
+                         ("C-2", f"{ap}/table_c_2.json", PROP_C2),
+                         ("C-3", f"{ap}/table_c_3{'' if si else 'c'}.json", PROP_C3),
+                         ("C-4", f"{ap}/table_c_4.json", PROP_C4)):
+        nf = sum(1 for d in filas if d["prop"] == tbl)
+        record_meta(name, res.load(fn).get("table_id"), fn, "2024", system, nf, tbl)
+    return dict(sheet=name, n_ident=n, temps=temps, last_row=last, recs=filas,
+                pack_t0=t0, pack_v0=v0, npack=npack, npts_col=CC["n_pts"])
+
+
+# El enlace SI<->US del Apendice C es POSICIONAL (clave_bi = propiedad#fila
+# impresa): los nombres divergen entre ediciones por artefactos de impresion
+# ('Type 309.' con punto en C-3 y con coma en C-3C, '25Cr–20Ni' con raya en una
+# y con guion en la otra), asi que enlazar por nombre fallaria en esas filas.
+# La contrapartida obligatoria de un enlace posicional es esta asercion: si el
+# numero de filas por propiedad no coincide, o si un nombre normalizado difiere
+# fuera de la lista blanca, el build ABORTA. Sin ella seria una bomba silenciosa.
+DIVERGENCIAS_NOMBRE_C = {
+    # normalizado SI -> normalizado US, con el motivo impreso
+    ("C3", "TYPE309.23CR-12NI"): ("TYPE309,23CR-12NI",
+                                  "C-3 imprime punto y C-3C coma tras 'Type 309'"),
+}
+
+
+def _norm_nombre_c(s) -> str:
+    """Nombre comparable entre ediciones: sin espacios, con guiones plegados."""
+    return re.sub(r"\s+", "", txt(s)).upper()
+
+
+def verificar_paridad_apendice_c(si_info, us_info):
+    a = {d["bi"]: d for d in si_info["recs"]}
+    b = {d["bi"]: d for d in us_info["recs"]}
+    if set(a) != set(b):
+        raise SystemExit(
+            "Apendice C: las dos ediciones no publican el mismo numero de filas por "
+            f"propiedad. Solo en SI: {sorted(set(a) - set(b))[:8]}; "
+            f"solo en US: {sorted(set(b) - set(a))[:8]}.")
+    malas = []
+    for bi, d in a.items():
+        ns, nu = _norm_nombre_c(d["material"]), _norm_nombre_c(b[bi]["material"])
+        if ns == nu:
+            continue
+        permitido = DIVERGENCIAS_NOMBRE_C.get((d["prop_id"], ns))
+        if permitido and permitido[0] == nu:
+            continue
+        malas.append(f"{bi}: SI={d['material']!r} US={b[bi]['material']!r}")
+    if malas:
+        raise SystemExit(
+            "Apendice C: el enlace SI/US es posicional y hay nombres que no casan "
+            "fuera de la lista blanca documentada:\n  " + "\n  ".join(malas))
+    ISSUES.append(
+        f"Apendice C: {len(a)} filas enlazadas SI<->US por posicion (clave_bi); "
+        f"{len(DIVERGENCIAS_NOMBRE_C)} divergencia(s) de nombre en lista blanca, "
+        "todas artefactos de impresion documentados.")
 
 
 def build_nometalicos(res, wb):
     """Formato largo (Tabla | Material | Campo | Valor): permite cascada
-    Tabla -> Material y ficha campo/valor sin matrices dinamicas."""
+    Tabla -> Material y ficha campo/valor sin matrices dinamicas.
+
+    Solo Apendice B. Las tablas C-2 y C-4 —dilatacion y modulo de no
+    metalicos— salieron de aqui a DB_B31_C / DB_B31_CC: el Apendice B publica
+    esfuerzos de diseno hidrostatico y presion admisible, que es otra cosa.
+    Un dato, un motor.
+    """
     tables = [("B-1", f"{APX}/appendix_b/table_b_1.json"),
               ("B-1C", f"{APX}/appendix_b/table_b_1c.json"),
               ("B-2", f"{APX}/appendix_b/table_b_2.json"),
               ("B-3", f"{APX}/appendix_b/table_b_3.json"),
               ("B-4", f"{APX}/appendix_b/table_b_4.json"),
               ("B-5", f"{APX}/appendix_b/table_b_5.json"),
-              ("B-6", f"{APX}/appendix_b/table_b_6.json"),
-              ("C-2", f"{APX}/appendix_c/table_c_2.json"),
-              ("C-4", f"{APX}/appendix_c/table_c_4.json")]
+              ("B-6", f"{APX}/appendix_b/table_b_6.json")]
     ws = new_sheet(wb, "DB_NoMetalicos",
-                   "MATERIALES NO METALICOS — ASME B31.3-2024, Apendice B (HDS y presiones "
-                   "admisibles) y Apendice C (C-2 dilatacion, C-4 modulo)",
-                   "Fuente: resources/" + APX + "/appendix_b/table_b_1..b_6.json y "
-                   "appendix_c/table_c_2.json, table_c_4.json · Formato largo "
+                   "MATERIALES NO METALICOS — ASME B31.3-2024, Apendice B: esfuerzos de "
+                   "diseno hidrostatico (HDS) y presiones admisibles",
+                   "Fuente: resources/" + APX + "/appendix_b/table_b_1..b_6.json · "
+                   "Formato largo "
                    "(tabla / material / campo / valor) para permitir la consulta por lista "
-                   "desplegable. Valores tal como estan impresos.")
+                   "desplegable. Valores tal como estan impresos. La dilatacion (C-2) y el "
+                   "modulo (C-4) de no metalicos viven en DB_B31_C / DB_B31_CC.")
     n = write_headers(ws, ["clave", "Tabla", "clave_sf", "Material", "Campo", "Valor",
                            "Titulo de la tabla"])
     recs = []
@@ -780,6 +1126,283 @@ def build_map_factores(res, wb):
     record_meta("MAP_Factores", "A-2 + A-3", f"{fa2} ; {fa3}", "2024", "adimensional",
                 last - R_DATA + 1, "Ej y Ec por especificacion / tipo de junta.")
     return dict(sheet="MAP_Factores", last_row=last)
+
+
+# ---------------------------------------------------------------------------
+# Factores de calidad Ec (Tabla A-2) y Ej (Tabla A-3) — bases y notas
+# ---------------------------------------------------------------------------
+# Ec y Ej son multiplicadores directos del esfuerzo admisible en la ecuacion de
+# diseno por presion, t = P·D / (2(S·E + P·Y)). Equivocar el factor mueve el
+# espesor requerido hasta un 40 % —de E = 1,00 en un tubo sin costura a E = 0,60
+# en uno soldado a tope en horno—, asi que no es un dato accesorio.
+#
+# Lo importante que estas dos tablas dicen, y que el libro no decia: el factor
+# publicado es un MINIMO que puede subirse con examen suplementario. Ver
+# build_buscador_factor y las Notas (4) y (5) de A-2.
+FACT_COLS = [
+    "material_id", "Tabla", "k0", "k1", "k2", "k3", "k4", "clave_bi",
+    "Grupo impreso", "Spec. No.", "Clase o tipo", "Descripcion", "Factor",
+    "Notas citadas", "Admite incremento", "Detalle del incremento",
+    "Texto de las notas", "Paginas PDF (fuente)", "Archivo fuente",
+    "Linea", "n_pts"]
+CF = {n: i + 1 for i, n in enumerate(FACT_COLS)}
+N_IDENT_F = len(FACT_COLS)
+CLF = {n: get_column_letter(i) for n, i in CF.items()}
+assert FACT_COLS[:8] == STRESS_COLS[:8], \
+    "el contrato de las 8 primeras columnas es lo que reutiliza build_listas"
+
+NO_APLICA = "(no aplica)"
+INC_SI = "SI — admite incremento por examen suplementario [Nota (4)]"
+INC_SI_YA = ("SI — admite incremento; ademas el factor basico ya supone examen "
+             "suplementario [Notas (4) y (5)]")
+INC_NO = "NO — el factor ya supone el examen suplementario [Nota (5)]"
+INC_SILENCIO = "El codigo no se pronuncia en esta fila"
+
+# El corte de pagina parte un grupo en dos ("Copper and Copper Alloy" y
+# "Copper and Copper Alloy (Cont'd)"). No son dos grupos: es el mismo rotulo
+# reimpreso al pasar de folio. Se normaliza para la navegacion y se declara
+# fila a fila en la columna «Detalle del incremento» de la propia hoja.
+_RE_CONTD = re.compile(r"\s*\(Cont'?d\)\s*$", re.I)
+
+
+def _grupo_sin_contd(g):
+    return _RE_CONTD.sub("", txt(g)).strip()
+
+
+def notas_numeradas(textos) -> dict[str, str]:
+    """Trocea las notas al pie de A-2 / A-3, que llegan como parrafos enteros.
+
+    La extraccion entrega las notas de estas dos tablas como uno o dos strings
+    largos, no como items. Trocearlas por «cualquier (n)» seria un error: el
+    propio texto cita «para. 302.3.1(a)» y «Table A-1 (Table A-1C)». Se buscan
+    los marcadores EN ORDEN —(1), luego (2) a partir de ahi, etc.—, que es lo
+    unico que distingue un marcador de nota de una referencia interna.
+    """
+    entero = " ".join(clean(t) or "" for t in (textos or []))
+    marcas = []
+    desde = 0
+    n = 1
+    while True:
+        pos = entero.find(f"({n})", desde)
+        if pos < 0:
+            break
+        marcas.append((n, pos))
+        desde = pos + 1
+        n += 1
+    out = {}
+    for i, (num_, pos) in enumerate(marcas):
+        fin = marcas[i + 1][1] if i + 1 < len(marcas) else len(entero)
+        cuerpo = entero[pos + len(f"({num_})"):fin].strip()
+        # El asterisco marca en el codigo las notas que repiten texto del cuerpo
+        # normativo; se conserva tal como se imprime.
+        out[str(num_)] = cuerpo
+    return out
+
+
+def _citadas(notas_txt) -> list[str]:
+    """Numeros de nota que cita una fila ('(3), (4)' -> ['3','4'])."""
+    return re.findall(r"\((\d+)\)", txt(notas_txt))
+
+
+def build_ec_incremento(res, wb):
+    """DB_Ec_Incremento — Tabla 302.3.3-1, los 6 examenes y su Ec.
+
+    Es lo que convierte el factor basico de A-2 en el factor que de verdad
+    aplica. Se cita SIEMPRE table_302_3_3_1.json: su gemelo de doble prefijo
+    quedo declarado como duplicado por completar_tabla_302_3_3.py.
+    """
+    fn = "ASME B31/ASME B31.3/CHAPTERS/tables/table_302_3_3_1.json"
+    d = res.load(fn)
+    cols = d.get("columns") or []
+    if len(cols) != 2:
+        raise SystemExit("Tabla 302.3.3-1: se esperaban 2 columnas.")
+    # Los encabezados impresos no se capturaron; completar_tabla_302_3_3.py
+    # dejo en su lugar los derivados del para. 302.3.3(c), con su procedencia.
+    rot = [clean(c.get("header") or c.get("header_derivado")) for c in cols]
+    if not all(rot):
+        raise SystemExit(
+            "Tabla 302.3.3-1: las columnas no traen ni header ni header_derivado. "
+            "Corra completar_tabla_302_3_3.py antes de construir el libro.")
+    ws = new_sheet(
+        wb, "DB_Ec_Incremento",
+        f"FACTOR DE CALIDAD DE FUNDICION INCREMENTADO — ASME B31.3-2024, "
+        f"{d.get('table_id')}: {d.get('title')}",
+        f"Fuente: resources/{fn} · ASME B31.3-2024 · Los rotulos de columna son "
+        "DERIVADOS del para. 302.3.3(c) (el impreso no se capturo); su procedencia "
+        "va en fuente_derivacion dentro del JSON. Valores tal como estan impresos.")
+    n = write_headers(ws, ["clave", "Tabla", "clave_sf", rot[0], rot[1],
+                           "Notas de la tabla"])
+    notas = " ".join(clean(t) or "" for t in d.get("notes") or [])
+    recs = []
+    for i, row in enumerate(d["rows"], start=1):
+        recs.append(([f"302.3.3-1 #{i}", d.get("table_id"), d.get("table_id"),
+                      clean(row.get("column_1")), row.get("column_2"), notas], {}))
+    last = write_rows(ws, recs, n)
+    autosize(ws, {"A": 16, "B": 18, "C": 18, "D": 44, "E": 12, "F": 120})
+    ws.column_dimensions["C"].hidden = True
+    ws.column_dimensions["F"].hidden = True
+    record_meta("DB_Ec_Incremento", d.get("table_id"), fn, "2024", "adimensional",
+                last - R_DATA + 1,
+                "Ec incrementado por examen suplementario (para. 302.3.3(c)).")
+    return dict(sheet="DB_Ec_Incremento", n_ident=n, last_row=last,
+                col_examen=4, col_factor=5, notas=notas,
+                tabla=d.get("table_id"), archivo=fn)
+
+
+def build_factores(res, wb, cual):
+    """DB_A2_Ec (24 filas) o DB_A3_Ej (127 filas), con el contrato de columnas."""
+    a2 = cual == "A-2"
+    fn = f"{APX}/appendix_a/table_a_{'2' if a2 else '3'}.json"
+    d = res.load(fn)
+    name = "DB_A2_Ec" if a2 else "DB_A3_Ej"
+    campo = "ec" if a2 else "ej"
+    notas = notas_numeradas(d.get("notes"))
+    paginas = "-".join(str(p) for p in (d.get("pdf_pages") or []))
+    folios = ((d.get("extraction_amendments") or {}).get("folios_impresos"))
+    cita_pag = f"PDF {paginas}" + (f" · folios impresos {folios[0]}-{folios[-1]}"
+                                   if folios else "")
+
+    filas = []
+    for i, row in enumerate(d["rows"], start=1):
+        crudo = clean(g(row, "material_group"))
+        grupo = _grupo_sin_contd(crudo) or "(sin grupo impreso)"
+        cit = _citadas(g(row, "notes"))
+        detalle = []
+        if crudo and _RE_CONTD.search(crudo):
+            detalle.append(f"El codigo reimprime el rotulo del grupo como "
+                           f"«{crudo}» al pasar de folio; es corte de pagina, no "
+                           f"un grupo distinto")
+        if a2:
+            # Se deriva de las notas que cita la fila, nunca de una heuristica.
+            if "4" in cit and "5" in cit:
+                admite = INC_SI_YA
+            elif "4" in cit:
+                admite = INC_SI
+            elif "5" in cit:
+                admite = INC_NO
+            else:
+                admite = INC_SILENCIO
+        else:
+            # A-3 no reparte el incremento fila a fila: su Nota general (2)
+            # remite al para. 302.3.4(b) para TODA la tabla.
+            admite = "VER para. 302.3.4(b) y Table 302.3.4-1"
+        texto = " · ".join(f"({k}) {notas[k]}" for k in cit if k in notas)
+        faltan = [k for k in cit if k not in notas]
+        if faltan:
+            detalle.append("no se pudo trocear la(s) nota(s) "
+                           + ", ".join(f"({k})" for k in faltan))
+        filas.append(dict(
+            grupo=grupo, spec=clean(g(row, "spec_no")),
+            clase=clean(g(row, "class_or_type")),
+            desc=clean(g(row, "description")),
+            factor=g(row, campo), notas=clean(g(row, "notes")),
+            admite=admite, detalle=" · ".join(detalle) or None,
+            texto=texto or None, idx=i))
+
+    filas.sort(key=lambda x: (txt(x["grupo"]).upper(), txt(x["spec"]).upper(),
+                              txt(x["clase"]).upper(), txt(x["desc"]).upper(),
+                              x["idx"]))
+    ids, _ = make_unique(
+        [build_material_id([cual, x["spec"], x["clase"], x["desc"]]) for x in filas],
+        [x["idx"] for x in filas])
+    records = []
+    for mid, x in zip(ids, filas):
+        gr, sp = _seg(x["grupo"]), _seg(x["spec"])
+        # A-2 tiene 3 niveles y A-3 cuatro; los no usados se rellenan con una
+        # etiqueta seleccionable en vez de dejarse vacios, para que la cascada
+        # pueda recorrerse igual en los dos motores.
+        if a2:
+            n1, n2, n3, n4 = sp, _seg(x["desc"]), NO_APLICA, NO_APLICA
+        else:
+            n1, n2, n3, n4 = (sp, _seg(x["clase"], NO_APLICA),
+                              _seg(x["desc"]), NO_APLICA)
+        k0 = x["grupo"]
+        k1 = f"{k0}|{n1}"
+        k2 = f"{k1}|{n2}"
+        k3 = f"{k2}|{n3}"
+        k4 = f"{k3}|{n4}"
+        x["mid"], x["bi"] = mid, f"{'A2' if a2 else 'A3'}#{x['idx']}"
+        records.append((
+            [mid, cual, k0, k1, k2, k3, k4, x["bi"], x["grupo"], x["spec"],
+             x["clase"], x["desc"], x["factor"], x["notas"], x["admite"],
+             x["detalle"], x["texto"], cita_pag, f"resources/{fn}", x["idx"], 0],
+            {}))
+
+    ws = new_sheet(
+        wb, name,
+        f"FACTORES DE CALIDAD — ASME B31.3-2024, {d.get('table_id')}: {d.get('title')}",
+        f"Fuente: resources/{fn} · ASME B31.3-2024 · {cita_pag} · "
+        f"{'Ec' if a2 else 'Ej'} es adimensional y el codigo publica UNA sola tabla "
+        "para los dos sistemas de unidades. El factor impreso es un MINIMO: vea la "
+        "columna «Admite incremento» y el bloque 3 del motor.")
+    n = write_headers(ws, FACT_COLS)
+    last = write_rows(ws, records, n)
+    autosize(ws, {CLF["material_id"]: 52, CLF["Tabla"]: 8, CLF["clave_bi"]: 10,
+                  CLF["Grupo impreso"]: 30, CLF["Spec. No."]: 16,
+                  CLF["Clase o tipo"]: 20, CLF["Descripcion"]: 56,
+                  CLF["Factor"]: 9, CLF["Notas citadas"]: 12,
+                  CLF["Admite incremento"]: 46, CLF["Detalle del incremento"]: 60,
+                  CLF["Texto de las notas"]: 120,
+                  CLF["Paginas PDF (fuente)"]: 30, CLF["Archivo fuente"]: 54})
+    for cn in ("k0", "k1", "k2", "k3", "k4", "clave_bi", "Texto de las notas",
+               "Linea", "n_pts"):
+        ws.column_dimensions[CLF[cn]].hidden = True
+    ws.auto_filter.ref = f"A{R_HDR}:{get_column_letter(n)}{last}"
+    record_meta(name, d.get("table_id"), fn, "2024", "adimensional",
+                last - R_DATA + 1, d.get("title"))
+    return dict(sheet=name, n_ident=n, last_row=last, recs=filas,
+                tabla=d.get("table_id"), archivo=fn, cita_pag=cita_pag,
+                notas=notas)
+
+
+def texto_incremento_ej(res):
+    """Lo que el codigo dice sobre subir Ej, leido de resources/ (no de memoria).
+
+    Devuelve (parrafo 302.3.4(b), Nota (1) de la Tabla 302.3.4-1, hueco).
+    `hueco` es el aviso a mostrar cuando la extraccion de la Tabla 302.3.4-1 no
+    permite ofrecer un factor: su cuerpo se colapso dentro de los encabezados de
+    columna, asi que el motor cita el parrafo y remite al impreso en vez de
+    inventar una cifra.
+    """
+    cap = res.load("ASME B31/ASME B31.3/CHAPTERS/chapter_02.json")
+
+    def _txt(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k == "text" and isinstance(v, str):
+                    yield v
+                else:
+                    yield from _txt(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from _txt(v)
+
+    parrafo = next((clean(t) for t in _txt(cap)
+                    if "Table 302.3.4-1 also indicates" in t), None)
+    if not parrafo:
+        raise SystemExit(
+            "No se encuentra el para. 302.3.4(b) en chapter_02.json. Sin el, el "
+            "motor de A-3 no puede declarar si el codigo publica un incremento "
+            "para Ej, y no se afirma nada sin fuente.")
+    t34 = res.load("ASME B31/ASME B31.3/CHAPTERS/tables/table_302_3_4_1.json")
+    nota1 = None
+    for t in t34.get("notes") or []:
+        m = re.search(r"NOTE:\s*\(1\)\s*(.+?\.)", clean(t) or "")
+        if m:
+            nota1 = m.group(1)
+            break
+    cabeceras = " ".join(clean((c or {}).get("header")) or ""
+                         for c in t34.get("columns") or [])
+    inservible = bool(re.search(r"Factor,\s*Ej\s*0\.\d", cabeceras))
+    hueco = None
+    if inservible:
+        hueco = (f"HUECO DECLARADO: la extraccion de {t34.get('table_id')} en "
+                 "resources/ colapso el cuerpo de la tabla dentro de los "
+                 "encabezados de columna, asi que este motor NO ofrece un factor "
+                 "incrementado. Lea la tabla en el impreso "
+                 f"(PDF {'-'.join(str(p) for p in t34.get('pdf_pages') or [])}). "
+                 "No se aproxima ningun valor.")
+    return parrafo, nota1, hueco
 
 
 # ---------------------------------------------------------------------------
@@ -2209,22 +2832,28 @@ def finish_buscador(ctx, wb, curvas, cidx):
         ws.column_dimensions[cc].width = w
 
 
-def build_buscador_grupo(wb, curvas, bloques, rangos):
-    """Propiedades indexadas por GRUPO de material (no por especificacion):
-    modulo E, dilatacion termica, Poisson y densidad. Mismo formato de tarjeta.
+def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
+    """Propiedades de la II-D indexadas por GRUPO de material (no por
+    especificacion): modulo E (TM-1..5) y Poisson/densidad (PRD).
 
     GRUPO es el rotulo normativo impreso en TM-1 / TE-1 («Material Group C»,
     «Group 3»), no la FAMILIA de db_lib, que es una agrupacion derivada solo
     para acortar listas desplegables y no interviene en ningun calculo.
+
+    El Apendice C del B31.3 —que antes compartia esta hoja— tiene motor propio
+    (Buscar_Prop_B31_3): se indexa por material, no por grupo, y necesita
+    conmutador SI/US, rama de dato puntual y bloqueo por la propia banda
+    tabulada. Un dato, un motor.
     """
-    ws = new_sheet(wb, "Buscar_Propiedades",
-                   "BUSCADOR DE PROPIEDADES POR GRUPO DE MATERIAL — modulo E (TM-1..5), "
-                   "dilatacion y modulo del Apendice C del B31.3, Poisson y densidad (PRD)",
+    ws = new_sheet(wb, name,
+                   "BUSCADOR DE PROPIEDADES POR GRUPO DE MATERIAL — ASME BPVC Seccion "
+                   "II-D 2025: modulo E (TM-1..5), Poisson y densidad (PRD)",
                    "Estas tablas del codigo se indexan por GRUPO de material, no por "
                    "especificacion: elija primero la tabla y despues el grupo. Para saber "
                    "que grupo corresponde a su material consulte MAP_Grupo. Valores en "
                    "unidades metricas (edicion SI del codigo). La unica celda que se "
-                   "escribe es la temperatura de consulta.")
+                   "escribe es la temperatura de consulta. Las propiedades fisicas del "
+                   "Apendice C del B31.3 estan en Buscar_Prop_B31_3.")
     ws.freeze_panes = "A4"
     _mrg(ws, 1, 1, NCOLS)
     _mrg(ws, 2, 1, NCOLS)
@@ -2415,12 +3044,793 @@ def build_buscador_grupo(wb, curvas, bloques, rangos):
     return ws
 
 
+# ---------------------------------------------------------------------------
+# Buscar_Prop_B31_3 — propiedades fisicas del Apendice C del B31.3
+# ---------------------------------------------------------------------------
+# No reutiliza build_buscador/finish_buscador a proposito: esa pareja la
+# comparten los cinco buscadores de esfuerzos y sostiene 271 276 valores ya
+# auditados. El Apendice C necesita tres cosas que ella no tiene —rama de dato
+# puntual (C-2 y C-4 no dependen de T), limite de rango tomado de la propia
+# banda tabulada en vez de una columna «Temp. max.», y un conmutador que en dos
+# tablas cambia de COLUMNA en lugar de hoja—. Tocarla arriesgaria la regresion
+# de todo lo verificado.
+#
+# Columnas ocultas propias: 36..39 (listas materializadas de los niveles 1 a 4)
+# y 41..42 (auxiliares de resolucion). Quedan por debajo de AUX_COL (46), de
+# CASC_COL (50..54), del bloque 60..65 de build_buscador_grupo y, sobre todo,
+# de COL_CLAVE_BASE (66).
+APXC_LST_COL = 36          # 36, 37, 38, 39 -> niveles 1, 2, 3 y 4
+APXC_AUX_COL = 41          # 41 = rotulo, 42 = valor
+APXC_CURVA_COL = 400       # columna de arranque en _Curvas
+
+
+def _rngc(info, colname):
+    """Rango de una columna de la base del Apendice C (layout APXC_COLS)."""
+    L = CLC[colname]
+    return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
+
+
+def formula_estado_apxc(fil, tipo, npts, tprim, tult, tq):
+    """Estado del rango del Apendice C. Bloquea en LOS DOS extremos.
+
+    El Apendice C no publica columna «Temp. max.»: el limite es el primer y el
+    ultimo punto que la propia fila tabula. Sostener el ultimo valor por encima
+    del rango —que es lo que hacen los cinco buscadores de esfuerzos, donde el
+    tope lo pone una columna del codigo— seria extrapolar aqui.
+
+    La expresion se genera en una sola funcion porque verificar.py §6 la vuelve
+    a emitir para recalcularla en Excel: si viviese suelta dentro del motor, la
+    prueba estaria comprobando una copia y no el original.
+    """
+    return (f'=IF({fil}="","{EST_SIN_SEL}",'
+            f'IF({tipo}="{TIPO_PUNTO}","{EST_PUNTO}",'
+            f'IF({npts}=0,"{EST_SIN_TAB}",'
+            f'IF({tq}<{tprim},"{EST_BAJO}",'
+            f'IF({tq}>{tult},"{EST_ALTO}",'
+            f'"{EST_OK}")))))')
+
+
+def formula_valor_apxc(fil, tipo, vu, vt, fac, est, vtab):
+    """Valor de la propiedad CON el factor de escala aplicado (regla 6: la
+    unidad final va visible junto al KPI; la seccion 4 muestra el impreso)."""
+    return (f'=IF({fil}="","",'
+            f'IF({tipo}="{TIPO_PUNTO}",IF(ISNUMBER({vu}),{vu}*{fac},{vt}),'
+            f'IF(ISNUMBER(SEARCH("FUERA DE RANGO",{est})),"{VAL_BLOQUEADO}",'
+            f'IF({est}="{EST_SIN_TAB}","{EST_SIN_TAB}",'
+            f'IF(ISNUMBER({vtab}),{vtab}*{fac},"")))))')
+
+
+def build_buscador_prop_c(wb, curvas, rng, master, us):
+    name = "Buscar_Prop_B31_3"
+    hl = get_column_letter
+    ws = new_sheet(
+        wb, name,
+        "PROPIEDADES FISICAS DE MATERIALES DE TUBERIA — ASME B31.3-2024, APENDICE C",
+        "Tablas C-1/C-1C y C-3/C-3C (metales) · C-2 y C-4 (no metalicos). Se elige "
+        "primero QUE PROPIEDAD se necesita y despues el material. Valores tal como "
+        "estan impresos: el factor de escala se aplica a la vista y se declara. "
+        "La unica celda que se escribe es la temperatura de consulta.")
+    ws.freeze_panes = "A4"
+    _mrg(ws, 1, 1, NCOLS)
+    _mrg(ws, 2, 1, NCOLS)
+    ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[2].height = 30
+
+    SEL = '$D$5="SI"'
+
+    def ident(colname):
+        return f'IF({SEL},{_rngc(master, colname)},{_rngc(us, colname)})'
+
+    banda(ws, 4, "1 · QUE PROPIEDAD QUIERE CONSULTAR   —   todo por lista desplegable")
+    com_sist = ("Entrada: SI lee la edicion metrica del Apendice C (Tablas C-1, C-3 y "
+                "las columnas metricas de C-2 y C-4); US lee la edicion U.S. Customary "
+                "(C-1C, C-3C y las columnas en pulgadas de C-2 y C-4). Los dos sistemas "
+                "estan IMPRESOS en el codigo: el conmutador nunca convierte.")
+    filas = [
+        (5, "Sistema de unidades", "SI", com_sist),
+        (6, "0 · Propiedad", "",
+         "Entrada: paso 0 de la cascada, y el nivel que distingue este motor: se elige "
+         "primero QUE propiedad se necesita (dilatacion o modulo, metal o no metal) y "
+         "el motor decide en que tabla del Apendice C vive."),
+        (7, "1 · Grupo del codigo", "",
+         "Entrada: paso 1, dependiente del paso 0. Encabezado de grupo tal como lo "
+         "imprime la tabla. Las tablas que no imprimen grupo ofrecen "
+         f"«{SIN_GRUPO}»."),
+        (8, "2 · Subgrupo", "",
+         "Entrada: paso 2, dependiente de los pasos 0 y 1. Subgrupo impreso "
+         f"(va indentado en el codigo). Si la tabla no lo imprime, «{SIN_SUBGRUPO}»."),
+        (9, "3 · Material", "",
+         "Entrada: paso 3, dependiente de los pasos 0 a 2. Material tal como lo nombra "
+         "la tabla del codigo."),
+        (10, "4 · Coeficiente / variante", "",
+         "Entrada: paso 4, dependiente de los pasos 0 a 3. En C-1 elige entre el "
+         "coeficiente A (medio) y el B (expansion total acumulada); en las tres filas de "
+         "Poly(perfluoroalkoxy alkane) de C-2 elige el rango de validez, que es lo que "
+         f"las separa. En el resto de las filas vale «{VAR_UNICA}»."),
+    ]
+    for r, et, val, com in filas:
+        e = _mrg(ws, r, 1, 3, et)
+        e.font = LBL_F
+        e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, com)
+        c = _mrg(ws, r, 4, 6, val)
+        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        ws.row_dimensions[r].height = 17
+
+    # Celda unica de escritura: relleno lavanda propio, distinto del amarillo de
+    # las listas desplegables (regla de estilo 1 del proyecto).
+    com_temp = ("Entrada: la UNICA celda de escritura libre de todo el motor. "
+                "Temperatura a la que se necesita la propiedad, en la unidad de la "
+                "celda de la derecha. Las propiedades de tipo PUNTO (C-2 y C-4) no "
+                "dependen de la temperatura y el ESTADO lo avisa.")
+    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
+    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e.alignment = Alignment(vertical="center", indent=1)
+    _nota(e, com_temp)
+    c = _mrg(ws, 11, 4, 5, 350)
+    c.font, c.fill = IN_F, TEMP_INPUT_FILL
+    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    _nota(c, com_temp)
+    u = ws.cell(11, 6)
+    u.value = f'=IF({SEL},"°C","°F")'
+    u.font = UNIT_F
+    _nota(u, "Calculo: unidad de la temperatura de consulta; cambia entre °C y °F "
+             "segun el selector 'Sistema de unidades' (D5).")
+
+    com_modo = ("Entrada: 'Interpolado' aplica la interpolacion lineal entre los dos "
+                "puntos tabulados que rodean la temperatura de consulta. "
+                "'Tabulado-conservador' adopta el valor tabulado superior (T2). "
+                "No interviene en las propiedades de tipo PUNTO.")
+    e = _mrg(ws, 12, 1, 3, "Modo de lectura")
+    e.font = LBL_F
+    e.alignment = Alignment(vertical="center", indent=1)
+    _nota(e, com_modo)
+    c = _mrg(ws, 12, 4, 6, "Interpolado")
+    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+
+    dv_list(ws, "D5", '"SI,US"', com_sist)
+    dv_list(ws, "D12", '"Interpolado,Tabulado-conservador"', com_modo)
+    dv_list(ws, "D6", "=" + rng["FAM"], filas[1][3])
+    niveles = [("D7", rng["CK"], rng["CV"], "$D$6", rng.get("maxC", 20), filas[2][3]),
+               ("D8", rng["FK"], rng["FV"], '$D$6&"|"&$D$7', rng.get("maxF", 20),
+                filas[3][3]),
+               ("D9", rng["SK"], rng["SV"], '$D$6&"|"&$D$7&"|"&$D$8',
+                rng.get("maxS", 80), filas[4][3]),
+               ("D10", rng["GK"], rng["GV"], '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9',
+                rng.get("maxG", 10), filas[5][3])]
+    for i, (cell, kr, vr, key, mx, com) in enumerate(niveles):
+        col = APXC_LST_COL + i
+        L = hl(col)
+        mx = max(1, min(int(mx), 250))
+        ws.cell(R_HDR, col, f"lista nivel {i + 1}").font = SRC_F
+        for k in range(1, mx + 1):
+            ws.cell(R_DATA + k - 1, col).value = (
+                f'=IF(COUNTIF({kr},{key})<{k},"",'
+                f'INDEX({vr},MATCH({key},{kr},0)+{k}-1))')
+        ws.column_dimensions[L].hidden = True
+        dv_list(ws, cell, f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}", com)
+
+    # --- auxiliares de resolucion (columnas ocultas) ------------------------
+    A = APXC_AUX_COL
+    LA = hl(A + 1)
+    rm, ru = packed_refs(master), packed_refs(us)
+    npack = max(master["npack"], us["npack"])
+
+    def aux(fila, rotulo, formula):
+        ws.cell(fila, A, rotulo).font = SRC_F
+        ws.cell(fila, A + 1).value = formula
+        return f"${LA}${fila}"
+
+    KEY = aux(4, "clave k4", '=$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9&"|"&$D$10')
+    FSI = aux(5, "fila SI", f'=IFERROR(MATCH({KEY},{rng["K4"]},0),"")')
+    MIDC = aux(6, "material_id", f'=IF({FSI}="","",INDEX({rng["ID"]},{FSI}))')
+    BI = aux(7, "clave bilingue",
+             f'=IF({FSI}="","",INDEX({_rngc(master,"clave_bi")},{FSI}))')
+    FUS = aux(8, "fila US",
+              f'=IF({BI}="","",IFERROR(MATCH({BI},{_rngc(us,"clave_bi")},0),""))')
+    FIL = aux(9, "fila activa", f'=IF({SEL},{FSI},{FUS})')
+    NP = aux(10, "n_pts", f'=IF({FIL}="",0,IFERROR(IF({SEL},'
+                          f'INDEX({rm["npts"]},{FIL}),INDEX({ru["npts"]},{FIL})),0))')
+    T_ANC = f'IF({SEL},{rm["t_anchor"]},{ru["t_anchor"]})'
+    V_ANC = f'IF({SEL},{rm["v_anchor"]},{ru["v_anchor"]})'
+    TR = f'OFFSET({T_ANC},{FIL}-1,0,1,MAX(1,{NP}))'
+    VR = f'OFFSET({V_ANC},{FIL}-1,0,1,MAX(1,{NP}))'
+    # INDEX sobre una celda VACIA devuelve 0, no cadena vacia. Sin este
+    # envoltorio, una fila de tipo PUNTO —que no tiene banda tabulada— daria
+    # T1 = 0 y ISNUMBER(valor unico) = VERDADERO sobre un 0 inventado, y el
+    # motor mostraria 0 donde el codigo publica un intervalo de texto.
+    def vacio_si_vacio(expr):
+        return f'IF({expr}="","",{expr})'
+
+    def indexc(colname):
+        """INDEX de una columna de la base sobre la fila activa, vacio si vacia."""
+        return vacio_si_vacio(f'INDEX({ident(colname)},{FIL})')
+
+    P1 = aux(11, "p1", f'=IF({FIL}="","",IFERROR(MATCH($D$11,{TR},1),1))')
+    tabulados = [("T1", f"INDEX({TR},{P1})"), ("V1", f"INDEX({VR},{P1})"),
+                 ("T2", f"INDEX({TR},{P1}+1)"), ("V2", f"INDEX({VR},{P1}+1)")]
+    T1C, S1C, T2C, S2C = [
+        aux(12 + k, lb, f'=IF({FIL}="","",IFERROR({vacio_si_vacio(expr)},""))')
+        for k, (lb, expr) in enumerate(tabulados)]
+    TIPO = aux(16, "tipo de dato",
+               f'=IF({FIL}="","",INDEX({ident("Tipo de dato")},{FIL}))')
+    TPRI = aux(17, "T primera", f'=IF({FIL}="","",{indexc("T primera tabulada")})')
+    TULT = aux(18, "T ultima", f'=IF({FIL}="","",{indexc("T ultima tabulada")})')
+    FAC = aux(19, "factor",
+              f'=IF({FIL}="",1,INDEX({ident("Factor de escala")},{FIL}))')
+    VU = aux(20, "valor unico", f'=IF({FIL}="","",{indexc("Valor unico")})')
+    VT = aux(21, "valor unico texto",
+             f'=IF({FIL}="","",{indexc("Valor unico (texto)")})')
+    VTAB = aux(22, "valor tabulado",
+               f'=IF({FIL}="","",' + interp_value(T1C, S1C, T2C, S2C,
+                                                  "$D$11", "$D$12")[1:] + ')')
+    # Bloqueo en LOS DOS extremos. El Apendice C no publica «Temp. max.»: el
+    # limite es el primer y el ultimo punto tabulado de la propia fila. Sostener
+    # el ultimo valor por encima del rango seria extrapolar, que es justo lo que
+    # prohibe el codigo (regla 4 del proyecto).
+    EST = aux(23, "estado", formula_estado_apxc(FIL, TIPO, NP, TPRI, TULT, "$D$11"))
+    VALOR = aux(24, "valor aplicado",
+                formula_valor_apxc(FIL, TIPO, VU, VT, FAC, EST, VTAB))
+    for jj in (A, A + 1):
+        ws.column_dimensions[hl(jj)].hidden = True
+
+    # Aviso: que tabla y que edicion se esta leyendo.
+    ay = _mrg(ws, 5, 7, NCOLS)
+    ay.value = (f'=IF({FIL}="",IF({SEL},'
+                f'"Edicion metrica — {master["sheet"]}",'
+                f'"Edicion U.S. Customary — {us["sheet"]}"),'
+                f'"Leyendo Table "&INDEX({ident("Tabla")},{FIL})&'
+                f'" ("&$D$5&") — valores en "&INDEX({ident("Unidad impresa")},{FIL}))')
+    ay.font = Font(italic=True, color=BLUE)
+    ay.alignment = Alignment(vertical="center", wrap_text=True)
+    _nota(ay, "Aviso automatico: dice siempre que tabla del Apendice C y que edicion "
+              "esta leyendo el motor. No se edita.")
+
+    # Semaforo de cascada. El disparador es $D$9 (nivel 3 · Material) porque el
+    # nivel 4 solo tiene contenido real en C-1 y en tres filas de C-2.
+    ay2 = _mrg(ws, 11, 7, 9)
+    ay2.value = '=IF($D$9="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
+    ay2.font, ay2.fill, ay2.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
+    ay2.alignment = Alignment(horizontal="center", vertical="center")
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada llega "
+               "al material; SELECCION INCOMPLETA (amarillo) mientras falte un paso.")
+    ws.conditional_formatting.add(
+        "G11:I11", FormulaRule(formula=['$D$9<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
+    ws.conditional_formatting.add(
+        "G11:I11", FormulaRule(formula=['$D$9=""'], fill=SEL_BAD_FILL, font=SEL_BAD_FONT))
+
+    # ------------------------- 2 · RESULTADO -------------------------------
+    banda(ws, 14, "2 · RESULTADO DE LA CONSULTA")
+    kpis = [(1, "VALOR DE LA PROPIEDAD", "=" + VALOR,
+             f'=IF({FIL}="","",INDEX({ident("Unidad impresa")},{FIL}))',
+             "Calculo: valor de la propiedad CON el factor de escala ya aplicado, a la "
+             "temperatura de consulta. En las propiedades de tipo PUNTO es el valor "
+             "unico impreso. BLOQUEADO si la temperatura cae fuera de la banda "
+             "tabulada: el codigo prohibe extrapolar."),
+            (4, "TEMPERATURA DE CONSULTA", "=$D$11", f'=IF({SEL},"°C","°F")',
+             "Calculo: repite la temperatura tecleada en D11, junto al resultado."),
+            (7, "MODO DE LECTURA", "=$D$12", '="segun MODO_S"',
+             "Calculo: repite el modo de lectura elegido en D12. No interviene en las "
+             "propiedades de tipo PUNTO."),
+            (10, "ESTADO DEL RANGO", "=" + EST,
+             f'=IF({FIL}="","",INDEX({ident("Tabla")},{FIL})&'
+             f'IF(INDEX({ident("Notas")},{FIL})="",""," · Nota "&'
+             f'INDEX({ident("Notas")},{FIL})))',
+             "Calculo: EN RANGO si T cae entre el primer y el ultimo punto tabulado de "
+             "la fila; FUERA DE RANGO en cualquiera de los dos extremos (el Apendice C "
+             "no publica Temp. max.: el limite es la propia banda tabulada); VALOR "
+             "UNICO en C-2 y C-4, que no dependen de la temperatura.")]
+    for c1, tit, val, uni, com in kpis:
+        t = _mrg(ws, 15, c1, c1 + 2, tit)
+        t.font, t.fill = KPI_TIT_F, BAND_FILL
+        t.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        v = _mrg(ws, 16, c1, c1 + 2, val)
+        v.font, v.fill = KPI_VAL_F, KPI_FILL
+        v.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        _nota(v, com)
+        u2 = _mrg(ws, 17, c1, c1 + 2, uni)
+        u2.font, u2.fill = UNIT_F, KPI_FILL
+        u2.alignment = Alignment(horizontal="center", wrap_text=True)
+        for r2 in (15, 16, 17):
+            for cc in range(c1, c1 + 3):
+                ws.cell(r2, cc).border = CARD_BORDER
+    ws.row_dimensions[15].height = 26
+    ws.row_dimensions[16].height = 30
+    ws.row_dimensions[17].height = 15
+    ws.conditional_formatting.add(
+        "A16:L17",
+        FormulaRule(formula=[f'ISNUMBER(SEARCH("FUERA DE RANGO",{EST}))'],
+                    font=Font(color="9C0006", bold=True)))
+
+    # ---------------------- 3 · FICHA DE LA PROPIEDAD ----------------------
+    banda(ws, 19, "3 · FICHA DE LA PROPIEDAD   —   cada campo con su unidad impresa")
+
+    def val_of(colname):
+        idx = f'INDEX({ident(colname)},{FIL})'
+        return f'=IF({FIL}="","—",IF({idx}="","—",{idx}))'
+
+    izq = [("Tabla del codigo", val_of("Tabla"), None,
+            "Calculo: tabla del Apendice C (C-1/C-1C, C-2, C-3/C-3C o C-4) de la que "
+            "sale la fila resuelta por la cascada."),
+           ("Propiedad consultada", val_of("Propiedad"), None,
+            "Calculo: propiedad elegida en el paso 0 de la cascada."),
+           ("Grupo impreso", val_of("Grupo impreso"), None,
+            "Calculo: encabezado de grupo tal como lo imprime la tabla."),
+           ("Subgrupo impreso", val_of("Subgrupo impreso"), None,
+            "Calculo: subgrupo impreso (va indentado en el codigo)."),
+           ("Material", val_of("Material"), None,
+            "Calculo: material tal como lo nombra la tabla del codigo."),
+           ("Variante / coeficiente", val_of("Variante / coeficiente"), None,
+            "Calculo: coeficiente A o B en C-1, rango de validez en las filas que el "
+            "codigo repite, «(unico)» en el resto."),
+           ("Definicion impresa", val_of("Definicion impresa"), None,
+            "Calculo: definicion del coeficiente tal como la imprime el codigo, con su "
+            "unidad (folios 408 y 414 del B31.3-2024)."),
+           ("Tipo de dato", val_of("Tipo de dato"), None,
+            "Calculo: CURVA si el codigo tabula la propiedad frente a la temperatura; "
+            "PUNTO si publica un valor unico (C-2 y C-4)."),
+           ("Rango de validez", val_of("Rango de validez"), None,
+            "Calculo: rango de temperatura de validez impreso en C-2, o temperatura de "
+            "referencia impresa en C-4 (23 °C / 73,4 °F). Vacio en las tablas de curva.")]
+    der = [("Edicion consultada",
+            f'=IF({FIL}="","—",IF({SEL},"{master["sheet"]} — metrica",'
+            f'IF({FUS}="","sin equivalente en la edicion US",'
+            f'"{us["sheet"]} — U.S. Customary")))', None,
+            "Calculo: confirma de que edicion sale la fila activa y avisa si el "
+            "material no tiene homologo publicado en la otra."),
+           ("Unidad impresa", val_of("Unidad impresa"), None,
+            "Calculo: unidad en la que queda el valor DESPUES de aplicar el factor de "
+            "escala, tal como la imprime el codigo."),
+           ("Factor de escala aplicado", val_of("Factor de escala"),
+            '="multiplicador"',
+            "Calculo: multiplicador que lleva del valor tabulado al valor fisico. Se "
+            "lee del encabezado de la tabla, no esta codificado en el motor."),
+           ("Factor tal como se imprime", val_of("Factor impreso"), None,
+            "Calculo: el texto del encabezado del que sale el factor "
+            "(«Multiply Tabulated Values by 10^3», «Divide Table Values by 10^6»)."),
+           ("Primer punto tabulado", val_of("T primera tabulada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: temperatura del primer punto que el codigo tabula para esta fila. "
+            "Por debajo de ella el resultado queda BLOQUEADO."),
+           ("Ultimo punto tabulado", val_of("T ultima tabulada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: temperatura del ultimo punto tabulado. Por encima de ella el "
+            "resultado queda BLOQUEADO: el codigo prohibe extrapolar."),
+           ("Notas del codigo", val_of("Notas"), '="ver Instrucciones"',
+            "Calculo: notas al pie que cita esta fila o su tabla."),
+           ("Observacion de extraccion", val_of("Observacion"), None,
+            "Calculo: artefacto de extraccion conservado o reparado en esta fila, con "
+            "el folio impreso que lo respalda. Vacio si no hay ninguno.")]
+    for k in range(max(len(izq), len(der))):
+        r2 = 20 + k
+        if k < len(izq):
+            campo(ws, r2, 1, izq[k][0], izq[k][1], izq[k][2], com_val=izq[k][3])
+        if k < len(der):
+            campo(ws, r2, 7, der[k][0], der[k][1], der[k][2], com_val=der[k][3])
+
+    # ------------------ 4 · TRAZABILIDAD DEL CALCULO -----------------------
+    rt = 20 + max(len(izq), len(der)) + 1
+    banda(ws, rt, "4 · TRAZABILIDAD   —   valores tal como estan impresos, antes del "
+                  "factor")
+    campo(ws, rt + 1, 1, "T1 — tabulada inferior", f"={T1C}", f'=IF({SEL},"°C","°F")',
+          com_val="Calculo: temperatura tabulada inmediatamente inferior (o igual) a la "
+                  "de consulta, tomada de la banda compacta de la fila.")
+    campo(ws, rt + 2, 1, "Valor impreso en T1", f"={S1C}",
+          f'=IF({FIL}="","",INDEX({ident("Unidad impresa")},{FIL})&" / factor")',
+          com_val="Calculo: valor TABULADO en T1, sin aplicar el factor de escala. El "
+                  "KPI de la seccion 2 muestra este valor multiplicado por el factor.")
+    campo(ws, rt + 1, 7, "T2 — tabulada superior", f"={T2C}", f'=IF({SEL},"°C","°F")',
+          com_val="Calculo: temperatura tabulada inmediatamente superior. Vacia si T1 "
+                  "es el ultimo punto tabulado.")
+    campo(ws, rt + 2, 7, "Valor impreso en T2", f"={S2C}",
+          f'=IF({FIL}="","",INDEX({ident("Unidad impresa")},{FIL})&" / factor")',
+          com_val="Calculo: valor TABULADO en T2, sin aplicar el factor de escala.")
+    ec = _mrg(ws, rt + 3, 1, NCOLS)
+    ec.value = (
+        f'=IF({FIL}="","",'
+        f'IF({TIPO}="{TIPO_PUNTO}",'
+        f'"Valor unico impreso: no hay interpolacion. Se muestra el valor de la columna '
+        f'del sistema activo, multiplicado por el factor de escala.",'
+        f'IF(ISNUMBER(SEARCH("FUERA DE RANGO",{EST})),'
+        f'"Resultado bloqueado: la temperatura cae fuera de la banda tabulada y el '
+        f'codigo prohibe extrapolar.",'
+        f'IF($D$12="Tabulado-conservador",'
+        f'"Modo tabulado-conservador: se adopta el valor de T2, por el factor de escala.",'
+        f'"Interpolacion lineal:  V = V1 + (V2-V1)*(T-T1)/(T2-T1), por el factor de '
+        f'escala."))))')
+    ec.font = SRC_F
+    ec.alignment = Alignment(vertical="center", indent=1)
+    _nota(ec, "Calculo: dice en texto cual de los cuatro casos aplico para obtener el "
+              "KPI de la seccion 2.")
+    fu = _mrg(ws, rt + 4, 1, NCOLS)
+    fu.value = (f'=IF({FIL}="",'
+                f'"Fuente: resources/{APX}/appendix_c/",'
+                f'"Fuente: resources/{APX}/appendix_c/ · Table "&'
+                f'INDEX({ident("Tabla")},{FIL})&" · fila impresa "&'
+                f'INDEX({ident("Linea")},{FIL}))')
+    fu.font = SRC_F
+    fu.alignment = Alignment(vertical="center", indent=1)
+    _nota(fu, "Trazabilidad: archivo de resources/ y numero de fila impresa de la que "
+              "sale el valor mostrado.")
+
+    # --------------------------- 5 · CURVA ---------------------------------
+    rg = rt + 6
+    banda(ws, rg, "5 · CURVA DE LA PROPIEDAD   —   valor tabulado frente a la temperatura")
+    av = _mrg(ws, rg + 1, 1, NCOLS)
+    av.value = (f'=IF({TIPO}="{TIPO_PUNTO}",'
+                f'"Esta propiedad no depende de la temperatura: el codigo publica un '
+                f'valor unico. La grafica queda vacia a proposito.","")')
+    av.font = Font(name="Calibri", size=9, italic=True, color="9C6500")
+    av.alignment = Alignment(vertical="center", indent=1)
+    _nota(av, "Aviso automatico: explica por que la grafica esta vacia cuando la "
+              "propiedad es de tipo PUNTO (C-2 y C-4).")
+
+    c0 = APXC_CURVA_COL
+    q = f"'{ws.title}'!"
+
+    def _q(expr):
+        return (expr.replace("$D$5", q + "$D$5")
+                    .replace(NP, q + NP).replace(FIL, q + FIL))
+
+    curvas.cell(1, c0, f"{ws.title} — datos de la curva (hoja auxiliar)").font = SRC_F
+    curvas.cell(2, c0).value = f'=CONCATENATE("Temperatura, ",{q}$F$11)'
+    curvas.cell(2, c0 + 1).value = (
+        f'=CONCATENATE("Valor tabulado, ",IF({q}{FIL}="","",'
+        f'INDEX(IF({q}$D$5="SI",{_rngc(master,"Unidad impresa")},'
+        f'{_rngc(us,"Unidad impresa")}),{q}{FIL})))')
+    for k in range(1, npack + 1):
+        curvas.cell(2 + k, c0).value = f'=IFERROR(INDEX({_q(TR)},{k}),NA())'
+        curvas.cell(2 + k, c0 + 1).value = f'=IFERROR(INDEX({_q(VR)},{k}),NA())'
+    curvas.cell(2, c0 + 3, "T consulta").font = HDR_F
+    curvas.cell(2, c0 + 4, "Punto consultado").font = HDR_F
+    curvas.cell(3, c0 + 3).value = f"={q}$D$11"
+    curvas.cell(3, c0 + 4).value = f"={q}{VTAB}"
+
+    from openpyxl.chart import Reference, Series, ScatterChart
+    from openpyxl.chart.marker import Marker
+    from openpyxl.chart.shapes import GraphicalProperties
+    from openpyxl.chart.layout import Layout, ManualLayout
+    from openpyxl.drawing.line import LineProperties
+    ch = ScatterChart()
+    ch.title = "Propiedad tabulada frente a la temperatura"
+    ch.style = 13
+    ch.scatterStyle = "line"
+    ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
+    ch.y_axis.title = "Valor TABULADO (antes del factor de escala)"
+    ch.height, ch.width = 9.5, 26
+    ch.x_axis.delete = False
+    ch.y_axis.delete = False
+    ch.layout = Layout(manualLayout=ManualLayout(
+        xMode="edge", yMode="edge", x=0.13, y=0.15, w=0.80, h=0.65))
+    xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
+    ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
+    s1 = Series(ys, xs, title_from_data=True)
+    # Linea continua sin marcadores, mismo azul de la banda (regla de estilo 3).
+    s1.marker = Marker(symbol="none")
+    s1.smooth = False
+    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
+    ch.series.append(s1)
+    xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
+    yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
+    s2 = Series(yq, xq, title_from_data=True)
+    s2.marker = Marker(symbol="diamond", size=10,
+                       spPr=GraphicalProperties(
+                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
+    s2.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
+    ch.series.append(s2)
+    ws.add_chart(ch, f"A{rg + 2}")
+
+    for cc, w in zip("ABCDEFGHIJKL",
+                     [22, 20, 16, 16, 10, 3, 22, 20, 16, 16, 10, 3]):
+        ws.column_dimensions[cc].width = w
+    return ws
+
+
+# ---------------------------------------------------------------------------
+# Buscar_Ec_A2 y Buscar_Ej_A3 — factores de calidad del B31.3
+# ---------------------------------------------------------------------------
+# Son la mitad de maquina que los otros motores, y el plan no finge lo
+# contrario: Ec y Ej son ESCALARES —el codigo publica un numero por fila, no una
+# funcion de T—, asi que aqui no hay interpolacion, ni banda compacta, ni curva.
+# Lo que si hay, y es la razon de peso para construirlos, es el bloque 3: el
+# factor publicado es un MINIMO que puede subirse con examen suplementario, y
+# hasta ahora el libro no lo decia en ninguna parte.
+FACT_LST_COL = 36          # 36..39 -> listas dependientes de los niveles 1 a 4
+FACT_AUX_COL = 41          # 41 = rotulo, 42 = valor
+
+# El conmutador SI/US de la regla 10 es DEGENERADO en estas dos tablas y hay que
+# decirlo: Ec y Ej son adimensionales y el codigo publica UNA sola tabla para los
+# dos sistemas (no existen A-2C ni A-3C). Poner un desplegable inventaria una
+# distincion que el codigo no hace; poner nada dejaria al usuario sin saber en
+# que sistema esta. Se resuelve con una celda fija y rotulada.
+TXT_ADIMENSIONAL = ("FACTOR ADIMENSIONAL — identico en SI y en US "
+                    "(el codigo publica una sola tabla)")
+
+
+def _rngf(info, colname):
+    """Rango de una columna de una base de factores (layout FACT_COLS)."""
+    L = CLF[colname]
+    return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
+
+
+def formula_factor_aplicable(fil, admite, basico, incfac):
+    """Factor que de verdad aplica tras el examen suplementario.
+
+    Sale de dos frases del codigo, no de un criterio propio:
+      · Nota (4) de A-2 — «The HIGHER factor from Table 302.3.3-1 may be
+        substituted for this factor»  -> MAX(basico, factor del examen).
+      · para. 302.3.3(c) — «In no case shall the quality factor exceed 1.00»
+        -> MIN(1, ...).
+    Y solo se aplica donde la fila lo admite: la Nota (5) dice lo contrario —que
+    el factor YA supone el examen—, y confundir las dos mueve el espesor.
+
+    Se genera en una funcion porque verificar.py §6c la vuelve a emitir para
+    recalcularla en Excel: asi la prueba ejerce el original, no una copia.
+    """
+    return (f'=IF({fil}="","",'
+            f'IF(LEFT({admite},2)<>"SI",{basico},'
+            f'IF({incfac}="",{basico},MIN(1,MAX({basico},{incfac})))))')
+
+
+def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
+                          simbolo, incremento):
+    """Motor de un factor de calidad. `niveles` son los pasos 1..n de la cascada
+    (el nivel 0 es siempre el grupo impreso del codigo)."""
+    hl = get_column_letter
+    ws = new_sheet(wb, name, titulo, subtitulo)
+    ws.freeze_panes = "A4"
+    _mrg(ws, 1, 1, NCOLS)
+    _mrg(ws, 2, 1, NCOLS)
+    ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[2].height = 30
+
+    banda(ws, 4, f"1 · SELECCION   —   todo por lista desplegable")
+    fija = _mrg(ws, 5, 1, NCOLS, TXT_ADIMENSIONAL)
+    fija.font = Font(name="Calibri", size=10, bold=True, color=BLUE)
+    fija.fill = CARD_FILL
+    fija.border = CARD_BORDER
+    fija.alignment = Alignment(vertical="center", indent=1)
+    _nota(fija, "Celda fija, no editable: no es un selector. Ec y Ej son "
+                "adimensionales y el B31.3 publica una sola tabla para los dos "
+                "sistemas de unidades; no existen A-2C ni A-3C. Es la excepcion "
+                "declarada a la regla del conmutador SI/US: se cumple su espiritu "
+                "—el usuario sabe siempre en que sistema lee y nunca ve un valor "
+                "convertido— sin fabricar un interruptor que no gobierna nada.")
+    ws.row_dimensions[5].height = 18
+
+    todos = [("0 · Grupo del codigo",
+              "Entrada: paso 0 de la cascada. Grupo de material tal como lo "
+              "encabeza la tabla del codigo.")] + list(niveles)
+    for i, (et, com) in enumerate(todos):
+        r = 6 + i
+        e = _mrg(ws, r, 1, 3, et)
+        e.font = LBL_F
+        e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, com)
+        c = _mrg(ws, r, 4, 6, "")
+        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        ws.row_dimensions[r].height = 17
+    r_ult = 6 + len(todos) - 1
+    celdas = [f"$D${6 + i}" for i in range(len(todos))]
+
+    dv_list(ws, "D6", "=" + rng["FAM"], todos[0][1])
+    claves = ["$D$6"]
+    for i in range(1, len(todos)):
+        claves.append("&\"|\"&".join(celdas[:i + 1]))
+    fuentes = [("C", rng["CK"], rng["CV"], rng.get("maxC", 20)),
+               ("F", rng["FK"], rng["FV"], rng.get("maxF", 20)),
+               ("S", rng["SK"], rng["SV"], rng.get("maxS", 20)),
+               ("G", rng["GK"], rng["GV"], rng.get("maxG", 20))]
+    for i in range(1, len(todos)):
+        _, kr, vr, mx = fuentes[i - 1]
+        key = claves[i - 1]
+        col = FACT_LST_COL + i - 1
+        L = hl(col)
+        mx = max(1, min(int(mx), 250))
+        ws.cell(R_HDR, col, f"lista nivel {i}").font = SRC_F
+        for k in range(1, mx + 1):
+            ws.cell(R_DATA + k - 1, col).value = (
+                f'=IF(COUNTIF({kr},{key})<{k},"",'
+                f'INDEX({vr},MATCH({key},{kr},0)+{k}-1))')
+        ws.column_dimensions[L].hidden = True
+        dv_list(ws, celdas[i], f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}", todos[i][1])
+
+    # Semaforo junto al ultimo nivel de la cascada.
+    ay = _mrg(ws, r_ult, 7, 9)
+    ay.value = f'=IF({celdas[-1]}="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
+    ay.font, ay.fill, ay.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
+    ay.alignment = Alignment(horizontal="center", vertical="center")
+    _nota(ay, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada esta "
+              "resuelta; SELECCION INCOMPLETA (amarillo) mientras falte un paso.")
+    rango_sem = f"G{r_ult}:I{r_ult}"
+    ws.conditional_formatting.add(rango_sem, FormulaRule(
+        formula=[f'{celdas[-1]}<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
+    ws.conditional_formatting.add(rango_sem, FormulaRule(
+        formula=[f'{celdas[-1]}=""'], fill=SEL_BAD_FILL, font=SEL_BAD_FONT))
+
+    # --- auxiliares --------------------------------------------------------
+    A = FACT_AUX_COL
+    LA = hl(A + 1)
+
+    def aux(fila, rotulo, formula):
+        ws.cell(fila, A, rotulo).font = SRC_F
+        ws.cell(fila, A + 1).value = formula
+        return f"${LA}${fila}"
+
+    # La clave completa siempre tiene cinco segmentos: los niveles que la tabla
+    # no usa van con la etiqueta (no aplica), igual que en la base.
+    relleno = "".join(f'&"|{NO_APLICA}"' for _ in range(5 - len(todos)))
+    KEY = aux(4, "clave k4", "=" + "&\"|\"&".join(celdas) + relleno)
+    FIL = aux(5, "fila", f'=IFERROR(MATCH({KEY},{rng["K4"]},0),"")')
+    MIDC = aux(6, "material_id", f'=IF({FIL}="","",INDEX({rng["ID"]},{FIL}))')
+
+    def col(nombre):
+        return f'INDEX({_rngf(info, nombre)},{FIL})'
+
+    def val_of(nombre):
+        return f'=IF({FIL}="","—",IF({col(nombre)}="","—",{col(nombre)}))'
+
+    BASICO = aux(7, "factor basico", f'=IF({FIL}="","",{col("Factor")})')
+    ADMITE = aux(8, "admite incremento",
+                 f'=IF({FIL}="","",{col("Admite incremento")})')
+    for jj in (A, A + 1):
+        ws.column_dimensions[hl(jj)].hidden = True
+
+    # ------------------------- 2 · FACTOR BASICO ---------------------------
+    r = r_ult + 2
+    banda(ws, r, f"2 · FACTOR BASICO {simbolo}   —   tal como lo imprime el codigo")
+    kpis = [(1, f"{simbolo} BASICO", "=" + BASICO, '="adimensional"',
+             f"Calculo: factor {simbolo} impreso por la tabla del codigo para la fila "
+             "resuelta por la cascada. Es un MINIMO: vea el bloque 3."),
+            (4, "TABLA DEL CODIGO", val_of("Tabla"), val_of("Paginas PDF (fuente)"),
+             "Calculo: tabla del Apendice A de la que sale la fila, con las paginas "
+             "del PDF del codigo que declara la extraccion."),
+            (7, "NOTAS CITADAS", val_of("Notas citadas"), '="ver bloque 4"',
+             "Calculo: numeros de nota al pie que cita esta fila. Su texto integro "
+             "esta transcrito en el bloque 4."),
+            (10, "ADMITE INCREMENTO", val_of("Admite incremento"),
+             '="ver bloque 3"',
+             "Calculo: si el codigo permite subir el factor con examen "
+             "suplementario. Se deriva de las notas que cita la propia fila, no de "
+             "una suposicion.")]
+    for c1, tit, valf, uni, com in kpis:
+        t = _mrg(ws, r + 1, c1, c1 + 2, tit)
+        t.font, t.fill = KPI_TIT_F, BAND_FILL
+        t.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        v = _mrg(ws, r + 2, c1, c1 + 2, valf)
+        v.font, v.fill = (KPI_VAL_F if c1 == 1 else VAL_F), KPI_FILL
+        v.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        _nota(v, com)
+        u = _mrg(ws, r + 3, c1, c1 + 2, uni)
+        u.font, u.fill = UNIT_F, KPI_FILL
+        u.alignment = Alignment(horizontal="center", wrap_text=True)
+        for rr in (r + 1, r + 2, r + 3):
+            for cc in range(c1, c1 + 3):
+                ws.cell(rr, cc).border = CARD_BORDER
+    ws.row_dimensions[r + 1].height = 26
+    ws.row_dimensions[r + 2].height = 32
+    ws.row_dimensions[r + 3].height = 15
+    r += 5
+
+    # --------- 3 · FACTOR INCREMENTADO POR EXAMEN SUPLEMENTARIO ------------
+    banda(ws, r, "3 · FACTOR INCREMENTADO POR EXAMEN SUPLEMENTARIO")
+    r += 1
+    if incremento["tipo"] == "tabla":
+        inc = incremento["info"]
+        exa = (f'{inc["sheet"]}!${hl(inc["col_examen"])}${R_DATA}:'
+               f'${hl(inc["col_examen"])}${inc["last_row"]}')
+        fac = (f'{inc["sheet"]}!${hl(inc["col_factor"])}${R_DATA}:'
+               f'${hl(inc["col_factor"])}${inc["last_row"]}')
+        com_ex = ("Entrada: combinacion de examenes suplementarios realmente "
+                  f'realizada, tal como la enumera la {inc["tabla"]}. Solo tiene '
+                  "efecto si la fila seleccionada admite incremento (Nota (4)).")
+        e = _mrg(ws, r, 1, 3, "Examen realizado")
+        e.font = LBL_F
+        e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, com_ex)
+        c = _mrg(ws, r, 4, NCOLS, "")
+        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        dv_list(ws, f"D{r}", "=" + exa, com_ex)
+        celda_ex = f"$D${r}"
+        r += 1
+        INCFAC = aux(9, "factor del examen",
+                     f'=IFERROR(INDEX({fac},MATCH({celda_ex},{exa},0)),"")')
+        APLICA = aux(10, "factor aplicable",
+                     formula_factor_aplicable(FIL, ADMITE, BASICO, INCFAC))
+        campo(ws, r, 1, f"{simbolo} aplicable con ese examen", "=" + APLICA,
+              '="adimensional"',
+              com_val=f"Calculo: el mayor entre el {simbolo} basico y el factor que "
+                      f'habilita el examen elegido, acotado a 1,00. Si la fila NO '
+                      f"admite incremento, se conserva el basico.")
+        campo(ws, r, 7, "Factor que habilita ese examen", "=" + INCFAC,
+              f'="{inc["tabla"]}"',
+              com_val=f'Calculo: factor que la {inc["tabla"]} asocia a la '
+                      "combinacion de examenes elegida arriba.")
+        r += 1
+        av = _mrg(ws, r, 1, NCOLS)
+        av.value = (f'=IF({FIL}="","",IF(LEFT({ADMITE},2)="SI",'
+                    f'"Esta fila admite incremento: "&{ADMITE},'
+                    f'"Esta fila NO admite incremento: "&{ADMITE}))')
+        av.font = Font(name="Calibri", size=10, bold=True, color="9C6500")
+        av.fill = PatternFill("solid", fgColor="FFEB9C")
+        av.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+        _nota(av, "Aviso automatico: repite, en palabras, si el codigo permite subir "
+                  "el factor de esta fila. Se deriva de las notas que ella cita.")
+        ws.row_dimensions[r].height = 18
+        r += 1
+        lim = _mrg(ws, r, 1, NCOLS, incremento["limite"])
+        lim.font = SRC_F
+        lim.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+        ws.row_dimensions[r].height = 26
+        r += 2
+    else:
+        for texto, estilo in incremento["bloques"]:
+            b = _mrg(ws, r, 1, NCOLS, texto)
+            b.font = estilo
+            b.alignment = Alignment(vertical="top", indent=1, wrap_text=True)
+            ws.row_dimensions[r].height = max(16, 13 * (1 + len(texto) // 130))
+            r += 1
+        r += 1
+
+    # ---------------------- 4 · NOTAS DEL CODIGO ---------------------------
+    banda(ws, r, "4 · NOTAS DEL CODIGO   —   transcritas, las que cita la fila")
+    r += 1
+    nt = _mrg(ws, r, 1, NCOLS)
+    nt.value = (f'=IF({FIL}="","Complete la seleccion para ver las notas.",'
+                f'IF({col("Texto de las notas")}="",'
+                f'"Esta fila no cita ninguna nota numerada.",'
+                f'{col("Texto de las notas")}))')
+    nt.font = Font(name="Calibri", size=9)
+    nt.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    ws.row_dimensions[r].height = 74
+    _nota(nt, "Calculo: texto integro de las notas al pie que cita la fila "
+              "seleccionada, transcrito del codigo.")
+    r += 2
+
+    # ------------------------ 5 · TRAZABILIDAD -----------------------------
+    banda(ws, r, "5 · TRAZABILIDAD")
+    r += 1
+    campo(ws, r, 1, "Material resuelto", f"=IF({FIL}=\"\",\"—\",{MIDC})", None,
+          com_val="Calculo: clave del registro resuelto por la cascada.")
+    campo(ws, r, 7, "Grupo impreso", val_of("Grupo impreso"), None,
+          com_val="Calculo: grupo tal como lo encabeza la tabla del codigo.")
+    r += 1
+    campo(ws, r, 1, "Archivo fuente", val_of("Archivo fuente"), None,
+          com_val="Trazabilidad: archivo de resources/ del que sale la fila.")
+    campo(ws, r, 7, "Paginas del PDF del codigo", val_of("Paginas PDF (fuente)"),
+          None, com_val="Trazabilidad: paginas del PDF del codigo que declara la "
+                        "extraccion para esta tabla.")
+    r += 1
+    obs = _mrg(ws, r, 1, NCOLS)
+    obs.value = (f'=IF({FIL}="","",IF({col("Detalle del incremento")}="","",'
+                 f'"Observacion de extraccion: "&{col("Detalle del incremento")}))')
+    obs.font = SRC_F
+    obs.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+    _nota(obs, "Calculo: artefacto de extraccion conservado o normalizado en esta "
+               "fila. Vacio si no hay ninguno.")
+    r += 1
+    rec = _mrg(ws, r, 1, NCOLS,
+               f"Recordatorio: {simbolo} entra en el diseno por presion como "
+               "t = P·D / (2·(S·E + P·Y)). En ningun otro sitio.")
+    rec.font = Font(name="Calibri", size=10, bold=True, color=NAVY)
+    rec.fill = PatternFill("solid", fgColor=GREY)
+    rec.alignment = Alignment(vertical="center", indent=1)
+    ws.row_dimensions[r].height = 18
+
+    for cc, w in zip("ABCDEFGHIJKL",
+                     [22, 20, 18, 18, 12, 6, 22, 20, 16, 14, 12, 4]):
+        ws.column_dimensions[cc].width = w
+    return ws
+
+
 def build_buscador_nm(wb, info, rangos, max_mat=60):
     ws = new_sheet(wb, "Buscar_NoMetalicos",
-                   "BUSCADOR — Materiales no metalicos (ASME B31.3, Apendices B y C)",
+                   "BUSCADOR — ASME B31.3, APENDICE B: esfuerzos de diseno hidrostatico "
+                   "y presion admisible de tuberias no metalicas",
                    "Elija la tabla y despues el material: se muestran todos los campos "
                    "impresos para ese material, con las unidades que emplea el codigo. "
-                   "Todo por lista desplegable.")
+                   "Todo por lista desplegable. Las propiedades fisicas de los no "
+                   "metalicos (dilatacion C-2 y modulo C-4) estan en Buscar_Prop_B31_3.")
     ws.freeze_panes = "A4"
     _mrg(ws, 1, 1, NCOLS)
     _mrg(ws, 2, 1, NCOLS)
@@ -3049,9 +4459,34 @@ INSTRUCCIONES = [
      "DB_E — Tablas TM-1..5 (modulo E) · DB_TE — Tablas TE-1..5 (dilatacion) · DB_PRD — "
      "Poisson y densidad. Estas tres se indexan por GRUPO de material (el rotulo impreso "
      "en TM-1 / TE-1, no la familia de navegacion): ver MAP_Grupo.\n"
-     "DB_C_dilatacion / DB_C_modulo — Apendice C del B31.3 (lado tuberia).\n"
-     "DB_NoMetalicos — Apendices B y C-2/C-4 (termoplasticos, RTR, concreto, vidrio).\n"
+     "DB_B31_C / DB_B31_CC — Apendice C del B31.3 ENTERO en una sola base por edicion: "
+     "C-1/C-1C (dilatacion de metales), C-2 (dilatacion de no metalicos), C-3/C-3C "
+     "(modulo de metales) y C-4 (modulo de no metalicos). 201 filas por edicion.\n"
+     "DB_NoMetalicos — Apendice B (HDS y presion admisible de tuberia no metalica).\n"
      "MAP_Factores (Ej/Ec) · MAP_Grupo · Notas_Codigo · DB_Listas · _meta (trazabilidad)."),
+    ("3b. Propiedades fisicas: que motor usar",
+     "Buscar_Prop_B31_3 — Apendice C del B31.3, para TUBERIA. Se elige primero QUE "
+     "propiedad se necesita (nivel 0 de la cascada) y el motor decide en que tabla vive:\n"
+     "  · DILATACION TERMICA - METALES → Tabla C-1 (SI) / C-1C (US). Dos coeficientes por "
+     "material: A = coeficiente medio, en 10^-6 mm/mm/°C (10^-6 in./in./°F en US); "
+     "B = expansion lineal acumulada desde 20 °C (70 °F), en mm/m (in./100 ft).\n"
+     "  · MODULO DE ELASTICIDAD - METALES → Tabla C-3 (SI) / C-3C (US). El valor impreso se "
+     "multiplica por 10^3 para dar MPa, o por 10^6 para dar psi. El motor aplica el factor "
+     "a la vista y la seccion 4 muestra el valor impreso sin el.\n"
+     "  · DILATACION TERMICA - NO METALICOS → Tabla C-2, y MODULO ELASTICIDAD CORTO PLAZO - "
+     "NO METALICOS → Tabla C-4. Estas dos NO dependen de la temperatura: publican un valor "
+     "unico, la grafica queda vacia a proposito y el ESTADO dice VALOR UNICO. C-2 se divide "
+     "por 10^6 para dar mm/mm/°C.\n"
+     "Por que el conmutador SI/US se comporta distinto: C-1/C-1C y C-3/C-3C son una tabla "
+     "por edicion, asi que cambia de HOJA; C-2 y C-4 imprimen los dos sistemas en la MISMA "
+     "tabla, asi que cambia de COLUMNA. En ningun caso hay conversion.\n"
+     "El Apendice C no publica columna 'Temp. max.': el limite es el primer y el ultimo "
+     "punto que la propia fila tabula. Fuera de ellos el resultado queda BLOQUEADO — "
+     "sostener el ultimo valor seria extrapolar, que es lo que prohibe el codigo.\n"
+     "Buscar_Prop_IID — modulo E (TM-1..5) y Poisson/densidad (PRD) de la II-D, para "
+     "RECIPIENTES. Se indexa por GRUPO de material: consulte MAP_Grupo.\n"
+     "Buscar_NoMetalicos — solo Apendice B: esfuerzo de diseno hidrostatico y presion "
+     "admisible. Ya no ofrece propiedades fisicas."),
     ("4. Conmutador de unidades SI / US",
      "Cada buscador tiene la celda 'Sistema de unidades'. En SI lee la tabla metrica del "
      "codigo (MPa, C); en US lee la tabla nativa en unidades inglesas (ksi, F): el B31.3 usa "
@@ -3185,8 +4620,9 @@ DASH = "Dashboard"
 # Hojas que el usuario puede llegar a abrir. Todo lo demas queda veryHidden.
 # Esta lista DEBE coincidir con HojasNavegables() de vba/mod_nav.vba.
 NAVEGABLES = ["Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
-              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Propiedades",
-              "Buscar_NoMetalicos", "Instrucciones"]
+              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
+              "Buscar_Prop_B31_3", "Buscar_NoMetalicos", "Buscar_Ec_A2",
+              "Buscar_Ej_A3", "Instrucciones"]
 
 # La clave de destino de cada boton se guarda oculta en (fila del boton,
 # COL_CLAVE_BASE + columna del boton). Depende de la columna, y no solo de la
@@ -3326,7 +4762,7 @@ def build_dashboard(wb, kpis, fecha):
     _ocultar_columnas_clave(ws, (1, 5, 9))
 
     # --- cabecera ---------------------------------------------------------
-    t = _mrg(ws, 1, 1, DASH_NCOLS, "MOTOR DE CALCULO ASME PCC          Rev. 3")
+    t = _mrg(ws, 1, 1, DASH_NCOLS, "MOTOR DE CALCULO ASME PCC          Rev. 4")
     t.font = Font(name="Calibri", size=16, bold=True, color="FFFFFF")
     t.fill = TITLE_FILL
     t.alignment = Alignment(vertical="center", indent=1)
@@ -3373,11 +4809,21 @@ def build_dashboard(wb, kpis, fecha):
          "Buscar_Su"),
         ("BPVC II-D · TABLA Y-1", ["Limite de fluencia Sy", "MPa (SI) y ksi (US)"],
          "Buscar_Sy"),
-        ("PROPIEDADES POR FAMILIA", ["Modulo E, dilatacion, Poisson, densidad",
-                                     "TM-1..5 · TE · PRD · B31.3 Ap. C"],
-         "Buscar_Propiedades"),
-        ("B31.3 · APENDICES B y C", ["Materiales no metalicos", "Temperaturas admisibles"],
+        ("BPVC II-D · TM y PRD", ["Modulo E, Poisson y densidad",
+                                  "por grupo de material · ver MAP_Grupo"],
+         "Buscar_Prop_IID"),
+        ("B31.3 · APENDICE C", ["Propiedades fisicas: dilatacion y modulo",
+                                "Metales y no metalicos · SI y US"],
+         "Buscar_Prop_B31_3"),
+        ("B31.3 · APENDICE B", ["Esfuerzo de diseno hidrostatico",
+                                "Tuberia no metalica · presion admisible"],
          "Buscar_NoMetalicos"),
+        ("B31.3 · TABLA A-2", ["Factor de calidad de fundicion Ec",
+                               "Basico y con examen suplementario"],
+         "Buscar_Ec_A2"),
+        ("B31.3 · TABLA A-3", ["Factor de calidad de junta longitudinal Ej",
+                               "Por tipo de junta soldada"],
+         "Buscar_Ej_A3"),
         ("MANUAL DE USO", ["Convenciones, alcance y limitaciones", "Leer antes de calcular"],
          "Instrucciones"),
     ]
@@ -3500,10 +4946,14 @@ def main(argv=None):
     e_si, e_us = build_modulo(res, wb, "SI"), build_modulo(res, wb, "US")
     build_te(res, wb, "SI"); build_te(res, wb, "US")
     prd, prdc = build_prd(res, wb, "SI"), build_prd(res, wb, "US")
-    cap = build_appendix_c(res, wb, "SI")
-    build_appendix_c(res, wb, "US")
+    apxc = build_apendice_c(res, wb, "SI")
+    apxcc = build_apendice_c(res, wb, "US")
+    verificar_paridad_apendice_c(apxc, apxcc)
     nm = build_nometalicos(res, wb)
     fac = build_map_factores(res, wb)
+    ec_inc = build_ec_incremento(res, wb)
+    a2 = build_factores(res, wb, "A-2")
+    a3 = build_factores(res, wb, "A-3")
     ruta_dec = (Path(a.decisiones) if a.decisiones else
                 Path(__file__).resolve().parent.parent / "decisiones_map_grupo.json")
     todas = [b313, b313c, iid, iidc, iidb, iidbc]
@@ -3516,24 +4966,22 @@ def main(argv=None):
     # listas simples de los buscadores por grupo
     wse, wsprd, wsnm = wb["DB_E"], wb["DB_PRD"], wb["DB_NoMetalicos"]
     e_pairs = uniques(wse, e_si["last_row"], 3, 4)
-    c1_pairs = uniques(wb[cap["C-1"]["sheet"]], cap["C-1"]["last_row"], 3, 4)
-    c3_pairs = uniques(wb[cap["C-3"]["sheet"]], cap["C-3"]["last_row"], 3, 4)
     prd_pairs = uniques(wsprd, prd["last_row"], 3, 4)
     nm_pairs = uniques(wsnm, nm["last_row"], 2, 4)
     simples = [
         ("E_TABLA", sorted({k for k, _ in e_pairs})),
         ("E_K", [k for k, _ in e_pairs]), ("E_V", [v for _, v in e_pairs]),
-        ("C1_TABLA", sorted({k for k, _ in c1_pairs})),
-        ("C1_K", [k for k, _ in c1_pairs]), ("C1_V", [v for _, v in c1_pairs]),
-        ("C3_TABLA", sorted({k for k, _ in c3_pairs})),
-        ("C3_K", [k for k, _ in c3_pairs]), ("C3_V", [v for _, v in c3_pairs]),
         ("PRD_TABLA", sorted({k for k, _ in prd_pairs if k})),
         ("PRD_K", [k for k, _ in prd_pairs]), ("PRD_V", [v for _, v in prd_pairs]),
         ("NM_TABLA", sorted({k for k, _ in nm_pairs})),
         ("NM_MATK", [k for k, _ in nm_pairs]), ("NM_MATV", [v for _, v in nm_pairs]),
     ]
+    # El Apendice C entra en build_listas como una base mas: su contrato de las
+    # 8 primeras columnas es identico al de STRESS_COLS, asi que la funcion no
+    # necesita ni una linea de cambio.
     rangos = build_listas(wb, [("B313", b313), ("IID1A", iid), ("IIDB", iidb),
-                               ("SU", su), ("SY", sy)], simples)
+                               ("SU", su), ("SY", sy), ("APXC", apxc),
+                               ("A2EC", a2), ("A3EJ", a3)], simples)
 
     curvas = wb.create_sheet("_Curvas")
     curvas["A1"] = ("Datos auxiliares de las graficas. Hoja oculta: no editar. "
@@ -3558,13 +5006,9 @@ def main(argv=None):
         finish_buscador(ctx, wb, curvas, i)
 
     e_tab = sorted({k for k, _ in e_pairs})
-    c1_tab = sorted({k for k, _ in c1_pairs})
-    c3_tab = sorted({k for k, _ in c3_pairs})
     prd_tab = sorted({k for k, _ in prd_pairs if k})
     from collections import Counter as _Cnt
     mx_e = max(_Cnt(k for k, _ in e_pairs).values())
-    mx_c1 = max(_Cnt(k for k, _ in c1_pairs).values())
-    mx_c3 = max(_Cnt(k for k, _ in c3_pairs).values())
     mx_prd = max(_Cnt(k for k, _ in prd_pairs).values())
     mx_nm = max(_Cnt(k for k, _ in nm_pairs).values())
     build_buscador_grupo(wb, curvas, [
@@ -3573,16 +5017,6 @@ def main(argv=None):
              info=e_si, n_ident=e_si["n_ident"], temps=e_si["temps"],
              valor_lbl="Modulo E (valor tabulado)", unidad="x10^3 MPa", max_grupo=mx_e,
              nota="El valor real de E = valor tabulado x 10^3 MPa (factor del titulo de la tabla)."),
-        dict(titulo="DILATACION TERMICA — ASME B31.3, Apendice C, Tabla C-1",
-             lst_tabla="C1_TABLA", nm_key="C1_K", nm_val="C1_V", default_tabla=c1_tab[0],
-             info=cap["C-1"], n_ident=cap["C-1"]["n_ident"], temps=cap["C-1"]["temps"],
-             valor_lbl="Coef. de dilatacion", unidad="10^-6 mm/mm·°C", max_grupo=mx_c1,
-             nota="Fila A = coeficiente medio; fila B = expansion lineal acumulada."),
-        dict(titulo="MODULO DE ELASTICIDAD — ASME B31.3, Apendice C, Tabla C-3",
-             lst_tabla="C3_TABLA", nm_key="C3_K", nm_val="C3_V", default_tabla=c3_tab[0],
-             info=cap["C-3"], n_ident=cap["C-3"]["n_ident"], temps=cap["C-3"]["temps"],
-             valor_lbl="Modulo E (valor tabulado)", unidad="x10^3 MPa", max_grupo=mx_c3,
-             nota="El valor real de E = valor tabulado x 10^3 MPa."),
         dict(titulo="POISSON Y DENSIDAD — ASME BPVC II-D, Tabla PRD",
              lst_tabla="PRD_TABLA", nm_key="PRD_K", nm_val="PRD_V",
              default_tabla=prd_tab[0], info=prd, temps=None,
@@ -3590,6 +5024,66 @@ def main(argv=None):
              campos=[("Coeficiente de Poisson", 5, "adimensional"),
                      ("Densidad", 6, "kg/m3")]),
     ], rangos)
+    build_buscador_prop_c(wb, curvas, rangos["APXC"], apxc, apxcc)
+
+    # --- los dos motores de factores de calidad ---------------------------
+    par34, nota34, hueco34 = texto_incremento_ej(res)
+    build_buscador_factor(
+        wb, "Buscar_Ec_A2",
+        f"FACTOR DE CALIDAD DE FUNDICION Ec — ASME B31.3-2024, {a2['tabla']}",
+        f"Valores tal como estan impresos · {a2['cita_pag']} · El factor publicado "
+        "es un MINIMO: la Nota (4) permite subirlo con examen suplementario segun "
+        "el para. 302.3.3(c) y la Tabla 302.3.3-1, y la Nota (5) avisa de lo "
+        "contrario —que el factor YA supone ese examen—. Confundirlas "
+        "es un error con consecuencia directa en el espesor requerido.",
+        rangos["A2EC"], a2,
+        [("1 · Especificacion",
+          "Entrada: paso 1, dependiente del grupo. Spec. No. tal como lo imprime "
+          "la Tabla A-2 (todas son ASTM, segun su Nota (1))."),
+         ("2 · Descripcion",
+          "Entrada: paso 2, dependiente de los pasos 0 y 1. Desambigua las "
+          "especificaciones que el codigo repite en dos grupos (A352 figura en "
+          "Carbon Steel y en Low and Intermediate Alloy Steel).")],
+        "Ec",
+        dict(tipo="tabla", info=ec_inc,
+             limite=("Limite del propio codigo, para. 302.3.3(c): «Quality factors "
+                     "higher than those shown in Table 302.3.3-1 do not result from "
+                     "combining tests (2)(a) and (2)(b), or (3)(a) and (3)(b). In no "
+                     "case shall the quality factor exceed 1.00.» De ahi salen el "
+                     "MAX y el tope de 1,00 de la celda de arriba.")))
+    build_buscador_factor(
+        wb, "Buscar_Ej_A3",
+        f"FACTOR DE CALIDAD DE JUNTA LONGITUDINAL Ej — ASME B31.3-2024, {a3['tabla']}",
+        f"Valores tal como estan impresos · {a3['cita_pag']} · El factor lo decide "
+        "el TIPO DE JUNTA, no el material: para el mismo A312 el codigo publica "
+        "1,00 sin costura, 1,00 con EFW radiografiada al 100 %, 0,85 a doble tope y "
+        "0,80 a tope simple.",
+        rangos["A3EJ"], a3,
+        [("1 · Especificacion",
+          "Entrada: paso 1, dependiente del grupo. Spec. No. tal como lo imprime la "
+          "Tabla A-3 (todas ASTM salvo API, segun su Nota (1))."),
+         ("2 · Clase o tipo",
+          "Entrada: paso 2, dependiente de los pasos 0 y 1. Clase o tipo impresos "
+          f"(Type S/E/F, All, DW, SW, 12/22/32...). «{NO_APLICA}» cuando el codigo "
+          "no imprime clase para esa especificacion."),
+         ("3 · Descripcion de la junta",
+          "Entrada: paso 3, y el que de verdad mueve el factor: sin costura, "
+          "resistencia electrica, fusion electrica radiografiada al 100 %, doble "
+          "tope, tope simple...")],
+        "Ej",
+        dict(tipo="declarado", bloques=[
+            ("SI: el codigo publica un mecanismo para subir Ej, y no es una tabla "
+             "aparte como la 302.3.3-1 del Ec.",
+             Font(name="Calibri", size=10, bold=True, color=NAVY)),
+            (f"para. 302.3.4(b), transcrito: {par34}",
+             Font(name="Calibri", size=9)),
+            (f"Table 302.3.4-1, Nota (1): {nota34}" if nota34 else
+             "No se pudo leer la Nota (1) de la Tabla 302.3.4-1 en resources/.",
+             Font(name="Calibri", size=9, bold=True, color="9C6500")),
+            (hueco34 or "La Tabla 302.3.4-1 esta disponible en resources/: revise "
+                        "este bloque.",
+             Font(name="Calibri", size=9, bold=True, color="9C0006")),
+        ]))
     build_buscador_nm(wb, nm, rangos, mx_nm)
 
     integrate_motor(wb, b313, iid, iidb, fac, rangos)
@@ -3613,10 +5107,12 @@ def main(argv=None):
     }
     build_meta(wb, counts)
     rewrite_instrucciones(
-        wb, "Rev. 3 — Dashboard unico de navegacion (libro con macros, .xlsm): las bases de "
-            "datos quedan ocultas y se abre un motor a la vez. Consulta por cascada de "
-            "listas desplegables, resultados sobre la ficha, curva del material como "
-            "grafica y libro sin funciones de matriz dinamica.")
+        wb, "Rev. 4 — El Apendice C del B31.3 pasa a motor propio (Buscar_Prop_B31_3) con "
+            "conmutador SI/US y las cuatro tablas C-1..C-4 en una sola base; el Apendice B "
+            "se queda solo en Buscar_NoMetalicos y la II-D en Buscar_Prop_IID. Se mantiene "
+            "el Dashboard unico de navegacion de la Rev. 3 (libro con macros, .xlsm), la "
+            "consulta por cascada de listas desplegables y el libro sin funciones de "
+            "matriz dinamica.")
 
     # Los conteos del Dashboard salen de las mismas variables que alimentan
     # `counts`, nunca escritos a mano. El indicador cuenta lo que el codigo NO
@@ -3636,12 +5132,14 @@ def main(argv=None):
 
     order = [DASH,
              "Instrucciones", "Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
-             "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Propiedades",
+             "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
+             "Buscar_Prop_B31_3", "Buscar_Ec_A2", "Buscar_Ej_A3",
              "Buscar_NoMetalicos", "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
              "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_PRD", "DB_PRDC",
-             "DB_C_dilatacion", "DB_C_dilatacionC", "DB_C_modulo", "DB_C_moduloC",
-             "DB_NoMetalicos", "MAP_Factores", "MAP_Grupo", "MAP_GrupoC",
+             "DB_B31_C", "DB_B31_CC",
+             "DB_NoMetalicos", "MAP_Factores", "DB_A2_Ec", "DB_A3_Ej",
+             "DB_Ec_Incremento", "MAP_Grupo", "MAP_GrupoC",
              "Notas_Codigo", "DB_Listas",
              "_meta", "_Curvas"]
     wb._sheets = [wb[n] for n in order if n in wb.sheetnames] + \

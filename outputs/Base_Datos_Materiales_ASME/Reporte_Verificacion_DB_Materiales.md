@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  39 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  43 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -11,6 +11,11 @@ Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  39 hojas
 | 1B + 3 -> DB_BPVC_IID_B | 1662 | 1655 | OK — 7 filas sin identificacion ni valores (ruido de extraccion) |
 | U -> DB_Su | 2484 | 2473 | OK — 11 filas sin identificacion ni valores (ruido de extraccion) |
 | Y-1 -> DB_Sy | 2475 | 2462 | OK — 13 filas sin identificacion ni valores (ruido de extraccion) |
+| C-1 + C-2 + C-3 + C-4 -> DB_B31_C | 201 | 201 | OK |
+| C-1C + C-2 + C-3C + C-4 -> DB_B31_CC | 201 | 201 | OK |
+| A-2 -> DB_A2_Ec | 24 | 24 | OK |
+| A-3 -> DB_A3_Ej | 127 | 127 | OK |
+| 302.3.3-1 -> DB_Ec_Incremento | 6 | 6 | OK |
 
 ## 2. Unicidad de material_id
 
@@ -24,6 +29,10 @@ Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`  ·  39 hojas
 | DB_BPVC_IID_BC | 1655 | 1655 | OK |
 | DB_Su | 2473 | 2473 | OK |
 | DB_Sy | 2462 | 2462 | OK |
+| DB_B31_C | 201 | 201 | OK |
+| DB_B31_CC | 201 | 201 | OK |
+| DB_A2_Ec | 24 | 24 | OK |
+| DB_A3_Ej | 127 | 127 | OK |
 
 ## 3. Auditoria fila a fila contra el JSON fuente
 
@@ -50,10 +59,11 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 |---|---|---|---|---|
 | DB_E | 135 | 135 | 1456 | 0 |
 | DB_EC | 135 | 135 | 1629 | 0 |
-| DB_C_dilatacion | 52 | 52 | 1568 | 0 |
-| DB_C_dilatacionC | 52 | 52 | 777 | 0 |
-| DB_C_modulo | 75 | 75 | 1109 | 0 |
-| DB_C_moduloC | 75 | 75 | 1036 | 0 |
+| DB_B31_C | 201 | 201 | 2795 | 0 |
+| DB_B31_CC | 201 | 201 | 1931 | 0 |
+| DB_A2_Ec | 24 | 24 | 96 | 0 |
+| DB_A3_Ej | 127 | 127 | 635 | 0 |
+| DB_Ec_Incremento | 6 | 6 | 12 | 0 |
 
 | Hoja | Filas JSON | Filas en la hoja | Estado |
 |---|---|---|---|
@@ -63,7 +73,7 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 | DB_TEC | 544 | 580 | OK |
 | MAP_Factores | 151 | 151 | OK |
 | Notas_Codigo | 325 | 325 | OK |
-| DB_NoMetalicos (pares campo/valor) | 944 | 944 | OK |
+| DB_NoMetalicos (pares campo/valor) | 583 | 583 | OK |
 
 ## 4. Contiguidad de los bloques de la cascada
 
@@ -79,6 +89,10 @@ Las listas dependientes se resuelven con OFFSET/MATCH/COUNTIF, que exige que tod
 | DB_BPVC_IID_BC | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_Su | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_Sy | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_B31_C | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_B31_CC | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_A2_Ec | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_A3_Ej | 0 | 0 | 0 | 0 | 0 | OK |
 
 (0 = ningun bloque fragmentado)
 
@@ -119,6 +133,50 @@ Validaciones de lista revisadas en todo el libro; con origen NO portable: **0**
 
 **22 casos, 0 fallos.** El caso T = 125 C de A106 Gr.B verifica el salto de huecos interiores: la Tabla A-1 no imprime ese punto para ese material y la hoja interpola entre 100 y 150 C, no entre celdas vacias.
 
+### 6b. Apendice C — bloqueo en los dos extremos y rama de dato puntual
+
+El Apendice C no publica columna «Temp. max.»: el limite es el primer y el ultimo punto que tabula la propia fila. Estos casos comprueban, recalculando en Excel la misma expresion que lleva el motor, que por encima y por debajo de esa banda el resultado queda BLOQUEADO en vez de sostener el valor del extremo, y que C-2 y C-4 se resuelven por su valor unico impreso.
+
+| Hoja | material_id | T | Tipo | Estado hoja | Estado referencia | Valor hoja | Valor referencia | Estado |
+|---|---|---|---|---|---|---|---|---|
+| DB_B31_C | `C-3 | Carbon steels with carbon co` | 25 | CURVA | EN RANGO | EN RANGO | 202000 | 202000.0 | OK |
+| DB_B31_C | `C-3 | Carbon steels with carbon co` | 375 | CURVA | EN RANGO | EN RANGO | 175000 | 175000.0 | OK |
+| DB_B31_C | `C-3 | Carbon steels with carbon co` | 700 | CURVA | FUERA DE RANGO — T por encima del  | FUERA DE RANGO — T por encima del  | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_C | `C-3 | Carbon steels with carbon co` | -300 | CURVA | FUERA DE RANGO — T por debajo del  | FUERA DE RANGO — T por debajo del  | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_C | `C-1 | Group 1 carbon and low alloy` | 400 | CURVA | EN RANGO | EN RANGO | 13.8 | 13.8 | OK |
+| DB_B31_C | `C-1 | Group 1 carbon and low alloy` | 412 | CURVA | EN RANGO | EN RANGO | 13.896 | 13.896 | OK |
+| DB_B31_C | `C-4 | Acetal | (unico)` | 25 | PUNTO | VALOR UNICO — no depende de T; vea | VALOR UNICO — no depende de T; vea | 2830 | 2830 | OK |
+| DB_B31_C | `C-4 | Acetal | (unico)` | 300 | PUNTO | VALOR UNICO — no depende de T; vea | VALOR UNICO — no depende de T; vea | 2830 | 2830 | OK |
+| DB_B31_C | `C-2 | Glass-epoxy, filament-wound ` | 25 | PUNTO | VALOR UNICO — no depende de T; vea | VALOR UNICO — no depende de T; vea | 16–23.5 | 16–23.5 | OK |
+| DB_B31_CC | `C-3C | Carbon steels with carbon c` | 662 | CURVA | EN RANGO | EN RANGO | 25880000 | 25880000.0 | OK |
+
+**10 casos del Apendice C, 0 fallos.**
+
+### 6c. Factores de calidad — el motor muestra el factor de la fila, sin redondeo
+
+Ec y Ej son escalares: no hay interpolacion que recalcular. Lo que se comprueba, conduciendo la cascada y recalculando en Excel, es que el KPI es EXACTAMENTE el valor impreso y que el incremento de la Tabla 302.3.3-1 solo se aplica donde la fila lo admite.
+
+| Base | Fila | Examen | Factor hoja | Factor codigo | Admite | Aplicable hoja | Aplicable referencia | Estado |
+|---|---|---|---|---|---|---|---|---|
+| DB_A2_Ec | Spec. No.=A395 · Descripcion=Ductile and ferri | (1) and (3)(a) or (3)(b) | 0.8 | 0.8 | SI — admite incremen | 1 | 1 | OK |
+| DB_A2_Ec | Spec. No.=A451 · Grupo impreso=Stainless Steel | (1) | 0.9 | 0.9 | SI — admite incremen | 0.9 | 0.9 | OK |
+| DB_A2_Ec | Spec. No.=A451 · Grupo impreso=Stainless Steel | (1) and (3)(a) or (3)(b) | 0.9 | 0.9 | SI — admite incremen | 1 | 1 | OK |
+| DB_A2_Ec | Spec. No.=A426 | (1) and (3)(a) or (3)(b) | 1 | 1 | NO — el factor ya su | 1 | 1 | OK |
+| DB_A2_Ec | Spec. No.=A47 | (1) and (3)(a) or (3)(b) | 1 | 1 | El codigo no se pron | 1 | 1 | OK |
+| DB_A3_Ej | Spec. No.=API 5L · Descripcion=Continuous weld | — | 0.6 | 0.6 | VER para. 302.3.4(b) | 0.6 | 0.6 | OK |
+| DB_A3_Ej | Spec. No.=API 5L · Descripcion=Seamless pipe | — | 1 | 1 | VER para. 302.3.4(b) | 1 | 1 | OK |
+| DB_A3_Ej | Spec. No.=A312 · Descripcion=Electric fusion w | — | 0.8 | 0.8 | VER para. 302.3.4(b) | 0.8 | 0.8 | OK |
+| DB_A3_Ej | Spec. No.=A312 · Descripcion=Electric fusion w | — | 0.85 | 0.85 | VER para. 302.3.4(b) | 0.85 | 0.85 | OK |
+
+Y el mismo calculo conducido por la cascada real de cada motor, que es lo que comprueba el cableado de las listas desplegables:
+
+| Motor | Fila | Factor hoja | Factor codigo | Admite hoja | Aplicable hoja | Aplicable referencia | Estado |
+|---|---|---|---|---|---|---|---|
+| Buscar_Ec_A2 | Spec. No.=A395 · Descripcion=Ductile and ferri | 0.8 | 0.8 | SI — admite incremen | 1 | 1 | OK |
+| Buscar_Ej_A3 | Spec. No.=API 5L · Descripcion=Continuous weld | 0.6 | 0.6 | VER para. 302.3.4(b) | None | None | OK |
+
+**11 casos de factores, 0 fallos.**
+
 ## 7. Regresion del caso semilla (collar 12"-CWS-46-032-B1)
 
 Temperatura de evaluacion: **25 °C** · metal base `A-1 | A106 | B | Pipe & tube | K03006 | ` · collar `A-1 | A516 | 70 | Plate, bar, shps., she`
@@ -136,11 +194,11 @@ Dictamen global del modulo: **APTO** (OK).
 | Comprobacion | Detalle | Estado |
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
-| Las 9 hojas navegables estan hidden | 9 hojas | OK |
-| El resto esta veryHidden | 29 hojas | OK |
+| Las 12 hojas navegables estan hidden | 12 hojas | OK |
+| El resto esta veryHidden | 30 hojas | OK |
 | Ninguna base de datos alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
-| Los botones cubren las 9 hojas navegables | 9 botones | OK |
+| Los botones cubren las 12 hojas navegables | 12 botones | OK |
 | Cada hoja navegable tiene enlace de retorno |  | OK |
 
 La visibilidad esta grabada en el archivo, no la impone la macro: con las macros bloqueadas el usuario sigue sin ver ninguna base de datos.

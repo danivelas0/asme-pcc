@@ -8,9 +8,9 @@ Option Explicit
 ' no es la fuente de verdad y cualquier cambio ahi se pierde al resembrar.
 '
 ' Las hojas se referencian SIEMPRE por .Name y NUNCA por CodeName. Motivo:
-' openpyxl no asigna codeName a las hojas que crea (35 de las 38 del libro),
-' y Excel se los inventa al abrir. Un CodeName escrito aqui apuntaria a una
-' hoja distinta -o a ninguna- en el proximo build.
+' openpyxl no asigna codeName a las hojas que crea (todas salvo las tres que
+' vienen del maestro), y Excel se los inventa al abrir. Un CodeName escrito
+' aqui apuntaria a una hoja distinta -o a ninguna- en el proximo build.
 ' ===========================================================================
 
 Public Const HOJA_INICIO As String = "Dashboard"
@@ -57,7 +57,7 @@ End Function
 ' Unica fuente de verdad de que hojas puede llegar a ver el usuario.
 ' Todo lo que no este en esta lista y no sea el Dashboard queda
 ' xlSheetVeryHidden: ni siquiera aparece en el menu Mostrar de Excel.
-' Las 28 hojas restantes (DB_*, MAP_*, Notas_Codigo, DB_Listas, Datos_Ref,
+' Las hojas restantes (DB_*, MAP_*, Notas_Codigo, DB_Listas, Datos_Ref,
 ' _meta, _Curvas) son insumo auditado, no interfaz.
 Public Function HojasNavegables() As Variant
     HojasNavegables = Array( _
@@ -67,8 +67,11 @@ Public Function HojasNavegables() As Variant
         "Buscar_BPVC_IID_B", _
         "Buscar_Su", _
         "Buscar_Sy", _
-        "Buscar_Propiedades", _
+        "Buscar_Prop_IID", _
+        "Buscar_Prop_B31_3", _
         "Buscar_NoMetalicos", _
+        "Buscar_Ec_A2", _
+        "Buscar_Ej_A3", _
         "Instrucciones")
 End Function
 

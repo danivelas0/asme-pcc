@@ -6,6 +6,41 @@
 
 ---
 
+## ✅ EJECUTADO — 2026-09-07
+
+Fases 0 a 5 completas. `verificar.py` devuelve **0 fallos** en sus nueve secciones.
+
+| Fase | Estado | Resultado |
+|---|---|---|
+| 0 · Cerrar el vacío normativo | ✅ (ya lo estaba) | `completar_apendice_c.py` |
+| 1 · `DB_B31_C` / `DB_B31_CC` | ✅ | 201 filas por edición; las cuatro `DB_C_*` desaparecen |
+| 2 · Motor `Buscar_Prop_B31_3` | ✅ | cascada de 5 niveles, conmutador SI/US, rama PUNTO, bloqueo en los dos extremos |
+| 3 · Separar Apéndice B y navegación | ✅ | `Buscar_Prop_IID`, `Buscar_NoMetalicos` solo Ap. B |
+| 4 · Verificación | ✅ | §1, §2/§4, §3b (4 726 valores, 0 discrepancias), §6b (10 casos recalculados en Excel) |
+| 5 · `CLAUDE.md` e `Instrucciones` | ✅ | regla 10 ya estaba; se añaden §3b de Instrucciones y la sección del Apéndice C |
+
+**Dos desviaciones del plan, ambas a mejor y documentadas en el código:**
+
+1. **27 columnas en vez de 25.** La definición impresa del coeficiente y el texto
+   impreso del factor de escala van en columna propia en lugar de componerse dentro
+   de una fórmula: la ficha del motor los cita verbatim y siguen siendo auditables
+   desde la hoja. El contrato que importa —las **8 primeras columnas idénticas a
+   `STRESS_COLS`** y `n_pts` como última de identificación— se mantiene entero, y es
+   lo que permite que `build_listas` y las §2/§4 de `verificar.py` no cambien ni una
+   línea.
+2. **Se corrigió un fallo real que el plan no preveía:** `INDEX` sobre una celda
+   vacía devuelve **0**, no cadena vacía. Sin envolverlo, una fila de tipo PUNTO
+   —que no tiene banda tabulada— daba `T1 = 0` y `ISNUMBER(valor único) = VERDADERO`
+   sobre un cero inventado, y el motor mostraba `0` donde el código publica un
+   intervalo de texto. Corregido en el motor y en el banco de pruebas.
+
+Los rótulos de estado (`EST_BAJO`, `EST_ALTO`, `EST_PUNTO`…) y las funciones que
+generan las fórmulas (`formula_estado_apxc`, `formula_valor_apxc`) viven en
+`build_db_materiales.py` y las emiten **tanto el motor como `verificar.py` §6b**:
+la prueba ejerce el original, no una copia.
+
+---
+
 ## Contexto
 
 El Apéndice C del B31.3 es la tabla de **propiedades físicas de materiales de tubería**:

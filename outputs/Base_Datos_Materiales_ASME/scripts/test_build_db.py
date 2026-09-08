@@ -381,6 +381,138 @@ class TestFormulas:
         for bad in ("_xlfn", "FILTER(", "XLOOKUP(", "UNIQUE(", "SORT("):
             assert bad not in f
 
+    def test_el_apendice_c_bloquea_en_los_dos_extremos(self):
+        # Los cinco buscadores de esfuerzos sostienen el ultimo valor tabulado
+        # porque el tope se lo pone la columna «Temp. max.» del codigo. El
+        # Apendice C no publica esa columna: si aqui se sostuviera el extremo se
+        # estaria extrapolando, que es lo que prohibe la regla 4.
+        f = B.formula_estado_apxc("$X$1", "$X$2", "$X$3", "$X$4", "$X$5", "$D$11")
+        assert f'IF($D$11<$X$4,"{B.EST_BAJO}"' in f
+        assert f'IF($D$11>$X$5,"{B.EST_ALTO}"' in f
+        assert f'IF($X$2="{B.TIPO_PUNTO}","{B.EST_PUNTO}"' in f
+        for bad in ("_xlfn", "FILTER(", "XLOOKUP(", "UNIQUE(", "SORT("):
+            assert bad not in f
+
+    def test_el_valor_del_apendice_c_se_bloquea_fuera_de_rango(self):
+        f = B.formula_valor_apxc("$X$1", "$X$2", "$X$3", "$X$4", "$X$5",
+                                 "$X$6", "$X$7")
+        assert f'ISNUMBER(SEARCH("FUERA DE RANGO",$X$6)),"{B.VAL_BLOQUEADO}"' in f
+        # El factor de escala se aplica a la VISTA, en las dos ramas.
+        assert "$X$3*$X$5" in f and "$X$7*$X$5" in f
+
+
+class TestApendiceCUnificado:
+    """La base DB_B31_C: contrato de columnas, factores y tipado de celda."""
+
+    def test_las_ocho_primeras_columnas_son_las_de_stress_cols(self):
+        # Es lo que permite que build_listas y las secciones 2 y 4 de
+        # verificar.py funcionen sobre esta base sin tocar una linea.
+        assert B.APXC_COLS[:8] == B.STRESS_COLS[:8]
+        assert B.APXC_COLS[-1] == "n_pts" and B.CC["n_pts"] == B.N_IDENT_C
+
+    def test_el_factor_se_lee_del_json_y_no_esta_codificado(self):
+        # Confundir 10^3 con 10^6 son tres ordenes de magnitud en el modulo E.
+        assert B._factor_escala({"operacion": "multiplicar", "exponente": 3,
+                                 "impreso": "x10^3"}) == (1000, "x10^3")
+        assert B._factor_escala({"operacion": "multiplicar", "exponente": 6})[0] == 10 ** 6
+        assert B._factor_escala({"operacion": "dividir", "exponente": 6})[0] == 10 ** -6
+        assert B._factor_escala({"operacion": "ninguna", "exponente": 0})[0] == 1
+        assert B._factor_escala(None)[0] == 1
+
+    def test_las_referencias_de_nota_salen_del_rotulo_impreso(self):
+        assert B._notas_ref("Group 1 carbon and low alloy steels [Note (2)]") == "(2)"
+        assert B._notas_ref("Thermoplastics [Note (1)]", "x [Note (1)]") == "(1)"
+        assert B._notas_ref("Carbon steels") == ""
+
+    def test_el_separador_de_cascada_no_puede_aparecer_en_un_segmento(self):
+        # El separador de las claves k1..k4 es '|': un rotulo que lo llevase
+        # partiria la cascada en build_listas sin dar ningun error.
+        assert "|" not in B._seg("A|B")
+        assert B._seg(None, B.SIN_GRUPO) == B.SIN_GRUPO
+
+    def test_la_lista_blanca_de_divergencias_si_us_es_cerrada(self):
+        # El enlace SI/US del Apendice C es posicional. La unica divergencia de
+        # nombre admitida es la del 'Type 309' (punto en C-3, coma en C-3C).
+        assert len(B.DIVERGENCIAS_NOMBRE_C) == 1
+        (prop, si), (us, motivo) = next(iter(B.DIVERGENCIAS_NOMBRE_C.items()))
+        assert prop == "C3" and si == "TYPE309.23CR-12NI" and us == "TYPE309,23CR-12NI"
+        assert motivo
+
+    def test_normaliza_espacios_y_guiones_al_comparar_ediciones(self):
+        # '29Cr–7Ni– 2Mo–N' (C-1C) y '29Cr–7Ni–2Mo–N' (C-1) son el mismo
+        # material: la unica diferencia es un espacio del salto de linea.
+        assert (B._norm_nombre_c("5Cr–1Mo and 29Cr–7Ni– 2Mo–N steels") ==
+                B._norm_nombre_c("5Cr–1Mo and 29Cr–7Ni–2Mo–N steels"))
+        assert B._norm_nombre_c("Type 310, 25Cr–20Ni") == \
+            B._norm_nombre_c("Type 310, 25Cr-20Ni")
+
+    def test_carga_las_cuatro_tablas_con_su_reparto_impreso(self):
+        from db_lib import Resources
+        res = Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+        for si, tags in ((True, ("C-1", "C-3")), (False, ("C-1C", "C-3C"))):
+            filas = B._carga_apendice_c(res, si)
+            from collections import Counter
+            n = Counter(d["prop"] for d in filas)
+            assert n[B.PROP_C1] == 52 and n[B.PROP_C2] == 44
+            assert n[B.PROP_C3] == 75 and n[B.PROP_C4] == 30
+            assert len(filas) == 201
+            # Curva frente a punto: C-2 y C-4 no dependen de la temperatura.
+            for d in filas:
+                if d["prop"] in (B.PROP_C2, B.PROP_C4):
+                    assert d["tipo"] == B.TIPO_PUNTO and not d["vals"]
+                else:
+                    assert d["tipo"] == B.TIPO_CURVA and d["vals"]
+            tablas = {d["tabla"] for d in filas}
+            assert tags[0] in tablas and tags[1] in tablas
+
+    def test_los_intervalos_de_texto_no_se_convierten_en_numero(self):
+        from db_lib import Resources
+        res = Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+        filas = {(d["tabla"], d["material"]): d
+                 for d in B._carga_apendice_c(res, True)}
+        # C-2 publica '16–23.5' para el vidrio-epoxi bobinado: es un intervalo,
+        # no un numero. Parsearlo seria interpretar, no transcribir (regla 9).
+        d = filas[("C-2", "Glass–epoxy, filament-wound")]
+        assert d["vnum"] is None and d["vtxt"] == "16–23.5"
+        # C-4 publica '8 275–13 100' para el vidrio-epoxi centrifugado.
+        d = filas[("C-4", "Epoxy–glass, centrifugally cast")]
+        assert d["vnum"] is None and d["vtxt"]
+        # Y un valor numerico sigue siendo numerico.
+        d = filas[("C-4", "Acetal")]
+        assert d["vnum"] == 2830 and d["vtxt"] is None
+
+    def test_los_factores_de_escala_no_se_confunden_entre_ediciones(self):
+        from db_lib import Resources
+        res = Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+        for si, esperado in ((True, 10 ** 3), (False, 10 ** 6)):
+            mod = [d for d in B._carga_apendice_c(res, si)
+                   if d["prop"] == B.PROP_C3]
+            assert {d["factor"] for d in mod} == {esperado}
+            assert all("Multiply Tabulated Values" in d["factor_txt"] for d in mod)
+        # C-2 divide, no multiplica; C-1 lleva el 10^-6 dentro de la unidad.
+        filas = B._carga_apendice_c(res, True)
+        assert {d["factor"] for d in filas if d["prop"] == B.PROP_C2} == {10 ** -6}
+        assert {d["factor"] for d in filas if d["prop"] == B.PROP_C1} == {1}
+
+    def test_el_dedup_colapsa_el_rotulo_repetido_por_la_extraccion(self):
+        assert B._dedup_frase("Gray iron Gray iron") == "Gray iron"
+        assert B._dedup_frase("Carbon steels") == "Carbon steels"
+
+    def test_la_variante_separa_las_filas_que_el_codigo_repite(self):
+        from db_lib import Resources
+        res = Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+        pfa = [d for d in B._carga_apendice_c(res, True)
+               if d["tabla"] == "C-2" and "perfluoroalkoxy" in d["material"]]
+        # Tres filas con el mismo nombre y rangos de validez distintos: el rango
+        # es lo que las separa, asi que es la variante de la cascada.
+        assert len(pfa) == 3
+        assert len({d["variante"] for d in pfa}) == 3
+        assert all(d["variante"] != B.VAR_UNICA for d in pfa)
+        # Y los coeficientes A/B de C-1 se rotulan con su magnitud impresa.
+        c1 = [d for d in B._carga_apendice_c(res, True) if d["tabla"] == "C-1"]
+        assert {d["variante"] for d in c1} == set(B.VARIANTE_COEF.values())
+        assert all(d["definicion"].startswith(("A =", "B =")) for d in c1)
+
 
 # ---------------------------------------------------------------------------
 # La capa de metadatos del Apendice C del B31.3
@@ -706,3 +838,137 @@ class TestApendiceACorregido:
         texto = " ".join(d["notes"])
         for marca in ("(1)", "(2)", "(3)", "(4)", "(5)", "GENERAL NOTES"):
             assert marca in texto, marca
+
+
+# ---------------------------------------------------------------------------
+# Factores de calidad Ec (Tabla A-2) y Ej (Tabla A-3)
+# ---------------------------------------------------------------------------
+# Ec y Ej multiplican directamente el esfuerzo admisible en t = PD/(2(SE+PY)).
+# Lo que estas pruebas fijan no es solo el numero: es la distincion entre la
+# Nota (4) -«can be enhanced by supplementary examination»- y la Nota (5)
+# -«applicable only when proper supplementary examination has been performed»-,
+# que dicen cosas opuestas y comparten formato.
+class TestFactoresDeCalidad:
+
+    @staticmethod
+    def _res():
+        from db_lib import Resources
+        return Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+
+    @staticmethod
+    def _tabla(archivo, sub="APPEX/appendix_a"):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
+                "ASME B31.3")
+        for parte in sub.split("/"):
+            ruta = ruta / parte
+        with open(ruta / archivo, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    @staticmethod
+    def _base(cual):
+        import openpyxl
+        from db_lib import Resources
+        res = Resources(str(Path(__file__).resolve().parents[3] / "resources"))
+        return B.build_factores(res, openpyxl.Workbook(), cual)
+
+    def test_troceo_de_notas_en_orden_y_no_por_cualquier_parentesis(self):
+        # El propio texto del codigo cita «para. 302.3.1(a)» y «Table A-1
+        # (Table A-1C)»: trocear por cualquier «(n)» partiria las notas por la
+        # mitad. Solo valen los marcadores que aparecen EN ORDEN.
+        notas = B.notas_numeradas(self._tabla("table_a_2.json")["notes"])
+        assert set(notas) == {"1", "2", "3", "4", "5"}
+        assert notas["1"].startswith("Specifications are ASTM")
+        assert "can be enhanced by supplementary examination" in notas["4"]
+        assert "applicable only when proper supplementary examination" in notas["5"]
+        assert "302.3.3(c)" in notas["4"]
+
+    def test_admite_incremento_se_deriva_de_las_notas_citadas(self):
+        por_spec = {}
+        for x in self._base("A-2")["recs"]:
+            por_spec.setdefault(x["spec"], []).append(x)
+        # A395: Nota (4) -> el factor 0,80 es un minimo y puede subirse.
+        a395 = por_spec["A395"][0]
+        assert a395["factor"] == 0.8 and a395["admite"] == B.INC_SI
+        # A426: Nota (5) -> su 1,00 YA supone el examen; no admite incremento.
+        a426 = por_spec["A426"][0]
+        assert a426["factor"] == 1.0 and a426["admite"] == B.INC_NO
+        # A451: el codigo cita las DOS notas. No es un caso teorico: es la unica
+        # fila de A-2 que lo hace, y tratarla como si solo tuviera la (5)
+        # ocultaria que su 0,90 tambien puede subirse.
+        a451 = por_spec["A451"][0]
+        assert a451["factor"] == 0.9 and a451["admite"] == B.INC_SI_YA
+        # A47: sin (4) ni (5) -> el codigo no se pronuncia.
+        a47 = por_spec["A47"][0]
+        assert a47["factor"] == 1.0 and a47["admite"] == B.INC_SILENCIO
+        # El texto de las notas viaja con la fila, no hay que ir a buscarlo.
+        assert "supplementary examination" in a395["texto"]
+
+    def test_el_factor_ej_lo_decide_el_tipo_de_junta(self):
+        por = {(x["spec"], x["desc"]): x["factor"] for x in self._base("A-3")["recs"]}
+        assert por[("API 5L", "Seamless pipe")] == 1.0
+        assert por[("API 5L", "Continuous welded (furnace butt welded) pipe")] == 0.6
+        # Para el mismo A312 el codigo publica cuatro factores distintos.
+        a312 = {d: f for (s, d), f in por.items() if s == "A312"}
+        assert sorted(a312.values()) == [0.8, 0.85, 1.0, 1.0]
+        assert a312["Electric fusion welded pipe, double butt seam"] == 0.85
+        assert a312["Electric fusion welded pipe, single butt seam"] == 0.8
+
+    def test_el_corte_de_pagina_no_crea_grupos_falsos(self):
+        # "Copper and Copper Alloy (Cont'd)" es el mismo grupo reimpreso al
+        # pasar de folio. Si sobreviviese, la cascada ofreceria dos grupos
+        # donde el codigo publica uno.
+        recs = self._base("A-3")["recs"]
+        grupos = {x["grupo"] for x in recs}
+        assert not any("Cont" in g for g in grupos)
+        assert len(grupos) == 8
+        # Y queda declarado fila a fila, no en silencio.
+        assert any(x["detalle"] and "corte de pagina" in x["detalle"] for x in recs)
+
+    def test_la_tabla_302_3_3_1_publica_los_seis_examenes(self):
+        d = self._tabla("table_302_3_3_1.json", "CHAPTERS/tables")
+        assert [r["column_2"] for r in d["rows"]] == [0.85, 0.85, 0.95, 0.9, 1.0, 1.0]
+        assert d["rows"][4]["column_1"] == "(1) and (3)(a) or (3)(b)"
+
+    def test_el_archivo_canonico_de_la_302_3_3_1_esta_declarado(self):
+        # Existen table_302_3_3_1.json y table_table_302_3_3_1.json. Sin declarar
+        # cual manda, el motor citaria una fuente ambigua.
+        am = self._tabla("table_302_3_3_1.json",
+                         "CHAPTERS/tables")["extraction_amendments"]
+        assert am["archivo_canonico"] == "table_302_3_3_1.json"
+        assert am["duplicado_descartado"]["archivo"] == "table_table_302_3_3_1.json"
+        assert len(am["duplicado_descartado"]["sha256"]) == 64
+        dup = self._tabla("table_table_302_3_3_1.json", "CHAPTERS/tables")
+        assert dup["superseded_by"]["archivo"] == "table_302_3_3_1.json"
+
+    def test_los_rotulos_de_columna_son_derivados_y_lo_dicen(self):
+        # El impreso no se capturo y el PDF no esta en el repositorio: los
+        # rotulos salen del para. 302.3.3(c) y llevan su procedencia. El campo
+        # `header` sigue en null porque sigue siendo verdad que falta.
+        cols = self._tabla("table_302_3_3_1.json", "CHAPTERS/tables")["columns"]
+        assert all(c["header"] is None for c in cols)
+        assert "supplementary examination" in cols[0]["header_derivado"]
+        assert "Ec" in cols[1]["header_derivado"]
+        for c in cols:
+            assert "302.3.3(c)" in c["fuente_derivacion"]
+
+    def test_el_incremento_de_ej_existe_y_su_hueco_esta_declarado(self):
+        # Tercera pregunta de la Fase 0: si el codigo publica un mecanismo
+        # analogo para Ej. Lo publica —para. 302.3.4(b)— pero la extraccion de
+        # la Tabla 302.3.4-1 colapso su cuerpo dentro de los encabezados de
+        # columna, asi que el motor declara el hueco en vez de dar un numero.
+        par, nota1, hueco = B.texto_incremento_ej(self._res())
+        assert "higher joint quality factors" in par
+        assert nota1 and "not permitted to increase" in nota1
+        assert hueco and "HUECO DECLARADO" in hueco
+
+    def test_el_conmutador_si_us_degenerado_esta_rotulado(self):
+        # Regla 10: todo motor lleva conmutador SI/US. Ec y Ej son
+        # adimensionales y el codigo publica una sola tabla, asi que aqui es una
+        # celda fija: se cumple el espiritu sin inventar un interruptor.
+        assert "ADIMENSIONAL" in B.TXT_ADIMENSIONAL
+        assert "una sola tabla" in B.TXT_ADIMENSIONAL
+
+    def test_el_contrato_de_columnas_se_mantiene(self):
+        assert B.FACT_COLS[:8] == B.STRESS_COLS[:8]
+        assert B.FACT_COLS[-1] == "n_pts" and B.CF["n_pts"] == B.N_IDENT_F

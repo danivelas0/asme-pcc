@@ -1,7 +1,141 @@
-# Nota de versión — Motor de Cálculo ASME PCC, Rev. 3
+# Nota de versión — Motor de Cálculo ASME PCC, Rev. 4
 ## Base de datos de materiales (PLAN-DB-MAT-001)
 
-**Fecha:** 2026-09-06 · **Fuente única de verdad:** `resources/` · **Entregable:** `Motor_de_Calculo_ASME_PCC_Rev3.xlsm`
+**Fecha:** 2026-09-07 · **Fuente única de verdad:** `resources/` · **Entregable:** `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
+
+---
+
+# Rev. 4 — Apéndice C con motor propio y los dos factores de calidad (2026-09-07)
+
+De 39 hojas a **43**, y de 9 motores navegables a **12**. `verificar.py` sigue
+devolviendo **0 fallos** en sus nueve secciones, incluido el caso semilla
+(`Sa` 138 MPa, dictamen **APTO**), que no se ha movido.
+
+## 1 · El Apéndice C del B31.3 sale de dos motores prestados y tiene el suyo
+
+Hasta la Rev. 3 el Apéndice C vivía repartido: la dilatación y el módulo de metales
+(C-1, C-3) colgaban del buscador de propiedades de la II-D, y la dilatación y el
+módulo de **no metálicos** (C-2, C-4) estaban enterrados en `DB_NoMetalicos` como
+pares campo/valor, junto al Apéndice B —que es otra cosa: esfuerzos de diseño
+hidrostático—. Quien buscaba «el módulo E del A106 a 350 °C» tenía que saber de
+antemano en cuál de dos motores mirar.
+
+Ahora hay **`Buscar_Prop_B31_3`**, y el nivel 0 de su cascada es **la propiedad**:
+se elige qué se necesita y el motor decide en qué tabla vive.
+
+| Propiedad | Tabla SI | Tabla US | Filas |
+|---|---|---|---:|
+| Dilatación térmica — metales | C-1 | C-1C | 52 |
+| Dilatación térmica — no metálicos | C-2, col. métrica | C-2, col. en pulgadas | 44 |
+| Módulo de elasticidad — metales | C-3 | C-3C | 75 |
+| Módulo corto plazo — no metálicos | C-4, col. MPa | C-4, col. ksi | 30 |
+
+Las cuatro caben en **una sola base por edición**: `DB_B31_C` y `DB_B31_CC`,
+**201 filas cada una**. Las cuatro hojas `DB_C_*` de la Rev. 3 desaparecen.
+
+**Tres cosas que este motor hace distinto, y por qué:**
+
+- **Bloquea en los dos extremos.** El Apéndice C **no publica columna «Temp. máx.»**:
+  el límite es el primer y el último punto que tabula la propia fila. En los cinco
+  buscadores de esfuerzos, por encima del rango se sostiene el último valor porque
+  el tope lo pone una columna del código; aquí eso sería **extrapolar**, que es lo
+  que el código prohíbe. A 700 °C el acero al carbono ≤0,30 % C da **BLOQUEADO**,
+  no 107 000 MPa.
+- **Rama de dato puntual.** C-2 y C-4 no dependen de la temperatura. El estado dice
+  `VALOR UNICO`, la gráfica **queda vacía a propósito** y lo rotula.
+- **El conmutador SI/US cambia de columna en unas tablas y de hoja en otras.** C-2 y
+  C-4 imprimen los dos sistemas en la **misma** tabla; C-1/C-1C y C-3/C-3C tienen una
+  tabla por edición. En ningún caso hay conversión.
+
+**El factor de escala se lee del código, no se escribe.** Confundir el ×10³ de C-3
+con el ×10⁶ de C-3C son tres órdenes de magnitud en el módulo E. El exponente sale
+de `scale_factor` del JSON y viaja en columna propia junto con su texto impreso
+(«Multiply Tabulated Values by 10³»). El KPI muestra el valor **con** el factor
+aplicado y su unidad final; la sección de trazabilidad muestra el valor **impreso**
+sin él. Comprobado en Excel: A 25 °C, **202 000 MPa**; a 375 °C, **175 000 MPa**
+interpolando entre los 179 y 171 impresos; el mismo material en US a 662 °F,
+**25 880 000 psi** leídos de C-3C, no convertidos.
+
+**Los intervalos siguen siendo texto.** C-2 publica `16–23.5` para el vidrio-epoxi
+bobinado y C-4 `8 275–13 100` para el centrifugado. Parsearlos sería interpretar,
+no transcribir: se cargan como texto y el motor los muestra sin operar.
+
+## 2 · Los factores de calidad Ec y Ej, y lo que el libro no decía
+
+`Ec` y `Ej` multiplican directamente el esfuerzo admisible en
+`t = P·D / (2·(S·E + P·Y))`. Estaban en el libro —`MAP_Factores`, 151 filas— pero
+sin forma de buscarlos, y sobre todo **sin decir lo más importante que dicen esas
+tablas: que el factor publicado es un MÍNIMO**.
+
+Dos motores nuevos, `Buscar_Ec_A2` (24 filas, cascada de 3 niveles) y
+`Buscar_Ej_A3` (127 filas, 4 niveles, porque ahí el factor lo decide el **tipo de
+junta**: el mismo A312 vale 1,00 sin costura, 1,00 con EFW radiografiada al 100 %,
+0,85 a doble tope y 0,80 a tope simple).
+
+**La distinción que mueve el espesor.** Las Notas (4) y (5) de la Tabla A-2 dicen
+cosas opuestas con el mismo formato:
+
+> **(4)** *This casting quality factor **can be enhanced** by supplementary
+> examination…*
+> **(5)** *This casting quality factor is applicable **only when** proper
+> supplementary examination has been performed.*
+
+El bloque 3 de `Buscar_Ec_A2` ofrece las **seis combinaciones de examen de la Tabla
+302.3.3-1** (0,85 · 0,85 · 0,95 · 0,90 · 1,00 · 1,00) y da el factor aplicable,
+acotado a 1,00 por el propio para. 302.3.3(c). El estado se deriva de las notas que
+cita **la fila**, nunca de una suposición, y contempla los cuatro casos —incluido
+**A451, la única fila de A-2 que cita las dos notas**: su 0,90 ya supone examen y
+además admite incremento—. Comprobado en Excel: `A395` da 0,80 básico y **1,00**
+con el examen `(1) and (3)(a) or (3)(b)`.
+
+**Para `Ej` el código publica el mecanismo pero la extracción no lo permite, y eso
+se dice.** El para. 302.3.4(b) —transcrito en el motor desde `chapter_02.json`—
+remite a la Tabla 302.3.4-1, cuya Nota (1) prohíbe el incremento para las juntas 1
+y 2. Pero **el cuerpo de `table_302_3_4_1.json` se colapsó dentro de los encabezados
+de columna** (el encabezado del factor es literalmente
+`Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00`) y `rows` solo conserva dos
+fragmentos. El motor **declara el hueco y remite al folio impreso**: no ofrece un
+número que tendría que inventar.
+
+**La Tabla 302.3.3-1 estaba duplicada.** `table_302_3_3_1.json` y
+`table_table_302_3_3_1.json` con el mismo contenido, y sus dos columnas con
+`header: null`. `completar_tabla_302_3_3.py` declara cuál es el canónico —con el
+SHA-256 del descartado— y recupera los rótulos del propio código, del
+para. 302.3.3(c), dejándolos como `header_derivado` con su procedencia; el campo
+`header` **sigue en null**, porque sigue siendo verdad que el impreso no se capturó.
+De paso deja censado el patrón: en `CHAPTERS/tables/` hay **32 pares** con doble
+prefijo, 21 idénticos y 11 distintos, y en los distintos el de prefijo simple es la
+extracción buena. Los otros 31 pares no se tocan.
+
+## 3 · Reparto de motores y navegación
+
+- `Buscar_Propiedades` → **`Buscar_Prop_IID`**: solo módulo E (TM-1..5) y
+  Poisson/densidad (PRD), por grupo de material.
+- `Buscar_NoMetalicos`: solo Apéndice B. Ya no ofrece propiedades físicas.
+- Dashboard: **11 tarjetas de búsqueda** en 4 filas, más la del Art. 212.
+
+**Pendiente declarado, no efecto colateral:** `Buscar_Prop_IID` no expone la
+dilatación térmica de la II-D. `DB_TE`/`DB_TEC` (605 y 544 filas) se siguen
+construyendo y auditando, pero TE-1 se indexa por temperatura × columnas de grupo,
+no por material, y ningún motor la consulta.
+
+## 4 · Sección II partes A, B y C — medida, no volcada
+
+`secii_tablas.py` reconstruye las tablas de las **368 especificaciones** desde los
+bloques `Line` y sus coordenadas, porque el JSON no trae tablas: el `html` de todo
+bloque `Table` es `<p></p>` y los `Span` no se conservan.
+
+Medido sobre las cuatro partes: **2 572 tablas lógicas**, **54 198 filas**,
+218 202 celdas, 5 233 notas al pie, y los 124 115 bloques `Line` consumidos sin
+excepción. La **comprobación sin pérdida pasa en las 54 198 filas**: la
+concatenación de las celdas de cada fila coincide carácter a carácter con la de sus
+`Line` de origen.
+
+Pero **el 38,7 % de las filas de dato queda AMBIGUA** —el texto se conserva entero
+en una celda, no se pierde nada, pero tampoco queda tabulado—. El plan fija ahí una
+parada explícita, y se respeta: **las nueve hojas de la Sección II no están en el
+libro**. El informe `Revision_Tablas_SecII.md` es el insumo para decidir si se sigue
+o si se acota a las tablas que sí se reparten.
 
 ---
 
