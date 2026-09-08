@@ -52,22 +52,188 @@ from db_lib import (Resources, bilingual_key, build_material_id, clean, disambig
 import secii_tablas as secii
 
 # ---------------------------------------------------------------------------
-# Estilos
+# Sistema visual — Swiss Industrial Print
 # ---------------------------------------------------------------------------
-NAVY, BLUE, GREY, YELL = "1F3864", "2F5597", "F2F2F2", "FFF2CC"
-TITLE_F = Font(name="Calibri", size=12, bold=True, color="FFFFFF")
-TITLE_FILL = PatternFill("solid", fgColor=NAVY)
-BAND_FILL = PatternFill("solid", fgColor=BLUE)
-SRC_F = Font(name="Calibri", size=8, italic=True, color="595959")
-HDR_F = Font(name="Calibri", size=9, bold=True, color="FFFFFF")
-HDR_FILL = PatternFill("solid", fgColor=BLUE)
-DATA_F = Font(name="Calibri", size=9)
-THIN = Side(style="thin", color="BFBFBF")
+# UN solo sustrato para las 70 hojas: papel de documentacion sin blanquear,
+# tinta carbon y UN acento (rojo de aviacion). Sin degradados, sin sombras y
+# sin pasteles: los dos grises que existen son trama de medio tono y solo
+# sirven para el metadato, el estado inactivo y la reticula interior.
+#
+# El sustrato es CLARO por una razon de uso, no de gusto: el libro se imprime
+# y se firma, y la variante oscura de terminal sale en negro sobre el papel.
+#
+# Dos familias, una por funcion, y las dos vienen instaladas con Windows: una
+# fuente que Excel no encuentra la sustituye en silencio y deshace la retícula,
+# asi que aqui no entra ninguna fuente de descarga por bien que encaje en el
+# estilo (JetBrains Mono, Archivo Black).
+#   MACRO  estructura: titulo de hoja, banda de seccion y cifra de KPI.
+#   MONO   todo el dato: cabecera, celda, etiqueta, metadato y unidad.
+PAPEL = "F4F4F0"        # sustrato
+PAPEL_2 = "EAE8E3"      # sustrato de compartimento (tarjeta, KPI, campo)
+TINTA = "050505"        # tinta carbon: texto y bloque estructural
+TINTA_2 = "111111"      # trazo de curva
+ROJO = "E61919"         # UNICO acento: aviso, bloqueo, dato vital
+GRIS = "8A8A85"         # trama 55 %: metadato y tarjeta marcador
+GRIS_2 = "C9C7C1"       # trama 25 %: reticula interior
+
+# Semaforo funcional: la excepcion declarada al acento unico. En un libro de
+# calculo el estado de la consulta es informacion de seguridad y hay que verla
+# sin leerla, asi que se conservan los tres estados. Van como BLOQUE macizo con
+# tinta encima —nunca como pastel de relleno suave— y el rojo mantiene su unico
+# significado en todo el libro: bloqueado.
+VERDE = "4AF626"        # relleno: seleccion completa / en rango
+AMBAR = "E6A019"        # relleno: seleccion incompleta / dato con reserva
+AMBAR_TXT = "8A5D00"    # el mismo ambar como TEXTO sobre papel, ya legible
+
+MACRO = "Arial Black"
+MONO = "Consolas"
+
+TITLE_F = Font(name=MACRO, size=12, color=PAPEL)
+TITLE_FILL = PatternFill("solid", fgColor=TINTA)
+BAND_FILL = PatternFill("solid", fgColor=TINTA)
+PAPEL_FILL = PatternFill("solid", fgColor=PAPEL)
+SRC_F = Font(name=MONO, size=8, color=GRIS)
+HDR_F = Font(name=MONO, size=9, bold=True, color=PAPEL)
+HDR_FILL = PatternFill("solid", fgColor=TINTA)
+DATA_F = Font(name=MONO, size=9, color=TINTA)
+THIN = Side(style="thin", color=GRIS_2)
 BOX = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
-LBL_F = Font(name="Calibri", size=10, bold=True)
-IN_F = Font(name="Calibri", size=10, bold=True, color="0000FF")
-IN_FILL = PatternFill("solid", fgColor=YELL)
-OUT_F = Font(name="Calibri", size=12, bold=True, color="006100")
+# Regla de zona y franja de aviso. La banda de seccion y la cabecera de tabla
+# cierran por abajo con la franja roja: es el limite duro entre dos zonas de
+# informacion, dibujado y no insinuado.
+REGLA = Side(style="medium", color=TINTA)
+FRANJA = Side(style="thick", color=ROJO)
+CAJA_REGLA = Border(left=REGLA, right=REGLA, top=REGLA, bottom=REGLA)
+# Cabecera de tabla: conserva la reticula fina y cierra con la franja roja. Se
+# declara como borde completo en vez de retocar el borde ya puesto: openpyxl
+# devuelve los lados envueltos en un proxy de estilo y recomponerlos celda a
+# celda es fragil.
+BOX_FRANJA = Border(left=THIN, right=THIN, top=THIN, bottom=FRANJA)
+LBL_F = Font(name=MONO, size=10, bold=True, color=TINTA)
+# Campo de formulario. El sustrato del panel es PAPEL_2 y el campo va en PAPEL
+# limpio dentro de una caja de tinta: se lee como el hueco que hay que
+# rellenar, igual que en un formulario impreso. La UNICA celda que se teclea
+# lleva la misma caja en ROJO -ver TEMP_INPUT_FILL / CAJA_TECLEO-, asi que
+# nunca se confunde con una lista desplegable.
+IN_F = Font(name=MONO, size=10, bold=True, color=TINTA)
+IN_FILL = PatternFill("solid", fgColor=PAPEL)
+# La lista desplegable lleva SOLO la linea inferior, como el hueco de un
+# formulario impreso. Encajonarla por los cuatro lados se probo y se descarto al
+# mirarlo exportado: siete campos seguidos con caja completa se ven como una
+# escalera de barrotes, y ademas el borde de un campo compite con el de su
+# vecino en la arista que comparten, que es donde el recuadro rojo de la unica
+# celda que se teclea se perdia. Con la linea, la caja roja es el unico
+# rectangulo cerrado de la zona y no puede confundirse.
+CAJA_CAMPO = Border(bottom=REGLA)
+OUT_F = Font(name=MACRO, size=12, color=TINTA)
+
+# Microtipografia: mayusculas y separadores ASCII. Excel no tiene tracking, asi
+# que el caracter de la retícula lo llevan la caja mono, la mayuscula y el
+# separador; el guion largo del texto original es tipografia de prosa y en una
+# banda de seccion se cambia por «//».
+def rotulo(texto: str) -> str:
+    """Rotulo de banda o de boton: [ MAYUSCULAS // CON SEPARADOR ASCII ]."""
+    t = " ".join(str(texto).split()).replace("—", "//").replace(" - ", " // ")
+    t = " ".join(t.split())
+    return f"[ {t.upper()} ]"
+
+
+def franja(ws, fila, c1, c2, arriba=False):
+    """Franja roja al pie (o al tope) de una banda o de una cabecera de tabla.
+
+    HAY QUE RECORRER EL RANGO, tambien si esta fusionado, y esta comprobado en
+    Excel real: el RELLENO de un rango fusionado sale del formato de la celda
+    ancla y cubre todo el ancho, pero el BORDE no —Excel dibuja solo el de la
+    celda ancla, y la franja acaba siendo un muñon de una columna—.
+    Cuidado al comprobarlo: openpyxl MIENTE en los dos sentidos. Al leer un
+    libro reconstruye el borde de la ancla sobre todo el rango (parece que
+    estuviera), y al escribir no propaga nada si el estilo se puso despues de
+    fusionar. La unica evidencia valida es exportar la hoja e ir a mirarla.
+    """
+    lado = Border(top=FRANJA) if arriba else Border(bottom=FRANJA)
+    for c in range(c1, c2 + 1):
+        ws.cell(fila, c).border = lado
+
+
+# Ancho papelado por hoja: el sustrato se aplica al nivel de COLUMNA y no celda
+# a celda. Excel guarda un estilo por columna (<col style="n"/>), asi que las
+# 54 198 filas del volcado de la Seccion II heredan papel y fuente mono sin un
+# solo estilo de celda: el mismo resultado visual sin multiplicar el tamano del
+# .xlsm por 2,6 millones de celdas con formato. Toda celda con estilo propio
+# —cabecera, banda, tarjeta, campo— lo pisa, que es justo lo que se quiere.
+COLS_SUSTRATO_MIN = 20
+
+
+def sustrato(ws):
+    """Papel + mono en TODA la hoja, y sin las lineas de reticula de Excel.
+
+    Las gridlines se apagan porque en este sistema la reticula la DIBUJAN los
+    bordes: dejar tambien las de Excel superpone dos mallas distintas. Sobre
+    celda rellena Excel ya no las pinta, asi que apagarlas solo uniforma lo que
+    queda fuera del ancho papelado.
+    """
+    ws.sheet_view.showGridLines = False
+    ws.sheet_properties.tabColor = TINTA
+    ancho = min(100, max(COLS_SUSTRATO_MIN, ws.max_column + 8))
+    for c in range(1, ancho + 1):
+        dim = ws.column_dimensions[get_column_letter(c)]
+        dim.fill = PAPEL_FILL
+        dim.font = DATA_F
+
+
+def aplicar_sustrato(wb):
+    """Sustrato en las 70 hojas, incluidas las que trae el maestro."""
+    for ws in wb.worksheets:
+        sustrato(ws)
+    return len(wb.worksheets)
+
+
+# Grafica. Se estila a mano y NO con ch.style: los presets de Office traen su
+# propia paleta de series de colores y su propio tipo, que es exactamente lo que
+# este sistema no admite. La curva va en tinta y el punto consultado en el rojo
+# del acento; la malla queda como trama de 25 %, que es la reticula de plano.
+def _txt_chart(size=800, bold=False, color=TINTA):
+    from openpyxl.chart.text import RichText
+    from openpyxl.drawing.text import (CharacterProperties, Font as DFont, Paragraph,
+                                       ParagraphProperties, RichTextProperties)
+    cp = CharacterProperties(latin=DFont(typeface=MONO), sz=size, b=bold,
+                             solidFill=color)
+    return (cp, RichText(bodyPr=RichTextProperties(),
+                         p=[Paragraph(pPr=ParagraphProperties(defRPr=cp),
+                                      endParaRPr=cp)]))
+
+
+def estilizar_chart(ch):
+    """Aplica el sistema visual a una grafica ya construida (series incluidas).
+
+    Llamar DESPUES de fijar titulo y titulos de eje: el estilo del rotulo se
+    escribe sobre el objeto Title que crea openpyxl al asignarle la cadena.
+    """
+    from openpyxl.chart.axis import ChartLines
+    from openpyxl.chart.shapes import GraphicalProperties
+    from openpyxl.drawing.line import LineProperties
+    from openpyxl.drawing.text import ParagraphProperties
+
+    ch.graphical_properties = GraphicalProperties(
+        solidFill=PAPEL, ln=LineProperties(solidFill=TINTA, w=12700))
+    ch.plot_area.graphicalProperties = GraphicalProperties(
+        solidFill=PAPEL, ln=LineProperties(solidFill=TINTA, w=9525))
+    cp_eje, tx_eje = _txt_chart(800)
+    cp_tit, _ = _txt_chart(900, bold=True)
+    for ax in (ch.x_axis, ch.y_axis):
+        ax.spPr = GraphicalProperties(ln=LineProperties(solidFill=TINTA, w=9525))
+        ax.txPr = tx_eje
+        ax.majorGridlines = ChartLines(spPr=GraphicalProperties(
+            ln=LineProperties(solidFill=GRIS_2, w=3175)))
+        if ax.title is not None:
+            ax.title.tx.rich.p[0].pPr = ParagraphProperties(defRPr=cp_tit)
+    if ch.title is not None:
+        cp_h, _ = _txt_chart(1000, bold=True)
+        ch.title.tx.rich.p[0].pPr = ParagraphProperties(defRPr=cp_h)
+    if ch.legend is not None:
+        ch.legend.txPr = tx_eje
+    return ch
+
 
 R_TITLE, R_SRC, R_HDR, R_DATA = 1, 2, 3, 4
 N_VARIANTES = 25          # filas de la tabla comparativa de cada buscador
@@ -103,10 +269,28 @@ def fix_merged_ident(row: dict):
 # ---------------------------------------------------------------------------
 # Escritura generica
 # ---------------------------------------------------------------------------
+def cabecera_hoja(ws, ncols):
+    """Bloque de cabecera de una hoja de datos, a lo ancho de la tabla.
+
+    Tres franjas apiladas: el titulo en tinta maciza, la tira de procedencia en
+    medio tono y la cabecera de columnas, que cierra con la franja roja
+    (BOX_FRANJA). El ancho lo da la tabla —no una constante— porque estas hojas
+    van de 7 a 48 columnas y un bloque mas corto que la tabla se lee como un
+    titulo suelto, no como el encabezado del volcado.
+    """
+    for c in range(1, ncols + 1):
+        cel = ws.cell(R_TITLE, c)
+        cel.fill, cel.font = TITLE_FILL, TITLE_F
+        src = ws.cell(R_SRC, c)
+        src.fill, src.font = PatternFill("solid", fgColor=PAPEL_2), SRC_F
+    ws.row_dimensions[R_TITLE].height = 22
+
+
 def new_sheet(wb, name, title, source):
     ws = wb.create_sheet(name)
-    ws["A1"] = title
+    ws["A1"] = rotulo(title)
     ws["A1"].font, ws["A1"].fill = TITLE_F, TITLE_FILL
+    ws["A1"].alignment = Alignment(vertical="center", indent=1)
     ws["A2"] = source
     ws["A2"].font = SRC_F
     ws.freeze_panes = "A4"
@@ -116,14 +300,15 @@ def new_sheet(wb, name, title, source):
 def write_headers(ws, cols, temps=None):
     for j, h in enumerate(cols, start=1):
         c = ws.cell(R_HDR, j, h)
-        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX
+        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
         c.alignment = Alignment(wrap_text=True, vertical="center", horizontal="center")
     if temps:
         for j, t in enumerate(temps, start=len(cols) + 1):
             c = ws.cell(R_HDR, j, t)
-            c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX
+            c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
             c.alignment = Alignment(horizontal="center")
     ws.row_dimensions[R_HDR].height = 46
+    cabecera_hoja(ws, len(cols) + (len(temps) if temps else 0))
     return len(cols)
 
 
@@ -626,12 +811,12 @@ def build_te(res, wb, system):
             keys = list(row.keys())
             if keys != prev:
                 r += 1
-                c = ws.cell(r, 1, f"{d.get('table_id')} — {d.get('title')}")
-                c.font = Font(name="Calibri", size=9, bold=True, color=NAVY)
+                c = ws.cell(r, 1, f"{d.get('table_id')} // {d.get('title')}")
+                c.font = Font(name=MONO, size=9, bold=True, color=TINTA)
                 r += 1
                 for j, k in enumerate(keys, start=1):
                     cc = ws.cell(r, j, k)
-                    cc.font, cc.fill, cc.border = HDR_F, HDR_FILL, BOX
+                    cc.font, cc.fill, cc.border = HDR_F, HDR_FILL, BOX_FRANJA
                     cc.alignment = Alignment(wrap_text=True, vertical="center")
                 prev = keys
             r += 1
@@ -1777,7 +1962,7 @@ def bloques_tabla_ej(filas34):
         texto = (f"No. {f['no']} — {f['type_of_joint']} · Costura: "
                  f"{f['type_of_seam']} · Examen: {f['examination']} · "
                  f"Ej = {f['factor_ej']:.2f}{marca}")
-        out.append((texto, Font(name="Calibri", size=9)))
+        out.append((texto, Font(name=MONO, size=9, color=TINTA)))
     return out
 
 
@@ -2913,8 +3098,9 @@ def _txt_celda(ws, r, c, v):
 
 def new_sheet_secii(wb, name, title, source):
     ws = wb.create_sheet(name)
-    ws["A1"] = title
+    ws["A1"] = rotulo(title)
     ws["A1"].font, ws["A1"].fill = TITLE_F, TITLE_FILL
+    ws["A1"].alignment = Alignment(vertical="center", indent=1)
     ws["A2"] = source
     ws["A2"].font = SRC_F
     ws.freeze_panes = f"A{R_DATA_SECII}"
@@ -2924,10 +3110,11 @@ def new_sheet_secii(wb, name, title, source):
 def _hdr_secii(ws, cols):
     for j, h in enumerate(cols, start=1):
         c = ws.cell(R_HDR_SECII, j, h)
-        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX
+        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
         c.alignment = Alignment(wrap_text=True, vertical="center",
                                 horizontal="center")
     ws.row_dimensions[R_HDR_SECII].height = 40
+    cabecera_hoja(ws, len(cols))
     return len(cols)
 
 
@@ -3434,33 +3621,46 @@ CASC_COL = {"C": 50, "F": 51, "S": 52, "G": 53, "V": 54}   # listas dependientes
 AUX_COL = 46                                               # auxiliares de resolucion
 NCOLS = 12                                                 # ancho del panel (A..L)
 
-CARD_FILL = PatternFill("solid", fgColor="EEF3FA")
-KPI_FILL = PatternFill("solid", fgColor="DCE6F5")
-CARD_BORDER = Border(left=Side("thin", color="9DB7DC"), right=Side("thin", color="9DB7DC"),
-                     top=Side("thin", color="9DB7DC"), bottom=Side("thin", color="9DB7DC"))
-LBL2_F = Font(name="Calibri", size=9, bold=True, color="44546A")
-VAL_F = Font(name="Calibri", size=11, bold=True, color="1F3864")
-UNIT_F = Font(name="Calibri", size=9, italic=True, color="7F7F7F")
-KPI_TIT_F = Font(name="Calibri", size=9, bold=True, color="FFFFFF")
-KPI_VAL_F = Font(name="Calibri", size=18, bold=True, color="1F3864")
+CARD_FILL = PatternFill("solid", fgColor=PAPEL_2)
+KPI_FILL = PatternFill("solid", fgColor=PAPEL_2)
+CARD_BORDER = BOX
+LBL2_F = Font(name=MONO, size=9, bold=True, color=TINTA)
+VAL_F = Font(name=MONO, size=11, bold=True, color=TINTA)
+UNIT_F = Font(name=MONO, size=9, color=GRIS)
+KPI_TIT_F = Font(name=MONO, size=9, bold=True, color=PAPEL)
+# Cifra de KPI: la macrotipografia del sistema. El contraste de escala con el
+# rotulo mono de 9 pt es lo que da la jerarquia; Arial Black no lleva bold
+# —Excel lo sintetizaria y engorda el trazo— y baja de 18 a 16 pt porque es una
+# tipografia mucho mas ancha que la que habia y el KPI de estado publica una
+# frase, no solo una cifra.
+KPI_VAL_F = Font(name=MACRO, size=16, color=TINTA)
 
-# Celda unica de escritura (temperatura de consulta): relleno propio, distinto
-# del amarillo IN_FILL de las listas desplegables, para que salte a la vista
-# cual es la unica celda que se teclea en todo el buscador.
-TEMP_INPUT_FILL = PatternFill("solid", fgColor="CCC0DA")
+# Celda unica de escritura (temperatura de consulta). El campo va en PAPEL
+# limpio como cualquier otro, y lo que lo distingue de las listas desplegables
+# es la CAJA ROJA: es el unico rojo de la zona de seleccion y el unico borde
+# distinto del de tinta, asi que salta a la vista sin depender de un relleno de
+# color que en este sistema no existe.
+TEMP_INPUT_FILL = PatternFill("solid", fgColor=PAPEL)
+CAJA_TECLEO = Border(*[Side("medium", color=ROJO)] * 4)
 # Semaforo de cascada completa/incompleta (formato condicional sobre el
-# indicador de seleccion, ver build_buscador/finish_buscador).
-SEL_OK_FILL = PatternFill("solid", fgColor="C6EFCE")
-SEL_OK_FONT = Font(name="Calibri", size=11, bold=True, color="006100")
-SEL_BAD_FILL = PatternFill("solid", fgColor="FFEB9C")
-SEL_BAD_FONT = Font(name="Calibri", size=11, bold=True, color="9C6500")
+# indicador de seleccion, ver build_buscador/finish_buscador). Bloque macizo con
+# tinta encima: el color lo pone el relleno, nunca el texto.
+SEL_OK_FILL = PatternFill("solid", fgColor=VERDE)
+SEL_OK_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
+SEL_BAD_FILL = PatternFill("solid", fgColor=AMBAR)
+SEL_BAD_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
 
 
 def banda(ws, r, texto, n=NCOLS):
+    """Banda de seccion: bloque de tinta a todo el ancho, rotulo en
+    macrotipografia enmarcado en ASCII y franja roja de cierre por abajo."""
     ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=n)
-    c = ws.cell(r, 1, texto)
+    c = ws.cell(r, 1, rotulo(texto))
     c.font, c.fill = TITLE_F, BAND_FILL
     c.alignment = Alignment(vertical="center", indent=1)
+    # El bloque de tinta lo cubre la celda ancla; la franja roja hay que
+    # recorrerla celda a celda aunque el rango este fusionado (ver franja()).
+    franja(ws, r, 1, n)
     ws.row_dimensions[r].height = 20
 
 
@@ -3599,10 +3799,10 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
         e.alignment = Alignment(vertical="center", indent=1)
         _nota(e, com)
         c = _mrg(ws, r, 4, 6, val)
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         ws.row_dimensions[r].height = 17
-    e = _mrg(ws, 12, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
-    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e = _mrg(ws, 12, 1, 3, "TEMPERATURA DE CONSULTA  >>>  SE TECLEA")
+    e.font = Font(name=MONO, size=10, bold=True, color=ROJO)
     e.alignment = Alignment(vertical="center", indent=1)
     com_temp = ("Entrada: la UNICA celda de escritura libre de todo el buscador. "
                "Temperatura a la que se necesita el valor, en la unidad que muestra la "
@@ -3612,7 +3812,7 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     _nota(e, com_temp)
     c = _mrg(ws, 12, 4, 5, 25)
     c.font, c.fill = IN_F, TEMP_INPUT_FILL
-    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    c.border = CAJA_TECLEO
     _nota(c, com_temp)
     ws.cell(12, 6).value = f"={U_TMP}"
     ws.cell(12, 6).font = UNIT_F
@@ -3628,12 +3828,12 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
                "escalon superior), mas conservador.")
     _nota(e, com_modo)
     c = _mrg(ws, 13, 4, 6, "Interpolado")
-    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
     ay = _mrg(ws, 5, 7, NCOLS)
     ay.value = (f'=IF($D$5="SI","Leyendo {master["sheet"]} — valores en {unit_si}, '
                 f'temperatura en {temp_si}","Leyendo {us["sheet"]} — valores en {unit_us}, '
                 f'temperatura en {temp_us}")')
-    ay.font = Font(italic=True, color=BLUE)
+    ay.font = Font(name=MONO, size=9, color=GRIS)
     _nota(ay, "Aviso automatico: confirma que hoja base de datos y que unidades esta "
               "leyendo el buscador, segun el selector 'Sistema de unidades' (D5). No "
               "se edita.")
@@ -3643,9 +3843,9 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     ay2.fill = SEL_BAD_FILL
     ay2.border = BOX
     ay2.alignment = Alignment(horizontal="center", vertical="center")
-    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (fondo verde) si la cascada de "
-               "seleccion (pasos 0 a 4) esta completa; SELECCION INCOMPLETA (fondo "
-               "amarillo) si falta elegir algun nivel para poder mostrar un resultado. "
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (bloque verde) si la cascada de "
+               "seleccion (pasos 0 a 4) esta completa; SELECCION INCOMPLETA (bloque "
+               "ambar) si falta elegir algun nivel para poder mostrar un resultado. "
                "No se edita.")
     ws.conditional_formatting.add(
         "G12:I12",
@@ -3789,7 +3989,7 @@ def finish_buscador(ctx, wb, curvas, cidx):
     mid = _mrg(ws, 16, 1, NCOLS)
     mid.value = (f'=IF({FIL}="","Complete la cascada para obtener el material",'
                  f'"Material seleccionado:   "&{ctx["MIDC"]})')
-    mid.font = Font(name="Calibri", size=12, bold=True, color=NAVY)
+    mid.font = Font(name=MACRO, size=11, color=TINTA)
     mid.alignment = Alignment(vertical="center", indent=1)
     mid.fill = CARD_FILL
     _nota(mid, "Calculo: nombre del material_id resuelto por la cascada de "
@@ -3819,7 +4019,10 @@ def finish_buscador(ctx, wb, curvas, cidx):
         t.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
         v = _mrg(ws, 18, c1, c1 + 2, val)
         v.font, v.fill = KPI_VAL_F, KPI_FILL
-        v.alignment = Alignment(horizontal="center", vertical="center")
+        # wrap_text porque el KPI de ESTADO publica una frase, no una cifra, y
+        # la macrotipografia es mucho mas ancha que la que habia: sin envolver,
+        # «FUERA DE RANGO — T supera la Temp. max.» se cortaba.
+        v.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
         _nota(v, com)
         u = _mrg(ws, 19, c1, c1 + 2, uni)
         u.font, u.fill = UNIT_F, KPI_FILL
@@ -3828,12 +4031,12 @@ def finish_buscador(ctx, wb, curvas, cidx):
             for cc in range(c1, c1 + 3):
                 ws.cell(r2, cc).border = CARD_BORDER
     ws.row_dimensions[17].height = 26
-    ws.row_dimensions[18].height = 30
+    ws.row_dimensions[18].height = 38
     ws.row_dimensions[19].height = 14
     ws.conditional_formatting.add(
         f"A18:L19",
         FormulaRule(formula=[f'ISNUMBER(SEARCH("FUERA DE RANGO",{EST}))'],
-                    font=Font(color="9C0006", bold=True)))
+                    font=Font(color=ROJO, bold=True)))
 
     # --------------------- 3 · FICHA TECNICA ------------------------------
     banda(ws, 21, "3 · FICHA TECNICA DEL MATERIAL   —   identificacion tal como la "
@@ -4011,8 +4214,7 @@ def finish_buscador(ctx, wb, curvas, cidx):
     from openpyxl.chart.layout import Layout, ManualLayout
     from openpyxl.drawing.line import LineProperties
     ch = ScatterChart()
-    ch.title = f"{ctx['valor_lbl']} frente a la temperatura"
-    ch.style = 13
+    ch.title = f"{ctx['valor_lbl']} frente a la temperatura".upper()
     ch.scatterStyle = "line"
     ch.x_axis.title = (f"Temperatura  [{ctx['temp_si']} en SI  ·  "
                        f"{ctx['temp_us']} en US]")
@@ -4031,22 +4233,24 @@ def finish_buscador(ctx, wb, curvas, cidx):
     ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
     s1 = Series(ys, xs, title_from_data=True)
     # Linea continua, sin marcadores de punto: la curva del material se lee
-    # como trazo, no como nube de puntos. Mismo azul que la banda del buscador
-    # (BLUE), para que se identifique con la hoja en la que vive.
+    # como trazo, no como nube de puntos. En TINTA, como el resto del sistema:
+    # el rojo esta reservado al dato consultado y a los avisos.
     s1.marker = Marker(symbol="none")
     # Linea recta (no suavizada) entre puntos: la interpolacion del codigo es
     # lineal (seccion 4), una curva suavizada la representaria mal.
     s1.smooth = False
-    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
+    s1.graphicalProperties = GraphicalProperties(
+        ln=LineProperties(solidFill=TINTA_2, w=19050))
     ch.series.append(s1)
     xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
     yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
     s2 = Series(yq, xq, title_from_data=True)
     s2.marker = Marker(symbol="diamond", size=10,
                        spPr=GraphicalProperties(
-                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
+                           solidFill=ROJO, ln=LineProperties(solidFill=ROJO)))
     s2.graphicalProperties.line = LineProperties(noFill=True)
     ch.series.append(s2)
+    estilizar_chart(ch)
     ws.add_chart(ch, chart_anchor)
 
     for cc, w in zip("ABCDEFGHIJKL",
@@ -4105,10 +4309,10 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
     e.alignment = Alignment(vertical="center", indent=1)
     _nota(e, com_sist)
     c = _mrg(ws, 5, 4, 6, "SI")
-    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
     dv_list(ws, "D5", '"SI,US"', com_sist)
-    e = _mrg(ws, 6, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
-    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e = _mrg(ws, 6, 1, 3, "TEMPERATURA DE CONSULTA  >>>  SE TECLEA")
+    e.font = Font(name=MONO, size=10, bold=True, color=ROJO)
     e.alignment = Alignment(vertical="center", indent=1)
     com_temp = ("Entrada: la UNICA celda de escritura libre de toda la hoja, en la "
                "unidad que muestra la celda de la derecha (segun el selector 'Sistema "
@@ -4117,7 +4321,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
     _nota(e, com_temp)
     c = _mrg(ws, 6, 4, 5, 25)
     c.font, c.fill = IN_F, TEMP_INPUT_FILL
-    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    c.border = CAJA_TECLEO
     _nota(c, com_temp)
     u_tmp = ws.cell(6, 6)
     u_tmp.value = f'=IF({SEL},"°C","°F")'
@@ -4133,7 +4337,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
                "tabulado superior (T2), sin interpolar.")
     _nota(e, com_modo)
     c = _mrg(ws, 7, 4, 6, "Interpolado")
-    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
     dv_list(ws, "D7", '"Interpolado,Tabulado-conservador"', com_modo)
 
     r = 9
@@ -4148,7 +4352,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
                     f'"{b["titulo"]}". Habilita la lista de grupos de esa tabla.')
         _nota(e, com_tabla)
         c = _mrg(ws, r, 4, 6, b["default_tabla"])
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         dv_list(ws, f"D{r}", "=" + rangos[b["lst_tabla"]], com_tabla)
         tcell = f"$D${r}"
         r += 1
@@ -4163,7 +4367,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
                     "selector 'Sistema de unidades'.")
         _nota(e, com_grupo)
         c = _mrg(ws, r, 4, 8, "")
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         lc = 50 + i2
         LL = get_column_letter(lc)
         mx = max(1, min(int(b.get("max_grupo", 60)), 250))
@@ -4212,7 +4416,8 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             v.value = (f'=IF({frow}="","(elija grupo)",' +
                        interp_value(T1C, S1C, T2C, S2C, "$D$6", "$D$7")[1:] + ')')
             v.font, v.fill = KPI_VAL_F, KPI_FILL
-            v.alignment = Alignment(horizontal="center", vertical="center")
+            v.alignment = Alignment(horizontal="center", vertical="center",
+                                    wrap_text=True)
             _nota(v, f'Calculo: {b["valor_lbl"]} interpolado (o tabulado-conservador, '
                      'segun el Modo de lectura de D7) a la temperatura de consulta '
                      '(D6), entre los puntos tabulados T1/T2 de abajo, para el grupo '
@@ -4220,7 +4425,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             u = _mrg(ws, r, 6, 8)
             u.value = f"={u_val}"
             u.font, u.fill = UNIT_F, KPI_FILL
-            ws.row_dimensions[r].height = 26
+            ws.row_dimensions[r].height = 30
             valr = r
             r += 1
             campo(ws, r, 1, "T1 — tabulada inferior", f"={T1C}", f"={u_tmp_f}",
@@ -4263,7 +4468,7 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             from openpyxl.chart.layout import Layout, ManualLayout
             from openpyxl.drawing.line import LineProperties
             ch = ScatterChart()
-            ch.title = f'{b["valor_lbl"]} frente a la temperatura'
+            ch.title = f'{b["valor_lbl"]} frente a la temperatura'.upper()
             ch.scatterStyle = "line"
             ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
             ch.y_axis.title = (f'{b["valor_lbl"]}  [{b["unidad_si"]} en SI  ·  '
@@ -4276,21 +4481,23 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
             ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
             se = Series(ys, xs, title_from_data=True)
-            # Linea continua sin marcadores, mismo azul de la banda del buscador
-            # (BLUE) — mismo estilo que finish_buscador.
+            # Linea continua sin marcadores, en tinta — mismo estilo que
+            # finish_buscador (ver estilizar_chart).
             se.marker = Marker(symbol="none")
             se.smooth = False
-            se.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
+            se.graphicalProperties = GraphicalProperties(
+                ln=LineProperties(solidFill=TINTA_2, w=19050))
             ch.series.append(se)
             xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
             yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
             sq = Series(yq, xq, title_from_data=True)
             sq.marker = Marker(symbol="diamond", size=10,
                                spPr=GraphicalProperties(
-                                   solidFill="FF0000",
-                                   ln=LineProperties(solidFill="FF0000")))
+                                   solidFill=ROJO,
+                                   ln=LineProperties(solidFill=ROJO)))
             sq.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
             ch.series.append(sq)
+            estilizar_chart(ch)
             ws.add_chart(ch, f"A{r}")
             r += 15
         else:
@@ -4423,22 +4630,22 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
         e.alignment = Alignment(vertical="center", indent=1)
         _nota(e, com)
         c = _mrg(ws, r, 4, 6, val)
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         ws.row_dimensions[r].height = 17
 
-    # Celda unica de escritura: relleno lavanda propio, distinto del amarillo de
-    # las listas desplegables (regla de estilo 1 del proyecto).
+    # Celda unica de escritura: mismo campo de papel que las listas, pero con la
+    # caja en ROJO (regla de estilo 1 del proyecto).
     com_temp = ("Entrada: la UNICA celda de escritura libre de todo el motor. "
                 "Temperatura a la que se necesita la propiedad, en la unidad de la "
                 "celda de la derecha. Las propiedades de tipo PUNTO (C-2 y C-4) no "
                 "dependen de la temperatura y el ESTADO lo avisa.")
-    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
-    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA  >>>  SE TECLEA")
+    e.font = Font(name=MONO, size=10, bold=True, color=ROJO)
     e.alignment = Alignment(vertical="center", indent=1)
     _nota(e, com_temp)
     c = _mrg(ws, 11, 4, 5, 350)
     c.font, c.fill = IN_F, TEMP_INPUT_FILL
-    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    c.border = CAJA_TECLEO
     _nota(c, com_temp)
     u = ws.cell(11, 6)
     u.value = f'=IF({SEL},"°C","°F")'
@@ -4455,7 +4662,7 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     e.alignment = Alignment(vertical="center", indent=1)
     _nota(e, com_modo)
     c = _mrg(ws, 12, 4, 6, "Interpolado")
-    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
 
     dv_list(ws, "D5", '"SI,US"', com_sist)
     dv_list(ws, "D12", '"Interpolado,Tabulado-conservador"', com_modo)
@@ -4550,7 +4757,7 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
                 f'"Edicion U.S. Customary — {us["sheet"]}"),'
                 f'"Leyendo Table "&INDEX({ident("Tabla")},{FIL})&'
                 f'" ("&$D$5&") — valores en "&INDEX({ident("Unidad impresa")},{FIL}))')
-    ay.font = Font(italic=True, color=BLUE)
+    ay.font = Font(name=MONO, size=9, color=GRIS)
     ay.alignment = Alignment(vertical="center", wrap_text=True)
     _nota(ay, "Aviso automatico: dice siempre que tabla del Apendice C y que edicion "
               "esta leyendo el motor. No se edita.")
@@ -4561,8 +4768,9 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     ay2.value = '=IF($D$9="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
     ay2.font, ay2.fill, ay2.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
     ay2.alignment = Alignment(horizontal="center", vertical="center")
-    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada llega "
-               "al material; SELECCION INCOMPLETA (amarillo) mientras falte un paso.")
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (bloque verde) cuando la cascada "
+               "llega al material; SELECCION INCOMPLETA (bloque ambar) mientras falte "
+               "un paso.")
     ws.conditional_formatting.add(
         "G11:I11", FormulaRule(formula=['$D$9<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
     ws.conditional_formatting.add(
@@ -4609,7 +4817,7 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     ws.conditional_formatting.add(
         "A16:L17",
         FormulaRule(formula=[f'ISNUMBER(SEARCH("FUERA DE RANGO",{EST}))'],
-                    font=Font(color="9C0006", bold=True)))
+                    font=Font(color=ROJO, bold=True)))
 
     # ---------------------- 3 · FICHA DE LA PROPIEDAD ----------------------
     banda(ws, 19, "3 · FICHA DE LA PROPIEDAD   —   cada campo con su unidad impresa")
@@ -4729,7 +4937,7 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     av.value = (f'=IF({TIPO}="{TIPO_PUNTO}",'
                 f'"Esta propiedad no depende de la temperatura: el codigo publica un '
                 f'valor unico. La grafica queda vacia a proposito.","")')
-    av.font = Font(name="Calibri", size=9, italic=True, color="9C6500")
+    av.font = Font(name=MONO, size=9, bold=True, color=AMBAR_TXT)
     av.alignment = Alignment(vertical="center", indent=1)
     _nota(av, "Aviso automatico: explica por que la grafica esta vacia cuando la "
               "propiedad es de tipo PUNTO (C-2 y C-4).")
@@ -4761,8 +4969,7 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     from openpyxl.chart.layout import Layout, ManualLayout
     from openpyxl.drawing.line import LineProperties
     ch = ScatterChart()
-    ch.title = "Propiedad tabulada frente a la temperatura"
-    ch.style = 13
+    ch.title = "PROPIEDAD TABULADA FRENTE A LA TEMPERATURA"
     ch.scatterStyle = "line"
     ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
     ch.y_axis.title = "Valor TABULADO (antes del factor de escala)"
@@ -4774,19 +4981,21 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
     xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
     ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
     s1 = Series(ys, xs, title_from_data=True)
-    # Linea continua sin marcadores, mismo azul de la banda (regla de estilo 3).
+    # Linea continua sin marcadores, en tinta (regla de estilo 3).
     s1.marker = Marker(symbol="none")
     s1.smooth = False
-    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE, w=19050))
+    s1.graphicalProperties = GraphicalProperties(
+        ln=LineProperties(solidFill=TINTA_2, w=19050))
     ch.series.append(s1)
     xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
     yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
     s2 = Series(yq, xq, title_from_data=True)
     s2.marker = Marker(symbol="diamond", size=10,
                        spPr=GraphicalProperties(
-                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
+                           solidFill=ROJO, ln=LineProperties(solidFill=ROJO)))
     s2.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
     ch.series.append(s2)
+    estilizar_chart(ch)
     ws.add_chart(ch, f"A{rg + 2}")
 
     for cc, w in zip("ABCDEFGHIJKL",
@@ -4936,7 +5145,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
         e.alignment = Alignment(vertical="center", indent=1)
         _nota(e, com)
         c = _mrg(ws, r, 4, 6, val)
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         ws.row_dimensions[r].height = 17
 
     # Celda unica de escritura: relleno lavanda propio (regla de estilo 1).
@@ -4945,13 +5154,13 @@ def build_buscador_b1(wb, curvas, rng, master, us):
                 "de la celda de la derecha. El para. A302.2.4(a) no admite margen "
                 "por variaciones de presion o temperatura en tuberia no metalica: "
                 "aqui va la condicion mas severa.")
-    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
-    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA  >>>  SE TECLEA")
+    e.font = Font(name=MONO, size=10, bold=True, color=ROJO)
     e.alignment = Alignment(vertical="center", indent=1)
     _nota(e, com_temp)
     c = _mrg(ws, 11, 4, 5, 23)
     c.font, c.fill = IN_F, TEMP_INPUT_FILL
-    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    c.border = CAJA_TECLEO
     _nota(c, com_temp)
     u = ws.cell(11, 6)
     u.value = f'=IF({SEL},"°C","°F")'
@@ -4969,7 +5178,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     e.alignment = Alignment(vertical="center", indent=1)
     _nota(e, com_modo)
     c = _mrg(ws, 12, 4, 6, "Interpolado")
-    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
 
     dv_list(ws, "D5", '"SI,US"', com_sist)
     dv_list(ws, "D12", '"Interpolado,Tabulado-conservador"', com_modo)
@@ -5060,7 +5269,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
                 f'"Leyendo Table "&INDEX({ident("Tabla")},{FIL})&'
                 f'" ("&$D$5&") — HDS en "&INDEX({ident("Unidad de HDS")},{FIL})&'
                 f'", T en "&INDEX({ident("Unidad de temperatura")},{FIL}))')
-    ay.font = Font(italic=True, color=BLUE)
+    ay.font = Font(name=MONO, size=9, color=GRIS)
     ay.alignment = Alignment(vertical="center", wrap_text=True)
     _nota(ay, "Aviso automatico: dice siempre que tabla del Apendice B y que edicion "
               "esta leyendo el motor. No se edita.")
@@ -5072,8 +5281,9 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     ay2.value = '=IF($D$7="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
     ay2.font, ay2.fill, ay2.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
     ay2.alignment = Alignment(horizontal="center", vertical="center")
-    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada llega "
-               "a la especificacion; SELECCION INCOMPLETA (amarillo) mientras falte.")
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (bloque verde) cuando la cascada "
+               "llega a la especificacion; SELECCION INCOMPLETA (bloque ambar) mientras "
+               "falte.")
     ws.conditional_formatting.add(
         "G11:I11", FormulaRule(formula=['$D$7<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
     ws.conditional_formatting.add(
@@ -5123,7 +5333,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     ws.conditional_formatting.add(
         "A16:L17",
         FormulaRule(formula=[f'ISNUMBER(SEARCH("FUERA DE RANGO",{EST}))'],
-                    font=Font(color="9C0006", bold=True)))
+                    font=Font(color=ROJO, bold=True)))
 
     # ---------------------- 3 · FICHA DE LA FILA ---------------------------
     banda(ws, 19, "3 · FICHA DE LA FILA DEL CODIGO   —   cada campo con su unidad "
@@ -5244,7 +5454,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     av.value = ('="El HDS es el esfuerzo de diseno de la eq. (26a): t = PD/(2S+P), '
                 'para. A304.1.2(a). El para. A302.3.1(a) advierte que el uso del HDS '
                 'para calculos distintos del diseno a presion NO esta verificado."')
-    av.font = Font(name="Calibri", size=9, italic=True, color="9C6500")
+    av.font = Font(name=MONO, size=9, bold=True, color=AMBAR_TXT)
     av.alignment = Alignment(vertical="center", indent=1)
     _nota(av, "Aviso del codigo, transcrito: acota para que sirve el valor que "
               "devuelve este motor.")
@@ -5279,8 +5489,7 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     from openpyxl.chart.layout import Layout, ManualLayout
     from openpyxl.drawing.line import LineProperties
     ch = ScatterChart()
-    ch.title = "HDS tabulado frente a la temperatura"
-    ch.style = 13
+    ch.title = "HDS TABULADO FRENTE A LA TEMPERATURA"
     ch.scatterStyle = "line"
     ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
     ch.y_axis.title = "HDS tabulado  [MPa en SI  ·  ksi en US]"
@@ -5292,10 +5501,10 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
     ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
     s1 = Series(ys, xs, title_from_data=True)
-    # Linea continua sin marcadores, mismo azul de la banda (regla de estilo 3).
+    # Linea continua sin marcadores, en tinta (regla de estilo 3).
     s1.marker = Marker(symbol="none")
     s1.smooth = False
-    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE,
+    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=TINTA_2,
                                                                    w=19050))
     ch.series.append(s1)
     xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
@@ -5303,9 +5512,10 @@ def build_buscador_b1(wb, curvas, rng, master, us):
     s2 = Series(yq, xq, title_from_data=True)
     s2.marker = Marker(symbol="diamond", size=10,
                        spPr=GraphicalProperties(
-                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
+                           solidFill=ROJO, ln=LineProperties(solidFill=ROJO)))
     s2.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
     ch.series.append(s2)
+    estilizar_chart(ch)
     ws.add_chart(ch, f"A{rg + 1}")
 
     for cc, w in zip("ABCDEFGHIJKL",
@@ -5374,7 +5584,7 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
 
     banda(ws, 4, f"1 · SELECCION   —   todo por lista desplegable")
     fija = _mrg(ws, 5, 1, NCOLS, TXT_ADIMENSIONAL)
-    fija.font = Font(name="Calibri", size=10, bold=True, color=BLUE)
+    fija.font = Font(name=MONO, size=10, bold=True, color=TINTA)
     fija.fill = CARD_FILL
     fija.border = CARD_BORDER
     fija.alignment = Alignment(vertical="center", indent=1)
@@ -5396,7 +5606,7 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
         e.alignment = Alignment(vertical="center", indent=1)
         _nota(e, com)
         c = _mrg(ws, r, 4, 6, "")
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         ws.row_dimensions[r].height = 17
     r_ult = 6 + len(todos) - 1
     celdas = [f"$D${6 + i}" for i in range(len(todos))]
@@ -5428,8 +5638,8 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
     ay.value = f'=IF({celdas[-1]}="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
     ay.font, ay.fill, ay.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
     ay.alignment = Alignment(horizontal="center", vertical="center")
-    _nota(ay, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada esta "
-              "resuelta; SELECCION INCOMPLETA (amarillo) mientras falte un paso.")
+    _nota(ay, "Aviso automatico: SELECCION COMPLETA (bloque verde) cuando la cascada "
+              "esta resuelta; SELECCION INCOMPLETA (bloque ambar) mientras falte un paso.")
     rango_sem = f"G{r_ult}:I{r_ult}"
     ws.conditional_formatting.add(rango_sem, FormulaRule(
         formula=[f'{celdas[-1]}<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
@@ -5517,7 +5727,7 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
         e.alignment = Alignment(vertical="center", indent=1)
         _nota(e, com_ex)
         c = _mrg(ws, r, 4, NCOLS, "")
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         dv_list(ws, f"D{r}", "=" + exa, com_ex)
         celda_ex = f"$D${r}"
         r += 1
@@ -5539,8 +5749,8 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
         av.value = (f'=IF({FIL}="","",IF(LEFT({ADMITE},2)="SI",'
                     f'"Esta fila admite incremento: "&{ADMITE},'
                     f'"Esta fila NO admite incremento: "&{ADMITE}))')
-        av.font = Font(name="Calibri", size=10, bold=True, color="9C6500")
-        av.fill = PatternFill("solid", fgColor="FFEB9C")
+        av.font = Font(name=MONO, size=10, bold=True, color=TINTA)
+        av.fill = PatternFill("solid", fgColor=AMBAR)
         av.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
         _nota(av, "Aviso automatico: repite, en palabras, si el codigo permite subir "
                   "el factor de esta fila. Se deriva de las notas que ella cita.")
@@ -5568,7 +5778,7 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
                 f'IF({col("Texto de las notas")}="",'
                 f'"Esta fila no cita ninguna nota numerada.",'
                 f'{col("Texto de las notas")}))')
-    nt.font = Font(name="Calibri", size=9)
+    nt.font = DATA_F
     nt.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
     ws.row_dimensions[r].height = 74
     _nota(nt, "Calculo: texto integro de las notas al pie que cita la fila "
@@ -5600,8 +5810,9 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
     rec = _mrg(ws, r, 1, NCOLS,
                f"Recordatorio: {simbolo} entra en el diseno por presion como "
                "t = P·D / (2·(S·E + P·Y)). En ningun otro sitio.")
-    rec.font = Font(name="Calibri", size=10, bold=True, color=NAVY)
-    rec.fill = PatternFill("solid", fgColor=GREY)
+    rec.font = Font(name=MONO, size=10, bold=True, color=TINTA)
+    rec.fill = PatternFill("solid", fgColor=PAPEL_2)
+    rec.border = Border(top=REGLA, bottom=REGLA)
     rec.alignment = Alignment(vertical="center", indent=1)
     ws.row_dimensions[r].height = 18
 
@@ -5640,30 +5851,33 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
 
     def lab(r, text, note=None, com=None):
         cl = ws.cell(r, 1, text)
-        cl.font = Font(name="Calibri", size=10)
+        cl.font = Font(name=MONO, size=10, color=TINTA)
         if note:
-            ws.cell(r, 7, note).font = Font(name="Calibri", size=9, italic=True,
-                                            color="595959")
+            ws.cell(r, 7, note).font = Font(name=MONO, size=9, color=GRIS)
         if com:
             _nota(cl, com)
 
     def inp(cell, value="", com=None):
         c = ws[cell]
         c.value = value
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
         c.protection = Protection(locked=False)
         if com:
             _nota(c, com)
 
-    ws.cell(105, 1, "7.  RESOLUCION DE MATERIAL — BASE DE DATOS ASME "
-                    "(cascada de listas desplegables)")
-    ws.cell(105, 1).font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-    ws.cell(105, 1).fill = TITLE_FILL
+    ws.cell(105, 1, rotulo("7. RESOLUCION DE MATERIAL — BASE DE DATOS ASME "
+                           "(cascada de listas desplegables)"))
+    ws.cell(105, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    # La banda de seccion 7 va a lo ancho de la tabla del motor (7 columnas) y
+    # cierra con la franja roja, igual que las bandas de los buscadores. Aqui la
+    # fila NO esta fusionada, asi que hay que recorrerla de verdad.
+    for j2 in range(1, 8):
+        ws.cell(105, j2).fill = BAND_FILL
+    franja(ws, 105, 1, 7)
     for j2, h in enumerate(["Parametro", "", "Unidad", "Metal base", "Collar / parche",
                             "", "Referencia / Notas"], start=1):
-        c = ws.cell(106, j2, h)
-        c.font = Font(bold=True)
-        c.fill = PatternFill("solid", fgColor=GREY)
+        c = ws.cell(106, j2, h.upper())
+        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
     com_modo212 = ("Entrada: 'Interpolado' aplica la interpolacion lineal del "
                   "codigo entre T1 y T2 (fila 120/121). 'Tabulado-conservador' "
                   "adopta directamente el valor tabulado en T2, sin interpolar. "
@@ -5828,7 +6042,9 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
             f'IF($D$108<={L}120,{L}122,IF(OR({L}121="",{L}123=""),{L}122,'
             f'IF($D$107="Tabulado-conservador",{L}123,'
             f'{L}122+({L}123-{L}122)*($D$108-{L}120)/({L}121-{L}120)))))')
-        ws.cell(126, col2).font = Font(bold=True)
+        # S(T) resuelto: es el resultado del bloque, y por eso va en la
+        # macrotipografia del sistema y no en negrita de dato.
+        ws.cell(126, col2).font = Font(name=MACRO, size=11, color=TINTA)
         for rr in (115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126):
             _nota(ws.cell(rr, col2), com_etiq[rr])
 
@@ -5872,8 +6088,8 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
                     "(D126) si su Dictamen de rango es OK; NA() si no.")
     ws["D44"] = "=$E$128"
     ws["G44"] = "Ej por lookup (B31.3 Tabla A-3) — seccion 7"
-    ws["D44"].font = Font(name="Calibri", size=10)
-    ws["D44"].fill = PatternFill(fill_type=None)
+    ws["D44"].font = Font(name=MONO, size=10, color=TINTA)
+    ws["D44"].fill = PAPEL_FILL
     ws["D44"].protection = Protection(locked=True)
     _nota(ws["D44"], "Calculo: repite el Ej resuelto en la seccion 7 (E128) a partir "
                     "de la clave de junta longitudinal elegida en D128. No se edita "
@@ -6126,10 +6342,10 @@ def deprecate_datos_ref(wb):
     ws["A40"] = ("B. [OBSOLETO — ver DB_B31_3 / DB_BPVC_IID]  ESFUERZOS ADMISIBLES S (MPa) — "
                  "acero al carbono, T <= 40 C. Se conserva como respaldo historico de las "
                  "memorias ya emitidas; el motor ya NO lee de aqui.")
-    ws["A40"].font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    ws["A40"].font = Font(name=MONO, size=10, bold=True, color=ROJO)
     for r in range(41, 48):
         for c in range(1, 4):
-            ws.cell(r, c).font = Font(name="Calibri", size=10, color="808080", italic=True)
+            ws.cell(r, c).font = Font(name=MONO, size=10, color=GRIS)
 
 
 # ---------------------------------------------------------------------------
@@ -6264,11 +6480,23 @@ INSTRUCCIONES = [
      "corresponden a una regla de inclusion que redacta el codigo y debe aplicar el "
      "ingeniero; las 'SIN MAPEO' son materiales para los que II-D no publica E ni "
      "dilatacion, y en ellas el calculo queda bloqueado."),
-    ("10. Convenciones",
-     "Calculo en SI por defecto. Celdas de seleccion: texto azul sobre fondo amarillo; la "
-     "celda de ENTRADA de temperatura lleva ademas borde rojo. Hojas de calculo protegidas "
-     "con contrasena preliminar 0000; las bases y los buscadores quedan sin proteger para "
-     "poder filtrar y copiar. Verde = CUMPLE/APTO, rojo = NO CUMPLE/revisar."),
+    ("10. Convenciones de lectura del libro",
+     "Calculo en SI por defecto. El libro entero va en un solo sistema visual: papel, tinta "
+     "y UN acento rojo.\n"
+     "· CAMPO QUE SE RELLENA: papel limpio dentro de una caja de tinta. Todos son listas "
+     "desplegables.\n"
+     "· UNICA CELDA QUE SE TECLEA (temperatura de consulta): el mismo campo, pero con la "
+     "caja en ROJO. Es la unica caja roja de la hoja.\n"
+     "· BANDA DE SECCION: bloque de tinta con el rotulo entre corchetes y franja roja al "
+     "pie; separa las zonas de la hoja.\n"
+     "· CIFRA DE RESULTADO: tipografia ancha, mucho mayor que el resto. Debajo, su unidad.\n"
+     "· ROJO: siempre significa lo mismo — bloqueado, fuera de rango o aviso. Nunca es "
+     "decoracion.\n"
+     "· SEMAFORO DE SELECCION: bloque verde SELECCION COMPLETA / bloque ambar SELECCION "
+     "INCOMPLETA. Verde = CUMPLE/APTO, rojo = NO CUMPLE/revisar.\n"
+     "· GRIS APAGADO: no cargado en este libro, o metadato de procedencia.\n"
+     "Hojas de calculo protegidas con contrasena preliminar 0000; las bases y los buscadores "
+     "quedan sin proteger para poder filtrar y copiar."),
     ("Aviso",
      "Herramienta de ingenieria de referencia. Verificar entradas y resultados; complementar "
      "con WPS/PQR, ATS/JSA y registros del propietario. Revision y aprobacion por personal "
@@ -6284,19 +6512,22 @@ def rewrite_instrucciones(wb, version_note):
     for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=8):
         for c in row:
             c.value = None
-    ws["B2"] = "MOTOR DE CALCULO — ASME PCC (CODIGOS POST-CONSTRUCCION)"
-    ws["B2"].font = Font(name="Calibri", size=14, bold=True, color=NAVY)
+    ws["B2"] = "MOTOR DE CALCULO // ASME PCC (CODIGOS POST-CONSTRUCCION)"
+    ws["B2"].font = Font(name=MACRO, size=14, color=TINTA)
     ws["B3"] = ("Reparacion, montaje e inspeccion de equipos a presion y tuberia segun la "
                 "familia ASME PCC · Codigos de construccion: ASME B31.3-2024 y ASME BPVC "
                 "Seccion VIII-1 con II-D 2025")
-    ws["B3"].font = Font(name="Calibri", size=10, italic=True, color="595959")
+    ws["B3"].font = Font(name=MONO, size=9, color=GRIS)
     ws["B4"] = version_note
-    ws["B4"].font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    ws["B4"].font = Font(name=MONO, size=10, bold=True, color=ROJO)
     r = 6
     for title, body in INSTRUCCIONES:
-        ws.cell(r, 2, title).font = Font(name="Calibri", size=10, bold=True, color=NAVY)
+        t = ws.cell(r, 2, title.upper())
+        t.font = Font(name=MONO, size=10, bold=True, color=PAPEL)
+        t.fill = BAND_FILL
+        t.alignment = Alignment(vertical="top", indent=1, wrap_text=True)
         c = ws.cell(r, 3, body)
-        c.font = Font(name="Calibri", size=10)
+        c.font = Font(name=MONO, size=10, color=TINTA)
         c.alignment = Alignment(wrap_text=True, vertical="top")
         ws.row_dimensions[r].height = max(30, 13 * (body.count("\n") + 1 + len(body) // 110))
         r += 1
@@ -6316,16 +6547,18 @@ def build_meta(wb, counts):
     last = write_rows(ws, [([m["hoja"], m["tabla"], m["archivo"], m["edicion"],
                              m["sistema"], m["filas"], m["nota"]], {}) for m in META], n)
     r = last + 2
-    ws.cell(r, 1, "VERIFICACION DE CONTEOS").font = Font(bold=True, color=NAVY)
+    ws.cell(r, 1, "VERIFICACION DE CONTEOS").font = Font(name=MACRO, size=10, color=TINTA)
     for k, v in counts.items():
         r += 1
-        ws.cell(r, 1, k)
-        ws.cell(r, 3, v)
+        ws.cell(r, 1, k).font = DATA_F
+        ws.cell(r, 3, v).font = DATA_F
     r += 2
-    ws.cell(r, 1, "LIMITACIONES Y OBSERVACIONES").font = Font(bold=True, color=NAVY)
+    ws.cell(r, 1, "LIMITACIONES Y OBSERVACIONES").font = Font(name=MACRO, size=10, color=TINTA)
     for msg in ISSUES:
         r += 1
-        ws.cell(r, 1, msg).alignment = Alignment(wrap_text=True)
+        c = ws.cell(r, 1, msg)
+        c.font = DATA_F
+        c.alignment = Alignment(wrap_text=True)
     autosize(ws, {"A": 24, "B": 26, "C": 62, "D": 10, "E": 10, "F": 10, "G": 60})
     return last
 
@@ -6797,36 +7030,40 @@ ANCLA_VOLVER["Instrucciones"] = (1, 2, 3)
 
 DASH_NCOLS = 12
 DASH_ANCHO_COL = 15
-BTN_FILL = PatternFill("solid", fgColor=BLUE)
-BTN_F = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
-CARD_TIT_F = Font(name="Calibri", size=11, bold=True, color=NAVY)
-CARD_TXT_F = Font(name="Calibri", size=9, color="44546A")
-AVISO_ROJO_F = Font(name="Calibri", size=11, bold=True, color="9C0006")
-AVISO_ROJO_FILL = PatternFill("solid", fgColor="FFC7CE")
-PIE_F = Font(name="Calibri", size=9, italic=True, color="595959")
-PIE_FILL = PatternFill("solid", fgColor=GREY)
-KPI_AMBAR_F = Font(name="Calibri", size=18, bold=True, color="BF8F00")
+BTN_FILL = PatternFill("solid", fgColor=TINTA)
+BTN_F = Font(name=MONO, size=10, bold=True, color=PAPEL)
+CARD_TIT_F = Font(name=MACRO, size=10, color=TINTA)
+CARD_TXT_F = Font(name=MONO, size=9, color=TINTA)
+# Aviso de macros: bloque de peligro macizo, tinta sobre el rojo del acento. Es
+# el unico relleno rojo del libro, y por eso no se confunde con nada.
+AVISO_ROJO_F = Font(name=MONO, size=11, bold=True, color=PAPEL)
+AVISO_ROJO_FILL = PatternFill("solid", fgColor=ROJO)
+PIE_F = Font(name=MONO, size=8, color=GRIS)
+PIE_FILL = PatternFill("solid", fgColor=PAPEL_2)
+KPI_AMBAR_F = Font(name=MACRO, size=16, color=AMBAR_TXT)
 
-# Tarjeta marcador: gris apagado, sin hipervinculo y sin clave.
-MARK_FILL = PatternFill("solid", fgColor="F7F7F7")
-MARK_BAR_FILL = PatternFill("solid", fgColor="D9D9D9")
-MARK_TIT_F = Font(name="Calibri", size=11, bold=True, color="808080")
-MARK_TXT_F = Font(name="Calibri", size=9, color="A6A6A6")
-MARK_BAR_F = Font(name="Calibri", size=10, bold=True, color="767171")
-MARK_BORDER = Border(left=Side("thin", color="D9D9D9"), right=Side("thin", color="D9D9D9"),
-                     top=Side("thin", color="D9D9D9"), bottom=Side("thin", color="D9D9D9"))
-TXT_NO_CARGADO = "NO CARGADO EN ESTE LIBRO"
+# Tarjeta marcador: trama de medio tono, sin hipervinculo y sin clave. El estado
+# inactivo es lo unico que usa los dos grises del sistema.
+MARK_FILL = PatternFill("solid", fgColor=PAPEL)
+MARK_BAR_FILL = PatternFill("solid", fgColor=GRIS_2)
+MARK_TIT_F = Font(name=MACRO, size=10, color=GRIS)
+MARK_TXT_F = Font(name=MONO, size=9, color=GRIS)
+MARK_BAR_F = Font(name=MONO, size=10, bold=True, color=GRIS)
+MARK_BORDER = BOX
+TXT_NO_CARGADO = "/// NO CARGADO EN ESTE LIBRO"
 
 # Barra inferior de la tarjeta. El texto distingue el nivel: ENTRAR baja un
-# nivel del arbol, ABRIR llega a la hoja final.
-TXT_ENTRAR = "▸ ENTRAR"
-TXT_ABRIR = "▸ ABRIR"
-TXT_MANUAL = "? MANUAL DE USO"
+# nivel del arbol, ABRIR llega a la hoja final. Los signos son ASCII y no
+# tipografia decorativa: sobreviven a cualquier codificacion y a cualquier
+# fuente que Excel decida sustituir.
+TXT_ENTRAR = ">>> ENTRAR"
+TXT_ABRIR = ">>> ABRIR"
+TXT_MANUAL = "[ ? ] MANUAL DE USO"
 
 # Miga de pan: fila 4 de toda hoja NAV_*.
-MIGA_FILL = PatternFill("solid", fgColor="DCE6F5")
-MIGA_F = Font(name="Calibri", size=9, bold=True, color=BLUE, underline="single")
-MIGA_AQUI_F = Font(name="Calibri", size=9, bold=True, color="595959")
+MIGA_FILL = PatternFill("solid", fgColor=PAPEL_2)
+MIGA_F = Font(name=MONO, size=9, bold=True, color=ROJO, underline="single")
+MIGA_AQUI_F = Font(name=MONO, size=9, bold=True, color=TINTA)
 
 # Filas fijas de una hoja NAV_*. El Dashboard NO usa FILA_ACCIONES ni
 # FILA_MIGA: es la raiz (no tiene padre) y su fila 4 la ocupa el aviso de
@@ -6865,8 +7102,15 @@ def _boton(ws, fila, c1, c2, texto, clave):
 
 
 def _celda_clave(ws, fila, columna):
-    """Celda oculta con la clave de destino del boton anclado en (fila, columna)."""
-    return ws.cell(fila, COL_CLAVE_BASE + columna)
+    """Celda oculta con la clave de destino del boton anclado en (fila, columna).
+
+    Lleva la fuente de dato aunque no se vea nunca: asi ninguna celda con
+    contenido del libro se queda fuera del sistema visual, y la auditoria de
+    test_dashboard.py puede exigirlo sin excepciones que haya que recordar.
+    """
+    cel = ws.cell(fila, COL_CLAVE_BASE + columna)
+    cel.font = DATA_F
+    return cel
 
 
 def _ocultar_columnas_clave(ws, cols_boton):
@@ -6890,7 +7134,10 @@ def _tarjeta(ws, fila, c1, ancho, titulo, lineas, clave,
     """
     c2 = c1 + ancho - 1
     detalle = list(lineas[:2]) + [""] * (2 - len(lineas[:2]))
-    textos = [titulo, detalle[0], detalle[1],
+    # El titulo va en mayusculas —es el rotulo de la tarjeta, macrotipografia—
+    # y las dos lineas de detalle se dejan tal como estan escritas: son la
+    # unica prosa de la capa de navegacion y en versalitas se leen peor.
+    textos = [titulo.upper(), detalle[0], detalle[1],
               pie if cargado else TXT_NO_CARGADO]
 
     for i, texto in enumerate(textos):
@@ -6966,25 +7213,27 @@ def normalizar_textos_como_formula(wb):
 def _cabecera_nav(ws, nodo):
     """Titulo y subtitulo: filas 1 y 2 de toda hoja del arbol, Dashboard incluido."""
     ws.sheet_view.showGridLines = False
-    ws.sheet_properties.tabColor = NAVY
+    ws.sheet_properties.tabColor = TINTA
     for c in range(1, DASH_NCOLS + 1):
         ws.column_dimensions[get_column_letter(c)].width = DASH_ANCHO_COL
 
-    t = _mrg(ws, 1, 1, DASH_NCOLS, nodo.titulo)
-    t.font = Font(name="Calibri", size=16, bold=True, color="FFFFFF")
-    t.fill = TITLE_FILL
+    # Cabecera: dos filas de tinta maciza, la segunda cerrada por la franja
+    # roja. El relleno lo cubre la celda ancla de cada fila fusionada; la franja
+    # se recorre celda a celda (ver franja()).
+    t = _mrg(ws, 1, 1, DASH_NCOLS, nodo.titulo.upper())
+    t.font, t.fill = Font(name=MACRO, size=16, color=PAPEL), TITLE_FILL
     t.alignment = Alignment(vertical="center", indent=1)
     ws.row_dimensions[1].height = 32
     s = _mrg(ws, 2, 1, DASH_NCOLS, nodo.subtitulo)
-    s.font = Font(name="Calibri", size=9, italic=True, color="FFFFFF")
-    s.fill = TITLE_FILL
+    s.font, s.fill = Font(name=MONO, size=9, color=PAPEL), TITLE_FILL
     s.alignment = Alignment(vertical="center", indent=1)
+    franja(ws, 2, 1, DASH_NCOLS)
     ws.row_dimensions[2].height = 16
 
 
 def _texto_volver(hoja_padre):
-    return ("◂ VOLVER AL DASHBOARD" if hoja_padre == DASH
-            else f"◂ VOLVER A {ROTULO[hoja_padre]}")
+    return ("<<< VOLVER AL DASHBOARD" if hoja_padre == DASH
+            else f"<<< VOLVER A {ROTULO[hoja_padre].upper()}")
 
 
 def _miga(ws, fila, ruta, nodo):
@@ -6998,7 +7247,8 @@ def _miga(ws, fila, ruta, nodo):
     segmentos = [(n.hoja, ROTULO[n.hoja]) for n in ruta] + [(None, ROTULO[nodo.hoja])]
     for i, (hoja, rotulo) in enumerate(segmentos):
         c1 = 1 + i * 2
-        cel = _mrg(ws, fila, c1, c1 + 1, rotulo if i == 0 else f"› {rotulo}")
+        cel = _mrg(ws, fila, c1, c1 + 1,
+                   rotulo.upper() if i == 0 else f"/ {rotulo.upper()}")
         if hoja:
             _enlace(ws, cel, fila, c1, hoja)
             cel.font = MIGA_F
@@ -7093,7 +7343,7 @@ def build_dashboard(wb, nodo, kpis, fecha):
     # Aviso de macros. Se graba en rojo: es el estado correcto para un archivo
     # en disco. Workbook_Open lo pasa a verde solo si las macros corren.
     av = _mrg(ws, FILA_AVISO, 1, DASH_NCOLS,
-              "MACROS DESHABILITADAS - habilitelas para navegar entre los motores")
+              "/// MACROS DESHABILITADAS - HABILITELAS PARA NAVEGAR ENTRE LOS MOTORES ///")
     av.font, av.fill = AVISO_ROJO_F, AVISO_ROJO_FILL
     av.alignment = Alignment(horizontal="center", vertical="center")
     ws.row_dimensions[FILA_AVISO].height = 22
@@ -7128,13 +7378,13 @@ def build_dashboard(wb, nodo, kpis, fecha):
         # Las alturas se fijan DENTRO del bucle: con dos bandas de KPI, ponerlas
         # despues solo alcanzaba a la ultima y la primera quedaba encogida.
         ws.row_dimensions[r].height = 26
-        ws.row_dimensions[r + 1].height = 30
+        ws.row_dimensions[r + 1].height = 34
         ws.row_dimensions[r + 2].height = 14
     r += 3
     n = _mrg(ws, r, 1, DASH_NCOLS,
-             f"Compilado {fecha} · fuente unica: resources/ · valores cargados tal como "
-             f"estan impresos en el codigo; SI y US son extracciones independientes, "
-             f"nunca conversiones.")
+             f"COMPILADO {fecha} // FUENTE UNICA: resources/ // valores cargados tal "
+             f"como estan impresos en el codigo; SI y US son extracciones "
+             f"independientes, nunca conversiones.")
     n.font = SRC_F
     n.alignment = Alignment(vertical="center", indent=1)
     r += 2
@@ -7145,6 +7395,9 @@ def build_dashboard(wb, nodo, kpis, fecha):
              "leer las notas del material, antes de emitir para construccion.")
     p.font, p.fill = PIE_F, PIE_FILL
     p.alignment = Alignment(vertical="center", indent=1)
+    # El pie de responsabilidad cierra el Dashboard con la misma franja roja con
+    # la que abren las bandas: es el limite inferior del documento.
+    franja(ws, r, 1, DASH_NCOLS, arriba=True)
     ws.row_dimensions[r].height = 18
     return ws
 
@@ -7190,6 +7443,168 @@ def link_volver(wb):
         b.protection = Protection(locked=False)
         _celda_clave(ws, fila, c1).protection = Protection(locked=False)
         _ocultar_columnas_clave(ws, (c1,))
+
+
+# ---------------------------------------------------------------------------
+# Retonado de lo que trae el maestro
+# ---------------------------------------------------------------------------
+# Tres hojas no las construye este script: las trae maestro_con_macros.xlsm
+# (Instrucciones, Datos_Ref y el motor Parche_PCC2_Art212, cuyas secciones 1 a 6
+# vienen sembradas). Su estilo es el de la Rev. 0 —azules corporativos, Arial,
+# amarillo de entrada— y sin retonarlas el libro tendria dos sistemas visuales a
+# la vez. La plantilla NO se edita a mano (la genera make_vba_seed.py), asi que
+# el mapeo se aplica al construir.
+#
+# Es una tabla de EQUIVALENCIA EXACTA, no una aproximacion por cercania de
+# color: solo se traduce lo que estaba en el inventario de la plantilla. Asi es
+# idempotente y no puede tocar por accidente una celda que ya nacio en el
+# sistema nuevo —ningun color de la paleta nueva es clave de esta tabla—, y lo
+# que quede sin traducir lo delata la auditoria (celdas_fuera_del_sistema).
+HOJAS_HEREDADAS = ("Instrucciones", "Datos_Ref", "Parche_PCC2_Art212")
+
+# Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl
+# devuelve "FF1A1A1A" en lo que leyo del maestro y "00050505" en lo que acaba de
+# escribir este script a partir de una cadena de seis digitos. Comparar los ocho
+# hacia pasar por «heredado» a un color de la paleta nueva.
+def _rgb6(v):
+    return v[-6:].upper() if isinstance(v, str) and len(v) >= 6 else None
+
+
+# Relleno heredado -> relleno del sistema.
+MAPA_RELLENO = {
+    "16304F": TINTA,        # cabecera mas oscura del maestro
+    "1F4E79": TINTA,        # banda de seccion
+    "305496": TINTA,        # banda de subseccion / cabecera de tabla
+    "F3F6FA": PAPEL_2,      # panel
+    "DDE6F0": PAPEL_2,      # banda de fila alterna
+    "FFFFFF": PAPEL,        # blanco puro -> papel sin blanquear
+    "FFF7DC": PAPEL,        # celda de entrada: pasa a campo (caja de tinta)
+}
+# La celda de entrada del maestro se reconoce por su amarillo y es la unica que
+# ademas cambia de BORDE: en este sistema un campo es papel dentro de una caja
+# de tinta, no un relleno de color (ver IN_FILL / CAJA_CAMPO).
+RELLENO_DE_CAMPO = "FFF7DC"
+
+# (nombre, tamano, negrita, cursiva, color) heredado -> Font del sistema. El
+# tamano se conserva salvo en los titulos, que pasan a la macrotipografia.
+MAPA_FUENTE = {
+    ("Arial", 14.0, True, False, "FFFFFF"): Font(name=MACRO, size=14, color=PAPEL),
+    ("Arial", 13.0, True, False, "FFFFFF"): Font(name=MACRO, size=13, color=PAPEL),
+    ("Arial", 12.0, True, False, "1A1A1A"): Font(name=MACRO, size=12, color=TINTA),
+    ("Arial", 11.0, True, False, "FFFFFF"): Font(name=MACRO, size=11, color=PAPEL),
+    ("Arial", 10.0, True, False, "FFFFFF"): Font(name=MONO, size=10, bold=True,
+                                                 color=PAPEL),
+    ("Arial", 9.0, True, False, "FFFFFF"): Font(name=MONO, size=9, bold=True,
+                                                color=PAPEL),
+    ("Arial", 9.0, False, True, "FFFFFF"): Font(name=MONO, size=9, color=PAPEL),
+    ("Arial", 10.0, True, False, "1F4E79"): Font(name=MONO, size=10, bold=True,
+                                                 color=TINTA),
+    ("Arial", 9.0, True, False, "1F4E79"): Font(name=MONO, size=9, bold=True,
+                                                color=TINTA),
+    ("Arial", 10.0, True, False, "1A1A1A"): Font(name=MONO, size=10, bold=True,
+                                                 color=TINTA),
+    ("Arial", 9.0, True, False, "1A1A1A"): Font(name=MONO, size=9, bold=True,
+                                                color=TINTA),
+    ("Arial", 8.0, True, False, "1A1A1A"): Font(name=MONO, size=8, bold=True,
+                                                color=TINTA),
+    ("Arial", 8.0, True, False, "FFFFFF"): Font(name=MONO, size=8, bold=True,
+                                                color=PAPEL),
+    ("Arial", 10.0, False, False, "1A1A1A"): Font(name=MONO, size=10, color=TINTA),
+    ("Arial", 9.0, False, False, "1A1A1A"): Font(name=MONO, size=9, color=TINTA),
+    ("Arial", 8.0, False, False, "1A1A1A"): Font(name=MONO, size=8, color=TINTA),
+    # Metadato y nota del maestro: gris y turquesa en cursiva. Los dos pasan a
+    # la trama de medio tono, que es lo que este sistema usa para el metadato.
+    ("Arial", 8.0, False, True, "7A7A7A"): Font(name=MONO, size=8, color=GRIS),
+    ("Arial", 9.0, False, True, "7A7A7A"): Font(name=MONO, size=9, color=GRIS),
+    ("Arial", 9.0, False, True, "0D7C7C"): Font(name=MONO, size=9, color=GRIS),
+    # Texto de entrada del maestro (azul): pasa a tinta, como IN_F.
+    ("Arial", 10.0, True, False, "0000CC"): IN_F,
+    ("Arial", 9.0, True, False, "0000CC"): Font(name=MONO, size=9, bold=True,
+                                                color=TINTA),
+}
+# Celda con estilo propio pero fuente por omision (Calibri 11 del tema): son
+# celdas de dato del maestro y toman la fuente de dato del sistema.
+FUENTE_POR_OMISION = ("Calibri", 11.0, False, False, None)
+
+# Rotulos del maestro que DESCRIBEN el sistema visual y por tanto caducan con
+# el: retonar la celda sin reescribir su texto dejaria al libro explicando una
+# convencion que ya no existe. Se comprueba el texto esperado y, si no aparece,
+# se declara en ISSUES en vez de reescribir a ciegas una celda que cambio.
+TEXTOS_HEREDADOS = {
+    ("Parche_PCC2_Art212", "A16"): (
+        "1.  DATOS DE ENTRADA  (celdas azules sobre fondo amarillo = editables)",
+        "1.  DATOS DE ENTRADA  (campo con linea inferior = editable)"),
+}
+
+# Los colores que SI son del sistema, para no reportarlos como heredados.
+_RGB_SISTEMA = {PAPEL, PAPEL_2, TINTA, TINTA_2, ROJO, GRIS, GRIS_2, VERDE,
+                AMBAR, AMBAR_TXT}
+
+
+def _clave_fuente(f):
+    if f is None:
+        return None
+    rgb = getattr(f.color, "rgb", None) if f.color is not None else None
+    return (f.name, f.sz, bool(f.b), bool(f.i), _rgb6(rgb))
+
+
+def retonar_heredadas(wb):
+    """Pasa al sistema visual las hojas que vienen del maestro sembrado.
+
+    Devuelve (celdas tocadas, estilos heredados que no estaban en el mapa). Lo
+    segundo se declara en ISSUES: un estilo sin traducir es una celda que se
+    quedaria con el aspecto de la Rev. 0, y hay que verlo, no adivinarlo.
+    """
+    tocadas, sin_mapa = 0, Counter()
+    for (hoja, ref), (esperado, nuevo) in TEXTOS_HEREDADOS.items():
+        if hoja not in wb.sheetnames:
+            continue
+        cel = wb[hoja][ref]
+        if cel.value == esperado:
+            cel.value = nuevo
+            tocadas += 1
+        elif cel.value != nuevo:
+            ISSUES.append(
+                f"Retonado: {hoja}!{ref} ya no dice lo que declaraba el maestro, "
+                f"asi que no se reescribio. Compruebe si sigue describiendo la "
+                f"convencion visual antigua: {str(cel.value)[:80]!r}")
+    for nombre in HOJAS_HEREDADAS:
+        if nombre not in wb.sheetnames:
+            continue
+        ws = wb[nombre]
+        for row in ws.iter_rows():
+            for c in row:
+                cambio = False
+                relleno = c.fill
+                rgb = _rgb6(getattr(relleno.fgColor, "rgb", None)
+                            if relleno is not None and relleno.patternType else None)
+                if rgb in MAPA_RELLENO:
+                    era_campo = rgb == RELLENO_DE_CAMPO
+                    c.fill = PatternFill("solid", fgColor=MAPA_RELLENO[rgb])
+                    if era_campo:
+                        c.border = CAJA_CAMPO
+                    cambio = True
+                elif rgb is not None and rgb not in _RGB_SISTEMA:
+                    sin_mapa[f"{nombre}: relleno {rgb}"] += 1
+                clave = _clave_fuente(c.font)
+                if clave in MAPA_FUENTE:
+                    c.font = MAPA_FUENTE[clave]
+                    cambio = True
+                elif clave == FUENTE_POR_OMISION:
+                    c.font = DATA_F
+                    cambio = True
+                elif clave is not None and clave[0] not in (MONO, MACRO):
+                    sin_mapa[f"{nombre}: fuente {clave}"] += 1
+                if cambio:
+                    tocadas += 1
+    if sin_mapa:
+        ISSUES.append(
+            "Retonado de las hojas del maestro: "
+            f"{len(sin_mapa)} estilos heredados sin equivalencia declarada "
+            f"({', '.join(sorted(sin_mapa)[:6])}). Esas celdas conservan el "
+            "aspecto de la Rev. 0; anada su equivalencia a MAPA_RELLENO / "
+            "MAPA_FUENTE.")
+    return tocadas, sin_mapa
 
 
 def aplicar_visibilidad(wb):
@@ -7422,18 +7837,18 @@ def main(argv=None):
             ("SI: el codigo publica un mecanismo para subir Ej, y no es una tabla "
              "aparte como la 302.3.3-1 del Ec — son las propias filas de la "
              "Table 302.3.4-1, transcrita integra abajo.",
-             Font(name="Calibri", size=10, bold=True, color=NAVY)),
+             Font(name=MONO, size=10, bold=True, color=TINTA)),
             (f"para. 302.3.4(b), transcrito: {par34}",
-             Font(name="Calibri", size=9)),
+             Font(name=MONO, size=9, color=TINTA)),
             (f"Table 302.3.4-1, Nota (1): {nota34}" if nota34 else
              "No se pudo leer la Nota (1) de la Tabla 302.3.4-1 en resources/.",
-             Font(name="Calibri", size=9, bold=True, color="9C6500")),
+             Font(name=MONO, size=9, bold=True, color=AMBAR_TXT)),
             ("El factor Ej lo decide el TIPO DE JUNTA/COSTURA/EXAMEN de la fila "
              "abajo, no la especificacion de material seleccionada arriba: "
              "identifique cual de las diez filas describe su junta y lea su Ej. "
              "El codigo no imprime una correspondencia fila a fila entre la "
              "Tabla A-3 y esta tabla, asi que el motor no la infiere.",
-             Font(name="Calibri", size=9, bold=True, color="9C0006")),
+             Font(name=MONO, size=9, bold=True, color=ROJO)),
         ] + bloques_tabla_ej(filas34)))
 
     integrate_motor(wb, b313, iid, iidb, fac, rangos)
@@ -7511,6 +7926,16 @@ def main(argv=None):
              "_meta", "_Curvas"]
     wb._sheets = [wb[n] for n in order if n in wb.sheetnames] + \
                  [s for s in wb._sheets if s.title not in order]
+
+    # Sistema visual, al final y sobre el libro entero. El orden importa: primero
+    # se traduce lo que trae el maestro y solo despues se papela, para que el
+    # sustrato no tape un relleno heredado que aun habia que reconocer.
+    retonadas, _ = retonar_heredadas(wb)
+    hojas_papel = aplicar_sustrato(wb)
+    ISSUES.append(f"Sistema visual Swiss Industrial Print: sustrato de papel en "
+                  f"{hojas_papel} hojas (al nivel de columna, sin estilo por "
+                  f"celda) y {retonadas} celdas del maestro retonadas.")
+
     # Ultimo paso antes de guardar: el estado de visibilidad debe reflejar el
     # libro completo, incluidas las hojas que hubiese traido el maestro.
     estados = aplicar_visibilidad(wb)

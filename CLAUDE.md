@@ -467,6 +467,11 @@ comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
 | Hojas navegables (36, **en preorden**) | `NAVEGABLES` | `HojasNavegables()` |
 | Columna base de claves | `COL_CLAVE_BASE = 66` | `COL_CLAVE_BASE` |
 | Celda del aviso | `FILA_AVISO = 4` | `CELDA_AVISO = "A4"` |
+| Texto y color del aviso | `build_dashboard` + `AVISO_ROJO_*` | `TXT_INACTIVAS` · `TXT_ACTIVAS` y sus `RGB(...)` |
+
+El aviso entra en la tabla porque el VBA **reescribe A4 al abrir**: si su texto o
+su color no son los que grabó el builder, el libro cambia de aspecto en cuanto se
+abre. Los `RGB(...)` de `mod_nav.vba` son `TINTA`/`VERDE` y `PAPEL`/`ROJO`.
 
 `HojasNavegables()` es el **único** punto del VBA que crece con el árbol.
 
@@ -576,37 +581,109 @@ Tres trampas ya pagadas, documentadas en el código:
     `declarar_tablas_canonicas.py` (clase `RECONSTRUIDA_DEL_FOLIO_IMPRESO`): su
     canónico ya no es comparable columna a columna con el gemelo a propósito.
 
+### Sistema visual — Swiss Industrial Print (Rev. 4e)
+
+**Las 70 hojas van en un solo sistema, y esa es toda la regla.** Antes había dos:
+el azul corporativo de la Rev. 0 en las tres hojas que trae el maestro y el del
+builder en las otras 67. Ahora hay uno: papel de documentación sin blanquear,
+tinta carbón y **un** acento rojo.
+
+Vive en un bloque único de tokens al principio de `build_db_materiales.py`. Nada
+de color ni de fuente se escribe suelto: `verificar.py` no lo mira, pero
+`test_dashboard.py::TestSistemaVisual` recorre los 2,4 millones de celdas con
+formato del libro construido y falla si aparece un color fuera de la paleta o una
+fuente que no sea una de las dos.
+
+| Token | Valor | Para qué |
+|---|---|---|
+| `PAPEL` · `PAPEL_2` | `F4F4F0` · `EAE8E3` | sustrato · compartimento (tarjeta, KPI, campo) |
+| `TINTA` · `TINTA_2` | `050505` · `111111` | bloque estructural y texto · trazo de curva |
+| `ROJO` | `E61919` | **único** acento: aviso, bloqueo, dato vital |
+| `GRIS` · `GRIS_2` | `8A8A85` · `C9C7C1` | trama 55 % (metadato, marcador) · 25 % (retícula) |
+| `VERDE` · `AMBAR` · `AMBAR_TXT` | `4AF626` · `E6A019` · `8A5D00` | semáforo funcional |
+| `MACRO` · `MONO` | Arial Black · Consolas | estructura y cifra de KPI · todo el dato |
+
+Las dos fuentes vienen instaladas con Windows **a propósito**: una que Excel no
+encuentra la sustituye en silencio y deshace la retícula, así que aquí no entra
+ninguna de descarga (JetBrains Mono, Archivo Black) por bien que encaje.
+
+El **semáforo de tres estados se conserva retonado**, y es la excepción declarada
+al acento único: en un libro de cálculo el estado de la consulta es información
+de seguridad y se lee sin leerse. Va como bloque macizo con tinta encima, nunca
+como pastel de relleno suave, y el rojo mantiene un único significado en todo el
+libro: bloqueado.
+
+**El sustrato se graba a nivel de COLUMNA, no celda a celda** (`sustrato()` /
+`aplicar_sustrato()`, último paso antes de guardar). Excel admite un estilo por
+columna, así que las 54 198 filas del volcado de la Sección II heredan papel y
+mono sin un solo estilo de celda: el mismo resultado visual sin multiplicar el
+tamaño del `.xlsm` por 2,6 millones de celdas con formato. El archivo pasó de
+11,52 a 11,56 MB. Toda celda con estilo propio lo pisa, que es lo que se quiere.
+
+**Tres trampas ya pagadas, comprobadas exportando la hoja y mirándola:**
+
+- **En un rango fusionado el RELLENO se hereda de la celda ancla, pero el BORDE
+  no.** La banda de tinta sale entera poniéndosela solo a la ancla; la franja
+  roja puesta igual sale como un muñón de una columna. Hay que recorrer el rango
+  (`franja()`), y por eso esa función recorre aunque el rango esté fusionado.
+- **openpyxl miente en los dos sentidos y no sirve para comprobarlo.** Al leer un
+  libro reconstruye el borde de la ancla sobre todo el rango (parece que
+  estuviera) y al escribir no propaga nada si el estilo se puso después de
+  fusionar. La única evidencia válida es exportar la hoja a PDF/PNG desde Excel
+  e ir a mirarla.
+- **Un campo de formulario es una LÍNEA, no una caja.** Siete campos seguidos con
+  caja completa se ven como una escalera de barrotes, y además el borde de un
+  campo compite con el de su vecino en la arista que comparten — que es justo
+  donde se perdía el recuadro rojo de la única celda que se teclea. Con la línea
+  (`CAJA_CAMPO = Border(bottom=REGLA)`), la caja roja es el único rectángulo
+  cerrado de la zona.
+
+**Lo que trae el maestro se retona al construir** (`retonar_heredadas()`), porque
+la plantilla no se edita a mano. Es una tabla de equivalencia **exacta**
+(`MAPA_RELLENO` / `MAPA_FUENTE`), no una aproximación por cercanía de color: así
+es idempotente, no puede tocar una celda que ya nació en el sistema nuevo, y lo
+que quede sin traducir se declara en `ISSUES` en vez de quedarse con el aspecto
+de la Rev. 0. `TEXTOS_HEREDADOS` cubre el caso aparte: un rótulo del maestro que
+**describe** el sistema visual («celdas azules sobre fondo amarillo = editables»)
+caduca con él, y retonar la celda sin reescribir el texto dejaría al libro
+explicando una convención que ya no existe.
+
 ### Estilo de diseño de los buscadores — no romper
 
 Vive en `build_buscador` / `finish_buscador` (los 5 buscadores de cascada: B31_3,
 BPVC_IID, BPVC_IID_B, Su, Sy) y se replica en `build_buscador_grupo`. Tocar el
-estilo de un buscador significa tocar las tres constantes de módulo
-(`TEMP_INPUT_FILL`, `SEL_OK_FILL`/`SEL_OK_FONT`, `SEL_BAD_FILL`/`SEL_BAD_FONT`,
-declaradas junto a `CARD_FILL`/`KPI_FILL`) para que cambien a la vez en todos.
+estilo de un buscador significa tocar las constantes de módulo
+(`TEMP_INPUT_FILL`/`CAJA_TECLEO`, `CAJA_CAMPO`, `SEL_OK_FILL`/`SEL_OK_FONT`,
+`SEL_BAD_FILL`/`SEL_BAD_FONT`, declaradas junto a `CARD_FILL`/`KPI_FILL`) para que
+cambien a la vez en todos.
 
-1. **Celda única de escritura (temperatura de consulta): relleno propio
-   `TEMP_INPUT_FILL` (lavanda, `CCC0DA`)**, distinto del amarillo `IN_FILL` de las
-   celdas de lista desplegable. Es la única celda que se teclea en todo el
-   buscador; su color debe diferenciarla a simple vista de las que solo aceptan
-   una lista. Aplica también a `build_buscador_grupo`.
+1. **Celda única de escritura (temperatura de consulta): caja roja
+   (`CAJA_TECLEO`, borde medio en `ROJO`)**, frente a la línea inferior de tinta
+   (`CAJA_CAMPO`) de las celdas de lista desplegable. Las dos van sobre papel
+   limpio: lo que las distingue no es el relleno sino que la que se teclea es el
+   **único rectángulo cerrado** —y el único rojo— de la zona de selección. Su
+   rótulo va también en rojo y dice `TEMPERATURA DE CONSULTA >>> SE TECLEA`.
+   Aplica también a `build_buscador_grupo`.
 2. **Semáforo de cascada completa/incompleta**, exclusivo de los 5 buscadores de
    cascada (`build_buscador`/`finish_buscador`): la celda de aviso junto a la
-   temperatura (`G12:I12`) lleva formato condicional — verde `SEL_OK_FILL`
-   (`C6EFCE`/`006100`) con "SELECCION COMPLETA" cuando la cascada (pasos 0 a 4)
-   está resuelta; amarillo `SEL_BAD_FILL` (`FFEB9C`/`9C6500`) con "SELECCION
-   INCOMPLETA" mientras falte un paso. El texto va en mayúsculas y sin tilde
-   ("SELECCION", no "SELECCIÓN"): todo el texto de celda del libro evita acentos
-   (ver "SELECCION DEL MATERIAL", "Composicion nominal") para no arrastrar
+   temperatura (`G12:I12`) lleva formato condicional — bloque verde `SEL_OK_FILL`
+   (`4AF626`, texto en tinta) con "SELECCION COMPLETA" cuando la cascada (pasos 0
+   a 4) está resuelta; bloque ámbar `SEL_BAD_FILL` (`E6A019`, texto en tinta) con
+   "SELECCION INCOMPLETA" mientras falte un paso. El texto va en mayúsculas y sin
+   tilde ("SELECCION", no "SELECCIÓN"): todo el texto de celda del libro evita
+   acentos (ver "SELECCION DEL MATERIAL", "Composicion nominal") para no arrastrar
    problemas de codificación fuera de Excel 365. `build_buscador_grupo` no lleva
    este semáforo: no tiene una única cascada que completar, cada bloque ya avisa
    "(elija grupo)" en su propia celda de valor.
-3. **Curva del material: línea continua, sin marcadores, del mismo azul de la
-   banda del buscador (`BLUE = 2F5597`)** — `ch.scatterStyle = "line"`, serie del
-   valor tabulado con `marker="none"` y `smooth=False` (la interpolación del
-   código es lineal — regla 3 de esta lista arriba — una curva suavizada la
-   representaría mal). El punto consultado sigue siendo un rombo rojo (`FF0000`)
-   sin línea, para distinguir el valor puntual de la curva. Aplica a
-   `finish_buscador` y a `build_buscador_grupo`.
+3. **Curva del material: línea continua, sin marcadores, en tinta (`TINTA_2`)** —
+   `ch.scatterStyle = "line"`, serie del valor tabulado con `marker="none"` y
+   `smooth=False` (la interpolación del código es lineal — regla 3 de esta lista
+   arriba — una curva suavizada la representaría mal). El punto consultado es un
+   rombo en el rojo del acento (`ROJO`) sin línea, para distinguir el valor
+   puntual de la curva. El resto de la gráfica lo estila `estilizar_chart()`:
+   papel, marco de tinta, malla en trama de 25 % y texto mono. **No se usa
+   `ch.style`**: los presets de Office traen su propia paleta de series y es justo
+   lo que este sistema no admite. Aplica a los cuatro sitios que crean gráfica.
 
 ### `DB_B31_C` / `DB_B31_CC` — el Apéndice C entero en una base por edición
 

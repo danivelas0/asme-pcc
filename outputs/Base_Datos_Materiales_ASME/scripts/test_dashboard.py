@@ -383,6 +383,121 @@ class TestPortabilidadDelDashboard:
 
 
 # ---------------------------------------------------------------------------
+# Sistema visual: un solo sustrato en las 70 hojas
+# ---------------------------------------------------------------------------
+# El libro entero va en Swiss Industrial Print (ver el bloque de tokens del
+# builder). Lo que estas pruebas fijan no es el gusto sino la CONSISTENCIA: que
+# no haya dos sistemas visuales a la vez, que es lo que pasaba mientras las tres
+# hojas del maestro conservaban los azules y el Arial de la Rev. 0.
+#
+# Se auditan los ESTILOS EFECTIVAMENTE USADOS, resueltos por su indice: recorrer
+# 2,4 millones de celdas y quedarse con sus style_id cuesta segundos, y evita el
+# falso positivo de auditar styles.xml entero -que conserva entradas heredadas
+# del maestro que ya no referencia ninguna celda-.
+PALETA = {B.PAPEL, B.PAPEL_2, B.TINTA, B.TINTA_2, B.ROJO, B.GRIS, B.GRIS_2,
+          B.VERDE, B.AMBAR, B.AMBAR_TXT}
+FUENTES_DEL_SISTEMA = {B.MONO, B.MACRO}
+
+
+def _rgb6(v):
+    """Los seis digitos de color de un rgb, sin el alfa. openpyxl devuelve
+    "FF1A1A1A" en lo que leyo del maestro y "00050505" en lo que escribio a
+    partir de una cadena de seis digitos: son el mismo color."""
+    return v[-6:].upper() if isinstance(v, str) and len(v) >= 6 else None
+
+
+@pytest.fixture(scope="module")
+def estilos_usados(wb):
+    """(estilos de celda con contenido, estilos de toda celda con formato)."""
+    con_texto, todos = set(), set()
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for c in row:
+                if not c.has_style:
+                    continue
+                todos.add(c.style_id)
+                if c.value is not None:
+                    con_texto.add(c.style_id)
+    return con_texto, todos
+
+
+class TestSistemaVisual:
+    def test_ningun_relleno_fuera_de_la_paleta(self, wb, estilos_usados):
+        _, todos = estilos_usados
+        fuera = set()
+        for sid in todos:
+            fill = wb._fills[wb._cell_styles[sid].fillId]
+            rgb = _rgb6(getattr(getattr(fill, "fgColor", None), "rgb", None))
+            if fill.patternType and rgb and rgb not in PALETA:
+                fuera.add(rgb)
+        assert fuera == set(), f"rellenos fuera de la paleta: {sorted(fuera)}"
+
+    def test_ningun_color_de_texto_fuera_de_la_paleta(self, wb, estilos_usados):
+        con_texto, _ = estilos_usados
+        fuera = set()
+        for sid in con_texto:
+            f = wb._fonts[wb._cell_styles[sid].fontId]
+            rgb = _rgb6(getattr(f.color, "rgb", None) if f.color is not None else None)
+            if rgb and rgb not in PALETA:
+                fuera.add(rgb)
+        assert fuera == set(), f"colores de texto fuera de la paleta: {sorted(fuera)}"
+
+    def test_toda_celda_con_texto_usa_una_de_las_dos_fuentes(self, wb, estilos_usados):
+        """Solo las celdas CON contenido: una celda vacia no tiene texto que
+        mostrar, y las de relleno de una banda fusionada arrastran la fuente por
+        omision del libro sin que se vea nunca."""
+        con_texto, _ = estilos_usados
+        fuera = set()
+        for sid in con_texto:
+            nombre = wb._fonts[wb._cell_styles[sid].fontId].name
+            if nombre and nombre not in FUENTES_DEL_SISTEMA:
+                fuera.add(nombre)
+        assert fuera == set(), f"fuentes fuera del sistema: {sorted(fuera)}"
+
+    def test_las_70_hojas_llevan_el_sustrato_de_papel(self, wb):
+        """El sustrato se graba al nivel de COLUMNA, no celda a celda: es lo que
+        permite papelar las 54 198 filas del volcado de la Seccion II sin
+        multiplicar el tamano del archivo. Si una hoja se quedara sin el, se
+        abriria en blanco de Excel en medio de un libro de papel."""
+        for ws in wb.worksheets:
+            dim = ws.column_dimensions.get("A")
+            assert dim is not None and dim.fill is not None, ws.title
+            assert _rgb6(getattr(dim.fill.fgColor, "rgb", None)) == B.PAPEL, ws.title
+            assert dim.font is not None and dim.font.name == B.MONO, ws.title
+
+    def test_el_aviso_de_macros_es_el_unico_relleno_rojo(self, wb):
+        """El rojo del acento marca bloqueo, y como RELLENO solo aparece en el
+        aviso de macros del Dashboard: si apareciera en mas sitios dejaria de
+        significar algo.
+
+        Basta con la celda ancla: el aviso esta fusionado a lo ancho y Excel
+        aplica a todo el rango el formato de su esquina superior izquierda.
+        """
+        rojas = [(ws.title, c.coordinate)
+                 for ws in wb.worksheets
+                 for row in ws.iter_rows(max_col=B.DASH_NCOLS)
+                 for c in row
+                 if c.fill is not None and c.fill.patternType
+                 and _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.ROJO]
+        assert rojas == [(B.DASH, f"A{B.FILA_AVISO}")]
+
+    def test_el_semaforo_conserva_sus_tres_estados(self, wb):
+        """Retonados, no eliminados: el estado de la consulta es informacion de
+        seguridad y se lee de un vistazo. Verde y ambar solo viven en el formato
+        condicional del indicador de seleccion.
+
+        El color de un formato diferencial se lee de `fgColor`: en un dxf
+        openpyxl deja `bgColor` en negro y no es el que pinta.
+        """
+        ws = wb["Buscar_B31_3"]
+        reglas = [r for rango in ws.conditional_formatting
+                  for r in rango.rules if r.dxf is not None]
+        rellenos = {_rgb6(getattr(r.dxf.fill.fgColor, "rgb", None))
+                    for r in reglas if r.dxf.fill is not None}
+        assert {B.VERDE, B.AMBAR} <= rellenos
+
+
+# ---------------------------------------------------------------------------
 # El proyecto VBA sobrevive al round-trip de openpyxl
 # ---------------------------------------------------------------------------
 class TestVba:
@@ -418,6 +533,15 @@ class TestSincroniaPythonVba:
         m = re.search(r'CELDA_AVISO\s+As\s+String\s*=\s*"([A-Z]+)(\d+)"',
                       fuente_vba["mod_nav.vba"])
         assert m and int(m.group(2)) == B.FILA_AVISO
+
+    def test_mismo_texto_de_aviso_de_macros(self, wb, fuente_vba):
+        """El VBA reescribe A4 al abrir. Si su texto no es el que grabo el
+        builder, el aviso cambia de aspecto en cuanto se abre el libro —y era
+        justo lo que pasaba con el rotulo antiguo, sin las barras ASCII—."""
+        m = re.search(r'TXT_INACTIVAS As String = _\s*\n\s*"([^"]+)"',
+                      fuente_vba["mod_nav.vba"])
+        assert m, "no se encontro TXT_INACTIVAS en mod_nav.vba"
+        assert wb[B.DASH].cell(B.FILA_AVISO, 1).value == m.group(1)
 
     def test_misma_hoja_de_inicio(self, fuente_vba):
         assert re.search(rf'HOJA_INICIO\s+As\s+String\s*=\s*"{B.DASH}"',

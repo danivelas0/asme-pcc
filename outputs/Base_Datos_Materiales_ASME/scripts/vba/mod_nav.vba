@@ -45,9 +45,15 @@ Public Const CELDA_AVISO As String = "A4"
 ' ocupa K..P con sus listas de cascada.
 Public Const COL_CLAVE_BASE As Long = 66
 
-Private Const TXT_ACTIVAS As String = "MACROS ACTIVAS - navegacion habilitada"
+' Texto y color del aviso. Van en el sistema visual del libro (Swiss Industrial
+' Print): bloque macizo con tinta encima, nunca pastel de relleno suave. El
+' verde de terminal y el rojo de aviacion son los mismos que graba el builder en
+' AVISO_ROJO_FILL / VERDE, y el texto el mismo de build_dashboard: si divergen,
+' el libro cambia de aspecto en cuanto se abre.
+Private Const TXT_ACTIVAS As String = _
+    "/// MACROS ACTIVAS - NAVEGACION HABILITADA ///"
 Private Const TXT_INACTIVAS As String = _
-    "MACROS DESHABILITADAS - habilitelas para navegar entre los motores"
+    "/// MACROS DESHABILITADAS - HABILITELAS PARA NAVEGAR ENTRE LOS MOTORES ///"
 
 ' ---- fin de las declaraciones de modulo ----------------------------------
 ' VBA exige que TODA declaracion de nivel de modulo (Const, Dim, Type, Declare)
@@ -229,8 +235,8 @@ Public Sub MarcarMacrosActivas()
     On Error Resume Next
     With ThisWorkbook.Worksheets(HOJA_INICIO).Range(CELDA_AVISO)
         .Value = TXT_ACTIVAS
-        .Font.Color = RGB(0, 97, 0)          ' 006100
-        .Interior.Color = RGB(198, 239, 206) ' C6EFCE
+        .Font.Color = RGB(5, 5, 5)           ' 050505 TINTA
+        .Interior.Color = RGB(74, 246, 38)   ' 4AF626 VERDE
     End With
 End Sub
 
@@ -239,8 +245,8 @@ Public Sub MarcarMacrosInactivas()
     On Error Resume Next
     With ThisWorkbook.Worksheets(HOJA_INICIO).Range(CELDA_AVISO)
         .Value = TXT_INACTIVAS
-        .Font.Color = RGB(156, 0, 6)         ' 9C0006
-        .Interior.Color = RGB(255, 199, 206) ' FFC7CE
+        .Font.Color = RGB(244, 244, 240)     ' F4F4F0 PAPEL
+        .Interior.Color = RGB(230, 25, 25)   ' E61919 ROJO
     End With
 End Sub
 
