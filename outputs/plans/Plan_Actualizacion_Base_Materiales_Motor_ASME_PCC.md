@@ -4,6 +4,35 @@
 **Documento:** PLAN-DB-MAT-001 · Rev. 0
 **Fecha:** 2026-09-06
 **Autor:** Daniel Velásquez
+
+---
+
+## ✅ EJECUTADO — Fases 0 a 6. Fase 7 cerrada sin ejecutar (2026-09-08)
+
+Las bases, el motor de *lookup*, las propiedades, los buscadores y la guía están
+en el entregable vigente, que ya va por la **Rev. 4**
+(`outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`, 43 hojas). El protocolo de
+aceptación del §10 vive en `verificar.py` y devuelve **0 fallos**.
+
+**Fase 7 — migrar las hojas DB a un libro externo: se cierra sin ejecutar.** Era
+condicional («si el peso del libro lo justifica») y no lo justifica: el
+entregable pesa **6,63 MB** con 43 hojas, y el propio §0 del plan estimaba
+3–6 MB como aceptable para un motor maestro. Además, sacar las bases a un
+archivo referenciado reintroduciría justo lo que el §0.1 descartaba —enlaces que
+se rompen al mover o compartir el libro, sobre rutas de Google Drive
+Streaming— y hoy además rompería la capa de navegación VBA, que oculta las bases
+dentro del propio archivo. Si algún día se reabre, el esquema no cambia.
+
+**Dos desviaciones respecto de lo que el plan preveía**, ambas documentadas en
+`CLAUDE.md` y en la nota de versión:
+
+- El §6 proponía buscadores con **funciones de matriz dinámica**
+  (`FILTER`/`XLOOKUP`/`SORT`). Se descartó en la Rev. 2: no devolvían resultados
+  y ataban el libro a Excel 365. Todo es `INDEX`/`MATCH`/`OFFSET`/`COUNTIF` con
+  cascada de listas desplegables, y `verificar.py` §5 falla si reaparece una.
+- El §3.4 daba la II-D en U.S. Customary por conversión etiquetada. No hizo
+  falta: la edición nativa está en `resources/` y **SI y US son extracciones
+  independientes**, nunca conversiones (regla 9 del proyecto).
 **Ámbito:** Reemplazar la tabla de esfuerzos admisibles embebida (6 aceros al carbono, T ≤ 40 °C) por dos bases de datos de materiales completas y dependientes de temperatura —una por código— que alimenten por *lookup* a todos los motores de cálculo del libro.
 **Unidades:** SI (MPa, mm, °C). **Fuente única de verdad:** carpeta `resources/` (regla §5 de `knowledge/claude.md`).
 

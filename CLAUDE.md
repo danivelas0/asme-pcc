@@ -67,6 +67,13 @@ D–Z y las dos ediciones de II-D. `verificar_seccion_ii.py` audita **solo** las
 partes A, B y C: la II-D se le quitó para no mantener dos scripts con dos
 convenciones.
 
+**Los dos necesitan los PDF y devuelven distinto de 0 sin ellos.** No es un
+fallo: los PDF no se versionan (copyright de ASME) y sin `--pdfs` cada fuente
+sale como `REVISAR`, que significa «no comprobado», no «mal». Solo los puede
+correr en verde quien tenga los PDF en disco. Esto **no** afecta a
+`verificar.py`, que audita el libro contra los JSON y sí corre en cualquier
+copia del repositorio.
+
 ### Sección II, partes A, B y C — cómo está troceada
 
 379 especificaciones de material (SA-, SB-, SFA-), una por archivo en
@@ -132,6 +139,12 @@ cd outputs\Base_Datos_Materiales_ASME\scripts
 # Activa "Confiar en el acceso al modelo de objetos de proyectos de VBA" unos
 # segundos y lo restaura, verificando el resultado. Si avisa de que no pudo
 # restaurarlo, desactivelo a mano en el Centro de confianza.
+#
+# El script restaura el valor que ENCUENTRA, no el seguro: si una corrida
+# anterior murio sin restaurarlo, lo deja encendido y lo advierte por stderr.
+# Comprobarlo despues, y apagarlo si quedo a 1:
+#   Get-ItemProperty HKCU:\Software\Microsoft\Office\16.0\Excel\Security AccessVBOM
+#   Set-ItemProperty HKCU:\Software\Microsoft\Office\16.0\Excel\Security AccessVBOM 0
 python make_vba_seed.py
 
 # Solo si se repone la extraccion de II-D: notas de grupo de TM-1 / TE-1.
@@ -156,11 +169,17 @@ python completar_apendice_c.py --resources ..\..\..\resources
 python completar_apendice_b.py --resources ..\..\..\resources
 python completar_apendice_a.py --resources ..\..\..\resources
 
-# Solo si se repone la extraccion de las tablas del cuerpo del B31.3.
-# Declara cual de los dos archivos de la Tabla 302.3.3-1 es el canonico y
-# recupera sus rotulos de columna del para. 302.3.3(c). Idempotente, solo
-# metadatos. El builder ABORTA si no se ha corrido.
+# Solo si se repone la extraccion de las tablas del cuerpo del B31.3. Los dos
+# son idempotentes y solo escriben metadatos.
+#   302_3_3: declara el canonico del par de la Tabla 302.3.3-1, recupera sus
+#            rotulos de columna del para. 302.3.3(c) y deja escrito, DENTRO de
+#            table_302_3_4_1.json, el hueco de esa tabla. El builder ABORTA si
+#            no se ha corrido.
+#   canonicas: resuelve los 32 pares de doble prefijo de CHAPTERS/tables. Si
+#            algun par deja de encajar en una de las cinco clases mecanicas, no
+#            escribe nada y lo dice.
 python completar_tabla_302_3_3.py --resources ..\..\..\resources
+python declarar_tablas_canonicas.py --resources ..\..\..\resources
 
 python build_db_materiales.py --resources ..\..\..\resources `
     --in ..\..\..\templates\maestro_con_macros.xlsm `
