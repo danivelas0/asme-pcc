@@ -220,9 +220,9 @@ Cada hoja se audita contra las Notas de SU edicion: no numeran igual, asi que cr
 |---|---:|
 | AUTO (composicion en Nota) | 2594 |
 | AUTO (UNS exacto) | 2584 |
-| SIN MAPEO | 1310 |
+| SIN MAPEO | 1256 |
 | AUTO (composicion via UNS en otra tabla) | 386 |
-| VALIDADO POR INGENIERO | 34 |
+| VALIDADO POR INGENIERO | 88 |
 
 Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
 

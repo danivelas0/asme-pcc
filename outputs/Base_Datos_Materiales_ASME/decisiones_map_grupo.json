@@ -19,6 +19,56 @@
       "fecha": "2026-09-06",
       "_filas_afectadas": 17,
       "_nota": "Interpretacion de codigo, no lectura literal. El estado de la fila lo declara como decision, no como AUTO."
+    },
+    {
+      "uns": "K41545",
+      "grupo_tm": "Material Group E",
+      "grupo_te": "Coefficients for 5Cr-1Mo and 29Cr-7Ni-2Mo-N Steels",
+      "justificacion": "El libro asocia a este UNS dos 'composiciones' distintas: '5Cr-1/2Mo' (6 de las 7 filas de origen en el Apendice A, US Customary: A335 P5, A369 FP5, A387 Gr.5 Cl.1/2, A234 WP5, A182 F5) y '5Cr-1/2Mo A387 Gr. 5 Cl. 1' (1 fila, spec A691). La segunda no es una composicion distinta: es la costura de paginas enfrentadas del Apendice A-1C (misma clase de defecto que corrigio a66f4dd para otras filas de esa tabla) — el rotulo de grado 'A387 Gr. 5 Cl. 1' quedo pegado a la composicion en esa unica fila, mientras las otras 6 imprimen '5Cr-1/2Mo' limpio. No hay dos materiales: hay una composicion real, '5Cr-1/2Mo', miembro literal de la Nota (5) de TM-1 (Material Group E, '5-9Cr steels'). Dilatacion: TE-1 publica columna nombrada 'Coefficients for 5Cr-1Mo and 29Cr-7Ni-2Mo-N Steels', sin condicionar por grado ni tratamiento.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 18,
+      "_nota": "Ambiguedad de UNS resuelta por evidencia interna (fila limpia del mismo UNS en el mismo Apendice A), no por composicion elegida a criterio."
+    },
+    {
+      "uns": "K90941",
+      "grupo_tm": "Material Group E",
+      "grupo_te": "Coefficients for 9Cr-1Mo Steels (Including Grades 9, 91, 911, and 92)",
+      "justificacion": "El libro asocia a este UNS dos 'composiciones': '9Cr-1Mo' (5 de las 6 filas de origen: A335 P9, A369 FP9, A387 Gr.9 Cl.1, A234 WP9, A182 F9) y '9Cr-1Mo A387 Gr. 9 Cl. 1' (1 fila, spec A691). Mismo defecto de costura de paginas que K41545: el rotulo de grado se pego a la composicion en la fila de A691. La composicion real es '9Cr-1Mo', que cae dentro de la Nota (5) de TM-1 ('9Cr-Mo, including variations thereof', Material Group E) — el mismo fundamento normativo que sostiene la decision previa de '9Cr-1Mo-V'. Dilatacion: todas las filas de este UNS son Grado 9 (P9, FP9, F9, WP9, 9CR — ninguna es 91/911/92, que tienen UNS propios ya resueltos por la decision de 9Cr-1Mo-V), y TE-1 publica columna 'Coefficients for 9Cr-1Mo Steels (Including Grades 9, 91, 911, and 92)' que cubre el Grado 9 explicitamente.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 12,
+      "_nota": "Ambiguedad de UNS resuelta por evidencia interna, no por composicion elegida a criterio. Distinto UNS del ya decidido 9Cr-1Mo-V (K90901): no lo sustituye ni lo contradice."
+    },
+    {
+      "uns": "K11820",
+      "grupo_tm": "Material Group A",
+      "grupo_te": "Group 1",
+      "justificacion": "El libro asocia a este UNS dos 'composiciones': 'C-1/2Mo' (fila limpia, spec A204 Gr. A) y 'A' (2 filas, specs A672/A691). 'A' no es una composicion: es el rotulo de Tipo/Grado 'A' de SA-204, que en la costura de paginas del Apendice A-1C quedo escrito en la columna de composicion en vez del grado. La composicion real es 'C-1/2Mo', miembro literal de la Nota (1) de TM-1 (Material Group A) y de la Nota (1)/Grupo 1 de TE-1.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 8,
+      "_nota": "Ambiguedad de UNS resuelta por evidencia interna (fila limpia del mismo UNS), no por composicion elegida a criterio."
+    },
+    {
+      "uns": "K12020",
+      "grupo_tm": "Material Group A",
+      "grupo_te": "Group 1",
+      "justificacion": "Mismo defecto que K11820: el libro asocia a este UNS 'C-1/2Mo' (fila limpia, spec A204 Gr. B) y 'B' (2 filas, specs A672/A691) — 'B' es el rotulo de Tipo/Grado de SA-204 pegado a la columna de composicion por la misma costura de paginas del Apendice A-1C. La composicion real es 'C-1/2Mo', miembro literal de la Nota (1) de TM-1 (Material Group A) y de la Nota (1)/Grupo 1 de TE-1.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 8,
+      "_nota": "Ambiguedad de UNS resuelta por evidencia interna (fila limpia del mismo UNS), no por composicion elegida a criterio."
+    },
+    {
+      "uns": "K12320",
+      "grupo_tm": "Material Group A",
+      "grupo_te": "Group 1",
+      "justificacion": "El libro asocia a este UNS 'C-1/2Mo' (2 filas limpias: A672 L75, A204 Gr. C) y 'C-1/2Mo A204 Gr..' (1 fila, spec A691) — la misma costura de paginas del Apendice A-1C que en K41545/K90941/K11820/K12020, con el rotulo de grado pegado a la composicion. La composicion real es 'C-1/2Mo', miembro literal de la Nota (1) de TM-1 (Material Group A) y de la Nota (1)/Grupo 1 de TE-1.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 8,
+      "_nota": "Ambiguedad de UNS resuelta por evidencia interna (dos filas limpias del mismo UNS), no por composicion elegida a criterio."
     }
   ]
 }

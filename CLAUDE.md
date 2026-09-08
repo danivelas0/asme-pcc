@@ -438,10 +438,10 @@ Estado por hoja (3 454 filas cada una):
 | AUTO (UNS exacto) | 1 292 | UNS impreso en TM-1…TM-5 |
 | AUTO (composición en Nota o columna) | 1 297 | Nota, o columna nombrada de TE-1, citada en la propia fila |
 | AUTO (composición vía UNS en otra tabla) | 193 | el código imprime esa composición para el mismo UNS en otra de sus tablas; el UNS identifica el material de forma unívoca |
-| VALIDADO POR INGENIERO | 17 | `decisiones_map_grupo.json`; hoy solo el 9Cr-1Mo-V |
-| SIN MAPEO | 655 | II-D no publica el dato; cálculo bloqueado |
+| VALIDADO POR INGENIERO | 44 | `decisiones_map_grupo.json`; 6 decisiones (ver abajo) |
+| SIN MAPEO | 628 | II-D no publica el dato; cálculo bloqueado |
 
-**Cobertura:** 2 451 filas con módulo E y 1 325 con dilatación, de 3 454. Una
+**Cobertura:** 2 478 filas con módulo E y 1 352 con dilatación, de 3 454. Una
 fila puede tener uno y no el otro — TM-1 y TE-1 no enumeran los mismos
 materiales — y la columna `Motivo` lo dice fila a fila.
 
@@ -450,8 +450,9 @@ en el JSON, que lo validado por una persona se declare como tal y que toda
 composición prestada diga de dónde salió.
 
 **Vía de retorno de las decisiones.** `Revision_MAP_Grupo.md` lista las
-**157 decisiones distintas** (por composición, o por UNS cuando la fila no
-imprime composición). Para que lleguen al cálculo, copiar
+**113 decisiones distintas** que quedan abiertas (de 118, tras las 6 ya
+resueltas — ver abajo), por composición o por UNS cuando la fila no
+imprime composición. Para que lleguen al cálculo, copiar
 `decisiones_map_grupo.plantilla.json` a `decisiones_map_grupo.json` y rellenarlo:
 esas filas pasan al estado `VALIDADO POR INGENIERO`, **siempre separado de las
 AUTO**. Una decisión **nunca sobreescribe** un grupo que el código sí asigna: el
@@ -480,23 +481,49 @@ del título las designaciones que enumera. Cuando el título condiciona por
 **grado** —el caso de los 9Cr-1Mo— la comprobación sigue siendo literal, porque
 el grado está impreso en la propia fila.
 
-### La única decisión tomada, y por qué
+### Las decisiones tomadas, y por qué
 
-`decisiones_map_grupo.json` contiene **una**: `9Cr-1Mo-V` (Grado 91 / P91 / F91 /
+`decisiones_map_grupo.json` contiene **seis**.
+
+La primera: `9Cr-1Mo-V` (Grado 91 / P91 / F91 /
 T91, 17 filas) → `Material Group E` para el **módulo E**. TM-1 **no** lo asigna
 literalmente —ninguna de sus Notas nombra ese material ni el UNS K90901— y se
 aplica la Nota (5), *«9Cr–Mo, including variations thereof»*. Apoyos: Parte A
 (K90901 es 9Cr-1Mo con V, Nb y N), Parte C SFA-5.5 §A7.2.3.1 (describe el
 electrodo EB91 como *«a 9% Cr–1% Mo electrode modified with niobium and
 vanadium»*) y la propia TE-1, que agrupa el Grado 91 con los 9Cr-1Mo.
+**Solo afecta a E**: la dilatación la da la columna impresa de TE-1, que nombra
+el Grado 91, y por eso `grupo_te` va vacío en esta decisión.
 
-**Solo afecta a E.** La dilatación la da la columna impresa de TE-1, que nombra
-el Grado 91, y por eso `grupo_te` va vacío en la decisión.
+Las otras cinco resuelven UNS que el libro asociaba con **más de una**
+composición —el caso que el propio motor se niega a decidir por cuenta propia
+(`_composicion_prestada`)— pero donde las candidatas no son en realidad dos
+materiales distintos: son la misma composición, con una de sus apariciones
+rota por la costura de páginas enfrentadas del Apéndice A-1C (la misma clase
+de defecto que ya corrigió `a66f4dd` en otras filas de esa tabla). La
+evidencia es interna: el mismo UNS trae, en otra fila del mismo Apéndice A,
+la composición limpia.
 
-Las otras **118** no admiten propuesta: su composición no figura en ninguna Nota
-ni columna, así que II-D no publica E ni dilatación y **lo correcto es que sigan
-bloqueadas**. Verificado que ninguna coincide con una nota con los elementos en
-otro orden.
+| UNS | Candidatas del libro | Composición real | Grupo E (TM) | Grupo dilatación (TE) | Filas |
+|---|---|---|---|---|---:|
+| `K41545` | `5Cr-1/2Mo` · `5Cr-1/2Mo A387 Gr. 5 Cl. 1` | `5Cr-1/2Mo` (Nota (5), Grupo E) | Material Group E | Columna `5Cr-1Mo and 29Cr-7Ni-2Mo-N Steels` | 18 |
+| `K90941` | `9Cr-1Mo` · `9Cr-1Mo A387 Gr. 9 Cl. 1` | `9Cr-1Mo` (Nota (5), Grupo E) | Material Group E | Columna `9Cr-1Mo Steels (Including Grades 9, 91, 911, and 92)` — todas las filas son Grado 9 | 12 |
+| `K11820` | `C-1/2Mo` · `A` | `C-1/2Mo` (Nota (1), Grupo A) — «A» es el Tipo/Grado de SA-204 pegado por la costura | Material Group A | Group 1 | 8 |
+| `K12020` | `C-1/2Mo` · `B` | `C-1/2Mo` — mismo defecto, «B» es Tipo/Grado de SA-204 | Material Group A | Group 1 | 8 |
+| `K12320` | `C-1/2Mo` · `C-1/2Mo A204 Gr..` | `C-1/2Mo` — misma costura, grado pegado a la composición | Material Group A | Group 1 | 8 |
+
+`K90901` (Grado 91) y `K90941` (Grado 9) son UNS distintos: esta decisión no
+sustituye ni contradice la del 9Cr-1Mo-V.
+
+Las **113** restantes no admiten propuesta: su composición no figura en
+ninguna Nota ni columna (o el UNS no aparece con composición en ningún otro
+sitio del libro), así que II-D no publica E ni dilatación y **lo correcto es
+que sigan bloqueadas**. Verificado que ninguna coincide con una nota con los
+elementos en otro orden, y que ninguna de las ambigüedades de UNS restantes
+—`S41000`/`J91150` (`12Cr` vs `13Cr`), `S41003` (`12Cr` vs `12Cr-1Ni`),
+`G41400` (cuatro composiciones distintas)— es el mismo artefacto de costura:
+sus candidatas son composiciones reales y distintas impresas en filas limpias
+del Apéndice A, así que elegir entre ellas sí sería criterio no respaldado.
 
 **Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
 el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en
