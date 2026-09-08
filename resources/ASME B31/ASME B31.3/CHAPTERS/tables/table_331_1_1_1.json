@@ -154,5 +154,17 @@
    "minimum_holding_time_at_temperature_for_control_thickness_up_to_50_mm_2_0_in": "In accordance with WPS",
    "minimum_holding_time_at_temperature_for_control_thickness_over_50_mm_2_0_in": "In accordance with WPS"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_331_1_1_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_331_1_1_1.json",
+   "sha256": "ba4001e10e8bf3aca7b40511c346d83f6d4f9f380a4120ad0d9f2aa84efe0b81"
+  }
+ }
 }

@@ -249,5 +249,17 @@
    "788_1_450": null,
    "816_1_500": null
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_302_3_5_1.json",
+  "clase": "FILAS_RECOMPUESTAS",
+  "motivo": "el texto de cada COLUMNA es identico caracter a caracter; el canonico trae menos filas porque reintegro, dentro de su columna, las que el corte de linea habia partido",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_302_3_5_1.json",
+   "sha256": "acf5b63e27745c1df57935abca4e0c0e1632946d4e8698fb92a7c3b4200c4692"
+  }
+ }
 }

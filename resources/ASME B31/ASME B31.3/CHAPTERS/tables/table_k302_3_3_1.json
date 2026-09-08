@@ -56,5 +56,17 @@
    "acceptable_severity_level": 1,
    "acceptable_discontinuity_categories": "A, B, C"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_k302_3_3_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_k302_3_3_1.json",
+   "sha256": "de32fe432a845cf93c481510276c28fccfe2987505ef4ee71c9ff21625de506a"
+  }
+ }
 }

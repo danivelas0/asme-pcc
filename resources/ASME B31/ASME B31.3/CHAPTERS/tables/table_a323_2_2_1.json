@@ -45,5 +45,17 @@
    "column_a_at_or_above_listed_minimum_temperature": null,
    "column_b_below_listed_minimum_temperature": "An unlisted material shall conform to a published specification. Where composition, properties, and product form are comparable to those of a listed material, requirements for the corresponding listed material shall be met. Other unlisted materials shall be qualified as required in Column B."
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_a323_2_2_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_a323_2_2_1.json",
+   "sha256": "ccc4eb0a3719586a54d2344716a11ef868bc60f69187b7fb53a3b014d2f548e2"
+  }
+ }
 }

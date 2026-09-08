@@ -167,5 +167,12 @@
    "type_of_weld": null,
    "additional_limitations_required_for_exemption_from_pwht": "No exemptions from PWHT"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_331_1_3_1.json",
+  "clase": "IDENTICO",
+  "motivo": "duplicado por doble prefijo de la extraccion. los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

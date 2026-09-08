@@ -972,3 +972,80 @@ class TestFactoresDeCalidad:
     def test_el_contrato_de_columnas_se_mantiene(self):
         assert B.FACT_COLS[:8] == B.STRESS_COLS[:8]
         assert B.FACT_COLS[-1] == "n_pts" and B.CF["n_pts"] == B.N_IDENT_F
+
+
+# ---------------------------------------------------------------------------
+# El doble prefijo de CHAPTERS/tables y el hueco de la Tabla 302.3.4-1
+# ---------------------------------------------------------------------------
+# 66 archivos que son 32 pares, y en 11 de ellos el contenido DIFIERE. Citar "la
+# Tabla X de resources/" sin decir cual de los dos archivos no es auditable.
+class TestTablasCanonicas:
+
+    RUTA = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
+            "ASME B31.3" / "CHAPTERS" / "tables")
+
+    @classmethod
+    def _json(cls, nombre):
+        import json
+        with open(cls.RUTA / nombre, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    @classmethod
+    def _pares(cls):
+        import declarar_tablas_canonicas as D
+        return D.pares_de(cls.RUTA)
+
+    def test_los_32_pares_estan_declarados(self):
+        import declarar_tablas_canonicas as D
+        pares = self._pares()
+        assert len(pares) == 32
+        for simple, doble in pares:
+            dec = self._json(simple).get("canonical_declaration")
+            assert dec, simple
+            assert dec["archivo_canonico"] == simple
+            assert dec["clase"] in D.CLASES
+            assert dec["duplicado_descartado"]["archivo"] == doble
+            assert len(dec["duplicado_descartado"]["sha256"]) == 64
+            sup = self._json(doble).get("superseded_by")
+            assert sup and sup["archivo"] == simple, doble
+
+    def test_el_criterio_sigue_resolviendo_todos_los_pares(self):
+        # Si una reextraccion futura cambia uno de los dos archivos de un par de
+        # forma que el criterio mecanico ya no lo resuelva, esto lo detiene antes
+        # de que nadie cite el equivocado.
+        import declarar_tablas_canonicas as D
+        for simple, doble in self._pares():
+            clase = D.clasificar(self._json(simple), self._json(doble))
+            assert clase is not None, f"{simple} vs {doble}"
+            assert clase == self._json(simple)["canonical_declaration"]["clase"]
+
+    def test_las_dos_herramientas_no_discrepan(self):
+        # completar_tabla_302_3_3.py y declarar_tablas_canonicas.py afirman el
+        # mismo hecho sobre el mismo par: tienen que afirmarlo igual.
+        d = self._json("table_302_3_3_1.json")
+        assert (d["extraction_amendments"]["archivo_canonico"]
+                == d["canonical_declaration"]["archivo_canonico"]
+                == "table_302_3_3_1.json")
+
+    def test_el_hueco_de_la_302_3_4_1_esta_declarado_en_su_archivo(self):
+        # El motor de A-3 lo dice, pero quien abra el JSON tiene que verlo sin
+        # salir de el: un hueco que solo se nombra en la herramienta que lo
+        # consume se cita a ciegas desde cualquier otra.
+        d = self._json("table_302_3_4_1.json")
+        g = d.get("extraction_gap")
+        assert g, "table_302_3_4_1.json no declara su hueco"
+        for k in ("que_falta", "sintoma", "que_si_esta", "consecuencia",
+                  "como_cerrarlo"):
+            assert g.get(k), k
+        assert "302.3.4(b)" in g["consecuencia"]
+
+    def test_el_sintoma_del_hueco_sigue_siendo_cierto(self):
+        # El dia que la extraccion se reponga bien, esta prueba falla y avisa de
+        # que hay que retirar la declaracion de hueco y construir el bloque de
+        # incremento de Ej de verdad.
+        import re
+        d = self._json("table_302_3_4_1.json")
+        cab = " ".join(str((c or {}).get("header") or "") for c in d["columns"])
+        assert re.search(r"Factor,\s*Ej\s*0\.\d", cab), (
+            "la Tabla 302.3.4-1 ya no trae los valores dentro del encabezado: "
+            "revise si el hueco sigue existiendo")

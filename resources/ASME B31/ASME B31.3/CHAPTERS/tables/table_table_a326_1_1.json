@@ -386,5 +386,12 @@
    "title": "Taper Pipe Threads 60° for Thermoplastic Pipe and Fittings",
    "group": "Miscellaneous"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_a326_1_1.json",
+  "clase": "CONTINUACION_NORMALIZADA",
+  "motivo": "duplicado por doble prefijo de la extraccion. ademas de reintegrar las filas partidas, el canonico quita el marcador (Cont'd) que el codigo reimprime al pasar de folio; es artefacto de pagina, no contenido. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

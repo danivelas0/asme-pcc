@@ -229,5 +229,17 @@
    "required_minimum_temperature_deg_c": 10,
    "required_minimum_temperature_deg_f": 50
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_330_1_1_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_330_1_1_1.json",
+   "sha256": "83d318f652a673515ce5eff5ca191c7ac08bbe350060cb5b08f3844ad359acb5"
+  }
+ }
 }

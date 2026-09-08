@@ -65,13 +65,13 @@
   }
  ],
  "extraction_amendments": {
-  "fecha": "2026-09-07",
+  "fecha": "2026-09-08",
   "script": "completar_tabla_302_3_3.py",
   "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera: los seis factores Ec y sus combinaciones de examen se conservan tal como estaban cargados (regla 9 del proyecto).",
   "archivo_canonico": "table_302_3_3_1.json",
   "duplicado_descartado": {
    "archivo": "table_table_302_3_3_1.json",
-   "sha256": "201ca426567f41ea280731b7e5327264b1d947933d76a0af12ab50d0668d922d",
+   "sha256": "2639a7f5ea871e4319ba3713e477208d718ee61ee62e00efa56261f974c79f39",
    "motivo": "mismo contenido, prefijo 'table_' aplicado dos veces por la extraccion. Se cita SIEMPRE el de prefijo simple."
   },
   "encabezados": "columns[].header sigue en null porque el impreso no se capturo y el PDF del codigo no esta en el repositorio. Los rotulos van en header_derivado, con la frase del codigo de la que salen en fuente_derivacion.",
@@ -84,9 +84,21 @@
   },
   "censo_doble_prefijo": {
    "pares": 32,
-   "identicos": 20,
-   "distintos": 12,
+   "identicos": 0,
+   "distintos": 32,
    "criterio": "el archivo de prefijo SIMPLE es la extraccion recompuesta; el de prefijo doble conserva los fragmentos del corte de linea. Solo se declara el par de la 302.3.3-1."
+  }
+ },
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_302_3_3_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_302_3_3_1.json",
+   "sha256": "2639a7f5ea871e4319ba3713e477208d718ee61ee62e00efa56261f974c79f39"
   }
  }
 }

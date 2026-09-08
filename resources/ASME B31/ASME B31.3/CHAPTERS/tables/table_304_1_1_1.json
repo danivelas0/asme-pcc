@@ -122,5 +122,17 @@
    "649_1_200": 0.4,
    "677_1_250_and_above": 0.4
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_304_1_1_1.json",
+  "clase": "FILAS_RECOMPUESTAS",
+  "motivo": "el texto de cada COLUMNA es identico caracter a caracter; el canonico trae menos filas porque reintegro, dentro de su columna, las que el corte de linea habia partido",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_304_1_1_1.json",
+   "sha256": "f4d098957de429f0047f79ef44109d1e347e71c7709e367e04b60d42c2c629ed"
+  }
+ }
 }

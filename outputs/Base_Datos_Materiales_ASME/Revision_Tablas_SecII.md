@@ -28,6 +28,19 @@ Se dan dos columnas de porcentaje. La segunda es la que importa: una banda o un 
 
 **Comprobacion sin perdida: 0 filas en las que la concatenacion de celdas no coincide caracter a caracter con la de sus `Line` de origen.** Cero es la unica cifra aceptable: significa que esta capa reparte el texto impreso y no anade ni quita nada.
 
+## Lo que esta capa NO garantiza
+
+La comprobacion sin perdida demuestra que la tabulacion es una reparticion del texto que trae el JSON. **No demuestra que ese JSON reproduzca el PDF**: eso lo mide el extractor contra la capa de texto del propio PDF y lo declara en su `meta.json`. Se copia aqui porque acota lo que significa todo lo demas — una tabla puede estar perfectamente localizada y tabulada y aun asi haber perdido texto aguas arriba, y las paginas apaisadas son justo las tablas anchas de aleacion y propiedades mecanicas.
+
+| Parte | Cobertura declarada | Detalle del propio drop |
+|---|---|---|
+| `bpvc_ii_a_1` | 97.0% | The shortfall is running headers/footers (dropped by design) and lettering drawn inside figures. The 41 landscape pages average 88.1% against 97.5% for the 762 upright pages; the weakest single spec is SA-240/SA-240M at 87%. |
+| `bpvc_ii_a_2` | 96.8% | The shortfall is running headers/footers (dropped by design) and lettering drawn inside figures. The 34 landscape pages average 85.7% against 97.1% for the 909 upright pages; the weakest single spec is SA-705/SA-705M at 89%. |
+| `bpvc_ii_b` | 95.2% | The shortfall is running headers/footers (dropped by design) and lettering drawn inside figures and wide tables. Discounting the running header, the 1,239 upright pages reach 98.1% and the 80 landscape pages 74.0%; the weakest specifications are the SF- fastener specs and SB-626, around 88%. |
+| `bpvc_ii_c` | 95.5% | The shortfall is running headers/footers (dropped by design) and lettering drawn inside figures and wide tables. Discounting the running header, the 1,061 upright pages reach 98.5% and the 92 landscape pages 91.2%; the weakest specification is SFA-5.30/SFA-5.30M at 91%. |
+
+**Para valores leidos de esas tablas, el PDF manda.**
+
 ## Huecos declarados (no reparables sin el PDF)
 
 | Hueco | Bloques |

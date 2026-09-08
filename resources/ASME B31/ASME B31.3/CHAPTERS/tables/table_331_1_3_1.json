@@ -167,5 +167,17 @@
    "type_of_weld": null,
    "additional_limitations_required_for_exemption_from_pwht": "No exemptions from PWHT"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_331_1_3_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_331_1_3_1.json",
+   "sha256": "4dd6f5017cfb260b72a270f4719db8d0d189640152dbb6ada1686e7bbda6d4ee"
+  }
+ }
 }

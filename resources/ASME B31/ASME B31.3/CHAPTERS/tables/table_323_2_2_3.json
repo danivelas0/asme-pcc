@@ -346,5 +346,17 @@
    "reduction_in_exemption_temperature_deg_c_2": 120,
    "reduction_in_exemption_temperature_deg_f_2": 217
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_323_2_2_3.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_323_2_2_3.json",
+   "sha256": "ac27486b5cc02bc40ea7362d99f6edd3ce4130c24a48c030e924facedda2e5d7"
+  }
+ }
 }

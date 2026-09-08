@@ -56,5 +56,12 @@
    "acceptable_severity_level": 1,
    "acceptable_discontinuity_categories": "A, B, C"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_k302_3_3_1.json",
+  "clase": "IDENTICO",
+  "motivo": "duplicado por doble prefijo de la extraccion. los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

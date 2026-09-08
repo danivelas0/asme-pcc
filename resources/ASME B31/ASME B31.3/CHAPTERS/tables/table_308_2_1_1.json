@@ -49,5 +49,17 @@
    "maximum_flange_size_dn": 200,
    "maximum_flange_size_nps": 8
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_308_2_1_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_308_2_1_1.json",
+   "sha256": "e428f76896c9b1cc4cc4a610207662671664919a263bbe9c366473cf5ab36525"
+  }
+ }
 }

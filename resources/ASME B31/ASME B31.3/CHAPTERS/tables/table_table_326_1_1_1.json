@@ -526,5 +526,12 @@
    "title": "Standard for Fire Hose Connections",
    "group": "Miscellaneous (Cont’d)"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_326_1_1_1.json",
+  "clase": "ETIQUETA_DE_GRUPO_NO_REPETIDA",
+  "motivo": "duplicado por doble prefijo de la extraccion. ademas de lo anterior, al fusionar una fila partida la etiqueta de grupo que esa fila repetia pasa de N a N-1 repeticiones. El texto de cada columna coincide colapsando las repeticiones consecutivas: no se pierde ningun dato, solo una copia de un rotulo que el codigo reimprime en cada fila. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

@@ -77,9 +77,12 @@ CANONICO = "table_302_3_3_1.json"
 DUPLICADO = "table_table_302_3_3_1.json"
 TABLA_EJ = "table_302_3_4_1.json"
 
-# Claves que escribe este script. Se ignoran al comparar los dos archivos del
-# par, para que una segunda corrida no crea que el contenido ha cambiado.
-CLAVES_PROPIAS = ("extraction_amendments", "superseded_by")
+# Claves que escribe este script, mas la que escribe declarar_tablas_canonicas.py
+# sobre los 32 pares de la carpeta -este par entre ellos-. Se ignoran al comparar
+# los dos archivos, para que una segunda corrida, o la del otro script, no hagan
+# creer que el contenido ha cambiado.
+CLAVES_PROPIAS = ("extraction_amendments", "superseded_by", "canonical_declaration",
+                  "extraction_gap")
 CLAVES_COL_PROPIAS = ("header_derivado", "fuente_derivacion")
 
 # El parrafo del codigo del que se derivan los dos rotulos. Si el texto de
@@ -299,7 +302,42 @@ def main(argv=None):
     }
     ruta_dup.write_text(json.dumps(dup, ensure_ascii=False, indent=1),
                         encoding="utf-8")
-    print(f"\nEscritos {ruta_can.name} y {ruta_dup.name}.")
+    escritos = [ruta_can.name, ruta_dup.name]
+
+    # El hueco de la Tabla 302.3.4-1 se declara DENTRO de su propio archivo, no
+    # solo en el motor: quien abra table_302_3_4_1.json tiene que ver, sin salir
+    # de el, que su cuerpo no esta y por que. Un hueco que solo se nombra en la
+    # herramienta que lo consume se cita a ciegas desde cualquier otra.
+    if ruta_ej.is_file() and ej_utilizable is False:
+        ej = json.loads(ruta_ej.read_text(encoding="utf-8"))
+        ej["extraction_gap"] = {
+            "fecha": hoy,
+            "script": "completar_tabla_302_3_3.py",
+            "que_falta": "el CUERPO de la tabla. Las filas se colapsaron dentro "
+                         "de los encabezados de columna y `rows` solo conserva "
+                         "dos fragmentos sueltos.",
+            "sintoma": "el encabezado de la columna del factor contiene los "
+                       "propios valores: 'Factor, Ej 0.60 [Note (1)] 0.85 0.80 "
+                       "0.90 1.00'. Es la comprobacion que hace este script.",
+            "que_si_esta": "los encabezados con el texto crudo de las columnas "
+                           "-tipo de junta, tipo de costura y examen- y la Nota "
+                           "(1), que prohibe incrementar el factor para las "
+                           "juntas 1 y 2.",
+            "consecuencia": "no se puede ofrecer el factor Ej incrementado del "
+                            "para. 302.3.4(b). Buscar_Ej_A3 declara el hueco, "
+                            "transcribe el parrafo y la Nota (1) y remite al "
+                            "folio impreso; no aproxima ningun valor.",
+            "como_cerrarlo": "hace falta el folio impreso de esta tabla -pagina "
+                             f"{'-'.join(str(p) for p in ej.get('pdf_pages') or [])} "
+                             "del PDF del codigo- o su OCR estructurado, como se "
+                             "hizo con el Apendice C. Ni el PDF de los capitulos "
+                             "ni su OCR estan en el repositorio.",
+        }
+        ruta_ej.write_text(json.dumps(ej, ensure_ascii=False, indent=1),
+                           encoding="utf-8")
+        escritos.append(ruta_ej.name)
+
+    print("\nEscritos " + ", ".join(escritos) + ".")
     return 0
 
 

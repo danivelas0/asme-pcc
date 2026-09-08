@@ -186,5 +186,12 @@
    "column_b_other_components_fittings_etc": "(2) The impact values obtained from both the weld metal and HAZ specimens shall meet the transverse",
    "column_c_bolts": "base metal in accordance with"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_k323_3_1_1.json",
+  "clase": "IDENTICO",
+  "motivo": "duplicado por doble prefijo de la extraccion. los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

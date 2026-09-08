@@ -34,5 +34,17 @@
  "notes": [
   "NOTE: (1) This examination is limited to cold drawn austenitic stainless steel pipe and tubing. The designer is cautioned that the benefits of prestress may be reduced due to thermal, strain softening, or other effects."
  ],
- "rows": []
+ "rows": [],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_k305_1_2_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_k305_1_2_1.json",
+   "sha256": "01ff53dcd3e5e691d7d74ac6c485725cbcaae2145e8016a5b38bead26c17d401"
+  }
+ }
 }

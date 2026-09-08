@@ -736,6 +736,27 @@ def archivos_de(res: Path, parte: str, filtro=None):
         yield p
 
 
+def cobertura_declarada(res: Path, partes=PARTES):
+    """Lo que el propio drop declara sobre su fidelidad al PDF.
+
+    No es un dato de esta capa ni se puede medir desde aqui: lo mide el
+    extractor contra la capa de texto del PDF y lo escribe en su `meta.json`.
+    Se publica en el informe porque acota lo que significa todo lo demas: una
+    tabla puede estar perfectamente localizada y tabulada y aun asi haber
+    perdido texto aguas arriba.
+    """
+    out = []
+    for parte in partes:
+        ruta = res / SEC_II / parte / "meta.json"
+        if not ruta.is_file():
+            continue
+        m = json.loads(ruta.read_text(encoding="utf-8")).get("conversion") or {}
+        out.append(dict(parte=parte,
+                        cobertura=m.get("token_coverage_vs_pdf_text_layer", "?"),
+                        nota=m.get("coverage_note", "")))
+    return out
+
+
 def barrer(res: Path, partes=PARTES, filtro=None, verbose=False):
     total = dict(specs=0, tablas=0, filas=0, celdas=0, lineas=0,
                  conf=Counter(), conf_dato=Counter(), huecos=Counter(),
@@ -783,7 +804,7 @@ def barrer(res: Path, partes=PARTES, filtro=None, verbose=False):
     return total, detalle
 
 
-def informe(total, detalle) -> str:
+def informe(total, detalle, cobertura=()) -> str:
     n = total["conf"]
     tot_filas = sum(n.values()) or 1
     out = []
@@ -827,6 +848,26 @@ def informe(total, detalle) -> str:
       "concatenacion de celdas no coincide caracter a caracter con la de sus "
       "`Line` de origen.** Cero es la unica cifra aceptable: significa que esta "
       "capa reparte el texto impreso y no anade ni quita nada.")
+    a("")
+    a("## Lo que esta capa NO garantiza")
+    a("")
+    a("La comprobacion sin perdida demuestra que la tabulacion es una reparticion "
+      "del texto que trae el JSON. **No demuestra que ese JSON reproduzca el PDF**: "
+      "eso lo mide el extractor contra la capa de texto del propio PDF y lo declara "
+      "en su `meta.json`. Se copia aqui porque acota lo que significa todo lo demas "
+      "— una tabla puede estar perfectamente localizada y tabulada y aun asi haber "
+      "perdido texto aguas arriba, y las paginas apaisadas son justo las tablas "
+      "anchas de aleacion y propiedades mecanicas.")
+    a("")
+    if cobertura:
+        a("| Parte | Cobertura declarada | Detalle del propio drop |")
+        a("|---|---|---|")
+        for c in cobertura:
+            a(f"| `{c['parte']}` | {c['cobertura']} | {c['nota']} |")
+    else:
+        a("(no se encontro `meta.json` en ninguna parte)")
+    a("")
+    a("**Para valores leidos de esas tablas, el PDF manda.**")
     a("")
     a("## Huecos declarados (no reparables sin el PDF)")
     a("")
@@ -918,7 +959,7 @@ def main(argv=None):
     if not total["specs"]:
         print("ERROR: ninguna especificacion coincide con el filtro", file=sys.stderr)
         return 2
-    txt = informe(total, detalle)
+    txt = informe(total, detalle, cobertura_declarada(a.resources, partes))
     if a.informe:
         a.informe.parent.mkdir(parents=True, exist_ok=True)
         a.informe.write_text(txt, encoding="utf-8")

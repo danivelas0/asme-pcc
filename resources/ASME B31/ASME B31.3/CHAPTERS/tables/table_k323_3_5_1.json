@@ -134,5 +134,17 @@
    "energy_j_ft_lbf_for_specified_minimum_yield_strength_mpa_ksi_le_932_le_135": "65 (48)",
    "energy_j_ft_lbf_for_specified_minimum_yield_strength_mpa_ksi_932_135": "76 (56)"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_k323_3_5_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_k323_3_5_1.json",
+   "sha256": "f9dcd34f08c7deaef85062195f3c6a6e86c4e4be296b38e87fc99da684ff7da2"
+  }
+ }
 }

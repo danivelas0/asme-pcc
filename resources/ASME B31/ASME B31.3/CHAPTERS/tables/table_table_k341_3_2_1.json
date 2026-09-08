@@ -174,5 +174,12 @@
    "criteria_a_to_f_for_type_of_welds_fillet": "F",
    "criteria_a_to_f_for_type_of_welds_branch_connection": "F"
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_k341_3_2_1.json",
+  "clase": "FILAS_RECOMPUESTAS",
+  "motivo": "duplicado por doble prefijo de la extraccion. el texto de cada COLUMNA es identico caracter a caracter; el canonico trae menos filas porque reintegro, dentro de su columna, las que el corte de linea habia partido. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

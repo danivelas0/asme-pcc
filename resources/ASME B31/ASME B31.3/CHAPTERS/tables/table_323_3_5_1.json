@@ -136,5 +136,17 @@
    "energy_other_than_fully_deoxidized_steels_joules": null,
    "other_than_fully_deoxidized_steels_ft_lbf": null
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_323_3_5_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_323_3_5_1.json",
+   "sha256": "35e8d759b3e7eb426b775ca2771d0c97ea97f33a5e6f09ccb779ad6574845a29"
+  }
+ }
 }

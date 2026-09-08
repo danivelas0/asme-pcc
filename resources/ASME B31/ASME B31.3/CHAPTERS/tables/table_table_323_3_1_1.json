@@ -108,5 +108,12 @@
    "column_a_materials_tested_by_the_manufacturer_or_those_in_table_323_2_2_1_requiring_impact_tests_only_on_welds": "procedure qualification test coupon at or below the design minimum temperature and shall meet the acceptance criteria applicable to the base metal in accordance with para. 323.3. 6 (a) Weld metal: across the weld, with notch in the weld metal; notch axis shall be normal to material surface, with one face of specimen ≤1.5 mm (≤1∕16 in.) from the material surface. (b) HAZ: across the weld and long enough to locate notch in the HAZ after etching; notch axis shall be approximately normal to material surface and shall include as much as possible of the HAZ in the fracture. 7 The fabricator or erector",
    "column_b_materials_not_tested_by_the_manufacturer_or_those_tested_but_heat_treated_during_or_after_fabrication": "were supplied without impact test data based on test pieces that were subjected to such heat treatment, the fabricator or erector shall conduct impact tests on material that has been given such heat treatment."
   }
- ]
+ ],
+ "superseded_by": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo": "table_323_3_1_1.json",
+  "clase": "IDENTICO",
+  "motivo": "duplicado por doble prefijo de la extraccion. los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada. Cite siempre el canonico; este archivo se conserva como testigo."
+ }
 }

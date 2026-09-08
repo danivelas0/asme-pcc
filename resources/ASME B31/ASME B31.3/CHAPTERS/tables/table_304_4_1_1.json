@@ -65,5 +65,17 @@
    "concave_to_pressure": "UG-34",
    "convex_to_pressure": "UG-34"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_304_4_1_1.json",
+  "clase": "FILAS_RECOMPUESTAS",
+  "motivo": "el texto de cada COLUMNA es identico caracter a caracter; el canonico trae menos filas porque reintegro, dentro de su columna, las que el corte de linea habia partido",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_304_4_1_1.json",
+   "sha256": "a714bab189e558d7e79e81f3a77bfc050f8f7229931c8be0fb375d73aa38e995"
+  }
+ }
 }

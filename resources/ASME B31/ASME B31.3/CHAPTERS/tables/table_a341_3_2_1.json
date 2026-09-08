@@ -87,5 +87,17 @@
    "heat_fusion_joint": "Fused material, 25%",
    "rtr_and_rpm_materials_adhesive_cemented_joint": "Adhesive, 25%"
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_a341_3_2_1.json",
+  "clase": "FILAS_RECOMPUESTAS",
+  "motivo": "el texto de cada COLUMNA es identico caracter a caracter; el canonico trae menos filas porque reintegro, dentro de su columna, las que el corte de linea habia partido",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_a341_3_2_1.json",
+   "sha256": "3032db23e2ef4fb18403590c0b9428e7f6de375c65cfcb7635d8f59644e3e798"
+  }
+ }
 }

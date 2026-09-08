@@ -73,5 +73,26 @@
    "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
    "factor_ej_0_60_0_85_0_80_0_90_1_00": 1.0
   }
- ]
+ ],
+ "canonical_declaration": {
+  "fecha": "2026-09-08",
+  "script": "declarar_tablas_canonicas.py",
+  "archivo_canonico": "table_302_3_4_1.json",
+  "clase": "IDENTICO",
+  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
+  "duplicado_descartado": {
+   "archivo": "table_table_302_3_4_1.json",
+   "sha256": "85f9903920ae3cb5c1ac40f3bc3a85a6bacceede42338d47ee5d4e5cdbda4e09"
+  }
+ },
+ "extraction_gap": {
+  "fecha": "2026-09-08",
+  "script": "completar_tabla_302_3_3.py",
+  "que_falta": "el CUERPO de la tabla. Las filas se colapsaron dentro de los encabezados de columna y `rows` solo conserva dos fragmentos sueltos.",
+  "sintoma": "el encabezado de la columna del factor contiene los propios valores: 'Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00'. Es la comprobacion que hace este script.",
+  "que_si_esta": "los encabezados con el texto crudo de las columnas -tipo de junta, tipo de costura y examen- y la Nota (1), que prohibe incrementar el factor para las juntas 1 y 2.",
+  "consecuencia": "no se puede ofrecer el factor Ej incrementado del para. 302.3.4(b). Buscar_Ej_A3 declara el hueco, transcribe el parrafo y la Nota (1) y remite al folio impreso; no aproxima ningun valor.",
+  "como_cerrarlo": "hace falta el folio impreso de esta tabla -pagina 51-51 del PDF del codigo- o su OCR estructurado, como se hizo con el Apendice C. Ni el PDF de los capitulos ni su OCR estan en el repositorio."
+ }
 }
