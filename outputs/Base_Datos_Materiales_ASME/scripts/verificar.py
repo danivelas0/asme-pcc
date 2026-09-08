@@ -1262,7 +1262,13 @@ def auditar():
                 nota = fuente.split("Nota")[-1].strip()
                 if (tabla, nota, grupo) not in respaldo.get(comp, set()):
                     huerfanas += 1
-            if "otra tabla" in est and "aparece como" not in motivo:
+            # Dos redacciones posibles, segun por donde se resolvio la
+            # composicion prestada (ver _composicion_prestada en el builder):
+            # "aparece como" para el UNS a secas, "hay una sola" cuando hizo
+            # falta desambiguar por (UNS, especificacion impresa en la fila).
+            # Las dos citan de donde sale el dato; solo cambia la via.
+            if "otra tabla" in est and "aparece como" not in motivo \
+                    and "hay una sola" not in motivo:
                 prestada_sin_origen += 1
             # La marca de decision se exige a la FILA, no a cada columna: una
             # fila validada puede tener un grupo decidido por una persona y el

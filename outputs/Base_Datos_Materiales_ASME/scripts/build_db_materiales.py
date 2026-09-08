@@ -1759,27 +1759,65 @@ def _uns_tokens(clave: str) -> list[str]:
     return re.findall(r"[A-Z]\d{5}", clave.upper())
 
 
-def _composicion_prestada(comp_idx, uns_txt, ck, notas_idx):
+def _spec_num(spec_txt) -> str:
+    """Numero base de una designacion de especificacion, sin prefijo de letra
+    ni puntuacion: "SA-217" (II-D) y "A217" (B31.3 Apendice A) dan los dos
+    "217". Las dos fuentes y las dos ediciones escriben el mismo numero con
+    guion, en dash o prefijo "S" distintos; el numero es lo unico estable."""
+    m = re.search(r"\d+", txt(spec_txt))
+    return m.group(0) if m else ""
+
+
+def _composicion_prestada(comp_idx, comp_idx_spec, uns_txt, spec_txt, ck, notas_idx):
     """Recupera la composicion de una fila que no la imprime, via su UNS.
 
-    Solo devuelve algo si se cumplen las tres condiciones a la vez:
+    Primero intenta el UNS a secas, IGUAL que siempre: si el libro trae una
+    sola composicion para ese UNS, se toma de ahi (comportamiento sin cambios
+    para los casos ya resueltos, y con el mismo motivo de siempre).
+
+    Solo cuando el UNS a secas es AMBIGUO -mas de una composicion global- se
+    prueba una segunda via, mas fina: (UNS, especificacion impresa en la
+    propia fila). Resuelve los casos donde esa ambiguedad global es en
+    realidad el codigo repartiendo la composicion por especificacion -perno
+    vs. tuerca en A193/A194, fundicion vs. tubo fundido en A217/A426- sin
+    inventar nada, porque la especificacion la imprime la propia fila, no un
+    criterio elegido aparte. Probar esto SOLO como fallback -nunca primero-
+    importa: si se probara siempre, un UNS con una unica composicion global
+    tambien tendria un unico candidato en cualquier spec suya, y el motivo
+    cambiaria de redaccion sin necesidad para las 200 filas que ya resolvia
+    bien el camino simple.
+
+    Si ni el spec desambigua, sigue sin resolverse: la fila no imprime
+    especificacion, o el codigo tampoco es consistente ahi (el caso de
+    G41400, que reparte composicion incluso DENTRO de una misma
+    especificacion por grado -B7 vs B7M en la propia A193-; ahi ni el indice
+    fino desambigua, y con razon: no hay con que elegir sin inventar).
+
+    Condiciones para devolver algo, en cualquiera de las dos vias:
       1. la fila no trae composicion propia,
-      2. su UNS aparece en el libro con UNA sola composicion (si hay varias,
-         el codigo no es consistente para ese UNS y no se elige por cuenta
-         propia),
+      2. el candidato es UNICO para la clave que se prueba,
       3. esa composicion figura en alguna Nota de TM-1 o TE-1.
-    Devuelve (composicion, hojas_de_origen, origenes_de_nota).
+    Devuelve (composicion, hojas_de_origen, origenes_de_nota, spec_usada) con
+    `spec_usada` en None cuando se resolvio por el UNS global, no por spec.
     """
     if ck:
         return None
+    spec_n = _spec_num(spec_txt)
     for tok in _uns_tokens(uns_txt):
         candidatas = comp_idx.get(tok)
-        if not candidatas or len(candidatas) != 1:
+        if candidatas and len(candidatas) == 1:
+            comp_p, hojas = next(iter(candidatas.items()))
+            origenes = notas_idx.get(comp_key(comp_p))
+            if origenes:
+                return comp_p, hojas, origenes, None
             continue
-        comp_p, hojas = next(iter(candidatas.items()))
-        origenes = notas_idx.get(comp_key(comp_p))
-        if origenes:
-            return comp_p, hojas, origenes
+        if candidatas and len(candidatas) > 1 and spec_n:
+            candidatas_spec = comp_idx_spec.get((tok, spec_n))
+            if candidatas_spec and len(candidatas_spec) == 1:
+                comp_p, hojas = next(iter(candidatas_spec.items()))
+                origenes = notas_idx.get(comp_key(comp_p))
+                if origenes:
+                    return comp_p, hojas, origenes, spec_n
     return None
 
 
@@ -1824,26 +1862,38 @@ def cargar_prd_por_uns(res, ed):
 
 
 def indice_composicion_por_uns(wb, infos):
-    """Indice {UNS: {composicion: [hojas que la imprimen]}}.
+    """Indice {UNS: {composicion: [hojas que la imprimen]}} y su version fina
+    {(UNS, num. de especificacion): {composicion: [hojas]}}.
 
     Sirve para las filas que NO imprimen composicion nominal: su UNS suele
     aparecer con composicion en otra tabla del mismo libro. El UNS lo asigna
     SAE/ASTM y designa el mismo material, asi que la composicion es la misma;
     pero al venir de OTRA tabla —a veces de otro codigo, el Apendice A del
-    B31.3— el resultado no puede presentarse como AUTO. Se marca aparte y se
-    cita de donde salio, para que el ingeniero lo confirme.
+    B31.3— el resultado no puede presentarse como AUTO sin mas. El indice fino
+    por especificacion permite que `_composicion_prestada` SI lo trate como
+    AUTO (E_COMP_AJENA) cuando la propia fila imprime la especificacion y esa
+    combinacion (UNS, especificacion) tiene una unica composicion en el libro:
+    ya no es "el UNS trae una composicion" sino "el UNS CON ESTA
+    ESPECIFICACION, que la fila ya imprime, trae una unica composicion" —nada
+    que el ingeniero deba confirmar a criterio.
     """
     idx: dict[str, dict[str, list]] = {}
+    idx_spec: dict[tuple, dict[str, list]] = {}
     for info in infos:
         ws = wb[info["sheet"]]
         for r in range(R_DATA, info["last_row"] + 1):
             uns = txt(ws.cell(r, C["UNS / Alloy"]).value).upper()
             comp = txt(ws.cell(r, C["Composicion nominal"]).value)
+            spec = _spec_num(ws.cell(r, C["Spec. No."]).value)
             if uns and comp:
                 idx.setdefault(uns, {}).setdefault(comp, [])
                 if info["sheet"] not in idx[uns][comp]:
                     idx[uns][comp].append(info["sheet"])
-    return idx
+                if spec:
+                    celda = idx_spec.setdefault((uns, spec), {}).setdefault(comp, [])
+                    if info["sheet"] not in celda:
+                        celda.append(info["sheet"])
+    return idx, idx_spec
 
 
 # Estados del mapeo. No existe ya un estado «PROPUESTA»: o el codigo lo dice y
@@ -1943,7 +1993,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                 tm_index[tok] = (tid, txt(mat))
             tm_index.setdefault(key, (tid, txt(mat)))
     prd_por_uns = cargar_prd_por_uns(res, ed)
-    comp_idx = indice_composicion_por_uns(wb, comp_infos)
+    comp_idx, comp_idx_spec = indice_composicion_por_uns(wb, comp_infos)
     dec_comp, dec_uns = cargar_decisiones(ruta_decisiones)
     conflictos = {}
 
@@ -2083,25 +2133,39 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
 
             # 3b) Nada resolvio: recuperar la composicion por UNS, o declarar el hueco.
             if hit is None and not (grp_e or grp_te) and estado != E_TEXTUAL:
-                prestada = _composicion_prestada(comp_idx, key, ck, notas_idx)
+                prestada = _composicion_prestada(comp_idx, comp_idx_spec, key,
+                                                  spec, ck, notas_idx)
                 if prestada:
-                    # La fila no imprime composicion, pero su UNS aparece con una
-                    # sola composicion en otra tabla del libro, y esa composicion
-                    # si figura en una Nota. Es lectura del codigo, no criterio:
-                    # el UNS identifica el material de forma univoca. Se resuelve,
-                    # citando la tabla de la que sale la composicion.
-                    comp_p, hojas_p, origenes = prestada
+                    # La fila no imprime composicion, pero su UNS -o su (UNS,
+                    # especificacion) cuando eso es lo que desambigua- aparece
+                    # con una sola composicion en otra tabla del libro, y esa
+                    # composicion si figura en una Nota. Es lectura del codigo,
+                    # no criterio: el UNS identifica el material de forma
+                    # univoca (y la especificacion, cuando hace falta, la
+                    # imprime la propia fila). Se resuelve, citando la tabla de
+                    # la que sale la composicion.
+                    comp_p, hojas_p, origenes, spec_usada = prestada
                     for tabla, nota, grupo in origenes:
                         if tabla == "TM-1" and grp_e is None:
                             grp_e, fuente_e = grupo, f"TM-1 Nota {nota} · comp. de {hojas_p[0]}"
                         elif tabla == "TE-1" and grp_te is None:
                             grp_te, fuente_te = grupo, f"TE-1 Nota {nota} · comp. de {hojas_p[0]}"
                     estado = E_COMP_AJENA
-                    motivo = (f"La fila no imprime composicion nominal. Su UNS «{key}» "
-                              f"aparece como «{comp_p}» en {', '.join(hojas_p)}, y esa "
-                              f"composicion figura en Nota. El UNS identifica el "
-                              f"material de forma univoca, asi que el grupo se toma "
-                              f"de ahi.")
+                    if spec_usada:
+                        motivo = (f"La fila no imprime composicion nominal. Para su UNS "
+                                  f"«{key}» el libro imprime mas de una composicion segun "
+                                  f"la especificacion, pero PARA LA ESPECIFICACION QUE "
+                                  f"IMPRIME ESTA FILA («{txt(spec)}») hay una sola: "
+                                  f"«{comp_p}», en {', '.join(hojas_p)}. Esa composicion "
+                                  f"figura en Nota. El UNS junto con la especificacion "
+                                  f"impresa identifica el material de forma univoca, asi "
+                                  f"que el grupo se toma de ahi.")
+                    else:
+                        motivo = (f"La fila no imprime composicion nominal. Su UNS «{key}» "
+                                  f"aparece como «{comp_p}» en {', '.join(hojas_p)}, y esa "
+                                  f"composicion figura en Nota. El UNS identifica el "
+                                  f"material de forma univoca, asi que el grupo se toma "
+                                  f"de ahi.")
                 elif not ck:
                     # Sin composicion impresa y sin forma de recuperarla: la fila
                     # del codigo no trae el dato de entrada.

@@ -489,11 +489,11 @@ Estado por hoja (3 454 filas cada una):
 |---|---:|---|
 | AUTO (UNS exacto) | 1 292 | UNS impreso en TM-1…TM-5 |
 | AUTO (composición en Nota o columna) | 1 297 | Nota, o columna nombrada de TE-1, citada en la propia fila |
-| AUTO (composición vía UNS en otra tabla) | 193 | el código imprime esa composición para el mismo UNS en otra de sus tablas; el UNS identifica el material de forma unívoca |
+| AUTO (composición vía UNS en otra tabla) | 200 | el código imprime esa composición para el mismo UNS en otra de sus tablas, o —cuando el UNS a secas es ambiguo— para el mismo (UNS, especificación impresa en la propia fila); el UNS (con esa especificación, si hizo falta) identifica el material de forma unívoca |
 | VALIDADO POR INGENIERO | 44 | `decisiones_map_grupo.json`; 6 decisiones (ver abajo) |
-| SIN MAPEO | 628 | II-D no publica el dato; cálculo bloqueado |
+| SIN MAPEO | 621 | II-D no publica el dato; cálculo bloqueado |
 
-**Cobertura:** 2 478 filas con módulo E y 1 352 con dilatación, de 3 454. Una
+**Cobertura:** 2 485 filas con módulo E y 1 352 con dilatación, de 3 454. Una
 fila puede tener uno y no el otro — TM-1 y TE-1 no enumeran los mismos
 materiales — y la columna `Motivo` lo dice fila a fila.
 
@@ -592,14 +592,40 @@ Sí se encontró una vía real —pero en el Apéndice A del B31.3, ya indexado,
 en Sección II— para tres de los cuatro UNS ambiguos: `S41000`, `J91150` y
 `S41003` desambiguan limpio **por especificación** (perno vs. tuerca, forjado
 vs. fundición imprimen cada uno su propia composición sin ambigüedad).
-**No se aplicó**: el mecanismo de `decisiones_map_grupo.json` decide por UNS
-entero, no por (UNS, especificación); una decisión global le asignaría el
-grupo también a las filas de la especificación que no lo respalda, que es
-exactamente el tipo de invención que prohíbe la Regla 1. Resolverlo bien
-exigiría que `_composicion_prestada`/`comp_idx` desambigüen por
-(UNS, Spec. No.) en vez de por UNS solo — cambio de código, no de datos,
-evaluado y **no acometido**: queda como mejora declarada, no como pendiente
-silencioso.
+
+**Aplicada (2026-09-08).** `indice_composicion_por_uns` construye ahora,
+además del índice por UNS a secas, uno fino por `(UNS, número de
+especificación)`; `_composicion_prestada` lo consulta como *fallback*, nunca
+primero: solo cuando el UNS a secas trae más de una composición global prueba
+si `(UNS, especificación impresa en la propia fila)` tiene un único
+candidato. Probarlo siempre —no solo como fallback— habría cambiado la
+redacción del motivo en las ~200 filas que el camino simple ya resolvía bien,
+sin necesidad; `verificar.py` §9 lo detectó en la primera versión del cambio
+(270 filas sin la cita esperada) y obligó a corregir el orden. La
+especificación la imprime la propia fila del código: no es un criterio
+elegido aparte, así que el resultado sigue siendo `AUTO (composición vía UNS
+en otra tabla)`, nunca una decisión de ingeniería.
+
+Resultado real, no el ideal — y por diseño no cierra los cuatro casos:
+- `S41000`: de 18 filas, 12 resuelven (specs SA-182/SA-268/SA-240/SA-193 →
+  `13Cr`). Las 6 de SA-479 siguen bloqueadas: el Apéndice A no trae ninguna
+  fila de esa especificación para este UNS, así que tampoco hay de dónde
+  tomar el dato por spec.
+- `J91150`: de 4 filas, 2 resuelven (spec SA-426 → `13Cr`). Las 2 de SA-217
+  (`12Cr`) siguen bloqueadas: el spec sí desambigua, pero `12Cr` **no figura
+  en ninguna Nota de TM-1/TE-1** — II-D no publica el dato para esa
+  composición, con o sin ambigüedad de UNS.
+- `S41003`: sus 4 filas (spec SA-1010 → `12Cr-1Ni`) siguen bloqueadas por el
+  mismo motivo: `12Cr-1Ni` tampoco es miembro de ninguna Nota.
+- `G41400` queda intacto, como se esperaba: reparte composición incluso
+  DENTRO de una misma especificación (`B7` vs `B7M` en la propia A193), así
+  que ni el índice fino por spec tiene un candidato único ahí.
+
+Total: **14 filas menos en SIN MAPEO** por edición (628→621), sin tocar
+`decisiones_map_grupo.json` — es lectura más fina del código, no criterio de
+ingeniería. `test_build_db.py::TestComposicionPrestadaPorEspecificacion`
+cubre las dos ramas (desambigua por spec cuando el UNS es ambiguo; no
+desambigua si la propia spec también lo es, caso `G41400`).
 
 **Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
 el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en

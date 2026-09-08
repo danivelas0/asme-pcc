@@ -229,22 +229,24 @@ class TestBarrasDeFraccion:
 class TestComposicionPrestada:
     """Filas que no imprimen composicion: se recupera por UNS, nunca como AUTO."""
 
-    NOTAS = {"C-1/2MO": [("TM-1", "(1)", "Material Group A")]}
+    NOTAS = {"C-1/2MO": [("TM-1", "(1)", "Material Group A")],
+             "13CR": [("TM-1", "(2)", "Material Group B")]}
 
     def test_recupera_cuando_el_uns_tiene_una_sola_composicion(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
-        r = B._composicion_prestada(idx, "K11522", "", self.NOTAS)
+        r = B._composicion_prestada(idx, {}, "K11522", "", "", self.NOTAS)
         assert r is not None
-        comp, hojas, origenes = r
+        comp, hojas, origenes, spec_usada = r
         assert hojas == ["DB_B31_3"] and origenes[0][2] == "Material Group A"
+        assert spec_usada is None
 
     def test_no_elige_cuando_el_codigo_da_dos_composiciones(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
-        assert B._composicion_prestada(idx, "K11522", "", self.NOTAS) is None
+        assert B._composicion_prestada(idx, {}, "K11522", "", "", self.NOTAS) is None
 
     def test_no_se_usa_si_la_fila_ya_trae_composicion_propia(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
-        assert B._composicion_prestada(idx, "K11522", "18CR-8NI", self.NOTAS) is None
+        assert B._composicion_prestada(idx, {}, "K11522", "", "18CR-8NI", self.NOTAS) is None
 
     def test_el_motivo_distingue_por_que_fallo(self):
         dos = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
@@ -252,6 +254,41 @@ class TestComposicionPrestada:
         una = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
         assert "no figura en ninguna Nota" in B._motivo_sin_composicion(una, "K11522")
         assert "no aparece con" in B._motivo_sin_composicion({}, "K11522")
+
+
+class TestComposicionPrestadaPorEspecificacion:
+    """S41000/J91150/S41003: el UNS solo trae dos composiciones globales
+    porque el codigo las reparte por especificacion (perno vs. tuerca,
+    fundicion vs. tubo fundido) -no porque sea inconsistente. La propia fila
+    imprime su especificacion, asi que (UNS, spec) SI puede desambiguar."""
+
+    NOTAS = {"13CR": [("TM-1", "(35)", "Material Group F")]}
+
+    def test_desambigua_por_spec_cuando_el_uns_global_es_ambiguo(self):
+        idx = {"S41000": {"13Cr": ["DB_B31_3"], "12Cr": ["DB_B31_3"]}}
+        idx_spec = {("S41000", "193"): {"13Cr": ["DB_B31_3"]},
+                    ("S41000", "194"): {"12Cr": ["DB_B31_3"]}}
+        # La fila en cuestion imprime "SA-193": debe resolver a 13Cr, no a 12Cr.
+        r = B._composicion_prestada(idx, idx_spec, "S41000", "SA-193", "", self.NOTAS)
+        assert r is not None
+        comp, hojas, origenes, spec_usada = r
+        assert comp == "13Cr" and spec_usada == "193"
+
+    def test_no_desambigua_si_la_propia_spec_tambien_es_ambigua(self):
+        # G41400: incluso DENTRO de A193 el codigo reparte por grado (B7/B7M),
+        # asi que ni el indice fino por spec tiene un candidato unico. No hay
+        # con que elegir sin inventar: sigue sin resolverse.
+        idx = {"G41400": {"Cr-0.2Mo": ["DB_B31_3"], "Cr-Mo": ["DB_B31_3"]}}
+        idx_spec = {("G41400", "193"): {"Cr-0.2Mo": ["DB_B31_3"], "Cr-Mo": ["DB_B31_3"]}}
+        assert B._composicion_prestada(idx, idx_spec, "G41400", "A193", "",
+                                        {"CR-0.2MO": [("TM-1", "(1)", "X")],
+                                         "CR-MO": [("TM-1", "(1)", "X")]}) is None
+
+    def test_spec_num_ignora_prefijo_y_puntuacion(self):
+        assert B._spec_num("SA–217") == "217"
+        assert B._spec_num("A217") == "217"
+        assert B._spec_num("SA-1010") == "1010"
+        assert B._spec_num(None) == ""
 
 
 class TestDecisionesDelIngeniero:
