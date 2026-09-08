@@ -1,7 +1,72 @@
 # Nota de versión — Motor de Cálculo ASME PCC, Rev. 4
 ## Base de datos de materiales (PLAN-DB-MAT-001)
 
-**Fecha:** 2026-09-07 · **Fuente única de verdad:** `resources/` · **Entregable:** `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
+**Fecha:** 2026-09-08 · **Fuente única de verdad:** `resources/` · **Entregable:** `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
+
+---
+
+# Rev. 4c — La Sección II entra al libro y MAP_Grupo queda cerrado (2026-09-08)
+
+De 45 hojas a **54**. El libro pasa de 5 a **11 MB** y el build de 20 a **45 s**.
+`verificar.py` gana una décima sección y sigue devolviendo **0 fallos**.
+
+## 1 · MAP_Grupo: de 113 decisiones abiertas a **ninguna**
+
+Y sin rellenar una sola casilla que el código no respalde. Las 113 «decisiones
+pendientes de firma» describían mal la realidad: casi ninguna admitía decisión.
+Ahora `Revision_MAP_Grupo.md` va en **dos bloques** —casos **ABIERTOS**, que
+admiten criterio de ingeniería, y casos **CERRADOS por límite de la fuente**— y la
+clase la deriva el motor del camino por el que llegó al hueco, no de leer el texto.
+
+Se cerraron dos huecos reales del mapeo, los dos contra el código impreso:
+
+- **Las columnas nombradas de TE-1 no las veía el camino de composición prestada.**
+  TE-1 reparte la mayor parte de la dilatación por columnas que se autodescriben
+  («Coefficients for 8Ni and 9Ni Steels»), tan normativas como sus Notas. El motor
+  ya las leía para las filas que imprimen su composición, pero no para las que la
+  recuperan por UNS: el **9Ni** de `K81340` (38 filas) salía como «II-D no publica
+  el dato» teniendo columna propia impresa.
+- **Faltaba la tercera vía de identificación: (UNS, GRADO impreso en la fila).**
+  Cierra `S41000`/SA-479 —cuyo grado «410» sí está en el Apéndice A aunque su
+  especificación no— y `G41400`, que reparte composición por grado dentro de la
+  propia A193. El grado se compara **literal**: A194 Gr. «6» y A193 Gr. «B6» son
+  grados distintos del mismo UNS con composiciones distintas.
+
+**Resultado:** SIN MAPEO 621 → **591** por edición, dilatación 1 352 → **1 396**,
+módulo E 2 485 → **2 490**. Una decisión nueva, la séptima —`J82090`, el 9Cr-1Mo
+moldeado→ `Material Group E` por la Nota (5) de TM-1, con la dilatación
+deliberadamente vacía porque TE-1 condiciona esa columna a los Grados 9/91/911/92
+y estas filas imprimen `C12` y `CP9`, designaciones de moldeo que no nombra.
+
+## 2 · Las tablas de la Sección II, partes A, B y C, ya están en el libro
+
+Nueve hojas nuevas, **navegables desde el Dashboard** (banda 3):
+
+| Hoja | Filas | Qué trae |
+|---|---:|---|
+| `CAT_SecII` | 379 | Catálogo: spec, título, páginas PDF y folios impresos |
+| `IDX_SecII_Tablas` | 2 572 | Una fila por tabla lógica: reparto por confianza y motivo |
+| `DB_SecII_A1` · `A2` · `B` · `C` | 54 198 | Volcado íntegro, una fila por fila impresa |
+| `DB_SecII_Notas` | 5 233 | Notas al pie con su marcador |
+| `DB_SecII_Quimica` | 220 | Composición normalizada (68 tablas) |
+| `DB_SecII_Traccion` | 182 | Rm, Re, alargamiento y dureza (38 tablas) |
+
+**Lo que hay que saber antes de leerlas.** El JSON de la Sección II no trae tablas:
+las filas cuelgan como bloques `Line` con su `bbox`, y los `Span` no se conservan.
+El **45,8 % de las filas** no se pudo repartir en columnas sin adivinar. Esas filas
+**no perdieron texto**: van enteras en `C01` y marcadas `AMBIGUA` con su motivo.
+El Dashboard publica el total en ámbar y `IDX_SecII_Tablas` lo desglosa tabla a
+tabla. Repartirlas por interpolación sobre el ancho del `bbox` sería inventar
+estructura con una fuente proporcional, y esta capa no inventa nada.
+
+**Las dos hojas normalizadas cubren poco, y el motivo es de la fuente.** Solo entra
+la tabla cuyos encabezados se resuelven **enteros** contra el vocabulario del
+código; los encabezados de la Sección II llegan casi siempre sin partir. Forzar el
+encaje daría una hoja que *parece* completa. El dato sigue íntegro en el volcado.
+
+**Para valores leídos de estas tablas, el PDF manda.** La cobertura de texto que
+declara la propia extracción baja al 74 % en las páginas apaisadas de la Parte B,
+que son justo las tablas anchas de aleación y propiedades mecánicas.
 
 ---
 

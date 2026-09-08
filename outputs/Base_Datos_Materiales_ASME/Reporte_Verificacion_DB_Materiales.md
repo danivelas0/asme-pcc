@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  45 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  54 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -196,11 +196,11 @@ Dictamen global del modulo: **APTO** (OK).
 | Comprobacion | Detalle | Estado |
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
-| Las 12 hojas navegables estan hidden | 12 hojas | OK |
+| Las 21 hojas navegables estan hidden | 21 hojas | OK |
 | El resto esta veryHidden | 32 hojas | OK |
-| Ninguna base de datos alcanzable desde la UI |  | OK |
+| Ninguna base que alimente un motor es alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
-| Los botones cubren las 12 hojas navegables | 12 botones | OK |
+| Los botones cubren las 21 hojas navegables | 21 botones | OK |
 | Cada hoja navegable tiene enlace de retorno |  | OK |
 
 La visibilidad esta grabada en el archivo, no la impone la macro: con las macros bloqueadas el usuario sigue sin ver ninguna base de datos.
@@ -229,6 +229,21 @@ Cada hoja se audita contra las Notas de SU edicion: no numeran igual, asi que cr
 
 Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
 
+## 10. Seccion II, partes A, B y C (volcado integro y normalizadas)
+
+La comprobacion sin perdida se relee DESDE LA HOJA: la concatenacion de las celdas C01..Cnn de cada fila grabada tiene que coincidir, caracter a caracter, con la del texto de sus bloques `Line` de origen. Es lo unico que se puede garantizar sin el PDF, y garantiza que esta capa reparte el texto impreso sin anadir ni quitar nada.
+
+| Comprobacion | Detalle | Estado |
+|---|---|---|
+| Las 9 hojas de la Seccion II estan en el libro | faltan: ninguna | OK |
+| Las 9 estan en la capa de navegacion | CAT_/IDX_/DB_SecII_* en NAVEGABLES | OK |
+| Ninguna de las 9 hojas lleva formulas | 0 celdas empiezan por '=' | OK |
+| Cada fila impresa aparece una sola vez | 0 claves (spec, tabla, fila) repetidas | OK |
+| La hoja conserva el texto impreso, caracter a caracter | 0 de 54198 filas en las que la concatenacion de las celdas grabadas no coincide con la de sus `Line` | OK |
+| IDX_SecII_Tablas cuadra con el volcado | 0 tablas cuyo recuento de filas no coincide | OK |
+
+Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en columnas sin adivinar, y cuyo texto impreso se conserva ENTERO en C01. Cuantas hay, y por que, esta en `IDX_SecII_Tablas`.
+
 ## Resultado
 
 | Seccion | Fallos |
@@ -242,5 +257,6 @@ Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los 
 | 7. Caso semilla | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
+| 10. Seccion II A/B/C | 0 |
 
 **Total de fallos: 0.**

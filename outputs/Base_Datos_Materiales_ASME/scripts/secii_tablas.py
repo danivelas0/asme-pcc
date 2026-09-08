@@ -123,6 +123,22 @@ def texto(html_) -> str:
     return _RE_WS.sub(" ", s).strip()
 
 
+# Caracteres que XML 1.0 no admite y que, por tanto, no pueden viajar dentro de
+# un .xlsx: los de control, los sustitutos y los dos no-caracteres. La
+# extraccion de la Seccion II los arrastra —el titulo de SA-533 en su
+# `index.json` trae un U+FFFE donde el PDF imprime un guion— y openpyxl los
+# escribe tal cual, produciendo un libro que Excel abre pero ningun parser XML
+# lee. Se sustituyen por U+FFFD, que es lo que Unicode reserva justamente para
+# «aqui habia algo que no se puede representar»: se ve, no se pierde la
+# posicion, y no se inventa el caracter que el codigo imprimia.
+_RE_XML_ILEGAL = re.compile(
+    "[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff￾￿]")
+
+
+def xml_seguro(s: str) -> str:
+    return _RE_XML_ILEGAL.sub("�", s) if s else s
+
+
 def _plano(s: str) -> str:
     """Forma comparable de un texto: sin espacios. Base de la comprobacion
     sin perdida — reparte quien reparta, los caracteres son los mismos."""
@@ -707,6 +723,481 @@ def tablas_de(spec) -> list[dict]:
             continuada=lg["continuada"], suelta=lg["suelta"],
             filas=filas, ncols=ncols, resumen=resumen, notas=notas))
     return salida
+
+
+# ---------------------------------------------------------------------------
+# Normalizacion (Fase 4): quimica y traccion
+# ---------------------------------------------------------------------------
+# Solo entra a las hojas normalizadas la tabla cuyos ENCABEZADOS se resuelven
+# ENTEROS contra este vocabulario. Lo que no encaje se queda en el volcado
+# integro -donde no se pierde nada- y se declara en el informe. Sin encaje
+# forzado: una tabla medio normalizada es peor que ninguna, porque parece
+# completa.
+#
+# Las columnas de la hoja son las que enumera el plan; todo elemento que el
+# codigo imprima y no este aqui va ENTERO a «Otros elementos», nunca se
+# descarta.
+COLS_QUIMICA = ["C", "Mn", "P", "S", "Si", "Cr", "Ni", "Mo", "V", "Nb", "N",
+                "Cu", "Al", "Ti", "B", "Co", "W", "Ta", "Zr", "Fe", "Pb",
+                "Sn", "Zn"]
+
+# Nombre impreso -> simbolo. ASME imprime unas veces el nombre y otras el
+# simbolo, y en la parte C alterna dentro de la misma especificacion.
+_ELEMENTOS = {
+    "carbon": "C", "manganese": "Mn", "phosphorus": "P", "phosphorous": "P",
+    "sulfur": "S", "sulphur": "S", "silicon": "Si", "chromium": "Cr",
+    "nickel": "Ni", "molybdenum": "Mo", "vanadium": "V", "columbium": "Nb",
+    "niobium": "Nb", "nitrogen": "N", "copper": "Cu", "aluminum": "Al",
+    "aluminium": "Al", "titanium": "Ti", "boron": "B", "cobalt": "Co",
+    "tungsten": "W", "tantalum": "Ta", "zirconium": "Zr", "iron": "Fe",
+    "lead": "Pb", "tin": "Sn", "zinc": "Zn",
+}
+# Simbolos aceptados tal cual, con la caja que imprime el codigo. Se comparan
+# CON mayusculas y minusculas exactas: en una cabecera «B» es boro, pero
+# tambien podria ser el Grado B, y la regla de aceptacion -tres columnas de
+# elemento como minimo- es lo que separa un caso del otro.
+_SIMBOLOS = set(COLS_QUIMICA)
+
+# Elementos que el codigo nombra y que esta hoja NO tiene columna propia: van a
+# «Otros elementos», con su nombre impreso delante. Se listan para poder
+# distinguir «esto es un elemento que no tabulamos» de «esto no es un elemento»,
+# que es lo que decide si la tabla se normaliza.
+_OTROS_ELEMENTOS = {
+    "cerium", "calcium", "magnesium", "beryllium", "bismuth", "antimony",
+    "arsenic", "selenium", "silver", "cadmium", "hafnium", "yttrium",
+    "oxygen", "hydrogen", "rhenium", "palladium", "ruthenium", "gold",
+    "platinum", "lithium", "tellurium", "thallium", "gallium", "indium",
+    "lanthanum", "cerium plus lanthanum", "rare earth", "sodium", "potassium",
+    "germanium", "scandium", "strontium", "barium", "chlorine", "fluorine",
+    "silicon plus iron", "iron plus silicon",
+}
+
+# Roles de identidad de una fila o columna: no son propiedades, identifican al
+# material. Un encabezado que cae aqui NO impide normalizar.
+_IDENTIDAD = re.compile(
+    r"^(?:uns|uns\s*(?:no\.?|number|designation)|grade|grades|type|class|"
+    r"classification|alloy|alloys?\s*(?:no\.?|number)?|designation|"
+    r"designations|condition|temper|material|composition|element|elements|"
+    r"aws\s*classification|spec(?:ification)?(?:\s*no\.?)?|"
+    r"common\s*name|nominal\s*composition|heat\s*treatment|symbol)$", re.I)
+
+# El marcador de nota va PEGADO al calificador —«Chromium, maxC»— porque el
+# codigo lo imprime como superindice y `texto()` lo conserva pegado a
+# proposito. Sin absorberlo aqui, `\bmax\b` no casa (entre «x» y «C» no hay
+# frontera de palabra) y cinco de los diez elementos de la Tabla 1 de SA-106
+# acababan en «Otros elementos» teniendo columna propia.
+_RE_CALIF = re.compile(r"\b(max|min)(?:imum)?(?:[A-Z]{1,3})?\b", re.I)
+_RE_PARENT = re.compile(r"[\(\[][^)\]]*[\)\]]")
+def _es_celda_de_requisito(v: str) -> bool:
+    """La celda es un valor del codigo, no una frase que menciona valores.
+
+    Se mide sobre las FICHAS: al menos la mitad tienen que ser fichas de valor.
+    «0.25A max» pasa (una de dos), «48 000 [330]» pasa (una de una), y
+    «nearest ksi, for over 10 to 100 ksi, incl» no (dos de nueve).
+    """
+    fs = fichas(v)
+    if not fs:
+        return False
+    return sum(1 for f in fs if es_valor(f)) * 2 >= len(fs)
+
+
+def _mayoria_de_valor(valores) -> bool:
+    """La mitad larga de las celdas escritas tiene que ser un requisito.
+
+    Es lo que separa una tabla de requisitos de una tabla de PROSA que
+    menciona las mismas palabras. La Tabla 19 de SB-111 —«Significance of
+    Numerical Limits»— tiene filas rotuladas «Tensile strength» y «Yield
+    strength» cuyo contenido es una frase; sin esta comprobacion se
+    normalizaba como si fueran requisitos de traccion.
+    """
+    vs = [v for v in valores if v and v.strip()]
+    if not vs:
+        return False
+    return sum(1 for v in vs if _es_celda_de_requisito(v)) * 2 >= len(vs)
+
+
+def _limpia_etiqueta(s: str) -> tuple[str, str]:
+    """(etiqueta sin adornos, calificador max/min). El marcador de nota va
+    PEGADO a la palabra —«Chromium, maxC»— porque asi lo imprime el codigo y
+    asi lo conserva `texto()`: se recorta con el calificador, no aparte."""
+    t = _RE_PARENT.sub(" ", s or "")
+    calif = ""
+    m = _RE_CALIF.search(t)
+    if m:
+        calif = "max" if m.group(1).lower().startswith("max") else "min"
+        t = t[:m.start()] + " " + t[m.end():]
+    t = re.sub(r"[,:;.]+", " ", t)
+    return _RE_WS.sub(" ", t).strip(), calif
+
+
+def elemento_de(etiqueta: str):
+    """(simbolo, calificador) si la etiqueta nombra un elemento; None si no.
+
+    Devuelve el simbolo con el que la hoja titula su columna. Un elemento real
+    que la hoja no tabula devuelve ("OTRO", calificador): es informacion
+    distinta de «no es un elemento», y es la que permite mandarlo entero a
+    «Otros elementos» sin que la tabla deje de normalizarse.
+    """
+    t, calif = _limpia_etiqueta(etiqueta)
+    if not t:
+        return None
+    if t in _SIMBOLOS:
+        return t, calif
+    k = t.lower()
+    if k in _ELEMENTOS:
+        return _ELEMENTOS[k], calif
+    if k in _OTROS_ELEMENTOS:
+        return "OTRO", calif
+    return None
+
+
+# Propiedades de traccion. La clave es la columna de la hoja; el valor, los
+# textos con que el codigo la nombra. Se compara por SUBCADENA sobre la
+# etiqueta limpia porque el codigo cuelga la unidad del propio rotulo
+# («Tensile strength, min, psi [MPa]»), y la unidad es del codigo, no nuestra.
+PROPS_TRACCION = [
+    ("Rm", ("tensile strength", "tensile str", "ultimate tensile")),
+    ("Re", ("yield strength", "yield point", "yield str")),
+    ("Alargamiento %", ("elongation",)),
+    ("Reduccion de area %", ("reduction of area", "reduction in area")),
+    ("Dureza", ("hardness", "brinell", "rockwell", "vickers")),
+]
+COLS_TRACCION = ["Rm min", "Rm max", "Re min", "Re max", "Alargamiento %",
+                 "Base de medida", "Reduccion de area %", "Dureza"]
+
+
+def propiedad_de(etiqueta: str):
+    """(columna de la hoja, calificador, base de medida) o None.
+
+    La base de medida —«in 2 in. [50 mm]»— es parte del rotulo del codigo y se
+    conserva aparte en vez de tirarla: un alargamiento sin su base de medida no
+    es comparable con nada.
+    """
+    t, calif = _limpia_etiqueta(etiqueta)
+    if not t:
+        return None
+    k = t.lower()
+    base = ""
+    mb = re.search(r"\bin\s+([\d\s/⁄.]+in\.?[^,]*)", etiqueta or "", re.I)
+    if mb:
+        base = _RE_WS.sub(" ", mb.group(1)).strip()
+    for col, claves in PROPS_TRACCION:
+        if any(c in k for c in claves):
+            return col, calif, base
+    return None
+
+
+# El encabezado de una tabla transpuesta llega casi siempre en UNA sola celda
+# —«Grade A Grade B Grade C»—, porque es una fila de un solo `Line` sin fichas
+# de valor con las que el conteo pueda partirla. Partirla aqui es licito por
+# dos motivos y solo con dos reglas: el propio codigo REPITE la palabra clave,
+# y el numero de trozos tiene que ser EXACTAMENTE el de columnas de valor que
+# la tabla ya demostro tener. Si no cuadra, se devuelve None y la tabla no se
+# normaliza. No se interpola nada.
+_RE_ENC_REPETIDO = re.compile(
+    r"\b(?:Grades?|Types?|Class(?:es)?|Alloys?|Conditions?|Tempers?|"
+    r"Designations?)\b")
+
+
+def partir_encabezado(t: str, n: int):
+    """Los n nombres de columna de un encabezado que llego en una sola celda."""
+    t = (t or "").strip()
+    if n <= 0 or not t:
+        return None
+    if n == 1:
+        return [t]
+    pos = [m.start() for m in _RE_ENC_REPETIDO.finditer(t)]
+    if len(pos) == n and pos[0] == 0:
+        trozos = [t[a:b].strip() for a, b in zip(pos, pos[1:] + [len(t)])]
+        if all(trozos):
+            return trozos
+    # Designaciones sueltas sin palabra clave: «S30400 S31600 S31700», «E7018
+    # E7028». Cada ficha es un nombre, y solo vale si salen exactamente n.
+    fs = fichas(t)
+    if len(fs) == n:
+        return fs
+    return None
+
+
+def _cabecera_y_datos(tabla):
+    """(filas de cabecera iniciales, filas restantes). La cabecera de estas
+    tablas es la banda de filas de tipo `cabecera` que precede al primer dato:
+    despues del primer dato, una fila de cabecera es una continuacion de rotulo,
+    no un encabezado de columna."""
+    filas = tabla["filas"]
+    i = 0
+    while i < len(filas) and filas[i]["tipo"] == "cabecera":
+        i += 1
+    return filas[:i], filas[i:]
+
+
+def _nombres_de_columna(tabla):
+    """Un nombre por columna, apilando la banda de cabecera. None si no se
+    puede: ahi la tabla no se normaliza y se queda en el volcado integro."""
+    cab, _ = _cabecera_y_datos(tabla)
+    ncols = tabla["ncols"]
+    if not cab or ncols < 2:
+        return None
+    # Caso normal: alguna fila de cabecera esta repartida en columnas.
+    partidas = [f["celdas"] for f in cab if len(f["celdas"]) == ncols]
+    # Caso frecuente: la banda de cabecera llego ENTERA en una celda, porque es
+    # una fila de un solo `Line` sin fichas de valor con las que el conteo
+    # pueda partirla (los rotulos no son valores). Se parte con la misma regla
+    # literal que el resto —`partir_encabezado`, que exige exactamente ncols
+    # trozos— y no se interpola nada: si no cuadra, la tabla no se normaliza.
+    for f in cab:
+        if len(f["celdas"]) == 1:
+            trozos = partir_encabezado(f["celdas"][0], ncols)
+            if trozos:
+                partidas.append(trozos)
+    if partidas:
+        nombres = []
+        for c in range(ncols):
+            nombres.append(_RE_WS.sub(" ", " ".join(
+                p[c] for p in partidas if p[c]).strip()))
+        if any(nombres):
+            return nombres
+    return None
+
+
+def _grados_de_cabecera(tabla):
+    """Nombres de las ncols-1 columnas de valor de una tabla TRANSPUESTA.
+
+    En la transpuesta la primera columna son rotulos de propiedad y el
+    encabezado nombra los grados. Ese encabezado suele llegar entero en una
+    celda, y `partir_encabezado` solo lo parte si el codigo repite la palabra
+    clave y el conteo cuadra."""
+    cab, _ = _cabecera_y_datos(tabla)
+    ncols = tabla["ncols"]
+    for f in cab:
+        if len(f["celdas"]) == ncols and any(f["celdas"][1:]):
+            trozos = [c.strip() for c in f["celdas"][1:]]
+            if all(trozos):
+                return trozos
+    for f in cab:
+        if len(f["celdas"]) == 1:
+            trozos = partir_encabezado(f["celdas"][0], ncols - 1)
+            if trozos:
+                return trozos
+    return None
+
+
+def _traza(tabla, fila):
+    l0 = fila["lineas"][0]
+    return dict(pagina=l0["pagina"], folio=l0["folio"], bloque=l0["id"],
+                confianza=fila["confianza"])
+
+
+def normalizar_quimica(tabla):
+    """Filas normalizadas de composicion quimica, o (None, motivo).
+
+    Se aceptan las dos orientaciones porque el codigo usa las dos:
+      - TRANSPUESTA (la habitual en Seccion II): la primera columna nombra los
+        elementos y el encabezado nombra los grados. SA-106 Tabla 1.
+      - DIRECTA: el encabezado nombra los elementos y cada fila es un grado.
+
+    Valor TAL COMO ESTA IMPRESO (Regla 9): la celda dice `0.27–0.93` o
+    `0.25 max`, no un minimo y un maximo numericos. Parsear un rango es
+    interpretacion, no transcripcion.
+    """
+    cab, datos = _cabecera_y_datos(tabla)
+    if tabla["ncols"] < 2 or not datos:
+        return None, "menos de dos columnas o sin filas de dato"
+
+    # --- transpuesta ------------------------------------------------------
+    etiquetas = [(f, elemento_de(f["celdas"][0])) for f in datos
+                 if len(f["celdas"]) == tabla["ncols"] and f["celdas"][0]]
+    con_elemento = [x for x in etiquetas if x[1]]
+    # Mayoria, no solo tres: una tabla con 3 filas de elemento y 20 que no lo
+    # son no es una tabla de composicion, y normalizarla volcaria esas 20 a
+    # «Otros elementos» dando la impresion de que la tabla esta tabulada.
+    if len(con_elemento) >= 3 and len(con_elemento) * 2 >= len(etiquetas):
+        grados = _grados_de_cabecera(tabla)
+        if not grados:
+            return None, ("transpuesta, pero el encabezado no da un nombre por "
+                          "columna de valor y no se inventa")
+        out = []
+        for j, grado in enumerate(grados):
+            fila = {c: "" for c in COLS_QUIMICA}
+            otros, notas = [], []
+            for f, el in etiquetas:
+                v = f["celdas"][j + 1].strip()
+                if not v:
+                    continue
+                if el is None:
+                    otros.append(f"{f['celdas'][0]}: {v}")
+                    continue
+                simbolo, calif = el
+                texto_v = f"{v} {calif}".strip() if calif else v
+                if simbolo == "OTRO":
+                    otros.append(f"{f['celdas'][0]}: {texto_v}")
+                else:
+                    fila[simbolo] = (fila[simbolo] + " / " + texto_v
+                                     if fila[simbolo] else texto_v)
+            fila["_grado"] = grado
+            fila["_otros"] = " · ".join(otros)
+            fila["_notas"] = " · ".join(notas)
+            fila["_orientacion"] = "transpuesta"
+            fila["_traza"] = _traza(tabla, datos[0])
+            out.append(fila)
+        if not _mayoria_de_valor([f[c] for f in out for c in COLS_QUIMICA]):
+            return None, "los valores no son numericos: no es una tabla de requisitos"
+        return out, ""
+
+    # --- directa ----------------------------------------------------------
+    nombres = _nombres_de_columna(tabla)
+    if not nombres:
+        return None, "no se pudo componer un nombre por columna desde la cabecera"
+    cols = [elemento_de(n) for n in nombres]
+    n_el = sum(1 for c in cols if c and c[0] != "OTRO")
+    if n_el < 3:
+        return None, f"solo {n_el} columnas se resuelven como elemento"
+    sin_resolver = [n for n, c in zip(nombres, cols)
+                    if not c and not _IDENTIDAD.match(_limpia_etiqueta(n)[0])]
+    if sin_resolver:
+        return None, ("encabezados sin resolver: "
+                      + "; ".join(repr(x) for x in sin_resolver[:4]))
+    ident = [i for i, c in enumerate(cols) if not c]
+    out = []
+    for f in datos:
+        if len(f["celdas"]) != tabla["ncols"]:
+            continue
+        fila = {c: "" for c in COLS_QUIMICA}
+        otros = []
+        for i, c in enumerate(cols):
+            v = f["celdas"][i].strip()
+            if not v or c is None:
+                continue
+            simbolo, calif = c
+            texto_v = f"{v} {calif}".strip() if calif else v
+            if simbolo == "OTRO":
+                otros.append(f"{nombres[i]}: {texto_v}")
+            else:
+                fila[simbolo] = (fila[simbolo] + " / " + texto_v
+                                 if fila[simbolo] else texto_v)
+        fila["_grado"] = " | ".join(f["celdas"][i] for i in ident
+                                    if f["celdas"][i]).strip()
+        fila["_otros"] = " · ".join(otros)
+        fila["_notas"] = ""
+        fila["_orientacion"] = "directa"
+        fila["_traza"] = _traza(tabla, f)
+        if fila["_grado"] or any(fila[c] for c in COLS_QUIMICA):
+            out.append(fila)
+    if not out:
+        return None, "ninguna fila de dato utilizable"
+    if not _mayoria_de_valor([f[c] for f in out for c in COLS_QUIMICA]):
+        return None, "los valores no son numericos: no es una tabla de requisitos"
+    return out, ""
+
+
+def normalizar_traccion(tabla):
+    """Filas normalizadas de requisitos de traccion, o (None, motivo).
+
+    La DOBLE UNIDAD es del codigo, no nuestra: `48 000 [330]` se conserva
+    entero en la celda. Partirlo en psi y MPa seria una reparticion licita,
+    pero decidir cual de los dos es «el valor» ya no lo seria, asi que se
+    guarda como lo imprime el codigo y el rotulo de la fila dice en que
+    unidades viene.
+    """
+    cab, datos = _cabecera_y_datos(tabla)
+    if tabla["ncols"] < 2 or not datos:
+        return None, "menos de dos columnas o sin filas de dato"
+
+    # --- transpuesta: la primera columna nombra las propiedades -----------
+    etiquetas = [(f, propiedad_de(f["celdas"][0])) for f in datos
+                 if len(f["celdas"]) == tabla["ncols"] and f["celdas"][0]]
+    con_prop = [x for x in etiquetas if x[1]]
+    # Igual que en quimica: la mayoria de las filas rotuladas tiene que ser una
+    # propiedad de traccion. Si no, es otra tabla que menciona la traccion de
+    # pasada, y normalizarla la haria parecer lo que no es.
+    if len(con_prop) >= 2 and len(con_prop) * 2 >= len(etiquetas):
+        grados = _grados_de_cabecera(tabla)
+        if not grados:
+            return None, ("transpuesta, pero el encabezado no da un nombre por "
+                          "columna de valor y no se inventa")
+        out, saltadas = [], 0
+        for j, grado in enumerate(grados):
+            fila = {c: "" for c in COLS_TRACCION}
+            for f, pr in etiquetas:
+                v = f["celdas"][j + 1].strip()
+                if not v:
+                    continue
+                if pr is None:
+                    saltadas += 1
+                    continue
+                col, calif, base = pr
+                destino = (f"{col} {calif}" if col in ("Rm", "Re") else col)
+                if destino not in fila:
+                    destino = f"{col} min" if col in ("Rm", "Re") else col
+                fila[destino] = (fila[destino] + " / " + v
+                                 if fila[destino] else v)
+                if base and not fila["Base de medida"]:
+                    fila["Base de medida"] = base
+            fila["_grado"] = grado
+            fila["_orientacion"] = "transpuesta"
+            fila["_saltadas"] = saltadas
+            fila["_traza"] = _traza(tabla, datos[0])
+            out.append(fila)
+        if not _mayoria_de_valor([f[c] for f in out for c in COLS_TRACCION]):
+            return None, "los valores no son numericos: no es una tabla de requisitos"
+        return out, ""
+
+    # --- directa ----------------------------------------------------------
+    nombres = _nombres_de_columna(tabla)
+    if not nombres:
+        return None, "no se pudo componer un nombre por columna desde la cabecera"
+    cols = [propiedad_de(n) for n in nombres]
+    if sum(1 for c in cols if c) < 2:
+        return None, "menos de dos columnas se resuelven como propiedad"
+    sin_resolver = [n for n, c in zip(nombres, cols)
+                    if not c and not _IDENTIDAD.match(_limpia_etiqueta(n)[0])]
+    if sin_resolver:
+        return None, ("encabezados sin resolver: "
+                      + "; ".join(repr(x) for x in sin_resolver[:4]))
+    ident = [i for i, c in enumerate(cols) if not c]
+    out = []
+    for f in datos:
+        if len(f["celdas"]) != tabla["ncols"]:
+            continue
+        fila = {c: "" for c in COLS_TRACCION}
+        for i, c in enumerate(cols):
+            v = f["celdas"][i].strip()
+            if not v or c is None:
+                continue
+            col, calif, base = c
+            destino = (f"{col} {calif}" if col in ("Rm", "Re") else col)
+            if destino not in fila:
+                destino = f"{col} min" if col in ("Rm", "Re") else col
+            fila[destino] = fila[destino] + " / " + v if fila[destino] else v
+            if base and not fila["Base de medida"]:
+                fila["Base de medida"] = base
+        fila["_grado"] = " | ".join(f["celdas"][i] for i in ident
+                                    if f["celdas"][i]).strip()
+        fila["_orientacion"] = "directa"
+        fila["_saltadas"] = 0
+        fila["_traza"] = _traza(tabla, f)
+        if fila["_grado"] or any(fila[c] for c in COLS_TRACCION):
+            out.append(fila)
+    if not out:
+        return None, "ninguna fila de dato utilizable"
+    if not _mayoria_de_valor([f[c] for f in out for c in COLS_TRACCION]):
+        return None, "los valores no son numericos: no es una tabla de requisitos"
+    return out, ""
+
+
+# El marcador de una nota al pie va PEGADO a su primera palabra —«bSingle
+# values shown are maximum percentages»— porque el codigo lo imprime como
+# superindice. Se extrae para poder citarla («ver nota B»), pero el texto se
+# conserva ENTERO: el marcador no se recorta del cuerpo.
+_RE_MARCA_NOTA = re.compile(
+    r"^\s*(?:(\(\d+\))|(GENERAL NOTES?)|(NOTES?\s*\(?\d*\)?)|([A-Za-z])(?=[A-Z]))")
+
+
+def marcador_de_nota(t: str) -> str:
+    m = _RE_MARCA_NOTA.match(t or "")
+    if not m:
+        return ""
+    return next(g for g in m.groups() if g).strip()
 
 
 def huecos_de(spec) -> Counter:

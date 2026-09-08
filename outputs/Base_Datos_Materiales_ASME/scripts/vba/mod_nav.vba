@@ -59,6 +59,14 @@ End Function
 ' xlSheetVeryHidden: ni siquiera aparece en el menu Mostrar de Excel.
 ' Las hojas restantes (DB_*, MAP_*, Notas_Codigo, DB_Listas, Datos_Ref,
 ' _meta, _Curvas) son insumo auditado, no interfaz.
+'
+' Las nueve de la Seccion II (CAT_/IDX_/DB_SecII_*) SI estan aqui, y es
+' deliberado: son hojas de datos, sin buscador ni formulas, pero el ingeniero
+' tiene que poder abrirlas. Sin esto, «solo hojas de datos» habria significado
+' «inalcanzables».
+'
+' DEBE coincidir, en contenido Y EN ORDEN, con NAVEGABLES de
+' build_db_materiales.py. Lo comprueba test_dashboard.py::TestSincroniaPythonVba.
 Public Function HojasNavegables() As Variant
     HojasNavegables = Array( _
         "Parche_PCC2_Art212", _
@@ -72,6 +80,15 @@ Public Function HojasNavegables() As Variant
         "Buscar_NoMetalicos", _
         "Buscar_Ec_A2", _
         "Buscar_Ej_A3", _
+        "CAT_SecII", _
+        "IDX_SecII_Tablas", _
+        "DB_SecII_A1", _
+        "DB_SecII_A2", _
+        "DB_SecII_B", _
+        "DB_SecII_C", _
+        "DB_SecII_Notas", _
+        "DB_SecII_Quimica", _
+        "DB_SecII_Traccion", _
         "Instrucciones")
 End Function
 

@@ -67,12 +67,35 @@ class TestVisibilidad:
         very = {s.title for s in wb.worksheets if s.sheet_state == "veryHidden"}
         assert very == esperado
 
-    def test_ninguna_base_es_alcanzable_desde_la_ui(self, wb):
-        """Las DB_* y MAP_* no pueden estar ni visibles ni en el menu Mostrar."""
+    def test_ninguna_base_que_alimente_un_motor_es_alcanzable(self, wb):
+        """Las DB_* y MAP_* que alimentan un motor no pueden estar ni visibles
+        ni en el menu Mostrar: son insumo auditado, no interfaz. Abrirlas
+        dejaria leer un valor sin la cascada, sin el bloqueo por rango y sin la
+        nota del material.
+
+        Las nueve de la Seccion II son la excepcion, y es DECLARADA: ahi el
+        entregable ES la hoja de datos —no alimentan ningun motor y no llevan
+        formulas—, asi que ocultarlas no protegeria nada y las haria inutiles.
+        """
         expuestas = [s.title for s in wb.worksheets
                      if s.sheet_state != "veryHidden"
+                     and s.title not in B.NAV_SECII
                      and re.match(r"^(DB_|MAP_|Notas_Codigo|Datos_Ref|_)", s.title)]
         assert expuestas == []
+
+    def test_las_hojas_de_seccion_ii_no_llevan_formulas(self, wb):
+        """Son hojas de datos. Una formula aqui rompe la regla 1 del libro.
+
+        Se mira el TIPO de la celda, no si el texto empieza por «=»: el codigo
+        imprime celdas como «= 3.18 mm in any 1.524 m», que son texto y tienen
+        que seguir siendolo. El builder las fuerza a `s` (ver `_txt_celda`)
+        justo para eso; si un dia dejara de hacerlo, esta prueba lo veria.
+        """
+        for nombre in B.NAV_SECII:
+            for fila in wb[nombre].iter_rows():
+                for c in fila:
+                    assert c.data_type != "f", \
+                        f"{nombre}!{c.coordinate} guarda una formula"
 
 
 # ---------------------------------------------------------------------------

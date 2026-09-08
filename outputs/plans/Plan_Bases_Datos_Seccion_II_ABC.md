@@ -7,16 +7,41 @@
 
 ---
 
-## ⏸ PARADO EN EL PUNTO DE DECISIÓN DE LA FASE 2 — 2026-09-07
+## ✅ EJECUTADO ENTERO — 2026-09-08
 
 | Fase | Estado |
 |---|---|
 | 0 · Guardar el plan | ✅ |
-| 1 · Núcleo `secii_tablas.py` y piloto | ✅ · 12 especificaciones, más `test_secii_tablas.py` (19 pruebas) |
+| 1 · Núcleo `secii_tablas.py` y piloto | ✅ · 12 especificaciones, más `test_secii_tablas.py` |
 | 2 · Barrido completo e informe | ✅ · `outputs/Base_Datos_Materiales_ASME/Revision_Tablas_SecII.md` |
-| 3 · Volcado íntegro al libro | ⏸ **no ejecutado** |
-| 4 · Hojas normalizadas | ⏸ **no ejecutado** |
-| 5 · Cierre | ⏸ parcial: `CLAUDE.md` documenta el estado |
+| 3 · Volcado íntegro al libro | ✅ · 7 hojas, 54 198 filas |
+| 4 · Hojas normalizadas | ✅ · 2 hojas, **68 + 38 tablas de 2 572** (ver abajo) |
+| 5 · Cierre | ✅ · navegación sincronizada, `verificar.py` §10, pruebas y documentación |
+
+**La decisión de la Fase 2, tomada.** El ingeniero mandó ejecutar el plan
+entero. Se ejecutó **sin relajar la regla**: las 24 812 filas AMBIGUAS entran
+al libro con su texto impreso **entero en una celda** y marcadas como tales, y
+`IDX_SecII_Tablas` dice, tabla a tabla, cuántas hay y por qué. El aviso del
+plan —«escribir 124 000 filas dudosas es peor que no escribirlas»— apuntaba a
+escribirlas *como si estuvieran tabuladas*; escribirlas declaradas no pierde
+nada y las hace consultables. El Dashboard publica el número en ámbar.
+
+**Lo que la Fase 4 dio de verdad, y por qué es tan poco.** El plan estimaba
+~12 000 filas de química y ~6 000 de tracción. Salen **220 y 182**, de 68 y 38
+tablas. La causa es la misma que mide la Fase 2: los encabezados de la Sección
+II llegan casi siempre **sin partir** —son filas de un solo `Line` sin fichas
+de valor con las que el conteo pueda partirlas—, y la regla del plan
+(«normalizar solo lo que casa entero») las rechaza. Los dos motivos dominantes,
+contados: *no se pudo componer un nombre por columna desde la cabecera* (908
+tablas) y *ninguna columna se resuelve como elemento* (971). Forzar el encaje
+daría una hoja que **parece** completa y no lo es; el dato sigue íntegro en el
+volcado, y el motivo está impreso tabla a tabla.
+
+Dos ejemplos que fijan el criterio, los dos con prueba:
+- **SA-106 Tabla 1** sí normaliza: transpuesta, tres grados, diez elementos con
+  su calificador y su marcador de nota (`0.30B max`, `0.29–1.06`).
+- **SA-106 Tabla 2** no: su cabecera es de dos niveles (grado × longitudinal /
+  transversal) y no se resuelve sin adivinar. Se queda íntegra en el volcado.
 
 **Lo medido sobre las cuatro partes** (barrido completo en 13 s):
 
@@ -66,11 +91,21 @@ reordenar, y la comprobación sin pérdida vuelve a 0.
 fila pierde texto, ninguna fila AMBIGUA se rellena por interpolación sobre el
 `bbox`, y los huecos del origen se cuentan y se nombran.
 
-**La decisión que queda al ingeniero:** seguir a las Fases 3-5 tal cual, acotarlas a
-las tablas que sí se reparten (las de confianza EXACTA o POR CONTEO al 100 %), o
-reponer la extracción de la Sección II con una herramienta que conserve los `Span`
-—que es la causa raíz: sin ellos, la posición de cada palabra dentro de un `Line`
-no está en el fichero—.
+**La única vía que subiría de verdad la fracción tabulada** sigue siendo reponer
+la extracción de la Sección II con una herramienta que conserve los `Span`. Es la
+causa raíz: sin ellos, la posición de cada palabra dentro de un `Line` no está en
+el fichero, y ninguna heurística la puede recuperar sin inventarla. Queda como
+mejora de la fuente, no de esta capa.
+
+**Un carácter que XML no admite.** El `index.json` de SA-533 trae un **U+FFFE**
+en el título, donde el PDF imprime un guion. openpyxl lo escribe tal cual y
+produce un `.xlsm` que Excel abre pero que ningún parser XML lee —lo que rompía
+las 16 pruebas de `test_dashboard.py` sin tocar ninguna de sus aserciones—.
+`secii_tablas.xml_seguro()` sustituye los caracteres prohibidos por **U+FFFD**,
+que es lo que Unicode reserva para «aquí había algo irrepresentable»: se ve, no
+se pierde la posición y no se inventa el carácter. `verificar.py` §10 aplica la
+misma sustitución al lado del origen antes de comparar, de modo que la única
+diferencia admitida entre lo impreso y lo grabado queda declarada.
 
 ---
 

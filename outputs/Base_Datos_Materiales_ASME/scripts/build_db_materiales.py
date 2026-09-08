@@ -29,6 +29,7 @@ import datetime
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 import openpyxl
@@ -44,6 +45,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db_lib import (Resources, bilingual_key, build_material_id, clean, disambiguate,
                     familia_material, make_unique, num, search_key, sort_key,
                     temp_to_number, txt)
+# Reconstruccion de las tablas de la Seccion II partes A, B y C. Es una
+# libreria pura -sin Excel y sin PDF- y ademas CLI; aqui se usa como libreria.
+import secii_tablas as secii
 
 # ---------------------------------------------------------------------------
 # Estilos
@@ -2631,6 +2635,427 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
     return len(abiertas), len(cerradas)
 
 
+# ---------------------------------------------------------------------------
+# Seccion II, partes A, B y C (Fases 3 y 4 del plan)
+# ---------------------------------------------------------------------------
+# Nueve hojas de DATOS: sin buscador y sin una sola formula. El volcado integro
+# no pierde nada -una fila del libro por cada fila impresa, incluidas las que no
+# se dejaron repartir, que van enteras en una celda y marcadas AMBIGUA- y las
+# dos hojas normalizadas solo recogen las tablas cuyos encabezados se resuelven
+# ENTEROS contra el vocabulario del codigo. Ver secii_tablas.py.
+#
+# Estas hojas llevan una fila mas que el resto de las bases: la 3 queda libre
+# para el enlace VOLVER, porque son navegables desde el Dashboard y el resto de
+# hojas navegables ancla ahi su boton.
+R_HDR_SECII, R_DATA_SECII = 4, 5
+
+HOJAS_SECII_DB = {"bpvc_ii_a_1": "DB_SecII_A1", "bpvc_ii_a_2": "DB_SecII_A2",
+                  "bpvc_ii_b": "DB_SecII_B", "bpvc_ii_c": "DB_SecII_C"}
+NAV_SECII = ["CAT_SecII", "IDX_SecII_Tablas", "DB_SecII_A1", "DB_SecII_A2",
+             "DB_SecII_B", "DB_SecII_C", "DB_SecII_Notas", "DB_SecII_Quimica",
+             "DB_SecII_Traccion"]
+
+# Excel no admite mas de 32 767 caracteres en una celda. Ninguna fila de estas
+# tablas se acerca, pero el limite se comprueba y se declara en vez de
+# truncar en silencio: truncar perderia texto impreso del codigo.
+MAX_CELDA = 32767
+
+
+def _txt_celda(ws, r, c, v):
+    """Escribe una celda de TEXTO, aunque el codigo la imprima empezando por
+    «=» o «+». openpyxl convertiria eso en formula, y una formula en estas
+    hojas rompe la regla 1 del libro y ademas mostraria #NAME?."""
+    if v in (None, ""):
+        return None
+    s = secii.xml_seguro(str(v))
+    cel = ws.cell(r, c)
+    cel.value = s
+    if s[:1] in "=+-@":
+        cel.data_type = "s"
+    cel.font = DATA_F
+    return cel
+
+
+def new_sheet_secii(wb, name, title, source):
+    ws = wb.create_sheet(name)
+    ws["A1"] = title
+    ws["A1"].font, ws["A1"].fill = TITLE_F, TITLE_FILL
+    ws["A2"] = source
+    ws["A2"].font = SRC_F
+    ws.freeze_panes = f"A{R_DATA_SECII}"
+    return ws
+
+
+def _hdr_secii(ws, cols):
+    for j, h in enumerate(cols, start=1):
+        c = ws.cell(R_HDR_SECII, j, h)
+        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX
+        c.alignment = Alignment(wrap_text=True, vertical="center",
+                                horizontal="center")
+    ws.row_dimensions[R_HDR_SECII].height = 40
+    return len(cols)
+
+
+def _pdf_1based(p):
+    """`pdf_pages` de las partes A, B y C es 0-based (al reves que la II-D):
+    la hoja publica la pagina citable, +1. Ver CLAUDE.md."""
+    try:
+        return int(p) + 1
+    except (TypeError, ValueError):
+        return p
+
+
+def _cargar_secii(res):
+    """Recorre las cuatro partes una sola vez y devuelve lo que las nueve hojas
+    necesitan. Se hace en una pasada porque son 227 MB de JSON: releerlos por
+    hoja multiplicaria por nueve el tiempo de build sin ganar nada."""
+    raiz = Path(res.root)
+    partes = []
+    for parte in secii.PARTES:
+        idx_path = raiz / secii.SEC_II / parte / "index.json"
+        with open(idx_path, encoding="utf-8") as fh:
+            indice = json.load(fh)
+        specs = []
+        for ruta in secii.archivos_de(raiz, parte):
+            spec = secii.cargar_spec(ruta)
+            sid = spec["spec"].get("id") or ruta.stem
+            specs.append(dict(id=sid, archivo=ruta.name,
+                              tablas=secii.tablas_de(spec),
+                              huecos=secii.huecos_de(spec)))
+        partes.append(dict(parte=parte, indice=indice, specs=specs))
+    return partes
+
+
+def build_cat_secii(wb, datos):
+    ws = new_sheet_secii(
+        wb, "CAT_SecII",
+        "CATALOGO — ASME BPVC Seccion II, partes A (2 vol.), B y C · Edicion 2025",
+        "Una fila por entrada del indice de cada parte (especificaciones y "
+        "apendices). 'Pagina PDF' se publica 1-based y citable: el `pdf_pages` "
+        "de las partes A, B y C es 0-based, al reves que el de la II-D. El "
+        "folio impreso es el que lleva la pagina del codigo.")
+    _hdr_secii(ws, ["Parte", "Carpeta", "Especificacion", "Titulo",
+                    "Designacion equivalente (ASTM/AWS)", "Pagina PDF ini.",
+                    "Pagina PDF fin", "Folio impreso ini.", "Folio impreso fin",
+                    "Paginas", "Figuras", "Tablas logicas detectadas",
+                    "Archivo fuente (resources/)"])
+    r = R_DATA_SECII
+    for p in datos:
+        por_id = {s["id"]: s for s in p["specs"]}
+        for e in p["indice"]["entries"]:
+            pdfp = e.get("pdf_pages") or [None, None]
+            imp = e.get("printed_pages") or [None, None]
+            spec_id = txt(e.get("specification"))
+            # El indice nombra la entrada por su designacion; el JSON de la
+            # especificacion trae su propio id. Se casan por el fichero, que es
+            # lo unico que los dos declaran igual.
+            fichero = txt(e.get("file")).split("/")[-1]
+            hallado = next((s for s in p["specs"] if s["archivo"] == fichero),
+                           por_id.get(spec_id))
+            vals = [p["parte"], txt(e.get("folder")), spec_id or "(apendice)",
+                    txt(e.get("title")),
+                    txt(e.get("astm_designation") or e.get("equivalent_designation")),
+                    _pdf_1based(pdfp[0]), _pdf_1based(pdfp[1]),
+                    imp[0], imp[1], e.get("page_count"), e.get("figure_count"),
+                    len(hallado["tablas"]) if hallado else 0,
+                    f"{p['parte']}/specifications/{fichero}"]
+            for j, v in enumerate(vals, start=1):
+                if isinstance(v, (int, float)) and not isinstance(v, bool):
+                    ws.cell(r, j, v).font = DATA_F
+                else:
+                    _txt_celda(ws, r, j, v)
+            r += 1
+    last = r - 1
+    autosize(ws, {"A": 14, "B": 24, "C": 20, "D": 62, "E": 22, "F": 12, "G": 12,
+                  "H": 12, "I": 12, "J": 9, "K": 9, "L": 12, "M": 52})
+    ws.auto_filter.ref = f"A{R_HDR_SECII}:M{last}"
+    record_meta("CAT_SecII", "Indice de las partes A/B/C",
+                "ASME_BPVC/Sec_II/{bpvc_ii_a_1,a_2,b,c}/index.json", "2025", "-",
+                last - R_DATA_SECII + 1,
+                "Catalogo de las 379 entradas. Pagina PDF publicada 1-based.")
+    return last
+
+
+def build_idx_secii(wb, datos):
+    ws = new_sheet_secii(
+        wb, "IDX_SecII_Tablas",
+        "INDICE DE TABLAS — ASME BPVC Seccion II, partes A, B y C",
+        "Una fila por TABLA LOGICA (las continuaciones de pagina ya unidas). "
+        "El reparto por confianza dice cuanto de la tabla quedo tabulado: "
+        "AMBIGUA no pierde texto —la fila va entera en una celda— pero no queda "
+        "repartida en columnas. 'Normalizada' dice si la tabla alimenta ademas "
+        "DB_SecII_Quimica o DB_SecII_Traccion, y si no, por que no.")
+    _hdr_secii(ws, ["Parte", "Especificacion", "Tabla", "Titulo",
+                    "Paginas PDF", "Folio impreso", "Bloques de origen",
+                    "Filas", "Columnas", "Origen de las columnas",
+                    "Continuada", "Suelta", "EXACTA", "POR CONTEO",
+                    "AMBIGUA", "Motivo dominante", "Normalizada",
+                    "Por que no se normaliza"])
+    r = R_DATA_SECII
+    for p in datos:
+        for s in p["specs"]:
+            for t in s["tablas"]:
+                conf = Counter(f["confianza"] for f in t["filas"])
+                motivos = Counter(f["motivo"] for f in t["filas"] if f["motivo"])
+                q, mq = secii.normalizar_quimica(t)
+                tr, mt = secii.normalizar_traccion(t)
+                norm = " + ".join(x for x in (("Quimica" if q else ""),
+                                              ("Traccion" if tr else "")) if x)
+                porque = "" if norm else f"quimica: {mq} · traccion: {mt}"
+                vals = [p["parte"], s["id"], t["n"], t["titulo"],
+                        ", ".join(str(_pdf_1based(x)) for x in t["paginas"]),
+                        t["folio"], ", ".join(t["bloques"]), len(t["filas"]),
+                        t["ncols"],
+                        (t["resumen"] or {}).get("origen_ncols", "")
+                        if isinstance(t["resumen"], dict) else "",
+                        "si" if t["continuada"] else "no",
+                        "si" if t["suelta"] else "no",
+                        conf[secii.EXACTA], conf[secii.POR_CONTEO],
+                        conf[secii.AMBIGUA],
+                        motivos.most_common(1)[0][0] if motivos else "",
+                        norm or "no", porque]
+                for j, v in enumerate(vals, start=1):
+                    if isinstance(v, int) and not isinstance(v, bool):
+                        ws.cell(r, j, v).font = DATA_F
+                    else:
+                        _txt_celda(ws, r, j, v)
+                r += 1
+    last = r - 1
+    autosize(ws, {"A": 14, "B": 20, "C": 7, "D": 54, "E": 14, "F": 12, "G": 30,
+                  "H": 8, "I": 9, "J": 34, "K": 11, "L": 8, "M": 9, "N": 11,
+                  "O": 9, "P": 44, "Q": 14, "R": 60})
+    ws.auto_filter.ref = f"A{R_HDR_SECII}:R{last}"
+    record_meta("IDX_SecII_Tablas", "Tablas logicas de las partes A/B/C",
+                "ASME_BPVC/Sec_II/*/specifications/*.json (bloques Table -> Line)",
+                "2025", "-", last - R_DATA_SECII + 1,
+                "Reparto por confianza y motivo de la fila. AMBIGUA conserva el "
+                "texto entero, no lo pierde.")
+    return last
+
+
+def build_db_secii(wb, datos, ncols_max):
+    """El volcado integro: una fila del libro por cada fila impresa."""
+    largas = 0
+    lasts = {}
+    for p in datos:
+        nombre = HOJAS_SECII_DB[p["parte"]]
+        ws = new_sheet_secii(
+            wb, nombre,
+            f"VOLCADO INTEGRO — ASME BPVC Seccion II · {p['parte']}",
+            "Una fila por fila impresa, en formato ragged: C01..Cnn son las "
+            "columnas que esa tabla demostro tener. Confianza EXACTA = cada "
+            "Line a su columna por su bbox; POR CONTEO = fila de un solo Line "
+            "partida desde la derecha con el conteo confirmado por la "
+            "geometria; AMBIGUA = no se pudo repartir sin adivinar y el texto "
+            "impreso se conserva ENTERO en C01. No se interpola nunca.")
+        cols = ["Especificacion", "Tabla", "Titulo de la tabla", "Fila",
+                "Tipo", "Confianza", "Motivo", "Pagina PDF", "Folio impreso",
+                "Bloque"] + [f"C{i:02d}" for i in range(1, ncols_max + 1)]
+        n_ident = 10
+        _hdr_secii(ws, cols)
+        r = R_DATA_SECII
+        for s in p["specs"]:
+            for t in s["tablas"]:
+                for i, f in enumerate(t["filas"], start=1):
+                    l0 = f["lineas"][0]
+                    ident = [s["id"], t["n"], t["titulo"], i, f["tipo"],
+                             f["confianza"], f["motivo"],
+                             _pdf_1based(l0["pagina"]), l0["folio"], l0["id"]]
+                    for j, v in enumerate(ident, start=1):
+                        if isinstance(v, int) and not isinstance(v, bool):
+                            ws.cell(r, j, v).font = DATA_F
+                        else:
+                            _txt_celda(ws, r, j, v)
+                    for j, celda in enumerate(f["celdas"], start=n_ident + 1):
+                        if len(celda) > MAX_CELDA:
+                            largas += 1
+                            continue
+                        _txt_celda(ws, r, j, celda)
+                    r += 1
+        lasts[nombre] = r - 1
+        autosize(ws, {"A": 20, "B": 7, "C": 40, "D": 7, "E": 10, "F": 11,
+                      "G": 40, "H": 11, "I": 12, "J": 22})
+        for i in range(1, ncols_max + 1):
+            ws.column_dimensions[get_column_letter(n_ident + i)].width = 20
+        ws.auto_filter.ref = (f"A{R_HDR_SECII}:"
+                              f"{get_column_letter(n_ident + ncols_max)}{lasts[nombre]}")
+        record_meta(nombre, f"Tablas de {p['parte']}",
+                    f"ASME_BPVC/Sec_II/{p['parte']}/specifications/*.json",
+                    "2025", "-", lasts[nombre] - R_DATA_SECII + 1,
+                    "Volcado integro. Ninguna celda se rellena por "
+                    "interpolacion; AMBIGUA conserva la fila entera.")
+    if largas:
+        ISSUES.append(f"DB_SecII_*: {largas} celdas superaban el limite de "
+                      f"{MAX_CELDA} caracteres de Excel y se dejaron vacias. "
+                      f"El texto sigue integro en resources/; se declara aqui "
+                      f"en vez de truncarlo en silencio.")
+    return lasts
+
+
+def build_notas_secii(wb, datos):
+    ws = new_sheet_secii(
+        wb, "DB_SecII_Notas",
+        "NOTAS AL PIE — tablas de ASME BPVC Seccion II, partes A, B y C",
+        "Notas al pie y bloques NOTE de cada tabla. El marcador va PEGADO a la "
+        "primera palabra porque el codigo lo imprime como superindice: se "
+        "extrae para poder citarlo, pero el texto se conserva entero.")
+    _hdr_secii(ws, ["Parte", "Especificacion", "Tabla", "Titulo de la tabla",
+                    "Marcador", "Texto de la nota", "Bloque"])
+    r = R_DATA_SECII
+    for p in datos:
+        for s in p["specs"]:
+            for t in s["tablas"]:
+                for nt in t["notas"]:
+                    vals = [p["parte"], s["id"], t["n"], t["titulo"],
+                            secii.marcador_de_nota(nt["texto"]),
+                            nt["texto"][:MAX_CELDA], nt["id"]]
+                    for j, v in enumerate(vals, start=1):
+                        if isinstance(v, int) and not isinstance(v, bool):
+                            ws.cell(r, j, v).font = DATA_F
+                        else:
+                            _txt_celda(ws, r, j, v)
+                    r += 1
+    last = r - 1
+    autosize(ws, {"A": 14, "B": 20, "C": 7, "D": 40, "E": 11, "F": 110, "G": 22})
+    ws.auto_filter.ref = f"A{R_HDR_SECII}:G{last}"
+    record_meta("DB_SecII_Notas", "Notas al pie de las tablas de A/B/C",
+                "ASME_BPVC/Sec_II/*/specifications/*.json (Footnote / Text)",
+                "2025", "-", last - R_DATA_SECII + 1, "")
+    return last
+
+
+def build_normalizadas_secii(wb, datos):
+    """DB_SecII_Quimica y DB_SecII_Traccion.
+
+    Solo entra la tabla cuyos encabezados se resuelven ENTEROS contra el
+    vocabulario del codigo. El resto se queda en el volcado integro -donde no
+    se pierde nada- y `IDX_SecII_Tablas` dice por que, tabla a tabla. Es poca
+    tabla: los encabezados de la Seccion II llegan en su mayoria sin partir,
+    porque son filas de un solo `Line` sin fichas de valor con que partirlas.
+    Forzar el encaje daria una hoja que PARECE completa y no lo es.
+    """
+    resultados = {}
+    for hoja, fn, cols_val, titulo, fuente in (
+        ("DB_SecII_Quimica", secii.normalizar_quimica, secii.COLS_QUIMICA,
+         "COMPOSICION QUIMICA NORMALIZADA — Seccion II, partes A, B y C",
+         "Una fila por (especificacion, tabla, grado). Valor TAL COMO ESTA "
+         "IMPRESO (regla 9): la celda dice `0.27-0.93` o `0.25 max`, no un "
+         "minimo y un maximo numericos —parsear un rango es interpretacion, no "
+         "transcripcion—. Todo elemento que el codigo imprima y que esta hoja "
+         "no tabule va ENTERO a 'Otros elementos'."),
+        ("DB_SecII_Traccion", secii.normalizar_traccion, secii.COLS_TRACCION,
+         "REQUISITOS DE TRACCION NORMALIZADOS — Seccion II, partes A, B y C",
+         "Una fila por (especificacion, tabla, grado). La DOBLE UNIDAD es del "
+         "codigo, no nuestra: `48 000 [330]` se conserva entero tal como lo "
+         "imprime la tabla, nunca convertido.")):
+        ws = new_sheet_secii(wb, hoja, titulo, fuente)
+        extra = ["Otros elementos"] if cols_val is secii.COLS_QUIMICA else []
+        _hdr_secii(ws, ["Parte", "Especificacion", "Tabla",
+                        "Titulo de la tabla", "Grado / designacion",
+                        "Orientacion"] + list(cols_val) + extra +
+                   ["Pagina PDF", "Folio impreso", "Bloque", "Confianza"])
+        r = R_DATA_SECII
+        n_tablas = 0
+        for p in datos:
+            for s in p["specs"]:
+                for t in s["tablas"]:
+                    filas, _motivo = fn(t)
+                    if not filas:
+                        continue
+                    n_tablas += 1
+                    for f in filas:
+                        tz = f["_traza"]
+                        vals = ([p["parte"], s["id"], t["n"], t["titulo"],
+                                 f["_grado"], f["_orientacion"]]
+                                + [f.get(c, "") for c in cols_val]
+                                + ([f.get("_otros", "")] if extra else [])
+                                + [_pdf_1based(tz["pagina"]), tz["folio"],
+                                   tz["bloque"], tz["confianza"]])
+                        for j, v in enumerate(vals, start=1):
+                            if isinstance(v, int) and not isinstance(v, bool):
+                                ws.cell(r, j, v).font = DATA_F
+                            else:
+                                _txt_celda(ws, r, j, v)
+                        r += 1
+        last = r - 1
+        ancho = {get_column_letter(i): w for i, w in
+                 enumerate([14, 20, 7, 40, 26, 13], start=1)}
+        autosize(ws, ancho)
+        ws.auto_filter.ref = (f"A{R_HDR_SECII}:"
+                              f"{get_column_letter(6 + len(cols_val) + len(extra) + 4)}"
+                              f"{max(last, R_DATA_SECII)}")
+        resultados[hoja] = (last, n_tablas)
+        record_meta(hoja, "Normalizada desde las tablas de A/B/C",
+                    "ASME_BPVC/Sec_II/*/specifications/*.json", "2025", "-",
+                    max(last - R_DATA_SECII + 1, 0),
+                    f"{n_tablas} tablas normalizadas. El resto se queda en el "
+                    f"volcado integro y IDX_SecII_Tablas dice por que.")
+    return resultados
+
+
+def build_secii(res, wb):
+    """Las nueve hojas de la Seccion II. Devuelve el resumen para el Dashboard."""
+    datos = _cargar_secii(res)
+    ncols_max = max((t["ncols"] for p in datos for s in p["specs"]
+                     for t in s["tablas"]), default=1)
+    n_tablas = sum(len(s["tablas"]) for p in datos for s in p["specs"])
+    n_filas = sum(len(t["filas"]) for p in datos for s in p["specs"]
+                  for t in s["tablas"])
+    conf = Counter(f["confianza"] for p in datos for s in p["specs"]
+                   for t in s["tablas"] for f in t["filas"])
+    # La comprobacion sin perdida se corre AQUI tambien, no solo en el CLI: lo
+    # que se graba en el libro tiene que ser lo mismo que se midio. Un fallo
+    # aborta el build; escribir una fila que perdio texto seria peor que no
+    # escribirla.
+    malas = []
+    for p in datos:
+        for s in p["specs"]:
+            for t in s["tablas"]:
+                malas += secii.verificar_sin_perdida(t["filas"])
+    if malas:
+        raise SystemExit(
+            f"ERROR: {len(malas)} filas de la Seccion II no pasan la "
+            f"comprobacion sin perdida. El libro no se construye con filas que "
+            f"no sean una reparticion exacta del texto impreso.\n  "
+            + "\n  ".join(malas[:5]))
+
+    build_cat_secii(wb, datos)
+    build_idx_secii(wb, datos)
+    lasts = build_db_secii(wb, datos, ncols_max)
+    build_notas_secii(wb, datos)
+    norm = build_normalizadas_secii(wb, datos)
+
+    n_notas = sum(len(t["notas"]) for p in datos for s in p["specs"]
+                  for t in s["tablas"])
+    huecos = Counter()
+    for p in datos:
+        for s in p["specs"]:
+            huecos += s["huecos"]
+    ISSUES.append(
+        f"Seccion II A/B/C: {n_tablas} tablas logicas y {n_filas} filas "
+        f"volcadas ({conf[secii.EXACTA]} EXACTA · {conf[secii.POR_CONTEO]} POR "
+        f"CONTEO · {conf[secii.AMBIGUA]} AMBIGUA), {n_notas} notas al pie. "
+        f"Comprobacion sin perdida: 0 fallos sobre las {n_filas} filas.")
+    ISSUES.append(
+        "Seccion II A/B/C AMBIGUA: la fila conserva su texto impreso ENTERO en "
+        "una celda y se marca; no se reparte por interpolacion sobre el bbox "
+        "porque los `Span` no estan en el JSON y la posicion de cada palabra "
+        "dentro de un `Line` no consta. No se pierde texto; no queda tabulada.")
+    ISSUES.append(
+        f"Seccion II A/B/C normalizadas: "
+        f"{norm['DB_SecII_Quimica'][1]} tablas en DB_SecII_Quimica y "
+        f"{norm['DB_SecII_Traccion'][1]} en DB_SecII_Traccion, de {n_tablas}. "
+        f"Solo entra la tabla cuyos encabezados se resuelven ENTEROS contra el "
+        f"vocabulario del codigo; el resto sigue integro en el volcado y "
+        f"IDX_SecII_Tablas dice por que, tabla a tabla.")
+    if huecos:
+        ISSUES.append("Seccion II A/B/C huecos declarados (no reparables sin el "
+                      "PDF): " + " · ".join(f"{k}={v}" for k, v in
+                                            sorted(huecos.items())))
+    return dict(tablas=n_tablas, filas=n_filas, notas=n_notas, conf=conf,
+                ncols_max=ncols_max, lasts=lasts, norm=norm)
+
+
 def iter_notas(d):
     """Recorre TODAS las estructuras de notas que usan las extracciones:
     B31.3 -> 'general_notes' + 'notes';  BPVC II-D -> 'sections'[].'items'[].
@@ -5154,7 +5579,7 @@ DASH = "Dashboard"
 NAVEGABLES = ["Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
               "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
               "Buscar_Prop_B31_3", "Buscar_NoMetalicos", "Buscar_Ec_A2",
-              "Buscar_Ej_A3", "Instrucciones"]
+              "Buscar_Ej_A3"] + NAV_SECII + ["Instrucciones"]
 
 # La clave de destino de cada boton se guarda oculta en (fila del boton,
 # COL_CLAVE_BASE + columna del boton). Depende de la columna, y no solo de la
@@ -5177,6 +5602,9 @@ FILA_AVISO = 4
 # Instrucciones no congela y empieza en B2, dejando libre la fila 1.
 ANCLA_VOLVER = {n: (3, 1, 3) for n in NAVEGABLES}    # (fila, col_ini, col_fin)
 ANCLA_VOLVER["Instrucciones"] = (1, 2, 3)
+# Las nueve hojas de la Seccion II dejan libre la fila 3 a proposito (ver
+# R_HDR_SECII): asi anclan el boton donde lo anclan los buscadores, sin pisar
+# la fila de encabezados.
 
 DASH_NCOLS = 12
 DASH_ANCHO_COL = 15
@@ -5283,6 +5711,35 @@ def normalizar_textos_como_formula(wb):
     return n
 
 
+# Tarjetas de la banda 4 del Dashboard. Son hojas de DATOS, no motores: no
+# llevan buscador ni una sola formula, y la tarjeta lo dice para que nadie
+# espere de ellas lo que dan las de la banda 2.
+TARJETAS_SECII = [
+    ("SEC. II · CATALOGO", ["379 entradas: specs, paginas PDF y folios",
+                            "Partes A (2 vol.), B y C · 2025"], "CAT_SecII"),
+    ("SEC. II · INDICE DE TABLAS", ["2 572 tablas logicas y su reparto",
+                                    "Dice cuanto quedo tabulado y por que"],
+     "IDX_SecII_Tablas"),
+    ("SEC. II · PARTE A vol. 1", ["Volcado integro de SA-6 a SA-450",
+                                  "Una fila por fila impresa"], "DB_SecII_A1"),
+    ("SEC. II · PARTE A vol. 2", ["Volcado integro de SA-451 en adelante",
+                                  "Una fila por fila impresa"], "DB_SecII_A2"),
+    ("SEC. II · PARTE B", ["No ferrosos: SB-", "Una fila por fila impresa"],
+     "DB_SecII_B"),
+    ("SEC. II · PARTE C", ["Consumibles de soldadura: SFA-",
+                           "Una fila por fila impresa"], "DB_SecII_C"),
+    ("SEC. II · NOTAS AL PIE", ["Notas de tabla con su marcador",
+                                "Restringen lo que dice la tabla"],
+     "DB_SecII_Notas"),
+    ("SEC. II · QUIMICA", ["Composicion normalizada por elemento",
+                           "Solo tablas de encabezado resuelto"],
+     "DB_SecII_Quimica"),
+    ("SEC. II · TRACCION", ["Rm, Re, alargamiento y dureza",
+                            "Solo tablas de encabezado resuelto"],
+     "DB_SecII_Traccion"),
+]
+
+
 def build_dashboard(wb, kpis, fecha):
     """Portada unica del libro. `kpis` es una lista de (titulo, valor, unidad, ambar)."""
     ws = wb.create_sheet(DASH)
@@ -5366,11 +5823,27 @@ def build_dashboard(wb, kpis, fecha):
         _tarjeta(ws, r, col, 4, titulo, lineas, clave)
     r += 5
 
-    # --- 3. estado del libro ---------------------------------------------
-    banda(ws, r, "3 · ESTADO DEL LIBRO", DASH_NCOLS)
+    # --- 3. bases de datos de la Seccion II -------------------------------
+    banda(ws, r, "3 · BASES DE DATOS — ASME BPVC SECCION II, PARTES A, B y C "
+                 "(hojas de datos, sin buscador)", DASH_NCOLS)
     r += 1
+    for i, (titulo, lineas, clave) in enumerate(TARJETAS_SECII):
+        col = 1 + (i % 3) * 4
+        if i and i % 3 == 0:
+            r += 5
+        _tarjeta(ws, r, col, 4, titulo, lineas, clave)
+    r += 5
+
+    # --- 4. estado del libro ---------------------------------------------
+    banda(ws, r, "4 · ESTADO DEL LIBRO", DASH_NCOLS)
+    r += 1
+    # Cuatro KPI por banda: el Dashboard tiene DASH_NCOLS columnas y cada KPI
+    # ocupa tres. El quinto se salia del ancho de la hoja y quedaba invisible.
+    POR_BANDA = DASH_NCOLS // 3
     for i, (titulo, valor, unidad, ambar) in enumerate(kpis):
-        c1 = 1 + i * 3
+        if i and i % POR_BANDA == 0:
+            r += 4
+        c1 = 1 + (i % POR_BANDA) * 3
         k = _mrg(ws, r, c1, c1 + 2, titulo)
         k.font, k.fill = KPI_TIT_F, BAND_FILL
         k.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -5384,9 +5857,11 @@ def build_dashboard(wb, kpis, fecha):
         for rr in range(r, r + 3):
             for cc in range(c1, c1 + 3):
                 ws.cell(rr, cc).border = CARD_BORDER
-    ws.row_dimensions[r].height = 26
-    ws.row_dimensions[r + 1].height = 30
-    ws.row_dimensions[r + 2].height = 14
+        # Las alturas se fijan DENTRO del bucle: con dos bandas de KPI, ponerlas
+        # despues solo alcanzaba a la ultima y la primera quedaba encogida.
+        ws.row_dimensions[r].height = 26
+        ws.row_dimensions[r + 1].height = 30
+        ws.row_dimensions[r + 2].height = 14
     r += 3
     n = _mrg(ws, r, 1, DASH_NCOLS,
              f"Compilado {fecha} · fuente unica: resources/ · valores cargados tal como "
@@ -5496,6 +5971,7 @@ def main(argv=None):
     _, mapc_stats, mapc_pend = build_map_grupo(
         res, wb, [iidc, iidbc], todas, ruta_dec, "US")
     build_notas(res, wb)
+    sec2 = build_secii(res, wb)
 
     # listas simples de los buscadores por grupo
     wse, wste, wsprd, wsnm = wb["DB_E"], wb["DB_TE_G"], wb["DB_PRD"], wb["DB_NoMetalicos"]
@@ -5666,14 +6142,24 @@ def main(argv=None):
                         f" -> {sy['last_row'] - R_DATA + 1}",
         "MAP_Grupo": " · ".join(f"{k}={v}" for k, v in map_stats.items()),
         "MAP_GrupoC": " · ".join(f"{k}={v}" for k, v in mapc_stats.items()),
+        "Seccion II A/B/C -> DB_SecII_*":
+            f"{sec2['tablas']} tablas -> {sec2['filas']} filas "
+            f"({' · '.join(f'{k}={v}' for k, v in sorted(sec2['conf'].items()))})",
     }
     build_meta(wb, counts)
     rewrite_instrucciones(
-        wb, "Rev. 4 — El Apendice C del B31.3 pasa a motor propio (Buscar_Prop_B31_3) con "
-            "conmutador SI/US y las cuatro tablas C-1..C-4 en una sola base; el Apendice B "
-            "se queda solo en Buscar_NoMetalicos y la II-D en Buscar_Prop_IID. Se mantiene "
-            "el Dashboard unico de navegacion de la Rev. 3 (libro con macros, .xlsm), la "
-            "consulta por cascada de listas desplegables y el libro sin funciones de "
+        wb, "Rev. 4c — Entran al libro las tablas de la Seccion II, partes A, B y C: "
+            "nueve hojas de DATOS (CAT_SecII, IDX_SecII_Tablas, los cuatro DB_SecII_* "
+            "del volcado integro, DB_SecII_Notas y las normalizadas de quimica y "
+            "traccion), navegables desde el Dashboard y sin una sola formula. El "
+            "45,8 % de sus filas llega marcada AMBIGUA: no perdieron texto —va entero "
+            "en la celda C01— pero NO quedaron repartidas en columnas, porque el JSON "
+            "de la Seccion II no conserva la posicion de cada palabra dentro de la "
+            "linea. IDX_SecII_Tablas lo dice tabla a tabla y el Dashboard publica el "
+            "total. Para valores leidos de esas tablas, el PDF del codigo manda. "
+            "MAP_Grupo queda cerrado: 0 casos abiertos, 106 declarados como limite de "
+            "la fuente. Se mantiene el Dashboard unico de navegacion (libro con "
+            "macros, .xlsm), la consulta por cascada y el libro sin funciones de "
             "matriz dinamica.")
 
     # Los conteos del Dashboard salen de las mismas variables que alimentan
@@ -5685,9 +6171,13 @@ def main(argv=None):
     build_dashboard(wb, [
         ("MATERIALES B31.3 · A-1 y A-4", b313["last_row"] - R_DATA + 1, "registros", False),
         ("MATERIALES II-D · TABLA 1A", iid["last_row"] - R_DATA + 1, "registros", False),
-        ("MATERIALES II-D · TABLA U", su["last_row"] - R_DATA + 1, "registros", False),
         ("MAP_Grupo SIN GRUPO NORMATIVO", n_sin_resolver,
          "filas · no usar E ni dilatacion", True),
+        # Las filas AMBIGUAS no perdieron texto -van enteras en una celda- pero
+        # NO quedaron repartidas en columnas. Se publica en ambar porque es la
+        # limitacion que hay que tener delante al leer esas hojas.
+        ("SEC. II · FILAS SIN TABULAR", sec2["conf"][secii.AMBIGUA],
+         f"de {sec2['filas']} · texto integro, sin repartir", True),
     ], datetime.date.today().isoformat())
 
     link_volver(wb)
@@ -5703,7 +6193,7 @@ def main(argv=None):
              "DB_B31_C", "DB_B31_CC",
              "DB_NoMetalicos", "MAP_Factores", "DB_A2_Ec", "DB_A3_Ej",
              "DB_Ec_Incremento", "MAP_Grupo", "MAP_GrupoC",
-             "Notas_Codigo", "DB_Listas",
+             "Notas_Codigo"] + NAV_SECII + ["DB_Listas",
              "_meta", "_Curvas"]
     wb._sheets = [wb[n] for n in order if n in wb.sheetnames] + \
                  [s for s in wb._sheets if s.title not in order]

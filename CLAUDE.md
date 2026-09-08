@@ -119,12 +119,22 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
-(45 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
+(54 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
+a mano. El build entero tarda ~45 s.
 
-**Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación a los
-doce motores (Art. 212, los 10 buscadores, `Instrucciones`) la hace un proyecto VBA de
-dos componentes. Los estados de visibilidad van **grabados en el archivo**, así que con
-las macros bloqueadas no se expone ninguna base de datos.
+**Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación la
+hace un proyecto VBA de dos componentes, y alcanza **21 hojas**: los doce motores
+(Art. 212, los 10 buscadores, `Instrucciones`) y las nueve hojas de datos de la
+Sección II. Los estados de visibilidad van **grabados en el archivo**, así que con
+las macros bloqueadas no se expone ninguna base que alimente un motor.
+
+**Las nueve de la Sección II sí son navegables, y es una excepción declarada.**
+La regla —una base de datos que alimenta un motor es insumo auditado, no interfaz:
+abrirla dejaría leer un valor sin la cascada, sin el bloqueo por rango y sin la
+nota del material— no aplica ahí, porque en esas nueve el entregable **es** la
+hoja de datos: no alimentan ningún motor y no llevan una sola fórmula. Ocultarlas
+no protegería nada y solo las haría inútiles. `verificar.py` §8 y
+`test_dashboard.py` comprueban la regla **y** su excepción, por nombre.
 
 ### Los diez buscadores
 
@@ -277,11 +287,16 @@ python -m pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q
 python verificar.py --resources ..\..\..\resources `
     --wb ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm
 
-# No entra en el libro: mide la reconstruccion de las tablas de la Seccion II
-# partes A/B/C y escribe Revision_Tablas_SecII.md. Ver la seccion de abajo.
+# Opcional. Las tablas de la Seccion II YA entran al libro (el builder importa
+# secii_tablas.py como libreria); este CLI no escribe nada: solo mide y refresca
+# Revision_Tablas_SecII.md. Ver la seccion de abajo.
 python secii_tablas.py --resources ..\..\..\resources `
     --informe ..\Revision_Tablas_SecII.md
 ```
+
+`verificar.py` tarda varios minutos: su §10 relee las 54 198 filas de la Sección
+II desde la hoja y las contrasta contra una reconstrucción independiente hecha
+desde `resources/`.
 
 La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale de
 `outputs/Base_Datos_Materiales_ASME/Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx`
@@ -458,11 +473,12 @@ posicional sin red es una bomba silenciosa, así que el build **aborta** si el n
 de filas por propiedad no coincide o si un nombre normalizado difiere fuera de
 `DIVERGENCIAS_NOMBRE_C`, que hoy tiene **una sola entrada**.
 
-### Sección II partes A, B y C — medida, todavía no volcada al libro
+### Sección II partes A, B y C — las nueve hojas del libro
 
 `secii_tablas.py` reconstruye las tablas de las 368 especificaciones desde los
-bloques `Line` y sus `bbox`. **No escribe nada** en `resources/` ni en el libro:
-mide y reporta a `Revision_Tablas_SecII.md`.
+bloques `Line` y sus `bbox`. Es **librería y CLI**: el builder la importa para
+escribir las nueve hojas, y `--informe` mide y reporta a
+`Revision_Tablas_SecII.md` sin tocar `resources/` ni el libro.
 
 El JSON no trae tablas: el `html` de todo bloque `Table` es `<p></p>` y los `Span`
 no se conservan, así que el bloque más fino es `Line`. El reparto de cada fila
@@ -476,15 +492,75 @@ reparto, nunca lo produce.
 
 La garantía que sí se puede dar sin el PDF es la **comprobación sin pérdida**: la
 concatenación de las celdas de cada fila coincide carácter a carácter con la de sus
-`Line` de origen. Pasa sobre las 54 198 filas y los 124 115 `Line`.
+`Line` de origen. Pasa sobre las 54 198 filas y los 124 115 `Line`, **y se corre
+tres veces**: en el CLI, en el build (un fallo lo **aborta**: no se graba una fila
+que no sea una repartición exacta) y en `verificar.py` §10, que la relee **desde
+la hoja** y la contrasta contra una reconstrucción independiente desde
+`resources/`.
 
-**Estado: parado en el punto de decisión de la Fase 2 del plan.** Medido sobre las
-cuatro partes: 2 572 tablas lógicas, 54 198 filas, 5 233 notas al pie, y un
-**38,7 % de las filas de dato en AMBIGUA**. El plan dice que a esa escala escribir
-las filas dudosas es peor que no escribirlas, así que las nueve hojas
-(`CAT_SecII`, `IDX_SecII_Tablas`, los cuatro `DB_SecII_*`, `DB_SecII_Notas` y las
-normalizadas de química y tracción) **no están en el libro**. Seguir a las Fases 3-5
-—o acotarlas a las tablas que sí se reparten— es decisión del ingeniero.
+**Estado: volcado entero al libro (Rev. 4c).** 2 572 tablas lógicas, 54 198 filas
+y 5 233 notas al pie, en nueve hojas navegables:
+
+| Hoja | Filas | Contenido |
+|---|---:|---|
+| `CAT_SecII` | 379 | Catálogo del índice de las cuatro partes: spec, título, páginas PDF y folios |
+| `IDX_SecII_Tablas` | 2 572 | Una fila por tabla lógica: reparto por confianza, motivo dominante y por qué no se normaliza |
+| `DB_SecII_A1` · `A2` · `B` · `C` | 54 198 | **Volcado íntegro**, formato ragged: `C01..C48` |
+| `DB_SecII_Notas` | 5 233 | Notas al pie con su marcador |
+| `DB_SecII_Quimica` | 220 | Normalizada: 68 tablas |
+| `DB_SecII_Traccion` | 182 | Normalizada: 38 tablas |
+
+**Las 24 812 filas AMBIGUAS entran al libro, y eso no contradice el punto de
+parada de la Fase 2.** El plan avisaba de que escribir 124 000 filas dudosas es
+peor que no escribirlas; lo que sería peor es escribirlas **como si estuvieran
+tabuladas**. Aquí entran con su texto impreso **entero en `C01`** y marcadas
+`AMBIGUA` con su motivo, `IDX_SecII_Tablas` lo cuenta tabla a tabla y el
+Dashboard publica el total en ámbar. No se pierde nada y se puede consultar.
+
+**Las normalizadas cubren muy poco, y el motivo es de la fuente.** El plan
+estimaba ~12 000 filas de química; salen **220**. La regla —«solo se normaliza la
+tabla cuyos encabezados se resuelven ENTEROS contra el vocabulario del código»—
+rechaza el resto por dos motivos que se cuentan: *no se pudo componer un nombre
+por columna desde la cabecera* (908 tablas) y *ninguna columna se resuelve como
+elemento* (971). Los encabezados de la Sección II llegan casi siempre sin partir,
+porque son filas de un solo `Line` **sin fichas de valor** con las que el conteo
+pueda partirlas. Forzar el encaje daría una hoja que *parece* completa: el dato
+sigue íntegro en el volcado y el motivo está impreso tabla a tabla.
+
+Dos criterios que costaron y que no hay que revertir:
+
+- **El marcador de nota va pegado al calificador.** El código imprime
+  «Chromium, maxC» —el superíndice pegado, que `texto()` conserva a propósito—,
+  así que `\bmax\b` **no casa**: entre «x» y «C» no hay frontera de palabra. Sin
+  absorberlo, cinco de los diez elementos de la Tabla 1 de SA-106 acababan en
+  «Otros elementos» teniendo columna propia.
+- **Un guardia de fichas de valor separa un requisito de la prosa.** La Tabla 19
+  de SB-111 («Significance of Numerical Limits») rotula filas «Tensile strength»
+  y «Yield strength» cuyo contenido es una frase con números dentro. Un guardia
+  que solo mirase «¿lleva dígitos?» la dejaba pasar; el que exige que **la mitad
+  de las fichas sean fichas de valor** no.
+
+**El encabezado que llega en una sola celda se parte, pero solo con dos reglas.**
+«Grade A Grade B Grade C» se reparte porque el código **repite** la palabra clave
+y porque el número de trozos es **exactamente** el de columnas de valor que la
+tabla ya demostró tener (`partir_encabezado`). Si no cuadra, devuelve `None` y la
+tabla no se normaliza. No se interpola nada, igual que en el resto de la capa.
+
+**Un carácter que XML no admite.** El `index.json` de SA-533 trae un **U+FFFE** en
+el título, donde el PDF imprime un guion. openpyxl lo escribe tal cual y produce
+un `.xlsm` que Excel abre pero que **ningún parser XML lee** —rompía las 16
+pruebas de `test_dashboard.py` sin que ninguna de sus aserciones fuese falsa—.
+`xml_seguro()` sustituye los caracteres prohibidos por **U+FFFD**, que es lo que
+Unicode reserva para «aquí había algo irrepresentable»: se ve, no se pierde la
+posición y no se inventa el carácter. `verificar.py` §10 aplica la misma
+sustitución al lado del origen antes de comparar, de modo que la única diferencia
+admitida entre lo impreso y lo grabado queda declarada.
+
+**Estas nueve hojas no llevan ni una fórmula.** Y el criterio de la prueba es el
+**tipo** de celda, no si el texto empieza por «=»: el código imprime celdas como
+«= 3.18 mm in any 1.524 m», que son texto y tienen que seguir siéndolo.
+`_txt_celda` las fuerza a `s`; `test_dashboard.py` y `verificar.py` §10 lo
+comprueban.
 
 ### `MAP_Grupo` — pertenencia a grupo de propiedades
 

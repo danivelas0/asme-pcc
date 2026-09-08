@@ -40,6 +40,7 @@ from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_db_materiales as B   # tabla de navegacion: DASH, NAVEGABLES, COL_CLAVE_BASE
+import secii_tablas as secii      # §10: se reconstruye desde resources/, no se cree al libro
 from db_lib import Resources, num, temp_to_number, txt
 
 # Se fijan en main() a partir de la linea de comandos. Antes vivian aqui como
@@ -116,11 +117,14 @@ def _matar(pid) -> None:
         win32api.CloseHandle(h)
     except Exception:  # noqa: BLE001
         pass
-def col_map(ws):
-    """Indices de columna leidos del propio encabezado (robusto a cambios)."""
+def col_map(ws, fila=None):
+    """Indices de columna leidos del propio encabezado (robusto a cambios).
+
+    `fila` porque las nueve hojas de la Seccion II encabezan una fila mas
+    abajo: dejan la 3 libre para el enlace VOLVER (ver R_HDR_SECII)."""
     m = {}
     for c in range(1, ws.max_column + 1):
-        v = ws.cell(R_HDR, c).value
+        v = ws.cell(fila or R_HDR, c).value
         if isinstance(v, str) and v not in m:
             m[v] = c
     return m
@@ -1166,8 +1170,15 @@ def auditar():
         (f"Las {len(B.NAVEGABLES)} hojas navegables estan hidden",
          ocultas == set(B.NAVEGABLES), f"{len(ocultas)} hojas"),
         ("El resto esta veryHidden", very == esperadas_very, f"{len(very)} hojas"),
-        ("Ninguna base de datos alcanzable desde la UI",
+        # Las bases que ALIMENTAN un motor son insumo auditado, no interfaz: si
+        # se pudieran abrir, el usuario leeria un valor sin la cascada, sin el
+        # bloqueo por rango y sin la nota del material. Las nueve de la Seccion
+        # II son la excepcion declarada, y no por comodidad: ahi el entregable
+        # ES la hoja de datos —no alimentan ningun motor, no llevan formulas—,
+        # de modo que ocultarlas no protegeria nada y solo las haria inutiles.
+        ("Ninguna base que alimente un motor es alcanzable desde la UI",
          not [n for n in estados if estados[n] != "veryHidden"
+              and n not in B.NAV_SECII
               and re.match(r"^(DB_|MAP_|Notas_Codigo|Datos_Ref|_)", n)], ""),
         ("El paquete conserva xl/vbaProject.bin",
          "xl/vbaProject.bin" in zipfile.ZipFile(ruta).namelist(), ruta.suffix),
@@ -1350,10 +1361,119 @@ def auditar():
         "bloqueado, que es lo que exige el codigo.")
     log("")
 
+    # ---- 10. Seccion II, partes A, B y C -----------------------------------
+    # El volcado se audita CONTRA LA HOJA, no contra la memoria del build: se
+    # relee lo que quedo grabado y se vuelve a reconstruir desde resources/.
+    # Auditar la estructura de datos en vez del libro dejaria pasar cualquier
+    # error de escritura.
+    log("## 10. Seccion II, partes A, B y C (volcado integro y normalizadas)")
+    log("")
+    log("La comprobacion sin perdida se relee DESDE LA HOJA: la concatenacion de "
+        "las celdas C01..Cnn de cada fila grabada tiene que coincidir, caracter a "
+        "caracter, con la del texto de sus bloques `Line` de origen. Es lo unico "
+        "que se puede garantizar sin el PDF, y garantiza que esta capa reparte el "
+        "texto impreso sin anadir ni quitar nada.")
+    log("")
+    sec_bad = 0
+    esperadas_secii = ["CAT_SecII", "IDX_SecII_Tablas", "DB_SecII_A1",
+                       "DB_SecII_A2", "DB_SecII_B", "DB_SecII_C",
+                       "DB_SecII_Notas", "DB_SecII_Quimica", "DB_SecII_Traccion"]
+    faltan_secii = [h for h in esperadas_secii if h not in wb0.sheetnames]
+    filas10 = [("Las 9 hojas de la Seccion II estan en el libro",
+                f"faltan: {', '.join(faltan_secii) or 'ninguna'}",
+                not faltan_secii),
+               ("Las 9 estan en la capa de navegacion",
+                "CAT_/IDX_/DB_SecII_* en NAVEGABLES",
+                all(h in B.NAVEGABLES for h in esperadas_secii))]
+
+    if not faltan_secii:
+        # Ninguna de estas hojas lleva formulas: son datos. Se mira el TIPO de
+        # la celda, no si el texto empieza por «=»: el codigo imprime celdas
+        # como «= 3.18 mm in any 1.524 m», que son texto y tienen que seguir
+        # siendolo (el builder las fuerza a `s` en `_txt_celda`).
+        con_formula = 0
+        for h in esperadas_secii:
+            for fila in wb0[h].iter_rows():
+                con_formula += sum(1 for c in fila if c.data_type == "f")
+        filas10.append(("Ninguna de las 9 hojas lleva formulas",
+                        f"{con_formula} celdas empiezan por '='", con_formula == 0))
+
+        # Reconstruccion independiente desde resources/ y cotejo fila a fila.
+        # Se lee con `iter_rows(values_only=True)` y no celda a celda: son
+        # 54 198 filas por 58 columnas, y el acceso individual convertia esta
+        # seccion en doce minutos de reloj.
+        RD = B.R_DATA_SECII
+        idx_ws = wb0["IDX_SecII_Tablas"]
+        cidx = col_map(idx_ws, B.R_HDR_SECII)
+        idx_hoja = {}
+        for fila in idx_ws.iter_rows(min_row=RD, values_only=True):
+            if not fila or fila[cidx["Especificacion"] - 1] is None:
+                continue
+            idx_hoja[(str(fila[cidx["Especificacion"] - 1]),
+                      int(fila[cidx["Tabla"] - 1]))] = int(fila[cidx["Filas"] - 1])
+
+        volcado, dup = {}, 0
+        for h in ("DB_SecII_A1", "DB_SecII_A2", "DB_SecII_B", "DB_SecII_C"):
+            ws_v = wb0[h]
+            cv = col_map(ws_v, B.R_HDR_SECII)
+            i_spec, i_tab = cv["Especificacion"] - 1, cv["Tabla"] - 1
+            i_fil, i_c0 = cv["Fila"] - 1, cv["C01"] - 1
+            for fila in ws_v.iter_rows(min_row=RD, values_only=True):
+                if not fila or fila[i_spec] is None:
+                    continue
+                clave = (str(fila[i_spec]), int(fila[i_tab]), int(fila[i_fil]))
+                if clave in volcado:
+                    dup += 1
+                volcado[clave] = "".join(str(x) for x in fila[i_c0:]
+                                         if x is not None)
+        filas10.append(("Cada fila impresa aparece una sola vez",
+                        f"{dup} claves (spec, tabla, fila) repetidas", dup == 0))
+
+        perdidas = descuadre = 0
+        vistas = 0
+        raiz = Path(RES.root)
+        for parte in secii.PARTES:
+            for ruta in secii.archivos_de(raiz, parte):
+                spec = secii.cargar_spec(ruta)
+                sid = spec["spec"].get("id") or ruta.stem
+                for t in secii.tablas_de(spec):
+                    if idx_hoja.get((sid, t["n"])) != len(t["filas"]):
+                        descuadre += 1
+                    for i, f in enumerate(t["filas"], start=1):
+                        # `xml_seguro` tambien en el origen: es la unica
+                        # diferencia admitida entre lo impreso y lo grabado, y
+                        # esta declarada (un caracter que XML no admite se
+                        # sustituye por U+FFFD, no se borra).
+                        origen = re.sub(r"\s+", "", secii.xml_seguro("".join(
+                            secii.texto(l["html"]) for l in f["lineas"])))
+                        grabado = re.sub(r"\s+", "",
+                                         volcado.get((sid, t["n"], i), "\x00"))
+                        vistas += 1
+                        if origen != grabado:
+                            perdidas += 1
+        filas10.append((
+            "La hoja conserva el texto impreso, caracter a caracter",
+            f"{perdidas} de {vistas} filas en las que la concatenacion de las "
+            f"celdas grabadas no coincide con la de sus `Line`", perdidas == 0))
+        filas10.append(("IDX_SecII_Tablas cuadra con el volcado",
+                        f"{descuadre} tablas cuyo recuento de filas no coincide",
+                        descuadre == 0))
+
+    log("| Comprobacion | Detalle | Estado |")
+    log("|---|---|---|")
+    for etiqueta, detalle, ok in filas10:
+        sec_bad += 0 if ok else 1
+        log(f"| {etiqueta} | {detalle} | {'OK' if ok else 'FALLO'} |")
+    log("")
+    log("Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en "
+        "columnas sin adivinar, y cuyo texto impreso se conserva ENTERO en C01. "
+        "Cuantas hay, y por que, esta en `IDX_SecII_Tablas`.")
+    log("")
+
     # ---- cierre -----------------------------------------------------------
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
-             + map_bad)
+             + map_bad + sec_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -1365,7 +1485,8 @@ def auditar():
                         ("6. Interpolacion recalculada", nbad),
                         ("7. Caso semilla", semilla_bad),
                         ("8. Capa de navegacion", nav_bad),
-                        ("9. Mapeo de grupos", map_bad)]:
+                        ("9. Mapeo de grupos", map_bad),
+                        ("10. Seccion II A/B/C", sec_bad)]:
         log(f"| {etiqueta} | {v} |")
     log("")
     log(f"**Total de fallos: {total}.**")

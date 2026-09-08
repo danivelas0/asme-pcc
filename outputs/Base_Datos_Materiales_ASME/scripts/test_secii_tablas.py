@@ -208,3 +208,96 @@ class TestContraElCodigo:
         for ruta in S.archivos_de(RES, "bpvc_ii_c"):
             total += S.huecos_de(S.cargar_spec(ruta))["Form sin contenido (parte C)"]
         assert total == 101
+
+
+# ---------------------------------------------------------------------------
+# Normalizacion (Fase 4): quimica y traccion
+# ---------------------------------------------------------------------------
+class TestVocabulario:
+    def test_el_marcador_de_nota_va_pegado_al_calificador(self):
+        # El codigo imprime «Chromium, maxC»: el marcador de nota es un
+        # superindice pegado a «max», y 	exto() lo conserva pegado a
+        # proposito. Sin absorberlo aqui, «\bmax\b» no casa —entre «x» y «C»
+        # no hay frontera de palabra— y cinco de los diez elementos de la
+        # Tabla 1 de SA-106 acababan en «Otros elementos» teniendo columna.
+        assert S.elemento_de("Chromium, maxC") == ("Cr", "max")
+        assert S.elemento_de("Carbon, max") == ("C", "max")
+        assert S.elemento_de("Silicon, min") == ("Si", "min")
+        assert S.elemento_de("Manganese") == ("Mn", "")
+
+    def test_un_elemento_sin_columna_propia_no_se_confunde_con_no_serlo(self):
+        # «OTRO» significa «es un elemento, pero esta hoja no lo tabula»: va
+        # entero a Otros elementos y NO impide normalizar la tabla. None
+        # significa «no es un elemento», y eso si la impide.
+        assert S.elemento_de("Cerium") == ("OTRO", "")
+        assert S.elemento_de("Grade") is None
+
+    def test_la_base_de_medida_del_alargamiento_se_conserva(self):
+        # Un alargamiento sin su base de medida no es comparable con nada.
+        col, calif, base = S.propiedad_de("Elongation in 2 in. [50 mm], min, %")
+        assert col == "Alargamiento %" and calif == "min"
+        assert base.startswith("2 in.")
+
+
+class TestEncabezadoRepetido:
+    def test_parte_solo_si_el_conteo_cuadra(self):
+        # El codigo REPITE la palabra clave; el numero de trozos tiene que ser
+        # exactamente el de columnas de valor que la tabla ya demostro tener.
+        assert S.partir_encabezado("Grade A Grade B Grade C", 3) == \
+            ["Grade A", "Grade B", "Grade C"]
+        assert S.partir_encabezado("Grade A Grade B Grade C", 4) is None
+
+    def test_no_inventa_estructura_cuando_no_hay_con_que(self):
+        assert S.partir_encabezado("Permissible Variations in Diameter", 3) is None
+
+
+@saltar
+class TestNormalizadas:
+    def test_sa_106_tabla_1_da_una_fila_por_grado(self):
+        # La transpuesta: la primera columna nombra elementos y el encabezado
+        # los grados. Es la orientacion habitual en Seccion II.
+        t = tablas("bpvc_ii_a_1", "SA-106")[0]
+        filas, motivo = S.normalizar_quimica(t)
+        assert filas and not motivo
+        assert [f["_grado"] for f in filas] == ["Grade A", "Grade B", "Grade C"]
+        b = next(f for f in filas if f["_grado"] == "Grade B")
+        # Valor TAL COMO ESTA IMPRESO, con su marcador de nota y su
+        # calificador: no se parte el rango ni se tira la «B» de la nota.
+        assert b["C"] == "0.30B max"
+        assert b["Mn"] == "0.29–1.06"
+        assert b["Cr"] == "0.40 max" and b["Mo"] == "0.15 max"
+        assert b["_otros"] == ""
+
+    def test_una_tabla_de_prosa_no_pasa_por_requisitos(self):
+        # SB-111 Tabla 19 («Significance of Numerical Limits») rotula filas
+        # «Tensile strength» y «Yield strength» cuyo contenido es una FRASE.
+        # Sin el guardia de fichas de valor se normalizaba como si fueran
+        # requisitos de traccion, y la hoja parecia tener un dato que no tiene.
+        for t in tablas("bpvc_ii_b", "SB-111"):
+            if "Significance of Numerical Limits" in (t["titulo"] or ""):
+                filas, motivo = S.normalizar_traccion(t)
+                assert filas is None and "no son numericos" in motivo
+                break
+        else:
+            pytest.skip("la tabla cambio de titulo en la extraccion")
+
+    def test_la_que_no_encaja_entera_no_se_normaliza(self):
+        # SA-106 Tabla 2 tiene cabecera a DOS niveles (grado x longitudinal /
+        # transversal). No se normaliza, y es lo correcto: forzarla daria una
+        # hoja que parece completa. Se queda integra en el volcado.
+        t = tablas("bpvc_ii_a_1", "SA-106")[1]
+        filas, motivo = S.normalizar_traccion(t)
+        assert filas is None and motivo
+
+
+class TestXmlSeguro:
+    def test_sustituye_lo_que_xml_no_admite(self):
+        # El titulo de SA-533 en su index.json trae un U+FFFE donde el PDF
+        # imprime un guion. openpyxl lo escribe tal cual y produce un libro
+        # que Excel abre pero ningun parser XML lee.
+        assert S.xml_seguro("Manganese￾Molybdenum") == "Manganese�Molybdenum"
+        assert S.xml_seguro("Carbon, max") == "Carbon, max"
+
+    def test_no_toca_los_caracteres_que_xml_si_admite(self):
+        for s in ("0.27–0.93", "48 000 [330]", "1 1⁄2", "µm", "°C"):
+            assert S.xml_seguro(s) == s
