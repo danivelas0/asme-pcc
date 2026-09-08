@@ -118,6 +118,15 @@ _RE_DECL = re.compile(
     r"^\s*(?:Public\s+|Private\s+|Global\s+)?(Const|Dim|Type|Declare|Enum)\b",
     re.IGNORECASE)
 
+# VBA no admite mas de 25 continuaciones de linea ('_') en una misma linea
+# logica. Pasarse no da un error de compilacion legible: AddFromString falla en
+# el acto con "Demasiadas continuaciones de linea", el modulo se queda VACIO, y
+# lo que el usuario ve despues es un "No se ha definido Sub o Function" al
+# guardar -porque el otro modulo llama a rutinas que ya no existen- dentro de
+# un dialogo modal que cuelga la automatizacion y deja un Excel huerfano.
+# Ya se pago una vez, con un Array() de 31 hojas navegables.
+MAX_CONTINUACIONES = 25
+
 
 def lint_vba(texto: str, nombre: str) -> list[str]:
     """Comprueba las reglas estructurales que Excel solo delata al compilar."""
@@ -125,13 +134,22 @@ def lint_vba(texto: str, nombre: str) -> list[str]:
     dentro = False          # dentro de una rutina
     primera_proc: int | None = None
     continuacion = False
+    n_cont, ini_logica, ya_avisado = 0, 1, False
 
     for i, cruda in enumerate(texto.splitlines(), 1):
         linea = cruda.split("'")[0] if not cruda.lstrip().startswith("'") else ""
         if continuacion:
+            n_cont += 1
+            if n_cont > MAX_CONTINUACIONES and not ya_avisado:
+                fallos.append(
+                    f"{nombre}:{ini_logica}: la linea logica encadena {n_cont} o mas "
+                    f"continuaciones ('_'); VBA admite {MAX_CONTINUACIONES}. "
+                    f"AddFromString la rechaza y deja el modulo vacio.")
+                ya_avisado = True
             continuacion = linea.rstrip().endswith("_")
             continue
         continuacion = linea.rstrip().endswith("_")
+        n_cont, ini_logica, ya_avisado = 0, i, False
 
         if _RE_FIN_PROC.match(linea):
             dentro = False
