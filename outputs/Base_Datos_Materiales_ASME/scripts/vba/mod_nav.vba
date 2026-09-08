@@ -1,7 +1,7 @@
 Option Explicit
 
 ' ===========================================================================
-' modNav - Navegacion del Motor de Calculo ASME PCC Rev. 3
+' modNav - Navegacion del Motor de Calculo ASME PCC Rev. 5
 ' ===========================================================================
 ' Fuente versionada en texto. Se inyecta en templates/maestro_con_macros.xlsm
 ' mediante scripts/make_vba_seed.py. No editar dentro de Excel: el editor VBA
@@ -11,10 +11,17 @@ Option Explicit
 ' openpyxl no asigna codeName a las hojas que crea (todas salvo las tres que
 ' vienen del maestro), y Excel se los inventa al abrir. Un CodeName escrito
 ' aqui apuntaria a una hoja distinta -o a ninguna- en el proximo build.
+'
+' Rev. 5: la navegacion es un ARBOL de cinco niveles (publicante > disciplina
+' > codigo > standard > hoja), no un indice plano. Ya no hay dos clases de
+' clave: la celda oculta guarda SIEMPRE el nombre de la hoja destino, se este
+' bajando o subiendo. Subir es ir a la hoja PADRE, que el builder graba en la
+' clave del boton VOLVER. Por eso desaparecieron CLAVE_VOLVER y
+' VolverAlDashboard, y AbrirHoja se convirtio en IrAHoja: una sola rama que no
+' crece cuando crece el arbol.
 ' ===========================================================================
 
 Public Const HOJA_INICIO As String = "Dashboard"
-Public Const CLAVE_VOLVER As String = "VOLVER"
 
 ' Celda del aviso de macros en el Dashboard, fusionada A..L por el builder.
 ' El builder la deja en rojo ("deshabilitadas"); si las macros corren,
@@ -26,9 +33,12 @@ Public Const CELDA_AVISO As String = "A4"
 ' La clave de destino de cada boton se guarda en celdas ocultas, fuera de
 ' todo layout: fila del boton, columna COL_CLAVE_BASE + columna del boton.
 '
-' Depende de la columna, y no solo de la fila, porque el Dashboard pone tres
+' Depende de la columna, y no solo de la fila, porque cada nivel pone tres
 ' tarjetas por banda: con una sola columna de claves las tres escribirian en
 ' la misma celda y solo sobreviviria la ultima.
+'
+' Cada tarjeta es clicable ENTERA: sus cuatro filas llevan hipervinculo y una
+' clave propia, en filas distintas de la misma columna.
 '
 ' La base es 66 (BN) porque BM es la columna mas alta que usa cualquier hoja
 ' navegable. No se usa N, que seria lo natural, porque Parche_PCC2_Art212 ya
@@ -65,31 +75,69 @@ End Function
 ' tiene que poder abrirlas. Sin esto, «solo hojas de datos» habria significado
 ' «inalcanzables».
 '
+' Las quince NAV_* son los nodos interiores del arbol de navegacion. Van en
+' PREORDEN, intercaladas con los destinos que cuelgan de cada una: es el orden
+' en que el builder las deriva del arbol, y este es el UNICO punto del VBA que
+' crece cuando crece el arbol.
+'
+' Los prefijos CAL / BUS / DAT son las tres bandas del Dashboard (motores de
+' calculo, motores de busqueda, bases de datos). Cada banda tiene su PROPIA
+' cascada, y por eso hay tres NAV_*_ASME y dos NAV_*_SEC_II: la rama que lleva
+' a los buscadores de la Parte D no es la que lleva a las hojas de datos de
+' las Partes A, B y C.
+'
 ' DEBE coincidir, en contenido Y EN ORDEN, con NAVEGABLES de
 ' build_db_materiales.py. Lo comprueba test_dashboard.py::TestSincroniaPythonVba.
+'
+' La lista se arma concatenando, y NO con un Array( ... ) de una sola linea
+' logica partida con guiones bajos. Motivo, ya pagado: VBA admite como maximo
+' 25 continuaciones de linea, y con 31 hojas hacian falta 30. AddFromString
+' falla con "Demasiadas continuaciones de linea", el modulo se queda VACIO, y
+' el sintoma que se ve no es ese sino un "No se ha definido Sub o Function" al
+' guardar -porque ThisWorkbook llama a rutinas que ya no existen- en un
+' dialogo modal que cuelga la automatizacion. Concatenar no tiene tope: el
+' arbol puede crecer sin volver a chocar con el limite, y cada hoja se queda
+' en su propia linea, que es lo que permite diffear esta lista contra la de
+' Python.
 Public Function HojasNavegables() As Variant
-    HojasNavegables = Array( _
-        "Parche_PCC2_Art212", _
-        "Buscar_B31_3", _
-        "Buscar_BPVC_IID", _
-        "Buscar_BPVC_IID_B", _
-        "Buscar_Su", _
-        "Buscar_Sy", _
-        "Buscar_Prop_IID", _
-        "Buscar_Prop_B31_3", _
-        "Buscar_NoMetalicos", _
-        "Buscar_Ec_A2", _
-        "Buscar_Ej_A3", _
-        "CAT_SecII", _
-        "IDX_SecII_Tablas", _
-        "DB_SecII_A1", _
-        "DB_SecII_A2", _
-        "DB_SecII_B", _
-        "DB_SecII_C", _
-        "DB_SecII_Notas", _
-        "DB_SecII_Quimica", _
-        "DB_SecII_Traccion", _
-        "Instrucciones")
+    Dim s As String
+    s = "NAV_CAL_ASME"
+    s = s & "|NAV_CAL_REPARACION"
+    s = s & "|NAV_CAL_PCC"
+    s = s & "|NAV_CAL_PCC2"
+    s = s & "|Parche_PCC2_Art212"
+    s = s & "|NAV_BUS_ASME"
+    s = s & "|NAV_BUS_PIPING"
+    s = s & "|NAV_BUS_B31"
+    s = s & "|NAV_BUS_B31_3"
+    s = s & "|Buscar_B31_3"
+    s = s & "|Buscar_Prop_B31_3"
+    s = s & "|Buscar_B31_B1"
+    s = s & "|Buscar_Ec_A2"
+    s = s & "|Buscar_Ej_A3"
+    s = s & "|NAV_BUS_PVESSELS"
+    s = s & "|NAV_BUS_BPVC"
+    s = s & "|NAV_BUS_SEC_II"
+    s = s & "|Buscar_BPVC_IID"
+    s = s & "|Buscar_BPVC_IID_B"
+    s = s & "|Buscar_Su"
+    s = s & "|Buscar_Sy"
+    s = s & "|Buscar_Prop_IID"
+    s = s & "|NAV_DAT_ASME"
+    s = s & "|NAV_DAT_PVESSELS"
+    s = s & "|NAV_DAT_BPVC"
+    s = s & "|NAV_DAT_SEC_II"
+    s = s & "|DB_SecII_A1"
+    s = s & "|DB_SecII_A2"
+    s = s & "|DB_SecII_B"
+    s = s & "|DB_SecII_C"
+    s = s & "|CAT_SecII"
+    s = s & "|IDX_SecII_Tablas"
+    s = s & "|DB_SecII_Notas"
+    s = s & "|DB_SecII_Quimica"
+    s = s & "|DB_SecII_Traccion"
+    s = s & "|Instrucciones"
+    HojasNavegables = Split(s, "|")
 End Function
 
 
@@ -130,26 +178,35 @@ Public Sub AplicarVisibilidad()
 End Sub
 
 
-' Abre una hoja navegable y esconde el Dashboard, de forma que el usuario
-' siga viendo una sola pestana.
-Public Sub AbrirHoja(ByVal nombre As String)
+' Va de `origen` a `destino` dejando una sola pestana a la vista. Es la UNICA
+' rutina de navegacion: sirve igual para bajar un nivel del arbol, para subir
+' al padre y para saltar por la miga de pan, porque en los tres casos la clave
+' del boton es el nombre de la hoja destino.
+Public Sub IrAHoja(ByVal destino As String, ByVal origen As Object)
     Dim ws As Object
 
     On Error Resume Next
-    Set ws = ThisWorkbook.Worksheets(nombre)
+    Set ws = ThisWorkbook.Worksheets(destino)
     On Error GoTo 0
 
     If ws Is Nothing Then
-        MsgBox "La hoja '" & nombre & "' no existe en este libro." & vbCrLf & _
+        MsgBox "La hoja '" & destino & "' no existe en este libro." & vbCrLf & _
                "Reconstruya el libro con build_db_materiales.py.", _
                vbExclamation, "Motor de Calculo ASME PCC"
         Exit Sub
     End If
 
-    ' Cortafuegos: aunque las celdas de clave del Dashboard se corrompiesen,
-    ' esta rutina nunca puede destapar una base de datos.
-    If Not EsNavegable(nombre) Then
-        MsgBox "La hoja '" & nombre & "' no es un motor navegable." & vbCrLf & _
+    ' Cortafuegos: aunque una celda de clave se corrompiese, esta rutina nunca
+    ' puede destapar una base de datos. El Dashboard se admite ademas de las
+    ' navegables porque es la raiz del arbol -no esta en la lista, es la unica
+    ' hoja visible- y hay botones que suben hasta el.
+    '
+    ' Ya no se exige que el origen sea el Dashboard, y no es un guardarrail que
+    ' se pierda: era redundante -EsNavegable ya impide abrir una DB_* o una
+    ' MAP_*- y con el arbol el origen legitimo dejo de ser una sola hoja.
+    If Not EsNavegable(destino) And _
+       StrComp(destino, HOJA_INICIO, vbTextCompare) <> 0 Then
+        MsgBox "La hoja '" & destino & "' no es un motor navegable." & vbCrLf & _
                "Las bases de datos son insumo auditado y no se abren desde aqui.", _
                vbExclamation, "Motor de Calculo ASME PCC"
         Exit Sub
@@ -158,26 +215,12 @@ Public Sub AbrirHoja(ByVal nombre As String)
     Application.ScreenUpdating = False
     ws.Visible = xlSheetVisible
     ws.Activate
-    ' Se oculta el Dashboard DESPUES de activar el destino, por el mismo
-    ' motivo que en AplicarVisibilidad.
-    ThisWorkbook.Worksheets(HOJA_INICIO).Visible = xlSheetHidden
-    Application.ScreenUpdating = True
-End Sub
-
-
-Public Sub VolverAlDashboard()
-    Dim previa As Object
-
-    Application.ScreenUpdating = False
-    Set previa = ActiveSheet
-
-    ThisWorkbook.Worksheets(HOJA_INICIO).Visible = xlSheetVisible
-    ThisWorkbook.Worksheets(HOJA_INICIO).Activate
-
-    If StrComp(previa.Name, HOJA_INICIO, vbTextCompare) <> 0 Then
-        previa.Visible = xlSheetHidden
+    ' El origen se oculta DESPUES de activar el destino, por el mismo motivo
+    ' que en AplicarVisibilidad: Excel se niega a ocultar la ultima hoja
+    ' visible del libro.
+    If StrComp(origen.Name, destino, vbTextCompare) <> 0 Then
+        origen.Visible = xlSheetHidden
     End If
-
     Application.ScreenUpdating = True
 End Sub
 

@@ -119,14 +119,66 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
-(54 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
+(70 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
 a mano. El build entero tarda ~45 s.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación la
-hace un proyecto VBA de dos componentes, y alcanza **21 hojas**: los doce motores
-(Art. 212, los 10 buscadores, `Instrucciones`) y las nueve hojas de datos de la
-Sección II. Los estados de visibilidad van **grabados en el archivo**, así que con
-las macros bloqueadas no se expone ninguna base que alimente un motor.
+hace un proyecto VBA de dos componentes, y alcanza **36 hojas**: los doce motores
+(Art. 212, los 10 buscadores, `Instrucciones`), las nueve hojas de datos de la
+Sección II y las **quince hojas `NAV_*`** del árbol de navegación. Los estados de
+visibilidad van **grabados en el archivo**, así que con las macros bloqueadas no se
+expone ninguna base que alimente un motor.
+
+**Primero el tipo de artefacto, y solo después la norma.** El `Dashboard` conserva
+sus tres bandas —`1 · MOTORES DE CÁLCULO`, `2 · MOTORES DE BÚSQUEDA`, `3 · BASES DE
+DATOS`—, que responden a la primera pregunta de quien abre el libro: *qué quiero
+hacer*. **Dentro** de cada banda empieza la categorización, con el camino con el que
+se **cita** una norma —`PUBLICANTE > DISCIPLINA > CÓDIGO DE LA DISCIPLINA > STANDARD
+CONCRETO`— y cada tarjeta abre el nivel siguiente:
+
+```
+Dashboard
+├ 1 · MOTORES DE CALCULO
+│    ASME → REPARACIONES ───→ PCC ─→ PCC-2 ──→ Art. 212
+├ 2 · MOTORES DE BUSQUEDA
+│    ASME → PIPING ─────────→ B31 ─→ B31.3 ─→ 5 buscadores del B31.3
+│         → PRESSURE VESSELS → BPVC → SEC. II → 5 buscadores de la Parte D
+├ 3 · BASES DE DATOS
+│    ASME → PRESSURE VESSELS → BPVC → SEC. II → 9 hojas de las Partes A, B y C
+├ 4 · TRANSVERSAL A TODA NORMA  →  MANUAL DE USO
+└ 5 · ESTADO DEL LIBRO (KPI) y pie de responsabilidad
+```
+
+**Cada banda tiene su propia rama completa, y por eso `ASME` aparece tres veces.**
+No es duplicación accidental: la rama del BPVC que lleva a los cinco buscadores de
+la Parte D **no** es la que lleva a las nueve hojas de datos de las Partes A, B y C.
+La separación por tipo atraviesa todo el recorrido y en cada pantalla todo lo que se
+ve es del mismo tipo; un motor nunca se cruza con una hoja de datos. Las hojas
+llevan el prefijo de su banda: `NAV_CAL_*`, `NAV_BUS_*`, `NAV_DAT_*`. Lo que sí se
+comparte es el **código** que construye la cascada repetida: `_rama_bpvc()` la emite
+una sola vez para las dos bandas, porque los tres niveles de arriba son literalmente
+la misma cita y escribirlos dos veces era garantizar que un día divergieran.
+
+El árbol se declara **una sola vez**, en `ARBOL` de `build_db_materiales.py`, y de
+él se derivan en preorden `HOJAS_NAV`, `DESTINOS`, `NAVEGABLES`, `PADRE`, `ROTULO`
+y `ANCLA_VOLVER`. Añadir el B31.1 mañana es añadir un `Nodo`: no toca el
+constructor de hojas ni el mecanismo de navegación.
+
+Lo que la norma publica y este libro **no** carga (B31.1, B16, SEC. VIII, PCC-1,
+PCC-3, el resto de artículos de PCC-2) aparece como **tarjeta marcador**: gris, sin
+hipervínculo ni clave, rotulada `NO CARGADO EN ESTE LIBRO`. Es solo un rótulo de
+documento —cero dato normativo, no roza la Regla nº 1—; sirve para que un nivel con
+un solo hijo cargado siga explicando la taxonomía y para ver de un vistazo qué falta.
+
+**Lo que está cargado pero en otra banda se dice con texto, no con un marcador.**
+`NAV_BUS_SEC_II` advierte al pie que las Partes A, B y C no llevan buscador y que su
+volcado está en la banda 3. Un marcador ahí sería **falso** —sí están cargadas— y
+enlazarlas cruzaría las dos bandas, que es justo lo que esta separación evita.
+
+Los KPI y el pie de responsabilidad se quedan en el `Dashboard`, que sigue siendo la
+única portada. `Instrucciones` cuelga de la raíz **y además** tiene botón fijo
+`? MANUAL DE USO` en la cabecera de toda hoja `NAV_*`: es transversal a las normas y
+debe estar siempre a un clic.
 
 **Las nueve de la Sección II sí son navegables, y es una excepción declarada.**
 La regla —una base de datos que alimenta un motor es insumo auditado, no interfaz:
@@ -146,13 +198,98 @@ no protegería nada y solo las haría inútiles. `verificar.py` §8 y
 | `Buscar_Su` · `Buscar_Sy` | Su y Sy frente a T | II-D Tablas U y Y-1 |
 | `Buscar_Prop_IID` | Módulo E, dilatación (Coef. B) y Poisson/densidad **por grupo** | II-D TM-1..5, TE-1..5 y PRD |
 | `Buscar_Prop_B31_3` | Dilatación y módulo, metales y no metálicos | B31.3 Apéndice C, C-1..C-4 |
-| `Buscar_NoMetalicos` | Esfuerzo de diseño hidrostático y presión admisible | B31.3 Apéndice B |
+| `Buscar_B31_B1` | Esfuerzo de diseño hidrostático **HDS** frente a T | B31.3 Apéndice B, B-1 y B-1C |
 | `Buscar_Ec_A2` | Factor de calidad de fundición **Ec** | B31.3 Tabla A-2 + 302.3.3-1 |
 | `Buscar_Ej_A3` | Factor de calidad de junta longitudinal **Ej** | B31.3 Tabla A-3 |
 
 **Un dato, un motor.** El Apéndice C salió de `Buscar_Propiedades` (que pasó a
 llamarse `Buscar_Prop_IID`) y de `Buscar_NoMetalicos`, y tiene motor propio con
-conmutador SI ↔ US.
+conmutador SI ↔ US. Por la misma razón, en la Rev. 4d salió la Tabla B-1 —ver
+abajo—, y con ella desapareció `Buscar_NoMetalicos`: lo que le quedaba (B-2 a
+B-6) se retiró del libro por alcance.
+
+**Todo buscador que reúna más de una tabla dice cuál resolvió la cascada y qué
+publica esa tabla.** `Buscar_B31_3` monta A-1 (esfuerzos básicos en tracción de
+los metales) junto a A-4 (esfuerzos de diseño de la **pernería**), y los dos
+admisibles se leen igual sin serlo: confundirlos cambia el cálculo. La ficha
+lleva la fila `Funcion de la tabla` justo debajo de `Tabla del codigo`, y el
+subtítulo de la hoja lo dice antes de que se elija nada. El texto vive en
+`FUNCION_TABLA` del builder —es una **descripción del título impreso**, no un
+dato normativo— y `formula_funcion_tabla()` emite solo las ramas de las tablas
+que esa base contiene de verdad, leídas de la propia base; una tabla nueva sin
+descripción **aborta el build** en vez de imprimir un rótulo genérico. Las
+ediciones US comparten descripción con su gemela métrica: A-1C no es otra tabla,
+es la misma en otras unidades.
+
+### `Buscar_B31_B1` — el HDS del Apéndice B (Rev. 4d)
+
+**Del Apéndice B, este libro carga solo la Tabla B-1 / B-1C.** Las Tablas B-2 y
+B-3 (listados de especificación de RTR y RPM) y B-4, B-5 y B-6 (presiones
+admisibles de concreto, vidrio borosilicato y PEX-AL-PEX) existían como
+`DB_NoMetalicos` + `Buscar_NoMetalicos` y **se retiraron en la Rev. 4d por
+decisión de alcance**: son tablas que este trabajo no usa. La extracción sigue
+intacta en `resources/.../appendix_b/table_b_2..b_6.json` —que es la fuente de
+verdad; lo que se quitó es la carga al libro— y en el árbol quedan como **tarjeta
+marcador** `NO CARGADO EN ESTE LIBRO`, igual que el B31.1 o la Sección VIII.
+`verificar.py` §3b comprueba que no vuelvan por descuido y `test_dashboard.py`
+que ninguna de las dos hojas exista.
+
+La Tabla B-1 (B-1C en US) es lo **único** del Apéndice B tabulado frente a la
+temperatura: las demás publican listados de especificación o una presión
+admisible puntual. Vivía dentro de `Buscar_NoMetalicos`, que es una ficha
+campo/valor sin temperatura de consulta y cuya clave de selección era **solo la
+designación de material**. Como el código publica
+`PE2708` bajo D2737, D3035 y F714 con HDS distinto, **17 de las 36 filas eran
+inalcanzables** y la ficha mezclaba campos de varias especificaciones. La
+cascada es ahora material → Spec. No. → designación de tubería → Cell Class →
+variante, y `test_dashboard.py::TestTablaB1` fija que las 36 filas de cada
+edición tengan clave propia.
+
+Conmutador SI ↔ US de **hoja** (`DB_B31_B1` ↔ `DB_B31_B1C`), nunca conversión:
+el código publica una tabla por edición. El enlace entre ellas es **posicional**
+(`clave_bi = B1#fila impresa`) y `verificar_paridad_b1()` es su contrapartida
+obligatoria: aborta si la identidad —designación de material + Spec. No.— no
+casa fila a fila. Lo que sí diverge se declara y no se toca: F2389 imprime `PR`
+como designación de tubería en B-1 e `IPS Sch. 80` en B-1C, y 110 °C frente a
+210 °F de máxima (regla 9; está en `observaciones_del_codigo`).
+
+**Las tres reglas de rango son otras, y son del Capítulo VII, no de las tablas de
+metales.** Están citadas una a una en el código y en la sección 4 del motor:
+
+- **Se interpola.** `para. A302.3.1(b)`: *«Straight-line interpolation between
+  temperatures is permissible.»* Con conmutador `Interpolado` /
+  `Tabulado-conservador`, igual que los cinco de esfuerzos.
+- **Por debajo de la primera temperatura tabulada NO se extrapola: se sostiene.**
+  Nota (3) de la propia tabla, anclada a la columna de 23 °C (73 °F): *«Use these
+  hydrostatic design stress (HDS) values at all lower temperatures.»* Concuerda
+  con `para. A323.2.2(b)`. Es la **única excepción declarada** a la regla 4 del
+  proyecto, y la escribe el código.
+- **Se bloquea por arriba en dos sitios distintos**, con aviso distinto para cada
+  uno: el **límite máximo recomendado** que imprime la fila (Notas (1) y (2),
+  `para. A323.2.1(a)`) y el **último punto tabulado**. El orden importa y no es
+  cosmético: F441/CPVC4120-05 imprime máxima 93,3 °C y su último HDS a 82 °C, así
+  que 90 °C y 95 °C tienen que decir cosas distintas —«el código no publica el
+  dato» no es «el material no se recomienda ahí»—. `formula_estado_b1()` comprueba
+  primero los límites recomendados y después la banda tabulada; `verificar.py`
+  §6d recalcula en Excel ese par exacto y `test_dashboard.py` fija el orden.
+
+El límite **por abajo** es el mínimo recomendado impreso, no el primer punto
+tabulado: entre uno y otro la Nota (3) sigue dando un valor válido (PEX0006 tiene
+mínima −50 °C y su primer HDS a 23 °C).
+
+Una fila puede no publicar HDS a ninguna temperatura —el ABS solo trae límites de
+temperatura— y el estado lo dice: `SIN HDS TABULADO`, no un cero.
+
+El HDS es el `S` de la eq. (26a) del `para. A304.1.2`, `t = PD/(2S+P)`. El pie del
+motor transcribe el aviso del `para. A302.3.1(a)`: usar el HDS para cálculos
+distintos del diseño a presión **no está verificado**.
+
+`formula_estado_b1` y `formula_valor_b1` viven en `build_db_materiales.py` y las
+emiten el motor **y** `verificar.py` §6d: la prueba ejerce el original, no una
+copia. Once casos recalculados en Excel real, más la conducción de la cascada
+completa (23 → 13,8 MPa; 60 → 7,375 interpolado y 3,45 tabulado-conservador;
+95 → BLOQUEADO por límite; 40 en PVC1120 → BLOQUEADO por banda; 0 en PEX0006 →
+4,34 por Nota (3); 140 °F en US → 1,07 ksi leído de B-1C).
 
 **`Buscar_Prop_IID` expone la dilatación de la II-D (Rev. 4b), pero solo el
 Coeficiente B.** TE-1..5 publican tres coeficientes por grupo —A (instantáneo),
@@ -304,14 +441,17 @@ La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale
 
 `verificar.py` devuelve 0 solo si todo pasa. Audita **fila a fila** cada valor
 tabulado contra el JSON del código (271 276 valores de esfuerzos, más 4 726 del
-Apéndice C y 743 de los factores de calidad), la contigüidad de la cascada,
+Apéndice C, 720 de la Tabla B-1 —incluidos los dos límites de temperatura
+recomendados de cada fila, que son lo que bloquea el resultado— y 743 de los
+factores de calidad), la contigüidad de la cascada,
 la ausencia de fórmulas de matriz dinámica, la interpolación recalculada en hoja, el
 caso semilla y la capa de navegación. **Requiere Excel instalado**: recalcula con el
 motor real, no con LibreOffice. **Ejecútalo siempre después de tocar el builder.**
 
-Sus §6b y §6c **recalculan en Excel la misma expresión que lleva el motor**, no una
-copia: las funciones que la generan (`formula_estado_apxc`, `formula_valor_apxc`,
-`formula_factor_aplicable`) viven en `build_db_materiales.py` y las emiten los dos.
+Sus §6b, §6c y §6d **recalculan en Excel la misma expresión que lleva el motor**, no
+una copia: las funciones que la generan (`formula_estado_apxc`, `formula_valor_apxc`,
+`formula_factor_aplicable`, `formula_estado_b1`, `formula_valor_b1`) viven en
+`build_db_materiales.py` y las emiten los dos.
 Si alguien cambia la lógica en el motor, la prueba la ejerce cambiada; si cambia solo
 el texto de un estado, el literal se lee de la misma constante y no puede divergir.
 
@@ -324,18 +464,42 @@ comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
 
 | Concepto | Python | VBA |
 |---|---|---|
-| Hojas navegables | `NAVEGABLES` | `HojasNavegables()` |
+| Hojas navegables (36, **en preorden**) | `NAVEGABLES` | `HojasNavegables()` |
 | Columna base de claves | `COL_CLAVE_BASE = 66` | `COL_CLAVE_BASE` |
 | Celda del aviso | `FILA_AVISO = 4` | `CELDA_AVISO = "A4"` |
 
-Dos trampas ya pagadas, documentadas en el código:
+`HojasNavegables()` es el **único** punto del VBA que crece con el árbol.
+
+**La clave es siempre el destino.** Antes había dos clases de clave: el nombre de la
+hoja a abrir y el literal `"VOLVER"`, que el VBA resolvía siempre al Dashboard. Con
+cinco niveles eso deja de servir: subir tiene que llevar al **padre**. Ahora la celda
+oculta guarda **siempre el nombre de la hoja destino**, se esté bajando, subiendo o
+saltando por la miga de pan, y `PADRE` —derivado del árbol— es la fuente del botón de
+retorno. `CLAVE_VOLVER` y `VolverAlDashboard` desaparecieron y `AbrirHoja` pasó a ser
+`IrAHoja(destino, origen)`: **una sola rama**, que ya no crece con el árbol. El
+guardarraíl «el origen debe ser el Dashboard» se retiró porque era redundante
+—`EsNavegable` ya impide destapar una `DB_*` o una `MAP_*`— y con el árbol el origen
+legítimo dejó de ser una sola hoja.
+
+**La tarjeta entera es clicable**, no solo la barra inferior: sus cuatro filas llevan
+hipervínculo y clave propia, en filas distintas de la misma columna, así que las claves
+siguen sin pisarse.
+
+Tres trampas ya pagadas, documentadas en el código:
 
 - **El VBA referencia hojas por `.Name`, nunca por CodeName.** openpyxl no asigna
-  `codeName` a las 37 hojas que crea; Excel se los inventa al abrir.
+  `codeName` a las hojas que crea; Excel se los inventa al abrir.
 - **Toda declaración de módulo (`Const`, `Dim`, `Type`) precede a la primera rutina.**
   Si no, VBA reporta «Variable not defined» en cada uso, Excel abre un diálogo modal al
   compilar durante `SaveAs`, y la automatización se cuelga sin mensaje. `make_vba_seed.py`
   lo comprueba con `lint_vba()` antes de tocar COM.
+- **VBA no admite más de 25 continuaciones de línea (`_`) en una línea lógica.** Con 31
+  hojas, el `Array( _ … )` de `HojasNavegables()` necesitaba 30 —hoy son 36— y `AddFromString` lo
+  rechazó: el módulo quedó **vacío**, y el síntoma visible no fue ese sino un «No se ha
+  definido Sub o Function» al guardar —ThisWorkbook llamaba a rutinas que ya no
+  existían— dentro de un diálogo modal que colgó Excel y dejó el maestro borrado. La
+  lista se arma ahora **concatenando** (`s = s & "|…"` + `Split`), que no tiene tope y
+  deja cada hoja en su línea; `lint_vba()` comprueba el límite antes de tocar COM.
 
 ### Reglas de diseño del libro — no romper
 

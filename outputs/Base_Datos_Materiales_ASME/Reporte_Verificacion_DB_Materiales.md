@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  54 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  70 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -13,6 +13,8 @@ Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  54 hojas
 | Y-1 -> DB_Sy | 2475 | 2462 | OK — 13 filas sin identificacion ni valores (ruido de extraccion) |
 | C-1 + C-2 + C-3 + C-4 -> DB_B31_C | 201 | 201 | OK |
 | C-1C + C-2 + C-3C + C-4 -> DB_B31_CC | 201 | 201 | OK |
+| B-1 -> DB_B31_B1 | 36 | 36 | OK |
+| B-1C -> DB_B31_B1C | 36 | 36 | OK |
 | A-2 -> DB_A2_Ec | 24 | 24 | OK |
 | A-3 -> DB_A3_Ej | 127 | 127 | OK |
 | 302.3.3-1 -> DB_Ec_Incremento | 6 | 6 | OK |
@@ -31,6 +33,8 @@ Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  54 hojas
 | DB_Sy | 2462 | 2462 | OK |
 | DB_B31_C | 201 | 201 | OK |
 | DB_B31_CC | 201 | 201 | OK |
+| DB_B31_B1 | 36 | 36 | OK |
+| DB_B31_B1C | 36 | 36 | OK |
 | DB_A2_Ec | 24 | 24 | OK |
 | DB_A3_Ej | 127 | 127 | OK |
 
@@ -63,6 +67,8 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 | DB_TE_GC | 53 | 53 | 1259 | 0 |
 | DB_B31_C | 201 | 201 | 2795 | 0 |
 | DB_B31_CC | 201 | 201 | 1931 | 0 |
+| DB_B31_B1 | 36 | 36 | 360 | 0 |
+| DB_B31_B1C | 36 | 36 | 360 | 0 |
 | DB_A2_Ec | 24 | 24 | 96 | 0 |
 | DB_A3_Ej | 127 | 127 | 635 | 0 |
 | DB_Ec_Incremento | 6 | 6 | 12 | 0 |
@@ -75,7 +81,7 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 | DB_TEC | 544 | 580 | OK |
 | MAP_Factores | 151 | 151 | OK |
 | Notas_Codigo | 325 | 325 | OK |
-| DB_NoMetalicos (pares campo/valor) | 583 | 583 | OK |
+| Apendice B (B-2..B-6) | no cargadas (marcador) | 0 | OK |
 
 ## 4. Contiguidad de los bloques de la cascada
 
@@ -93,6 +99,8 @@ Las listas dependientes se resuelven con OFFSET/MATCH/COUNTIF, que exige que tod
 | DB_Sy | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_B31_C | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_B31_CC | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_B31_B1 | 0 | 0 | 0 | 0 | 0 | OK |
+| DB_B31_B1C | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_A2_Ec | 0 | 0 | 0 | 0 | 0 | OK |
 | DB_A3_Ej | 0 | 0 | 0 | 0 | 0 | OK |
 
@@ -154,6 +162,26 @@ El Apendice C no publica columna «Temp. max.»: el limite es el primer y el ult
 
 **10 casos del Apendice C, 0 fallos.**
 
+### 6d. Tabla B-1 — orden de los bloqueos y excepcion de la Nota (3)
+
+La Tabla B-1 tiene tres reglas de rango que no son las de los metales, y las tres se recalculan aqui con la misma expresion que lleva el motor. Se INTERPOLA linealmente (para. A302.3.1(b)). Por debajo de la primera temperatura tabulada NO se extrapola: se sostiene ese HDS, porque lo manda la Nota (3) de la propia tabla. Y se bloquea por arriba en DOS sitios distintos —el limite maximo recomendado de las Notas (1) y (2) y el ultimo punto tabulado (para. A323.2.1(a))— con aviso distinto para cada uno; los casos de F441/CPVC4120-05 a 90 y a 95 °C son justo el par que separa los dos.
+
+| Hoja | material_id | T | Modo | Estado hoja | Estado referencia | HDS hoja | HDS referencia | Estado |
+|---|---|---|---|---|---|---|---|---|
+| DB_B31_B1 | `B-1 | PVC1120 | D1785 | Sch. 40, 80, 1` | 23 | Interpolado | EN RANGO | EN RANGO | 13.8 | 13.8 | OK |
+| DB_B31_B1 | `B-1 | PVC1120 | D1785 | Sch. 40, 80, 1` | 30 | Interpolado | FUERA DE RANGO — T por encima del ulti | FUERA DE RANGO — T por encima del ulti | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_B1 | `B-1 | PVC1120 | D1785 | Sch. 40, 80, 1` | 10 | Interpolado | FUERA DE RANGO — T por debajo del limi | FUERA DE RANGO — T por debajo del limi | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_B1 | `B-1 | CPVC4120-05 | F441 | Sch. 40, 80` | 23 | Interpolado | EN RANGO | EN RANGO | 13.8 | 13.8 | OK |
+| DB_B31_B1 | `B-1 | CPVC4120-05 | F441 | Sch. 40, 80` | 60 | Interpolado | EN RANGO | EN RANGO | 7.375 | 7.375 | OK |
+| DB_B31_B1 | `B-1 | CPVC4120-05 | F441 | Sch. 40, 80` | 60 | Tabulado-con | EN RANGO | EN RANGO | 3.45 | 3.45 | OK |
+| DB_B31_B1 | `B-1 | CPVC4120-05 | F441 | Sch. 40, 80` | 90 | Interpolado | FUERA DE RANGO — T por encima del ulti | FUERA DE RANGO — T por encima del ulti | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_B1 | `B-1 | CPVC4120-05 | F441 | Sch. 40, 80` | 95 | Interpolado | FUERA DE RANGO — T por encima del limi | FUERA DE RANGO — T por encima del limi | BLOQUEADO | BLOQUEADO | OK |
+| DB_B31_B1 | `B-1 | ABS | (sin Spec. No. impreso) | ` | 20 | Interpolado | SIN HDS TABULADO — la fila solo public | SIN HDS TABULADO — la fila solo public | SIN HDS TABULADO — la fila solo public | SIN HDS TABULADO — la fila solo public | OK |
+| DB_B31_B1 | `B-1 | PEX0006 | F2788/F2788M | SDR/DR-` | 0 | Interpolado | EN RANGO — Nota (3): se sostiene el HD | EN RANGO — Nota (3): se sostiene el HD | 4.34 | 4.34 | OK |
+| DB_B31_B1C | `B-1C | CPVC4120-05 | F441 | Sch. 40, 8` | 140 | Interpolado | EN RANGO | EN RANGO | 1.0699999999999998 | 1.0699999999999998 | OK |
+
+**11 casos de la Tabla B-1, 0 fallos.**
+
 ### 6c. Factores de calidad — el motor muestra el factor de la fila, sin redondeo
 
 Ec y Ej son escalares: no hay interpolacion que recalcular. Lo que se comprueba, conduciendo la cascada y recalculando en Excel, es que el KPI es EXACTAMENTE el valor impreso y que el incremento de la Tabla 302.3.3-1 solo se aplica donde la fila lo admite.
@@ -196,12 +224,13 @@ Dictamen global del modulo: **APTO** (OK).
 | Comprobacion | Detalle | Estado |
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
-| Las 21 hojas navegables estan hidden | 21 hojas | OK |
-| El resto esta veryHidden | 32 hojas | OK |
+| Las 36 hojas navegables estan hidden | 36 hojas | OK |
+| El resto esta veryHidden | 33 hojas | OK |
 | Ninguna base que alimente un motor es alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
-| Los botones cubren las 21 hojas navegables | 21 botones | OK |
-| Cada hoja navegable tiene enlace de retorno |  | OK |
+| Los botones del arbol cubren las 36 hojas navegables | 37 destinos distintos en 16 hojas | OK |
+| Cada hoja navegable vuelve a SU PADRE, no a la raiz |  | OK |
+| Toda hoja navegable se alcanza desde el Dashboard | huerfanas: ninguna | OK |
 
 La visibilidad esta grabada en el archivo, no la impone la macro: con las macros bloqueadas el usuario sigue sin ver ninguna base de datos.
 

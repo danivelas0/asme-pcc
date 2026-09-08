@@ -1,7 +1,7 @@
 Option Explicit
 
 ' ===========================================================================
-' ThisWorkbook - Eventos de libro del Motor de Calculo ASME PCC Rev. 3
+' ThisWorkbook - Eventos de libro del Motor de Calculo ASME PCC Rev. 5
 ' ===========================================================================
 ' Fuente versionada en texto. make_vba_seed.py vuelca este codigo dentro del
 ' modulo de documento ThisWorkbook del maestro (no lo importa como clase
@@ -26,8 +26,8 @@ Private Sub Workbook_Open()
 End Sub
 
 
-' Intercepta el clic sobre las celdas-boton del Dashboard y sobre el enlace
-' "VOLVER AL DASHBOARD" de cada motor.
+' Intercepta el clic sobre toda celda-boton del arbol: las tarjetas de cada
+' nivel, la miga de pan, el boton VOLVER de cada hoja y el acceso al manual.
 '
 ' La clave de destino NO viaja en el hipervinculo, sino en una celda oculta
 ' que modNav.CeldaClave localiza a partir de la posicion del boton. Dos
@@ -35,6 +35,11 @@ End Sub
 ' hipervinculo que apunte a una hoja oculta es invalido dentro del archivo.
 ' El hipervinculo apunta siempre a Dashboard!A1 -destino inocuo- y solo sirve
 ' para disparar este evento.
+'
+' Una sola rama: la clave es SIEMPRE el nombre de la hoja destino, tanto si se
+' baja un nivel como si se sube al padre. Antes habia dos clases de clave (el
+' nombre de la hoja y el literal "VOLVER"), y con un arbol de cinco niveles eso
+' ya no servia: VOLVER tiene que llevar al padre, no a la raiz.
 Private Sub Workbook_SheetFollowHyperlink(ByVal Sh As Object, ByVal Target As Hyperlink)
     Dim clave As String
 
@@ -43,11 +48,7 @@ Private Sub Workbook_SheetFollowHyperlink(ByVal Sh As Object, ByVal Target As Hy
     clave = Trim$(CStr(CeldaClave(Sh, Target.Range.Row, Target.Range.Column).Value))
     If Len(clave) = 0 Then Exit Sub
 
-    If StrComp(clave, CLAVE_VOLVER, vbTextCompare) = 0 Then
-        VolverAlDashboard
-    ElseIf StrComp(Sh.Name, HOJA_INICIO, vbTextCompare) = 0 Then
-        AbrirHoja clave
-    End If
+    IrAHoja clave, Sh
 
 Salir:
 End Sub

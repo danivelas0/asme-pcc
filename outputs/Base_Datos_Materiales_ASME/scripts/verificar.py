@@ -221,6 +221,13 @@ def auditar():
                sum(len(RES.rows(f"{APX}/appendix_c/{f}.json"))
                    for f in ("table_c_1c", "table_c_2", "table_c_3c", "table_c_4")),
                "DB_B31_CC"),
+              # Tabla B-1 del Apendice B: una tabla por edicion, 36 filas cada
+              # una. Aqui no se tolera descarte: son pocas filas y todas tienen
+              # identificacion, asi que cualquier diferencia es un fallo real.
+              ("B-1 -> DB_B31_B1",
+               len(RES.rows(f"{APX}/appendix_b/table_b_1.json")), "DB_B31_B1"),
+              ("B-1C -> DB_B31_B1C",
+               len(RES.rows(f"{APX}/appendix_b/table_b_1c.json")), "DB_B31_B1C"),
               # Factores de calidad: Ec (A-2), Ej (A-3) y el Ec incrementado.
               ("A-2 -> DB_A2_Ec", len(RES.rows(f"{APX}/appendix_a/table_a_2.json")),
                "DB_A2_Ec"),
@@ -258,7 +265,8 @@ def auditar():
     # primeras columnas (material_id, Tabla, k0..k4, clave_bi) con STRESS_COLS.
     bases = ["DB_B31_3", "DB_B31_3C", "DB_BPVC_IID", "DB_BPVC_IIDC",
              "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_Sy",
-             "DB_B31_C", "DB_B31_CC", "DB_A2_Ec", "DB_A3_Ej"]
+             "DB_B31_C", "DB_B31_CC", "DB_B31_B1", "DB_B31_B1C",
+             "DB_A2_Ec", "DB_A3_Ej"]
     # material_id es la clave con la que el motor localiza cada material: un
     # duplicado significa que el motor puede tomar el admisible equivocado.
     # Es un fallo, no una nota informativa como estaba escrito.
@@ -536,6 +544,64 @@ def auditar():
     extra_bad += audita_apendice_c("DB_B31_C", True)
     extra_bad += audita_apendice_c("DB_B31_CC", False)
 
+    def audita_b1(sh, si):
+        """DB_B31_B1 / DB_B31_B1C: fila a fila contra la Tabla B-1 / B-1C.
+
+        Se localiza la gemela de cada fila del JSON por su numero de linea
+        IMPRESA —el enlace SI<->US es posicional— y se comparan la identidad
+        (designacion de material, Spec. No., designacion de tuberia, Cell
+        Class), los DOS limites de temperatura recomendados y el vector entero
+        de HDS. Los limites entran aqui a proposito: no son un adorno de la
+        ficha, son lo que bloquea el resultado, y un desplazamiento de columna
+        entre ellos y la primera columna de HDS —23 °C frente a 23 como
+        minimo— no lo delata ninguna otra prueba.
+        """
+        from build_db_materiales import (B1_COL_SPEC, B1_COL_TUB, B1_COL_MAT,
+                                         B1_COL_CELL, B1_COL_TMIN, B1_COL_TMAX,
+                                         B1_COLS_HDS)
+        rel = f"{APX}/appendix_b/table_b_1{'' if si else 'c'}.json"
+        w = wb[sh]
+        cm = col_map(w)
+        temps = printed_temps(w)
+        ni = n_ident(w)
+        idx = {w.cell(r, cm["Linea"]).value: r
+               for r in range(R_DATA, w.max_row + 1)}
+        njson = nval = mal = 0
+        for i, row in enumerate(RES.rows(rel), start=1):
+            njson += 1
+            r = idx.get(i)
+            if r is None:
+                mal += 1
+                continue
+            ks = list(row)
+            pares = [
+                (txt(row[ks[B1_COL_MAT]]),
+                 txt(w.cell(r, cm["Designacion de material"]).value)),
+                (txt(row[ks[B1_COL_SPEC]]),
+                 txt(w.cell(r, cm["Spec. No. (ASTM)"]).value)),
+                (txt(row[ks[B1_COL_TUB]]),
+                 txt(w.cell(r, cm["Designacion de tuberia"]).value)),
+                (txt(row[ks[B1_COL_CELL]]), txt(w.cell(r, cm["Cell Class"]).value)),
+                (num(row[ks[B1_COL_TMIN]]),
+                 num(w.cell(r, cm["Temp. min. recomendada"]).value)),
+                (num(row[ks[B1_COL_TMAX]]),
+                 num(w.cell(r, cm["Temp. max. recomendada"]).value)),
+            ]
+            for esperado, visto in pares:
+                nval += 1
+                if esperado != visto:
+                    mal += 1
+            for j, t in zip(B1_COLS_HDS, temps):
+                v = num(row[ks[j]])
+                nval += 1
+                if v != num(w.cell(r, ni + 1 + temps.index(t)).value):
+                    mal += 1
+        log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {nval} | {mal} |")
+        return mal
+
+    extra_bad += audita_b1("DB_B31_B1", True)
+    extra_bad += audita_b1("DB_B31_B1C", False)
+
     def audita_factores(sh, rel, campo, con_clase):
         """Fila a fila: factor, notas citadas y descripcion contra el JSON.
 
@@ -616,18 +682,19 @@ def auditar():
         ok = nsheet >= njson if sh in ("DB_TE", "DB_TEC") else nsheet == njson
         extra_bad += 0 if ok else 1
         log(f"| {sh} | {njson} | {nsheet} | {'OK' if ok else 'REVISAR'} |")
-    wnm = wb["DB_NoMetalicos"]
-    nm_json = 0
-    # Solo Apendice B: C-2 y C-4 salieron de esta hoja a DB_B31_C / DB_B31_CC.
-    for rel in [f"{APX}/appendix_b/table_b_{k}.json" for k in
-                ("1", "1c", "2", "3", "4", "5", "6")]:
-        for row in RES.rows(rel):
-            nm_json += sum(1 for v in row.values() if v is not None)
-    nm_sheet = sum(1 for r in range(R_DATA, wnm.max_row + 1)
-                   if wnm.cell(r, 1).value is not None)
-    log(f"| DB_NoMetalicos (pares campo/valor) | {nm_json} | {nm_sheet} | "
-        f"{'OK' if nm_sheet == nm_json else 'REVISAR'} |")
-    extra_bad += 0 if nm_sheet == nm_json else 1
+    # Del Apendice B solo se carga la Tabla B-1 / B-1C, auditada arriba fila a
+    # fila. Las Tablas B-2 a B-6 se retiraron del libro en la Rev. 4d (decision
+    # de alcance) y aparecen como tarjeta marcador; su extraccion sigue en
+    # resources/, que es lo que audita verificar_resources.py, no este script.
+    # Que NO esten cargadas se comprueba, para que no vuelvan por descuido:
+    fantasmas = [s for s in ("DB_NoMetalicos", "Buscar_NoMetalicos")
+                 if s in wb.sheetnames]
+    if fantasmas:
+        log(f"| Apendice B (B-2..B-6) | retiradas del libro | {fantasmas} | "
+            "REVISAR — vuelven a estar cargadas |")
+        extra_bad += 1
+    else:
+        log("| Apendice B (B-2..B-6) | no cargadas (marcador) | 0 | OK |")
     log("")
 
     # ---- 4. contiguidad de la cascada ------------------------------------
@@ -834,6 +901,100 @@ def auditar():
             FIL, f"$K{r}", f"$H{r}", f"$L{r}", f"$M{r}", f"$C{r}")
         qc.cell(r, 19).value = B.formula_valor_apxc(
             FIL, f"$K{r}", f"$O{r}", f"$P{r}", f"$N{r}", f"$R{r}", f"$Q{r}")
+
+    # ---- 6d. Tabla B-1: los cuatro bloqueos y la excepcion de la Nota (3) ---
+    # Se recalcula la MISMA expresion que lleva el motor —la emiten
+    # formula_estado_b1 / formula_valor_b1 de build_db_materiales—, resolviendo
+    # la fila por material_id en vez de por la cascada.
+    #
+    # Lo que hay que ejercer aqui, y no se parece a ningun otro motor del libro,
+    # es el ORDEN de los bloqueos: el limite maximo recomendado de las Notas (1)
+    # y (2) manda ANTES que el ultimo punto tabulado. F441/CPVC4120-05 tiene
+    # tmax = 93,3 °C y su ultimo HDS tabulado a 82 °C, asi que 90 y 95 tienen
+    # que dar avisos DISTINTOS; si el orden se invirtiera, los dos darian el
+    # mismo y nadie lo notaria.
+    def _id_b1(sh, mat, spec):
+        w = wb[sh]
+        cm = col_map(w)
+        for r in range(R_DATA, w.max_row + 1):
+            if (txt(w.cell(r, cm["Designacion de material"]).value) == txt(mat)
+                    and txt(w.cell(r, cm["Spec. No. (ASTM)"]).value) == txt(spec)):
+                return w.cell(r, 1).value
+        raise SystemExit(f"{sh}: no hay fila con material {mat!r} y spec {spec!r}")
+
+    SB1, SB1C = "DB_B31_B1", "DB_B31_B1C"
+    casos_b1 = [
+        # (hoja, material_id, T, modo)
+        # PVC1120/D1785: banda de un solo punto (23 °C) y sin limite maximo
+        # impreso. Punto exacto, por encima del unico tabulado y por debajo del
+        # minimo recomendado.
+        (SB1, _id_b1(SB1, "PVC1120", "D1785"), 23, "Interpolado"),
+        (SB1, _id_b1(SB1, "PVC1120", "D1785"), 30, "Interpolado"),
+        (SB1, _id_b1(SB1, "PVC1120", "D1785"), 10, "Interpolado"),
+        # CPVC4120-05/F441: cuatro puntos, interpolacion y los dos topes.
+        (SB1, _id_b1(SB1, "CPVC4120-05", "F441"), 23, "Interpolado"),
+        (SB1, _id_b1(SB1, "CPVC4120-05", "F441"), 60, "Interpolado"),
+        (SB1, _id_b1(SB1, "CPVC4120-05", "F441"), 60, "Tabulado-conservador"),
+        (SB1, _id_b1(SB1, "CPVC4120-05", "F441"), 90, "Interpolado"),
+        (SB1, _id_b1(SB1, "CPVC4120-05", "F441"), 95, "Interpolado"),
+        # ABS: el codigo le imprime limites de temperatura y NINGUN HDS.
+        (SB1, _id_b1(SB1, "ABS", None), 20, "Interpolado"),
+        # PEX0006: minimo recomendado -50 °C y primer HDS a 23 °C. Entre los dos
+        # manda la Nota (3): se sostiene el valor de 23 °C, no se extrapola.
+        (SB1, _id_b1(SB1, "PEX0006", "F2788/F2788M"), 0, "Interpolado"),
+        # El mismo material en la edicion US: se lee la Tabla B-1C nativa.
+        (SB1C, _id_b1(SB1C, "CPVC4120-05", "F441"), 140, "Interpolado"),
+    ]
+    qb = wb.create_sheet("_QA_B1")
+    for j, h in enumerate(["hoja", "material_id", "T", "modo", "fila", "T1", "V1",
+                           "n_pts", "T2", "V2", "T min", "T max", "T prim",
+                           "T ult", "HDS(T)", "estado", "HDS resuelto"], 1):
+        qb.cell(2, j, h)
+    for i, (sh, mid, T, modo) in enumerate(casos_b1):
+        r = 3 + i
+        w = wb[sh]
+        cm = col_map(w)
+        ni = n_ident(w)
+        npr = len(printed_temps(w))
+        t0 = ni + npr + 1
+        npack = (w.max_column - t0 + 1) // 2
+        v0 = t0 + npack
+
+        def colb(nombre, _w=w, _cm=cm, _sh=sh):
+            L = get_column_letter(_cm[nombre])
+            return f"{_sh}!${L}${R_DATA}:${L}${_w.max_row}"
+
+        TA = f"{sh}!${get_column_letter(t0)}${R_DATA}"
+        VA = f"{sh}!${get_column_letter(v0)}${R_DATA}"
+        IDS = f"{sh}!$A${R_DATA}:$A${w.max_row}"
+        qb.cell(r, 1, sh); qb.cell(r, 2, mid); qb.cell(r, 3, T); qb.cell(r, 4, modo)
+        qb.cell(r, 5).value = f'=IFERROR(MATCH($B{r},{IDS},0),"")'
+        FIL = f"$E{r}"
+        NP = f"IFERROR(INDEX({colb('n_pts')},{FIL}),0)"
+        tr = f"OFFSET({TA},{FIL}-1,0,1,MAX(1,{NP}))"
+        vr = f"OFFSET({VA},{FIL}-1,0,1,MAX(1,{NP}))"
+        p1 = f"IFERROR(MATCH($C{r},{tr},1),1)"
+
+        # Mismo envoltorio que el motor: INDEX sobre celda vacia devuelve 0. Sin
+        # el, las filas que no imprimen limite maximo entrarian con tmax = 0.
+        def vacb(expr):
+            return f'IF({expr}="","",{expr})'
+
+        for j, expr in ((6, f"INDEX({tr},{p1})"), (7, f"INDEX({vr},{p1})"),
+                        (9, f"INDEX({tr},{p1}+1)"), (10, f"INDEX({vr},{p1}+1)")):
+            qb.cell(r, j).value = f'=IFERROR({vacb(expr)},"")'
+        qb.cell(r, 8).value = f"={NP}"
+        for j, nombre in ((11, "Temp. min. recomendada"), (12, "Temp. max. recomendada"),
+                          (13, "T primera tabulada"), (14, "T ultima tabulada")):
+            qb.cell(r, j).value = f'=IFERROR({vacb(f"INDEX({colb(nombre)},{FIL})")},"")'
+        qb.cell(r, 15).value = (
+            f'=IF($G{r}="","",IF($C{r}<=$F{r},$G{r},'
+            f'IF(OR($I{r}="",$J{r}=""),$G{r},'
+            f'IF($D{r}="Tabulado-conservador",$J{r},'
+            f'$G{r}+($J{r}-$G{r})*($C{r}-$F{r})/($I{r}-$F{r})))))')
+        qb.cell(r, 16).value = B.formula_estado_b1(
+            FIL, f"$H{r}", f"$K{r}", f"$L{r}", f"$M{r}", f"$N{r}", f"$C{r}")
+        qb.cell(r, 17).value = B.formula_valor_b1(FIL, f"$P{r}", f"$O{r}")
 
     # ---- 6c. los dos motores de factores de calidad ------------------------
     # Aqui no hay interpolacion que recalcular: Ec y Ej son escalares. Lo que se
@@ -1061,6 +1222,78 @@ def auditar():
     log("")
     nbad += nbad_c
 
+    # ---- 6d. Tabla B-1: los cuatro bloqueos y la Nota (3) ------------------
+    log("### 6d. Tabla B-1 — orden de los bloqueos y excepcion de la Nota (3)")
+    log("")
+    log("La Tabla B-1 tiene tres reglas de rango que no son las de los metales, y las "
+        "tres se recalculan aqui con la misma expresion que lleva el motor. Se "
+        "INTERPOLA linealmente (para. A302.3.1(b)). Por debajo de la primera "
+        "temperatura tabulada NO se extrapola: se sostiene ese HDS, porque lo manda la "
+        "Nota (3) de la propia tabla. Y se bloquea por arriba en DOS sitios distintos "
+        "—el limite maximo recomendado de las Notas (1) y (2) y el ultimo punto "
+        "tabulado (para. A323.2.1(a))— con aviso distinto para cada uno; los casos de "
+        "F441/CPVC4120-05 a 90 y a 95 °C son justo el par que separa los dos.")
+    log("")
+    rb1 = recalc["_QA_B1"]
+    log("| Hoja | material_id | T | Modo | Estado hoja | Estado referencia | "
+        "HDS hoja | HDS referencia | Estado |")
+    log("|---|---|---|---|---|---|---|---|---|")
+    nbad_b1 = 0
+    for i, (sh, mid, T, modo) in enumerate(casos_b1):
+        r = 3 + i
+        w = wb[sh]
+        cm = col_map(w)
+        temps_p = printed_temps(w)
+        ni = n_ident(w)
+        fila = next(rr for rr in range(R_DATA, w.max_row + 1)
+                    if w.cell(rr, 1).value == mid)
+        tmin = w.cell(fila, cm["Temp. min. recomendada"]).value
+        tmax = w.cell(fila, cm["Temp. max. recomendada"]).value
+        tprim = w.cell(fila, cm["T primera tabulada"]).value
+        tult = w.cell(fila, cm["T ultima tabulada"]).value
+        npts = w.cell(fila, cm["n_pts"]).value or 0
+        vals = {}
+        for k, t in enumerate(temps_p):
+            v = w.cell(fila, ni + 1 + k).value
+            if v is not None:
+                vals[t] = v
+        # Implementacion de referencia, escrita aparte a proposito: si copiase la
+        # del motor, las dos podrian estar mal a la vez.
+        if npts == 0:
+            est_ref = B.EST_B1_SIN_TAB
+        elif tmin is not None and T < tmin:
+            est_ref = B.EST_B1_BAJO
+        elif tmax is not None and T > tmax:
+            est_ref = B.EST_B1_ALTO_LIM
+        elif T > tult:
+            est_ref = B.EST_B1_ALTO_TAB
+        elif T < tprim:
+            est_ref = B.EST_B1_NOTA3
+        else:
+            est_ref = B.EST_B1_OK
+        if est_ref.startswith("FUERA DE RANGO"):
+            val_ref = B.VAL_B1_BLOQUEADO
+        elif est_ref == B.EST_B1_SIN_TAB:
+            val_ref = B.EST_B1_SIN_TAB
+        else:
+            v = interp(temps_p, vals, T, modo)
+            val_ref = v if v is not None else ""
+        got_e, got_v = rb1.cell(r, 16).value, rb1.cell(r, 17).value
+        if isinstance(got_v, (int, float)) and isinstance(val_ref, (int, float)):
+            ok_v = abs(got_v - val_ref) <= abs(val_ref) * 1e-9 + 1e-9
+        else:
+            ok_v = got_v == val_ref
+        ok = (got_e == est_ref) and ok_v
+        nbad_b1 += 0 if ok else 1
+        corto = lambda s: str(s)[:38] if s is not None else "—"
+        log(f"| {sh} | `{str(mid)[:38]}` | {T} | {modo[:12]} | {corto(got_e)} | "
+            f"{corto(est_ref)} | {corto(got_v)} | {corto(val_ref)} | "
+            f"{'OK' if ok else 'FALLO'} |")
+    log("")
+    log(f"**{len(casos_b1)} casos de la Tabla B-1, {nbad_b1} fallos.**")
+    log("")
+    nbad += nbad_b1
+
     # ---- 6c. factores de calidad Ec y Ej ----------------------------------
     log("### 6c. Factores de calidad — el motor muestra el factor de la fila, sin "
         "redondeo")
@@ -1183,19 +1416,39 @@ def auditar():
         ("El paquete conserva xl/vbaProject.bin",
          "xl/vbaProject.bin" in zipfile.ZipFile(ruta).namelist(), ruta.suffix),
     ]
-    # Las claves de destino de los botones deben apuntar a hojas reales.
-    dash = wb0[B.DASH]
-    claves = [dash.cell(c.row, B.COL_CLAVE_BASE + c.column).value
-              for row in dash.iter_rows() for c in row if c.hyperlink is not None]
-    filas.append((f"Los botones cubren las {len(B.NAVEGABLES)} hojas navegables",
-                  sorted(k for k in claves if k) == sorted(B.NAVEGABLES),
-                  f"{len(claves)} botones"))
-    filas.append(("Cada hoja navegable tiene enlace de retorno",
-                  all(any(wb0[n].cell(c.row, B.COL_CLAVE_BASE + c.column).value
-                          == B.CLAVE_VOLVER
-                          for row in wb0[n].iter_rows() for c in row
-                          if c.hyperlink is not None)
-                      for n in B.NAVEGABLES), ""))
+    # Las claves de destino de los botones deben apuntar a hojas reales. Se
+    # recorre el ARBOL entero -Dashboard y las diez NAV_*-, no solo la portada:
+    # desde la Rev. 5 cada nivel enlaza a sus propios hijos.
+    def _claves_de(nombre):
+        ws = wb0[nombre]
+        return [ws.cell(c.row, B.COL_CLAVE_BASE + c.column).value
+                for row in ws.iter_rows() for c in row if c.hyperlink is not None]
+
+    claves = {k for h in B.HOJAS_NAV for k in _claves_de(h) if k}
+    # El Dashboard entra en la union como clave del boton de retorno de
+    # NAV_ASME, pero no esta en NAVEGABLES: es la unica hoja visible.
+    filas.append((f"Los botones del arbol cubren las {len(B.NAVEGABLES)} "
+                  f"hojas navegables",
+                  claves == set(B.NAVEGABLES) | {B.DASH},
+                  f"{len(claves)} destinos distintos en {len(B.HOJAS_NAV)} hojas"))
+    filas.append(("Cada hoja navegable vuelve a SU PADRE, no a la raiz",
+                  all(B.PADRE[n] in _claves_de(n) for n in B.NAVEGABLES), ""))
+
+    # Conexidad del arbol. Es la comprobacion que de verdad protege el
+    # rediseno: un motor que se quedase fuera seguiria existiendo y seguiria
+    # `hidden`, pero no habria forma de abrirlo desde ninguna pantalla.
+    vistas, pila = set(), [B.DASH]
+    while pila:
+        hoja = pila.pop()
+        if hoja in vistas:
+            continue
+        vistas.add(hoja)
+        if hoja in B.HOJAS_NAV:
+            pila.extend(k for k in _claves_de(hoja) if k)
+    huerfanas = sorted(set(B.NAVEGABLES) - vistas)
+    filas.append(("Toda hoja navegable se alcanza desde el Dashboard",
+                  not huerfanas,
+                  f"huerfanas: {', '.join(huerfanas) or 'ninguna'}"))
 
     log("| Comprobacion | Detalle | Estado |")
     log("|---|---|---|")
@@ -1375,9 +1628,8 @@ def auditar():
         "texto impreso sin anadir ni quitar nada.")
     log("")
     sec_bad = 0
-    esperadas_secii = ["CAT_SecII", "IDX_SecII_Tablas", "DB_SecII_A1",
-                       "DB_SecII_A2", "DB_SecII_B", "DB_SecII_C",
-                       "DB_SecII_Notas", "DB_SecII_Quimica", "DB_SecII_Traccion"]
+    # Se lee del builder, no se reescribe a mano: era la misma lista duplicada.
+    esperadas_secii = list(B.NAV_SECII)
     faltan_secii = [h for h in esperadas_secii if h not in wb0.sheetnames]
     filas10 = [("Las 9 hojas de la Seccion II estan en el libro",
                 f"faltan: {', '.join(faltan_secii) or 'ninguna'}",

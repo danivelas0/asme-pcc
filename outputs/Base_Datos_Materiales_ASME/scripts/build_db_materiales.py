@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 build_db_materiales.py — Construye las bases de datos de materiales del
 Motor de Calculo ASME PCC a partir de los JSON de resources/.
@@ -27,10 +27,12 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import math
 import re
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import NamedTuple
 
 import openpyxl
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Protection, Side
@@ -1158,55 +1160,288 @@ def verificar_paridad_apendice_c(si_info, us_info):
         "todas artefactos de impresion documentados.")
 
 
-def build_nometalicos(res, wb):
-    """Formato largo (Tabla | Material | Campo | Valor): permite cascada
-    Tabla -> Material y ficha campo/valor sin matrices dinamicas.
+# ---------------------------------------------------------------------------
+# DB_B31_B1 / DB_B31_B1C — Tabla B-1 del Apendice B: HDS de termoplasticos
+# ---------------------------------------------------------------------------
+# El Apendice B publica el esfuerzo de diseno hidrostatico en UNA TABLA POR
+# EDICION —B-1 metrica y B-1C U.S. Customary—, asi que el conmutador de la
+# regla 10 cambia de HOJA y no convierte nunca. Es ademas el unico dato del
+# Apendice B tabulado FRENTE A LA TEMPERATURA: las demas tablas publican
+# listados de especificacion (B-2, B-3) o una presion admisible puntual
+# (B-4, B-5, B-6), que es otra magnitud. Un dato, un motor: B-1 sale de
+# Buscar_NoMetalicos igual que salio el Apendice C.
+APXB1_COLS = [
+    "material_id", "Tabla", "k0", "k1", "k2", "k3", "k4", "clave_bi",
+    "Designacion de material", "Spec. No. (ASTM)", "Designacion de tuberia",
+    "Cell Class", "Variante",
+    "Temp. min. recomendada", "Temp. max. recomendada",
+    "Unidad de temperatura", "Unidad de HDS", "Encabezado impreso del HDS",
+    "T primera tabulada", "T ultima tabulada",
+    "Notas del HDS", "Notas de los limites", "Observacion", "Linea", "n_pts"]
+CB1 = {n: i + 1 for i, n in enumerate(APXB1_COLS)}
+CLB1 = {n: get_column_letter(i) for n, i in CB1.items()}
+assert APXB1_COLS[:8] == STRESS_COLS[:8], \
+    "el contrato de las 8 primeras columnas es lo que reutiliza build_listas"
 
-    Solo Apendice B. Las tablas C-2 y C-4 —dilatacion y modulo de no
-    metalicos— salieron de aqui a DB_B31_C / DB_B31_CC: el Apendice B publica
-    esfuerzos de diseno hidrostatico y presion admisible, que es otra cosa.
-    Un dato, un motor.
+SIN_SPEC_B1 = "(sin Spec. No. impreso)"
+SIN_TUB_B1 = "(sin designacion de tuberia)"
+SIN_CELL_B1 = "(sin Cell Class impresa)"
+
+# Reparto de las 10 columnas de B-1/B-1C por POSICION. El JSON alinea `columns`
+# 1:1 con las claves de cada fila —y eso se comprueba antes de leer nada—, pero
+# `column_groups` llega como una lista PLANA de fragmentos de cabecera
+# ("Recommended", "Temperature Limits, °C", "[Notes (1), (2)]", ...) que no se
+# puede alinear por posicion con las columnas. Por eso el reparto se declara
+# aqui: describe la maqueta impresa y no aporta ni un valor.
+B1_COL_SPEC, B1_COL_TUB, B1_COL_MAT, B1_COL_CELL = 0, 1, 2, 3
+B1_COL_TMIN, B1_COL_TMAX = 4, 5
+B1_COLS_HDS = (6, 7, 8, 9)
+
+# Rotulos de estado del motor de la Tabla B-1. Viven aqui, y no sueltos dentro
+# de la formula, porque verificar.py §11 vuelve a emitir la misma expresion para
+# recalcularla en Excel: si el motor y el verificador escribiesen cada uno su
+# literal, una divergencia de redaccion pasaria desapercibida.
+EST_B1_SIN_SEL = "SIN SELECCION"
+EST_B1_SIN_TAB = "SIN HDS TABULADO — la fila solo publica limites de temperatura"
+EST_B1_BAJO = "FUERA DE RANGO — T por debajo del limite minimo recomendado"
+EST_B1_ALTO_LIM = "FUERA DE RANGO — T por encima del limite maximo recomendado"
+EST_B1_ALTO_TAB = "FUERA DE RANGO — T por encima del ultimo punto tabulado"
+EST_B1_NOTA3 = "EN RANGO — Nota (3): se sostiene el HDS de la primera T tabulada"
+EST_B1_OK = "EN RANGO"
+VAL_B1_BLOQUEADO = "BLOQUEADO"
+
+_RE_NOTA_B = re.compile(r"\[Notes?\s*([^\]]*)\]")
+_RE_NUM_NOTA = re.compile(r"\((\d+[A-Za-z]?)\)")
+
+
+def _notas_citadas(*textos):
+    """Numeros de nota al pie citados en los encabezados IMPRESOS.
+
+    El codigo escribe '23°C [Note (3)]' en la columna de HDS y
+    '[Notes (1), (2)]' en el grupo de los limites de temperatura. Se conservan
+    los numeros tal como los cita el encabezado; no se deduce ninguno.
     """
-    tables = [("B-1", f"{APX}/appendix_b/table_b_1.json"),
-              ("B-1C", f"{APX}/appendix_b/table_b_1c.json"),
-              ("B-2", f"{APX}/appendix_b/table_b_2.json"),
-              ("B-3", f"{APX}/appendix_b/table_b_3.json"),
-              ("B-4", f"{APX}/appendix_b/table_b_4.json"),
-              ("B-5", f"{APX}/appendix_b/table_b_5.json"),
-              ("B-6", f"{APX}/appendix_b/table_b_6.json")]
-    ws = new_sheet(wb, "DB_NoMetalicos",
-                   "MATERIALES NO METALICOS — ASME B31.3-2024, Apendice B: esfuerzos de "
-                   "diseno hidrostatico (HDS) y presiones admisibles",
-                   "Fuente: resources/" + APX + "/appendix_b/table_b_1..b_6.json · "
-                   "Formato largo "
-                   "(tabla / material / campo / valor) para permitir la consulta por lista "
-                   "desplegable. Valores tal como estan impresos. La dilatacion (C-2) y el "
-                   "modulo (C-4) de no metalicos viven en DB_B31_C / DB_B31_CC.")
-    n = write_headers(ws, ["clave", "Tabla", "clave_sf", "Material", "Campo", "Valor",
-                           "Titulo de la tabla"])
-    recs = []
-    for tag, fn in tables:
-        d = res.load(fn)
-        title = d.get("title")
-        for row in d.get("rows") or []:
-            keys = [k for k in row if row[k] is not None]
-            if not keys:
-                continue
-            mat = clean(g(row, "material_designation", "material", "material_description",
-                          "astm_spec_no", "spec_no", "spec_nos_astm_except_as_noted"))
-            mat = mat or clean(row[keys[0]])
-            for k in keys:
-                campo = k.replace("_", " ").strip().capitalize()
-                recs.append(([f"{tag} | {txt(mat)}", tag, f"{tag}|{txt(mat)}",
-                              mat, campo, row[k], title], {}))
-    recs.sort(key=lambda r: (r[0][1], txt(r[0][3]).upper()))
-    last = write_rows(ws, recs, n)
-    autosize(ws, {"A": 40, "B": 8, "C": 34, "D": 34, "E": 28, "F": 22, "G": 70})
-    ws.column_dimensions["C"].hidden = True
-    ws.auto_filter.ref = f"A{R_HDR}:G{last}"
-    for tag, fn in tables:
-        record_meta("DB_NoMetalicos", tag, fn, "2024", "SI/US", 0, "")
-    return dict(sheet="DB_NoMetalicos", last_row=last)
+    out = []
+    for t in textos:
+        for blk in _RE_NOTA_B.findall(txt(t)):
+            for n in _RE_NUM_NOTA.findall(blk):
+                if n not in out:
+                    out.append(n)
+    return ", ".join(out)
+
+
+def _temp_de_encabezado(h):
+    """Temperatura impresa en el encabezado de una columna de HDS.
+
+    Llega como '23°C [Note (3)]' en la edicion metrica y como '100°- F' en la
+    U.S. Customary (el guion es un artefacto de la extraccion). Se toma el
+    primer numero, que es lo unico que el codigo imprime como temperatura de
+    esa columna, y despues se coteja contra la clave de la fila.
+    """
+    m = re.search(r"-?\d+(?:\.\d+)?", txt(h))
+    return num(m.group(0)) if m else None
+
+
+def _carga_b1(res, si):
+    """Tabla B-1 (metrica) o B-1C (U.S. Customary), tal como esta impresa."""
+    fn = f"{APX}/appendix_b/table_b_1{'' if si else 'c'}.json"
+    d = res.load(fn)
+    cols = [clean(c) for c in (d.get("columns") or [])]
+    rows = d.get("rows") or []
+    if len(cols) != 10 or not rows:
+        raise SystemExit(
+            f"Tabla B-1: {fn} deberia publicar 10 columnas y al menos una fila; "
+            f"trae {len(cols)} columnas y {len(rows)} filas. El motor no se "
+            "construye con una extraccion que no reconoce.")
+    # `columns` es de donde salen el rotulo impreso de cada campo y la
+    # temperatura de cada columna de HDS. Si dejase de estar alineada 1:1 con
+    # las claves de la fila, el motor leeria una columna por otra en silencio.
+    for i, row in enumerate(rows, start=1):
+        if len(row) != len(cols):
+            raise SystemExit(
+                f"Tabla B-1: la fila impresa {i} de {fn} trae {len(row)} campos "
+                f"y el encabezado declara {len(cols)} columnas.")
+    temps = []
+    for j in B1_COLS_HDS:
+        t = _temp_de_encabezado(cols[j])
+        if t is None:
+            raise SystemExit(
+                f"Tabla B-1: no se lee la temperatura del encabezado {cols[j]!r} "
+                f"de {fn}.")
+        temps.append(t)
+    # Cotejo cruzado: la clave de la fila lleva la misma temperatura que el
+    # encabezado ('23_c' <-> '23°C'). Es la comprobacion que delata un
+    # desplazamiento de columna, que es el error caro en esta tabla.
+    claves = list(rows[0])
+    for j, t in zip(B1_COLS_HDS, temps):
+        if _temp_de_encabezado(claves[j]) != t:
+            raise SystemExit(
+                f"Tabla B-1: la columna {j} de {fn} declara {t} en el encabezado "
+                f"{cols[j]!r} y {claves[j]!r} en la clave de la fila.")
+
+    # Una observacion del codigo se adjudica a una fila SOLO si el texto de la
+    # observacion nombra literalmente su Spec. No. impreso. Es una comprobacion
+    # de contencion sobre una designacion impresa, no una inferencia.
+    obs_tabla = [clean(o) for o in (d.get("observaciones_del_codigo") or [])]
+    filas = []
+    for i, row in enumerate(rows, start=1):
+        ks = list(row)
+        vals = {}
+        for j, t in zip(B1_COLS_HDS, temps):
+            v = num(row[ks[j]])
+            if v is not None:
+                vals[t] = v
+        spec = clean(row[ks[B1_COL_SPEC]])
+        obs = [o for o in obs_tabla if spec and txt(spec) in txt(o)]
+        filas.append(dict(idx=i, spec=spec,
+                          tuberia=clean(row[ks[B1_COL_TUB]]),
+                          material=clean(row[ks[B1_COL_MAT]]),
+                          cell=clean(row[ks[B1_COL_CELL]]),
+                          tmin=num(row[ks[B1_COL_TMIN]]),
+                          tmax=num(row[ks[B1_COL_TMAX]]),
+                          vals=vals, obs=obs))
+    return d, cols, temps, filas
+
+
+def build_b1(res, wb, system):
+    """DB_B31_B1 / DB_B31_B1C — la Tabla B-1 del Apendice B, por edicion."""
+    si = system == "SI"
+    name = "DB_B31_B1" if si else "DB_B31_B1C"
+    d, cols, temps, filas = _carga_b1(res, si)
+    fn = f"{APX}/appendix_b/table_b_1{'' if si else 'c'}.json"
+    tid = (clean(d.get("table_id")) or "").replace("Table ", "") or \
+        ("B-1" if si else "B-1C")
+    u_t, u_v = ("°C", "MPa") if si else ("°F", "ksi")
+    hdr_hds = clean(d.get("value_axis")) or ""
+    n_hds = _notas_citadas(cols[B1_COLS_HDS[0]], hdr_hds)
+    n_lim = _notas_citadas(*(d.get("column_groups") or []))
+
+    # Orden de la base: material -> spec -> designacion de tuberia -> cell class,
+    # y la fila impresa como ultimo criterio. Cada nivel queda en un bloque
+    # CONTIGUO, que es lo que exige la cascada sin matrices dinamicas (regla 5).
+    filas.sort(key=lambda f: (txt(f["material"]).upper(),
+                              _seg(f["spec"], SIN_SPEC_B1).upper(),
+                              _seg(f["tuberia"], SIN_TUB_B1).upper(),
+                              _seg(f["cell"], SIN_CELL_B1).upper(),
+                              f["idx"]))
+    # La variante solo existe si (material, spec, tuberia, cell class) se repite.
+    # Hoy no se repite en ninguna de las dos ediciones, pero una reextraccion que
+    # colapsase dos filas dejaria una inalcanzable sin este nivel: es justo el
+    # defecto que traia Buscar_NoMetalicos, donde 17 de las 36 filas de B-1 no
+    # se podian seleccionar porque la clave era solo la designacion de material.
+    rep = Counter((txt(f["material"]), txt(f["spec"]), txt(f["tuberia"]),
+                   txt(f["cell"])) for f in filas)
+    records = []
+    for f in filas:
+        mat = _seg(f["material"])
+        sp = _seg(f["spec"], SIN_SPEC_B1)
+        tb = _seg(f["tuberia"], SIN_TUB_B1)
+        cl = _seg(f["cell"], SIN_CELL_B1)
+        clave = (txt(f["material"]), txt(f["spec"]), txt(f["tuberia"]),
+                 txt(f["cell"]))
+        var = f"fila impresa {f['idx']}" if rep[clave] > 1 else VAR_UNICA
+        k0 = mat
+        k1 = f"{k0}|{sp}"
+        k2 = f"{k1}|{tb}"
+        k3 = f"{k2}|{cl}"
+        k4 = f"{k3}|{var}"
+        f["k"] = (k0, k1, k2, k3, k4)
+        f["mid"] = build_material_id([tid, mat, sp, tb, cl, var])
+        # Enlace SI<->US POSICIONAL, como en el Apendice C: los nombres pueden
+        # divergir entre ediciones por lo que el propio codigo imprime distinto
+        # (la designacion de tuberia de F2389 es 'PR' en B-1 e 'IPS Sch. 80' en
+        # B-1C). La contrapartida obligatoria es verificar_paridad_b1().
+        f["bi"] = f"B1#{f['idx']}"
+        records.append((
+            [f["mid"], tid, k0, k1, k2, k3, k4, f["bi"],
+             f["material"], f["spec"], f["tuberia"], f["cell"], var,
+             f["tmin"], f["tmax"], u_t, u_v, hdr_hds,
+             min(f["vals"]) if f["vals"] else None,
+             max(f["vals"]) if f["vals"] else None,
+             n_hds, n_lim, " · ".join(f["obs"]) or None, f["idx"], len(f["vals"])],
+            f["vals"]))
+
+    ws = new_sheet(
+        wb, name,
+        "ESFUERZO DE DISENO HIDROSTATICO (HDS) DE TUBERIA TERMOPLASTICA — "
+        "ASME B31.3-2024, Apendice B, Tabla " + tid +
+        (" (edicion metrica: MPa, °C)" if si
+         else " (edicion U.S. Customary: ksi, °F)"),
+        f"Fuente: resources/{fn} · ASME B31.3-2024 · Valores tal como estan "
+        "impresos: SI y US son extracciones independientes de la tabla que "
+        "publica cada edicion, nunca una conversion (regla 9). Las columnas "
+        "'Temp. min./max. recomendada' son los Recommended Temperature Limits "
+        "de la propia tabla, NO el rango de HDS tabulado. " +
+        (" · ".join(clean(o) for o in
+                    (d.get("observaciones_del_codigo") or [])) or ""))
+    n = write_headers(ws, APXB1_COLS, temps)
+    last = write_rows(ws, records, n, temps)
+    autosize(ws, {CLB1["material_id"]: 56, CLB1["Tabla"]: 8, CLB1["clave_bi"]: 10,
+                  CLB1["Designacion de material"]: 22,
+                  CLB1["Spec. No. (ASTM)"]: 16,
+                  CLB1["Designacion de tuberia"]: 24, CLB1["Cell Class"]: 12,
+                  CLB1["Variante"]: 16, CLB1["Encabezado impreso del HDS"]: 34,
+                  CLB1["Observacion"]: 60})
+    for cn in ("k0", "k1", "k2", "k3", "k4", "clave_bi", "Linea", "n_pts"):
+        ws.column_dimensions[CLB1[cn]].hidden = True
+    t0, v0, npack = append_packed(ws, records, n, temps, CB1["n_pts"])
+    ws.auto_filter.ref = f"A{R_HDR}:{get_column_letter(n + len(temps))}{last}"
+    record_meta(name, tid, fn, "2024", system, len(records),
+                "Esfuerzo de diseno hidrostatico y limites de temperatura "
+                "recomendados de tuberia termoplastica.")
+    return dict(sheet=name, n_ident=n, temps=temps, last_row=last, recs=filas,
+                pack_t0=t0, pack_v0=v0, npack=npack, npts_col=CB1["n_pts"],
+                tabla=tid, u_t=u_t, u_v=u_v)
+
+
+def verificar_paridad_b1(si_info, us_info):
+    """Contrapartida del enlace posicional de B-1 <-> B-1C.
+
+    Se compara lo que identifica al MATERIAL —designacion y Spec. No.—, no todo
+    lo impreso: el propio codigo publica distinta designacion de tuberia y
+    distinto limite maximo para F2389 en cada edicion, y eso esta declarado en
+    `observaciones_del_codigo` y se conserva (regla 9). Si lo que divergiera
+    fuese la identidad, el enlace estaria uniendo dos materiales distintos y el
+    build ABORTA.
+    """
+    a = {f["bi"]: f for f in si_info["recs"]}
+    b = {f["bi"]: f for f in us_info["recs"]}
+    if set(a) != set(b):
+        raise SystemExit(
+            "Tabla B-1: las dos ediciones no publican el mismo numero de filas. "
+            f"Solo en SI: {sorted(set(a) - set(b))[:8]}; "
+            f"solo en US: {sorted(set(b) - set(a))[:8]}.")
+    malas = []
+    for bi, f in a.items():
+        ident_si = (txt(f["material"]).upper(), txt(f["spec"]).upper())
+        ident_us = (txt(b[bi]["material"]).upper(), txt(b[bi]["spec"]).upper())
+        if ident_si != ident_us:
+            malas.append(f"{bi}: SI={ident_si} US={ident_us}")
+    if malas:
+        raise SystemExit(
+            "Tabla B-1: el enlace SI/US es posicional y hay filas cuya "
+            "identidad no casa entre ediciones:\n  " + "\n  ".join(malas))
+    # Lo que SI puede divergir se cuenta y se declara, no se silencia: son
+    # asimetrias del propio codigo, ya recogidas en `observaciones_del_codigo`.
+    dif_tub = [bi for bi, f in a.items()
+               if txt(f["tuberia"]) != txt(b[bi]["tuberia"])]
+    ISSUES.append(
+        f"Tabla B-1: {len(a)} filas enlazadas SI<->US por posicion (clave_bi); "
+        "identidad (designacion de material + Spec. No.) identica en las dos "
+        f"ediciones. Designacion de tuberia distinta entre ediciones en "
+        f"{len(dif_tub)} fila(s) ({', '.join(dif_tub) or 'ninguna'}): asimetria "
+        "impresa por el codigo, se conserva tal cual (regla 9).")
+
+
+# El RESTO del Apendice B —B-2 y B-3 (listados de especificacion de RTR y RPM)
+# y B-4, B-5 y B-6 (presiones admisibles de concreto, vidrio borosilicato y
+# PEX-AL-PEX)— NO se carga en este libro. Existio como DB_NoMetalicos +
+# Buscar_NoMetalicos y se retiro en la Rev. 4d por decision de alcance: son
+# tablas que este trabajo no usa. La extraccion sigue intacta en
+# resources/.../appendix_b/table_b_2..b_6.json, que es la fuente de verdad; lo
+# que se quito es la carga al libro. En el arbol aparece como tarjeta marcador
+# «NO CARGADO EN ESTE LIBRO», igual que el B31.1 o la Seccion VIII: asi el nivel
+# sigue explicando la taxonomia y se ve de un vistazo que falta.
 
 
 # ---------------------------------------------------------------------------
@@ -3263,6 +3498,56 @@ def campo(ws, r, c1, etiqueta, formula, unidad=None,
     ws.row_dimensions[r].height = 17
 
 
+def formula_funcion_tabla(tabla_expr, tags):
+    """Rotulo en español de PARA QUE sirve la tabla de la fila activa.
+
+    Un buscador que reune dos tablas del codigo —A-1 (esfuerzos basicos en
+    traccion) y A-4 (perneria)— tiene que decir cual de las dos resolvio la
+    cascada Y que publica cada una: leer un admisible de perneria creyendo que
+    es el de un tubo cambia el calculo. El texto es una DESCRIPCION del titulo
+    impreso de la tabla, no un valor normativo, y por eso vive en el builder.
+
+    `tags` son SOLO las tablas que esa base contiene de verdad. Emitir las
+    nueve en los cinco buscadores dejaria ocho ramas muertas por motor y una
+    formula tres veces mas larga sin ganar nada. Si una tabla nueva llegase sin
+    descripcion, aborta el build en vez de imprimir un rotulo generico.
+
+    Se genera en una funcion —y no suelta dentro del motor— porque
+    test_dashboard.py comprueba el literal contra el mismo diccionario.
+    """
+    faltan = [t for t in tags if t not in FUNCION_TABLA]
+    if faltan:
+        raise SystemExit(
+            f"No hay descripcion en FUNCION_TABLA para {faltan}. Anadala: la "
+            "ficha del buscador tiene que decir que publica cada tabla.")
+    expr = f'"{FUNCION_TABLA_DESCONOCIDA}"'
+    for tag in sorted(tags, reverse=True):
+        expr = f'IF({tabla_expr}="{tag}","{FUNCION_TABLA[tag]}",{expr})'
+    return expr
+
+
+# Que publica cada tabla del codigo, en español. Solo describe el titulo
+# impreso; no aporta ni un valor. Las ediciones US llevan la MISMA descripcion
+# que su gemela metrica: lo que cambia entre A-1 y A-1C es la unidad, no la
+# funcion de la tabla.
+FUNCION_TABLA_DESCONOCIDA = "tabla no descrita en este buscador"
+FUNCION_TABLA = {
+    "A-1": "Esfuerzos basicos admisibles en traccion para METALES (tuberia, "
+           "placa, forja, fundicion)",
+    "A-1C": "Esfuerzos basicos admisibles en traccion para METALES (tuberia, "
+            "placa, forja, fundicion)",
+    "A-4": "Esfuerzos de diseno para materiales de PERNERIA (pernos, esparragos "
+           "y tuercas de union bridada)",
+    "A-4C": "Esfuerzos de diseno para materiales de PERNERIA (pernos, esparragos "
+            "y tuercas de union bridada)",
+    "1A": "Esfuerzos admisibles de materiales FERROSOS",
+    "1B": "Esfuerzos admisibles de materiales NO FERROSOS",
+    "3": "Esfuerzos admisibles de PERNERIA",
+    "U": "Resistencia a la traccion minima especificada Su frente a la temperatura",
+    "Y-1": "Limite de fluencia minimo especificado Sy frente a la temperatura",
+}
+
+
 def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit_us,
                    valor_lbl, temp_si="°C", temp_us="°F", nota=""):
     ws = new_sheet(wb, name, title,
@@ -3273,7 +3558,11 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     _mrg(ws, 1, 1, NCOLS)
     _mrg(ws, 2, 1, NCOLS)
     ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
-    ws.row_dimensions[2].height = 26
+    # El subtitulo describe QUE publica cada tabla del buscador y en los que
+    # reunen dos tablas se alarga; la altura se ajusta al texto en vez de
+    # truncarlo (el ancho util del panel es de unos 190 caracteres).
+    ws.row_dimensions[2].height = max(
+        26, 13 * math.ceil(len(ws.cell(2, 1).value) / 190))
     U_VAL = f'IF($D$5="SI","{unit_si}","{unit_us}")'
     U_TMP = f'IF($D$5="SI","{temp_si}","{temp_us}")'
 
@@ -3425,8 +3714,23 @@ def build_buscador(wb, curvas, name, title, pref, rng, master, us, unit_si, unit
     def ident(colname):
         return f'IF($D$5="SI",{_rng(master, colname)},{_rng(us, colname)})'
 
+    # La tabla de la fila activa, una sola vez. La ficha la usa dos veces —para
+    # el rotulo y para la funcion de la tabla— y repetir el INDEX dentro de un
+    # anidamiento de IF multiplicaba la formula por el numero de tablas.
+    # Fila 20: las 4 a 11 son de esta funcion y las 12 a 19 las escribe
+    # finish_buscador (n_pts, p1, T1/S1/T2/S2, S(T) y estado).
+    ws.cell(20, A, "tabla activa").font = SRC_F
+    ws.cell(20, A + 1).value = f'=IF({FIL}="","",INDEX({ident("Tabla")},{FIL}))'
+    TAB = f"${LA}$20"
+
+    # Los rotulos de tabla que esta base contiene de verdad, leidos de la propia
+    # base: asi la ficha no ofrece ramas de tablas que este buscador no tiene.
+    tags = sorted({d["tabla"] for d in master["recs"]} |
+                  {d["tabla"] for d in us["recs"]})
+
     return dict(ws=ws, pref=pref, rng=rng, master=master, us=us, A=A,
                 MIDC=MIDC, FSI=FSI, FUS=FUS, FIL=FIL, NVAR=NVAR, ident=ident,
+                TAB=TAB, tags=tags,
                 valor_lbl=valor_lbl, U_VAL=U_VAL, U_TMP=U_TMP,
                 unit_si=unit_si, unit_us=unit_us, temp_si=temp_si, temp_us=temp_us)
 
@@ -3542,6 +3846,16 @@ def finish_buscador(ctx, wb, curvas, cidx):
     izq = [("Tabla del codigo", val_of("Tabla"), None,
             "Calculo: tabla del codigo (A-1/A-4, 1A, 1B/3, U o Y-1 segun el buscador) "
             "de la que proviene la fila resuelta por la cascada de seleccion."),
+           # Un buscador que reune dos tablas tiene que decir cual resolvio la
+           # cascada Y que publica: el admisible de un perno (A-4) y el de un
+           # tubo (A-1) se leen igual y no son lo mismo.
+           ("Funcion de la tabla",
+            f'=IF({FIL}="","—",'
+            + formula_funcion_tabla(ctx["TAB"], ctx["tags"]) + ')', None,
+            "Calculo: que publica esa tabla del codigo, en español. Es una "
+            "descripcion de su titulo impreso, no un dato normativo: sirve para no "
+            "confundir el esfuerzo de un perno (A-4/Tabla 3) con el de un "
+            "componente a presion (A-1/Tabla 1A)."),
            ("Familia de material", val_of("Familia"), '="agrupacion de navegacion"',
             "Calculo: familia de material tal como quedo clasificada en la base "
             "(agrupacion de navegacion derivada del UNS y la composicion impresa; no "
@@ -3624,6 +3938,10 @@ def finish_buscador(ctx, wb, curvas, cidx):
         r2 = 22 + k
         if k < len(izq):
             campo(ws, r2, 1, izq[k][0], izq[k][1], izq[k][2], com_val=izq[k][3])
+            # `campo` fija 17 px, que basta para un valor corto. La funcion de la
+            # tabla es una frase y se parte en tres lineas dentro de dos columnas.
+            if izq[k][0] == "Funcion de la tabla":
+                ws.row_dimensions[r2].height = 44
         if k < len(der):
             campo(ws, r2, 7, der[k][0], der[k][1], der[k][2], com_val=der[k][3])
 
@@ -4478,6 +4796,525 @@ def build_buscador_prop_c(wb, curvas, rng, master, us):
 
 
 # ---------------------------------------------------------------------------
+# Buscar_B31_B1 — esfuerzo de diseno hidrostatico del Apendice B (Tabla B-1)
+# ---------------------------------------------------------------------------
+# Motor propio, por la misma razon por la que el Apendice C tiene el suyo: el
+# HDS es lo unico del Apendice B tabulado frente a la temperatura, y una ficha
+# campo/valor no puede resolver una consulta a una T cualquiera.
+#
+# Lo que separa este motor de los cinco de esfuerzos —y por que no reutiliza
+# build_buscador/finish_buscador— son las tres reglas de rango, que en el
+# Capitulo VII son OTRAS y estan citadas una a una:
+#
+#   · para. A302.3.1(b) — «The stresses and allowable pressures are grouped by
+#     materials and listed for stated temperatures. Straight-line interpolation
+#     between temperatures is permissible.» -> se interpola, igual que en los
+#     metales, y se puede elegir el modo tabulado-conservador.
+#   · Nota (3) de la propia Tabla B-1/B-1C, anclada a la columna de 23 °C
+#     (73 °F) — «Use these hydrostatic design stress (HDS) values at all lower
+#     temperatures.» -> por debajo de la primera T tabulada NO se extrapola: se
+#     SOSTIENE ese valor, y el estado lo dice citando la nota. Concuerda con
+#     para. A323.2.2(b).
+#   · para. A323.2.1(a) -> no se usa un material por encima de la maxima
+#     temperatura para la que hay valor o rating, y las Notas (1) y (2) fijan
+#     los limites recomendados. -> se bloquea por ARRIBA en dos sitios: el
+#     limite maximo recomendado que imprime la fila y el ultimo punto tabulado.
+#     El estado distingue los dos casos, porque no son el mismo aviso.
+#
+# El limite POR ABAJO es el minimo recomendado impreso, no el primer punto
+# tabulado: entre uno y otro la Nota (3) sigue dando un valor valido.
+#
+# Columnas ocultas propias: 36..39 (listas de los niveles 1 a 4) y 41..42
+# (auxiliares). Son las mismas que usan Buscar_Prop_B31_3 y los dos motores de
+# factores, pero cada uno en SU hoja; quedan por debajo de COL_CLAVE_BASE (66).
+APXB1_LST_COL = 36
+APXB1_AUX_COL = 41
+APXB1_CURVA_COL = 500      # columna de arranque en _Curvas (libres desde 500)
+
+
+def _rngb1(info, colname):
+    """Rango de una columna de la base de la Tabla B-1 (layout APXB1_COLS)."""
+    L = CLB1[colname]
+    return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
+
+
+def formula_estado_b1(fil, npts, tmin, tmax, tprim, tult, tq):
+    """Estado del rango de la Tabla B-1. Cuatro bloqueos y una excepcion.
+
+    El orden de las comprobaciones importa y no es arbitrario: primero los
+    limites de temperatura RECOMENDADOS que imprime la fila (Notas (1) y (2)),
+    que son un limite de servicio del material, y solo despues el extremo de la
+    banda tabulada, que es un limite del dato. Un material fuera de su limite
+    recomendado no se salva porque exista un HDS tabulado ahi.
+
+    La Nota (3) es la unica excepcion al «no extrapolar» de la regla 4 del
+    proyecto, y la escribe el codigo: por debajo de la primera temperatura
+    tabulada el HDS se SOSTIENE, no se extrapola hacia abajo.
+
+    Se genera en una funcion porque verificar.py §11 la vuelve a emitir para
+    recalcularla en Excel: asi la prueba ejerce el original y no una copia.
+    """
+    return (f'=IF({fil}="","{EST_B1_SIN_SEL}",'
+            f'IF({npts}=0,"{EST_B1_SIN_TAB}",'
+            f'IF(AND({tmin}<>"",{tq}<{tmin}),"{EST_B1_BAJO}",'
+            f'IF(AND({tmax}<>"",{tq}>{tmax}),"{EST_B1_ALTO_LIM}",'
+            f'IF({tq}>{tult},"{EST_B1_ALTO_TAB}",'
+            f'IF({tq}<{tprim},"{EST_B1_NOTA3}",'
+            f'"{EST_B1_OK}"))))))')
+
+
+def formula_valor_b1(fil, est, vtab):
+    """HDS resuelto. Bloqueado en cuanto el estado diga FUERA DE RANGO.
+
+    No hay factor de escala: la Tabla B-1 publica el HDS directamente en MPa
+    (ksi en B-1C). El valor sostenido de la Nota (3) ya lo devuelve
+    interp_value(), que por debajo del primer punto entrega ese primer valor.
+    """
+    return (f'=IF({fil}="","",'
+            f'IF(ISNUMBER(SEARCH("FUERA DE RANGO",{est})),"{VAL_B1_BLOQUEADO}",'
+            f'IF({est}="{EST_B1_SIN_TAB}","{EST_B1_SIN_TAB}",{vtab})))')
+
+
+def build_buscador_b1(wb, curvas, rng, master, us):
+    name = "Buscar_B31_B1"
+    hl = get_column_letter
+    ws = new_sheet(
+        wb, name,
+        "BUSCADOR — ESFUERZO DE DISENO HIDROSTATICO (HDS) DE TUBERIA "
+        "TERMOPLASTICA · ASME B31.3-2024, Apendice B, Tablas B-1 y B-1C",
+        "La Tabla B-1 publica DOS cosas por fila y no son lo mismo: el esfuerzo "
+        "de diseno hidrostatico HDS —el que entra como S en la eq. (26a) del "
+        "para. A304.1.2, t = PD/(2S+P)— tabulado a cuatro temperaturas, y los "
+        "LIMITES DE TEMPERATURA RECOMENDADOS de las Notas (1) y (2), que son un "
+        "limite de servicio del material. El motor los muestra por separado y "
+        "bloquea con los dos. Conmutador SI/US: cambia de HOJA (B-1 <-> B-1C), "
+        "nunca convierte. La UNICA celda que se escribe es la temperatura.")
+    ws.freeze_panes = "A4"
+    _mrg(ws, 1, 1, NCOLS)
+    _mrg(ws, 2, 1, NCOLS)
+    ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[2].height = 56
+
+    SEL = '$D$5="SI"'
+
+    def ident(colname):
+        return f'IF({SEL},{_rngb1(master, colname)},{_rngb1(us, colname)})'
+
+    # ------------------------- 1 · SELECCION -------------------------------
+    banda(ws, 4, "1 · SELECCION DEL TERMOPLASTICO   —   todo por lista desplegable")
+    com_sist = ("Entrada: SI lee la Tabla B-1 (HDS en MPa, temperaturas en °C); US "
+                "lee la Tabla B-1C (ksi, °F). El codigo publica UNA TABLA POR "
+                "EDICION y el conmutador cambia de hoja: nunca hay conversion "
+                "(regla 9 del proyecto).")
+    filas = [
+        (5, "Sistema de unidades", "SI", com_sist),
+        (6, "0 · Designacion de material", "",
+         "Entrada: paso 0 de la cascada. Designacion del termoplastico tal como la "
+         "imprime la tabla (ABS, CPVC4120, PE4710, PVC1120, PP-R...). Habilita el "
+         "paso 1."),
+        (7, "1 · Spec. No. (ASTM)", "",
+         "Entrada: paso 1, dependiente del paso 0. La misma designacion de material "
+         "aparece bajo VARIAS especificaciones con HDS distinto —PE2708 esta en "
+         "D2737, D3035 y F714—, asi que este paso no es decorativo: es el que "
+         f"separa esas filas. La fila del ABS no imprime Spec. No. y ofrece "
+         f"«{SIN_SPEC_B1}»."),
+        (8, "2 · Designacion de tuberia", "",
+         "Entrada: paso 2, dependiente de los pasos 0 y 1. Pipe Designation impresa "
+         "(SDR11, Sch. 40, 80, DR-PR...). Es lo que separa CPVC4120-05 de F441 y de "
+         "F442."),
+        (9, "3 · Cell Class", "",
+         "Entrada: paso 3, dependiente de los pasos 0 a 2. Cell Class impresa por la "
+         f"tabla. Las filas que no la imprimen ofrecen «{SIN_CELL_B1}»."),
+        (10, "4 · Variante", "",
+         "Entrada: paso 4, dependiente de los pasos 0 a 3. Solo tiene contenido real "
+         "si el codigo repitiese una fila con identificacion identica; hoy vale "
+         f"«{VAR_UNICA}» en las 36 filas de las dos ediciones."),
+    ]
+    for r, et, val, com in filas:
+        e = _mrg(ws, r, 1, 3, et)
+        e.font = LBL_F
+        e.alignment = Alignment(vertical="center", indent=1)
+        _nota(e, com)
+        c = _mrg(ws, r, 4, 6, val)
+        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+        ws.row_dimensions[r].height = 17
+
+    # Celda unica de escritura: relleno lavanda propio (regla de estilo 1).
+    com_temp = ("Entrada: la UNICA celda de escritura libre de todo el motor. "
+                "Temperatura de diseno del componente (para. A301.3.2), en la unidad "
+                "de la celda de la derecha. El para. A302.2.4(a) no admite margen "
+                "por variaciones de presion o temperatura en tuberia no metalica: "
+                "aqui va la condicion mas severa.")
+    e = _mrg(ws, 11, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
+    e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
+    e.alignment = Alignment(vertical="center", indent=1)
+    _nota(e, com_temp)
+    c = _mrg(ws, 11, 4, 5, 23)
+    c.font, c.fill = IN_F, TEMP_INPUT_FILL
+    c.border = Border(*[Side("medium", color="C00000")] * 4)
+    _nota(c, com_temp)
+    u = ws.cell(11, 6)
+    u.value = f'=IF({SEL},"°C","°F")'
+    u.font = UNIT_F
+    _nota(u, "Calculo: unidad de la temperatura de consulta; cambia entre °C y °F "
+             "segun el selector 'Sistema de unidades' (D5).")
+
+    com_modo = ("Entrada: 'Interpolado' aplica la interpolacion lineal recta que "
+                "autoriza el para. A302.3.1(b) entre los dos puntos tabulados que "
+                "rodean la temperatura de consulta. 'Tabulado-conservador' ignora la "
+                "interpolacion y adopta el valor tabulado en T2 (el escalon "
+                "superior), que da un HDS menor y por tanto un espesor mayor.")
+    e = _mrg(ws, 12, 1, 3, "Modo de lectura")
+    e.font = LBL_F
+    e.alignment = Alignment(vertical="center", indent=1)
+    _nota(e, com_modo)
+    c = _mrg(ws, 12, 4, 6, "Interpolado")
+    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+
+    dv_list(ws, "D5", '"SI,US"', com_sist)
+    dv_list(ws, "D12", '"Interpolado,Tabulado-conservador"', com_modo)
+    dv_list(ws, "D6", "=" + rng["FAM"], filas[1][3])
+    niveles = [("D7", rng["CK"], rng["CV"], "$D$6", rng.get("maxC", 10), filas[2][3]),
+               ("D8", rng["FK"], rng["FV"], '$D$6&"|"&$D$7', rng.get("maxF", 10),
+                filas[3][3]),
+               ("D9", rng["SK"], rng["SV"], '$D$6&"|"&$D$7&"|"&$D$8',
+                rng.get("maxS", 10), filas[4][3]),
+               ("D10", rng["GK"], rng["GV"], '$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9',
+                rng.get("maxG", 10), filas[5][3])]
+    for i, (cell, kr, vr, key, mx, com) in enumerate(niveles):
+        col = APXB1_LST_COL + i
+        L = hl(col)
+        mx = max(1, min(int(mx), 250))
+        ws.cell(R_HDR, col, f"lista nivel {i + 1}").font = SRC_F
+        for k in range(1, mx + 1):
+            ws.cell(R_DATA + k - 1, col).value = (
+                f'=IF(COUNTIF({kr},{key})<{k},"",'
+                f'INDEX({vr},MATCH({key},{kr},0)+{k}-1))')
+        ws.column_dimensions[L].hidden = True
+        dv_list(ws, cell, f"=${L}${R_DATA}:${L}${R_DATA + mx - 1}", com)
+
+    # --- auxiliares de resolucion (columnas ocultas) ------------------------
+    A = APXB1_AUX_COL
+    LA = hl(A + 1)
+    rm, ru = packed_refs(master), packed_refs(us)
+    npack = max(master["npack"], us["npack"])
+
+    def aux(fila, rotulo, formula):
+        ws.cell(fila, A, rotulo).font = SRC_F
+        ws.cell(fila, A + 1).value = formula
+        return f"${LA}${fila}"
+
+    KEY = aux(4, "clave k4", '=$D$6&"|"&$D$7&"|"&$D$8&"|"&$D$9&"|"&$D$10')
+    FSI = aux(5, "fila SI", f'=IFERROR(MATCH({KEY},{rng["K4"]},0),"")')
+    MIDC = aux(6, "material_id", f'=IF({FSI}="","",INDEX({rng["ID"]},{FSI}))')
+    BI = aux(7, "clave bilingue",
+             f'=IF({FSI}="","",INDEX({_rngb1(master,"clave_bi")},{FSI}))')
+    FUS = aux(8, "fila US",
+              f'=IF({BI}="","",IFERROR(MATCH({BI},{_rngb1(us,"clave_bi")},0),""))')
+    FIL = aux(9, "fila activa", f'=IF({SEL},{FSI},{FUS})')
+    NP = aux(10, "n_pts", f'=IF({FIL}="",0,IFERROR(IF({SEL},'
+                          f'INDEX({rm["npts"]},{FIL}),INDEX({ru["npts"]},{FIL})),0))')
+    T_ANC = f'IF({SEL},{rm["t_anchor"]},{ru["t_anchor"]})'
+    V_ANC = f'IF({SEL},{rm["v_anchor"]},{ru["v_anchor"]})'
+    TR = f'OFFSET({T_ANC},{FIL}-1,0,1,MAX(1,{NP}))'
+    VR = f'OFFSET({V_ANC},{FIL}-1,0,1,MAX(1,{NP}))'
+
+    # INDEX sobre una celda VACIA devuelve 0, no cadena vacia. Sin este
+    # envoltorio, una fila que no imprime limite maximo —la mayoria de las de
+    # PVC y PE— daria tmax = 0 y el motor bloquearia TODA temperatura por
+    # encima de cero como si el codigo hubiese publicado ese limite.
+    def vacio_si_vacio(expr):
+        return f'IF({expr}="","",{expr})'
+
+    def indexb(colname):
+        return vacio_si_vacio(f'INDEX({ident(colname)},{FIL})')
+
+    P1 = aux(11, "p1", f'=IF({FIL}="","",IFERROR(MATCH($D$11,{TR},1),1))')
+    tabulados = [("T1", f"INDEX({TR},{P1})"), ("V1", f"INDEX({VR},{P1})"),
+                 ("T2", f"INDEX({TR},{P1}+1)"), ("V2", f"INDEX({VR},{P1}+1)")]
+    T1C, S1C, T2C, S2C = [
+        aux(12 + k, lb, f'=IF({FIL}="","",IFERROR({vacio_si_vacio(expr)},""))')
+        for k, (lb, expr) in enumerate(tabulados)]
+    TMIN = aux(16, "T min. recomendada",
+               f'=IF({FIL}="","",{indexb("Temp. min. recomendada")})')
+    TMAX = aux(17, "T max. recomendada",
+               f'=IF({FIL}="","",{indexb("Temp. max. recomendada")})')
+    TPRI = aux(18, "T primera", f'=IF({FIL}="","",{indexb("T primera tabulada")})')
+    TULT = aux(19, "T ultima", f'=IF({FIL}="","",{indexb("T ultima tabulada")})')
+    # interp_value ya devuelve el PRIMER valor tabulado cuando T <= T1, que es
+    # exactamente lo que manda la Nota (3) por debajo de la primera columna.
+    VTAB = aux(20, "HDS tabulado",
+               f'=IF({FIL}="","",' + interp_value(T1C, S1C, T2C, S2C,
+                                                  "$D$11", "$D$12")[1:] + ')')
+    EST = aux(21, "estado",
+              formula_estado_b1(FIL, NP, TMIN, TMAX, TPRI, TULT, "$D$11"))
+    VALOR = aux(22, "HDS resuelto", formula_valor_b1(FIL, EST, VTAB))
+    for jj in (A, A + 1):
+        ws.column_dimensions[hl(jj)].hidden = True
+
+    ay = _mrg(ws, 5, 7, NCOLS)
+    ay.value = (f'=IF({FIL}="",IF({SEL},'
+                f'"Edicion metrica — Tabla B-1 ({master["sheet"]}) · HDS en MPa, T en °C",'
+                f'"Edicion U.S. Customary — Tabla B-1C ({us["sheet"]}) · HDS en ksi, '
+                f'T en °F"),'
+                f'"Leyendo Table "&INDEX({ident("Tabla")},{FIL})&'
+                f'" ("&$D$5&") — HDS en "&INDEX({ident("Unidad de HDS")},{FIL})&'
+                f'", T en "&INDEX({ident("Unidad de temperatura")},{FIL}))')
+    ay.font = Font(italic=True, color=BLUE)
+    ay.alignment = Alignment(vertical="center", wrap_text=True)
+    _nota(ay, "Aviso automatico: dice siempre que tabla del Apendice B y que edicion "
+              "esta leyendo el motor. No se edita.")
+
+    # Semaforo. El disparador es $D$7 (nivel 1 · Spec. No.) y no el nivel 0:
+    # la designacion de material sola NO identifica una fila —PE2708 esta en tres
+    # especificaciones con HDS distinto— y decir COMPLETA ahi seria mentir.
+    ay2 = _mrg(ws, 11, 7, 9)
+    ay2.value = '=IF($D$7="","SELECCION INCOMPLETA","SELECCION COMPLETA")'
+    ay2.font, ay2.fill, ay2.border = SEL_BAD_FONT, SEL_BAD_FILL, BOX
+    ay2.alignment = Alignment(horizontal="center", vertical="center")
+    _nota(ay2, "Aviso automatico: SELECCION COMPLETA (verde) cuando la cascada llega "
+               "a la especificacion; SELECCION INCOMPLETA (amarillo) mientras falte.")
+    ws.conditional_formatting.add(
+        "G11:I11", FormulaRule(formula=['$D$7<>""'], fill=SEL_OK_FILL, font=SEL_OK_FONT))
+    ws.conditional_formatting.add(
+        "G11:I11", FormulaRule(formula=['$D$7=""'], fill=SEL_BAD_FILL, font=SEL_BAD_FONT))
+
+    # ------------------------- 2 · RESULTADO -------------------------------
+    banda(ws, 14, "2 · RESULTADO DE LA CONSULTA")
+    kpis = [(1, "HDS — ESFUERZO DE DISENO HIDROSTATICO", "=" + VALOR,
+             f'=IF({FIL}="","",INDEX({ident("Unidad de HDS")},{FIL}))',
+             "Calculo: HDS a la temperatura de consulta. Es el valor que entra como "
+             "S en la eq. (26a) del para. A304.1.2: t = PD/(2S+P). BLOQUEADO si la "
+             "temperatura cae fuera del limite recomendado o de la banda tabulada."),
+            (4, "TEMPERATURA DE CONSULTA", "=$D$11", f'=IF({SEL},"°C","°F")',
+             "Calculo: repite la temperatura tecleada en D11, junto al resultado."),
+            (7, "MODO DE LECTURA", "=$D$12", '="segun A302.3.1(b)"',
+             "Calculo: repite el modo elegido en D12. La interpolacion lineal recta "
+             "la autoriza el para. A302.3.1(b)."),
+            (10, "ESTADO DEL RANGO", "=" + EST,
+             f'=IF({FIL}="","",IF(INDEX({ident("Notas del HDS")},{FIL})="","",'
+             f'"HDS: Nota "&INDEX({ident("Notas del HDS")},{FIL}))&'
+             f'IF(INDEX({ident("Notas de los limites")},{FIL})="",""," · limites: '
+             f'Notas "&INDEX({ident("Notas de los limites")},{FIL})))',
+             "Calculo: EN RANGO cuando T cae dentro de los limites recomendados y de "
+             "la banda tabulada. FUERA DE RANGO por debajo del minimo recomendado, "
+             "por encima del maximo recomendado o por encima del ultimo punto "
+             "tabulado —tres avisos distintos porque son tres causas distintas—. "
+             "EN RANGO · Nota (3) cuando T queda por debajo de la primera "
+             "temperatura tabulada: ahi el codigo manda sostener ese valor, no "
+             "extrapolar.")]
+    for c1, tit, val, uni, com in kpis:
+        t = _mrg(ws, 15, c1, c1 + 2, tit)
+        t.font, t.fill = KPI_TIT_F, BAND_FILL
+        t.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        v = _mrg(ws, 16, c1, c1 + 2, val)
+        v.font, v.fill = KPI_VAL_F, KPI_FILL
+        v.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        _nota(v, com)
+        u2 = _mrg(ws, 17, c1, c1 + 2, uni)
+        u2.font, u2.fill = UNIT_F, KPI_FILL
+        u2.alignment = Alignment(horizontal="center", wrap_text=True)
+        for r2 in (15, 16, 17):
+            for cc in range(c1, c1 + 3):
+                ws.cell(r2, cc).border = CARD_BORDER
+    ws.row_dimensions[15].height = 28
+    ws.row_dimensions[16].height = 30
+    ws.row_dimensions[17].height = 15
+    ws.conditional_formatting.add(
+        "A16:L17",
+        FormulaRule(formula=[f'ISNUMBER(SEARCH("FUERA DE RANGO",{EST}))'],
+                    font=Font(color="9C0006", bold=True)))
+
+    # ---------------------- 3 · FICHA DE LA FILA ---------------------------
+    banda(ws, 19, "3 · FICHA DE LA FILA DEL CODIGO   —   cada campo con su unidad "
+                  "impresa")
+
+    def val_of(colname):
+        idx = f'INDEX({ident(colname)},{FIL})'
+        return f'=IF({FIL}="","—",IF({idx}="","—",{idx}))'
+
+    izq = [("Tabla del codigo", val_of("Tabla"), None,
+            "Calculo: B-1 en la edicion metrica y B-1C en la U.S. Customary. Son dos "
+            "tablas distintas del codigo, no una convertida."),
+           ("Funcion de la tabla",
+            '="Esfuerzos de diseno hidrostatico (HDS) y limites de temperatura '
+            'recomendados de TUBERIA TERMOPLASTICA"', None,
+            "Calculo: que publica esta tabla del codigo, en español. Es una "
+            "descripcion de su titulo impreso, no un dato normativo."),
+           ("Designacion de material", val_of("Designacion de material"), None,
+            "Calculo: designacion del termoplastico tal como la imprime la tabla."),
+           ("Spec. No. (ASTM)", val_of("Spec. No. (ASTM)"), None,
+            "Calculo: especificacion ASTM impresa. La misma designacion de material "
+            "aparece bajo varias specs con HDS distinto."),
+           ("Designacion de tuberia", val_of("Designacion de tuberia"), None,
+            "Calculo: Pipe Designation impresa (SDR, Sch., DR-PR...). Puede diferir "
+            "entre las dos ediciones: es una asimetria del codigo, conservada."),
+           ("Cell Class", val_of("Cell Class"), '="ASTM"',
+            "Calculo: Cell Class impresa por la tabla, cuando la fila la trae."),
+           ("Variante", val_of("Variante"), None,
+            "Calculo: nivel 4 de la cascada. «(unico)» salvo que el codigo repitiese "
+            "una fila con identificacion identica.")]
+    der = [("Edicion consultada",
+            f'=IF({FIL}="","—",IF({SEL},"{master["sheet"]} — metrica",'
+            f'IF({FUS}="","sin equivalente en la edicion US",'
+            f'"{us["sheet"]} — U.S. Customary")))', None,
+            "Calculo: confirma de que edicion sale la fila activa y avisa si no "
+            "tuviese homologa en la otra."),
+           ("Temp. min. recomendada", val_of("Temp. min. recomendada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: limite MINIMO de temperatura recomendado, Notas (1) y (2) de la "
+            "tabla. Por debajo el resultado queda BLOQUEADO. No es la primera "
+            "temperatura tabulada: entre las dos sigue habiendo HDS por la Nota (3)."),
+           ("Temp. max. recomendada", val_of("Temp. max. recomendada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: limite MAXIMO recomendado, Notas (1) y (2). Por encima el "
+            "resultado queda BLOQUEADO (para. A323.2.1). Muchas filas no lo imprimen: "
+            "ahi manda el ultimo punto tabulado."),
+           ("Primera T tabulada", val_of("T primera tabulada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: primera temperatura con HDS impreso (23 °C / 73 °F). Por debajo "
+            "de ella la Nota (3) manda SOSTENER este valor."),
+           ("Ultima T tabulada", val_of("T ultima tabulada"),
+            f'=IF({SEL},"°C","°F")',
+            "Calculo: ultima temperatura con HDS impreso para esta fila. Por encima el "
+            "resultado queda BLOQUEADO: el codigo no publica valor y no se extrapola."),
+           ("Encabezado impreso del HDS", val_of("Encabezado impreso del HDS"), None,
+            "Calculo: el encabezado literal de la banda de HDS, con su unidad, tal "
+            "como lo imprime el codigo."),
+           ("Observacion de extraccion", val_of("Observacion"), None,
+            "Calculo: asimetria entre ediciones o artefacto declarado que afecta a "
+            "esta fila, con el folio impreso. Vacio si no hay ninguno.")]
+    for k in range(max(len(izq), len(der))):
+        r2 = 20 + k
+        if k < len(izq):
+            campo(ws, r2, 1, izq[k][0], izq[k][1], izq[k][2], com_val=izq[k][3])
+            if izq[k][0] == "Funcion de la tabla":
+                ws.row_dimensions[r2].height = 44
+        if k < len(der):
+            campo(ws, r2, 7, der[k][0], der[k][1], der[k][2], com_val=der[k][3])
+
+    # ------------------ 4 · TRAZABILIDAD DEL CALCULO -----------------------
+    rt = 20 + max(len(izq), len(der)) + 1
+    banda(ws, rt, "4 · TRAZABILIDAD   —   puntos tabulados usados y regla aplicada")
+    campo(ws, rt + 1, 1, "T1 — tabulada inferior", f"={T1C}", f'=IF({SEL},"°C","°F")',
+          com_val="Calculo: temperatura tabulada inmediatamente inferior (o igual) a "
+                  "la de consulta, tomada de la banda compacta de la fila.")
+    campo(ws, rt + 2, 1, "HDS en T1", f"={S1C}",
+          f'=IF({FIL}="","",INDEX({ident("Unidad de HDS")},{FIL}))',
+          com_val="Calculo: HDS tabulado en T1, tal como lo imprime el codigo.")
+    campo(ws, rt + 1, 7, "T2 — tabulada superior", f"={T2C}", f'=IF({SEL},"°C","°F")',
+          com_val="Calculo: temperatura tabulada inmediatamente superior. Vacia si T1 "
+                  "es el ultimo punto tabulado de la fila.")
+    campo(ws, rt + 2, 7, "HDS en T2", f"={S2C}",
+          f'=IF({FIL}="","",INDEX({ident("Unidad de HDS")},{FIL}))',
+          com_val="Calculo: HDS tabulado en T2. Vacio si T1 es el ultimo punto.")
+    ec = _mrg(ws, rt + 3, 1, NCOLS)
+    ec.value = (
+        f'=IF({FIL}="","",'
+        f'IF({EST}="{EST_B1_SIN_TAB}",'
+        f'"Esta fila no publica HDS a ninguna temperatura: el codigo solo le imprime '
+        f'los limites de temperatura recomendados.",'
+        f'IF(ISNUMBER(SEARCH("FUERA DE RANGO",{EST})),'
+        f'"Resultado bloqueado: la temperatura cae fuera del limite recomendado o de '
+        f'la banda tabulada. para. A323.2.1(a) y Notas (1) y (2) de la tabla.",'
+        f'IF({EST}="{EST_B1_NOTA3}",'
+        f'"Nota (3) de la Tabla B-1: se sostiene el HDS de la primera temperatura '
+        f'tabulada para toda temperatura inferior. No se extrapola.",'
+        f'IF($D$12="Tabulado-conservador",'
+        f'"Modo tabulado-conservador: se adopta el HDS de T2, menor que el '
+        f'interpolado, y por tanto conservador en el espesor.",'
+        f'"Interpolacion lineal recta autorizada por el para. A302.3.1(b):  '
+        f'S = S1 + (S2-S1)*(T-T1)/(T2-T1)")))))')
+    ec.font = SRC_F
+    ec.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+    ws.row_dimensions[rt + 3].height = 26
+    _nota(ec, "Calculo: dice en texto cual de los cinco casos aplico para obtener el "
+              "KPI de la seccion 2, y con que parrafo del codigo.")
+    fu = _mrg(ws, rt + 4, 1, NCOLS)
+    fu.value = (f'=IF({FIL}="",'
+                f'"Fuente: resources/{APX}/appendix_b/table_b_1.json y table_b_1c.json",'
+                f'"Fuente: resources/{APX}/appendix_b/ · Table "&'
+                f'INDEX({ident("Tabla")},{FIL})&" · fila impresa "&'
+                f'INDEX({ident("Linea")},{FIL}))')
+    fu.font = SRC_F
+    fu.alignment = Alignment(vertical="center", indent=1)
+    _nota(fu, "Trazabilidad: archivo de resources/ y numero de fila impresa de la que "
+              "sale el valor mostrado.")
+    av = _mrg(ws, rt + 5, 1, NCOLS)
+    av.value = ('="El HDS es el esfuerzo de diseno de la eq. (26a): t = PD/(2S+P), '
+                'para. A304.1.2(a). El para. A302.3.1(a) advierte que el uso del HDS '
+                'para calculos distintos del diseno a presion NO esta verificado."')
+    av.font = Font(name="Calibri", size=9, italic=True, color="9C6500")
+    av.alignment = Alignment(vertical="center", indent=1)
+    _nota(av, "Aviso del codigo, transcrito: acota para que sirve el valor que "
+              "devuelve este motor.")
+
+    # --------------------------- 5 · CURVA ---------------------------------
+    rg = rt + 7
+    banda(ws, rg, "5 · CURVA DEL HDS   —   valor tabulado frente a la temperatura")
+    c0 = APXB1_CURVA_COL
+    q = f"'{ws.title}'!"
+
+    def _q(expr):
+        return (expr.replace("$D$5", q + "$D$5")
+                    .replace(NP, q + NP).replace(FIL, q + FIL))
+
+    curvas.cell(1, c0, f"{ws.title} — datos de la curva (hoja auxiliar)").font = SRC_F
+    curvas.cell(2, c0).value = f'=CONCATENATE("Temperatura, ",{q}$F$11)'
+    curvas.cell(2, c0 + 1).value = (
+        f'=CONCATENATE("HDS, ",IF({q}{FIL}="","",'
+        f'INDEX(IF({q}$D$5="SI",{_rngb1(master,"Unidad de HDS")},'
+        f'{_rngb1(us,"Unidad de HDS")}),{q}{FIL})))')
+    for k in range(1, npack + 1):
+        curvas.cell(2 + k, c0).value = f'=IFERROR(INDEX({_q(TR)},{k}),NA())'
+        curvas.cell(2 + k, c0 + 1).value = f'=IFERROR(INDEX({_q(VR)},{k}),NA())'
+    curvas.cell(2, c0 + 3, "T consulta").font = HDR_F
+    curvas.cell(2, c0 + 4, "Punto consultado").font = HDR_F
+    curvas.cell(3, c0 + 3).value = f"={q}$D$11"
+    curvas.cell(3, c0 + 4).value = f"={q}{VTAB}"
+
+    from openpyxl.chart import Reference, Series, ScatterChart
+    from openpyxl.chart.marker import Marker
+    from openpyxl.chart.shapes import GraphicalProperties
+    from openpyxl.chart.layout import Layout, ManualLayout
+    from openpyxl.drawing.line import LineProperties
+    ch = ScatterChart()
+    ch.title = "HDS tabulado frente a la temperatura"
+    ch.style = 13
+    ch.scatterStyle = "line"
+    ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
+    ch.y_axis.title = "HDS tabulado  [MPa en SI  ·  ksi en US]"
+    ch.height, ch.width = 9.5, 26
+    ch.x_axis.delete = False
+    ch.y_axis.delete = False
+    ch.layout = Layout(manualLayout=ManualLayout(
+        xMode="edge", yMode="edge", x=0.13, y=0.15, w=0.80, h=0.65))
+    xs = Reference(curvas, min_col=c0, min_row=3, max_row=2 + npack)
+    ys = Reference(curvas, min_col=c0 + 1, min_row=2, max_row=2 + npack)
+    s1 = Series(ys, xs, title_from_data=True)
+    # Linea continua sin marcadores, mismo azul de la banda (regla de estilo 3).
+    s1.marker = Marker(symbol="none")
+    s1.smooth = False
+    s1.graphicalProperties = GraphicalProperties(ln=LineProperties(solidFill=BLUE,
+                                                                   w=19050))
+    ch.series.append(s1)
+    xq = Reference(curvas, min_col=c0 + 3, min_row=3, max_row=3)
+    yq = Reference(curvas, min_col=c0 + 4, min_row=2, max_row=3)
+    s2 = Series(yq, xq, title_from_data=True)
+    s2.marker = Marker(symbol="diamond", size=10,
+                       spPr=GraphicalProperties(
+                           solidFill="FF0000", ln=LineProperties(solidFill="FF0000")))
+    s2.graphicalProperties = GraphicalProperties(ln=LineProperties(noFill=True))
+    ch.series.append(s2)
+    ws.add_chart(ch, f"A{rg + 1}")
+
+    for cc, w in zip("ABCDEFGHIJKL",
+                     [24, 20, 16, 16, 10, 3, 24, 20, 16, 16, 10, 3]):
+        ws.column_dimensions[cc].width = w
+    return ws
+
+
+# ---------------------------------------------------------------------------
 # Buscar_Ec_A2 y Buscar_Ej_A3 — factores de calidad del B31.3
 # ---------------------------------------------------------------------------
 # Son la mitad de maquina que los otros motores, y el plan no finge lo
@@ -4770,80 +5607,6 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
 
     for cc, w in zip("ABCDEFGHIJKL",
                      [22, 20, 18, 18, 12, 6, 22, 20, 16, 14, 12, 4]):
-        ws.column_dimensions[cc].width = w
-    return ws
-
-
-def build_buscador_nm(wb, info, rangos, max_mat=60):
-    ws = new_sheet(wb, "Buscar_NoMetalicos",
-                   "BUSCADOR — ASME B31.3, APENDICE B: esfuerzos de diseno hidrostatico "
-                   "y presion admisible de tuberias no metalicas",
-                   "Elija la tabla y despues el material: se muestran todos los campos "
-                   "impresos para ese material, con las unidades que emplea el codigo. "
-                   "Todo por lista desplegable. Las propiedades fisicas de los no "
-                   "metalicos (dilatacion C-2 y modulo C-4) estan en Buscar_Prop_B31_3.")
-    ws.freeze_panes = "A4"
-    _mrg(ws, 1, 1, NCOLS)
-    _mrg(ws, 2, 1, NCOLS)
-    ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
-    banda(ws, 4, "1 · SELECCION")
-    coms = {5: "Entrada: elija la tabla del Apendice B o C del B31.3 (B-1, B-1C, "
-              "C-1, C-3, etc.). Habilita la lista de materiales de esa tabla.",
-           6: "Entrada: elija el material dentro de la tabla elegida arriba. "
-              "Muestra en la seccion 2 todos los campos que imprime esa fila del "
-              "codigo."}
-    for r, et, val, ref in ((5, "Tabla del Apendice", None, rangos["NM_TABLA"]),
-                            (6, "Material", "", None)):
-        e = _mrg(ws, r, 1, 3, et)
-        e.font = LBL_F
-        e.alignment = Alignment(vertical="center", indent=1)
-        _nota(e, coms[r])
-        c = _mrg(ws, r, 4, 8, val)
-        c.font, c.fill, c.border = IN_F, IN_FILL, BOX
-    ws["D5"] = wb["DB_NoMetalicos"].cell(R_DATA, 2).value
-    dv_list(ws, "D5", "=" + rangos["NM_TABLA"], coms[5])
-    mx = max(1, min(int(max_mat), 250))
-    ws.cell(R_HDR, 50, "lista material").font = SRC_F
-    for k in range(1, mx + 1):
-        ws.cell(R_DATA + k - 1, 50).value = (
-            f'=IF(COUNTIF({rangos["NM_MATK"]},$D$5)<{k},"",'
-            f'INDEX({rangos["NM_MATV"]},MATCH($D$5,{rangos["NM_MATK"]},0)+{k}-1))')
-    ws.column_dimensions["AX"].hidden = True
-    dv_list(ws, "D6", f"=$AX${R_DATA}:$AX${R_DATA + mx - 1}", coms[6])
-    last = info["last_row"]
-    sf = f'DB_NoMetalicos!$C${R_DATA}:$C${last}'
-    key = '$D$5&"|"&$D$6'
-    ws["BH1"] = f'=IFERROR(MATCH({key},{sf},0),0)'
-    ws["BH2"] = f'=COUNTIF({sf},{key})'
-    ws.column_dimensions["BH"].hidden = True
-    banda(ws, 8, "2 · FICHA DEL MATERIAL   —   campos tal como los imprime el codigo")
-    t = _mrg(ws, 9, 1, NCOLS)
-    t.value = (f'=IFERROR("Tabla "&$D$5&" — "&INDEX(DB_NoMetalicos!$G${R_DATA}:$G${last},'
-               f'MATCH({key},{sf},0)),"Seleccione tabla y material")')
-    t.font = Font(name="Calibri", size=11, bold=True, color=NAVY)
-    t.fill = CARD_FILL
-    t.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
-    _nota(t, "Calculo: confirma la tabla y el material seleccionados, o pide "
-             "completar la seleccion.")
-    ws.row_dimensions[9].height = 26
-    for k in range(1, 17):
-        r = 9 + k
-        cond = f'IF(OR($BH$1=0,{k}>$BH$2),""'
-        campo(ws, r, 1,
-              f'={cond},INDEX(DB_NoMetalicos!$E${R_DATA}:$E${last},$BH$1+{k}-1))',
-              f'={cond},INDEX(DB_NoMetalicos!$F${R_DATA}:$F${last},$BH$1+{k}-1))',
-              com_etq="Calculo: nombre del campo tal como lo imprime la tabla del "
-                     "Apendice B/C para el material elegido (fila k de la ficha; "
-                     "vacio si el material tiene menos campos que k).",
-              com_val="Calculo: valor de ese campo, en la unidad que imprime la "
-                     "propia tabla del codigo (no se convierte de unidades).")
-        _mrg(ws, r, 6, NCOLS)
-    av = _mrg(ws, 27, 1, NCOLS)
-    av.value = ('="Las unidades son las que imprime cada tabla: HDS en MPa (B-1) o ksi '
-                '(B-1C); presiones en kPa y psi; temperaturas en °C y °F; dilatacion en '
-                'mm/mm·°C e in/in·°F."')
-    av.font = SRC_F
-    for cc, w in zip("ABCDEFGHIJKL", [26, 26, 24, 24, 14, 3, 14, 14, 14, 14, 14, 4]):
         ws.column_dimensions[cc].width = w
     return ws
 
@@ -5415,7 +6178,14 @@ INSTRUCCIONES = [
      "DB_B31_C / DB_B31_CC — Apendice C del B31.3 ENTERO en una sola base por edicion: "
      "C-1/C-1C (dilatacion de metales), C-2 (dilatacion de no metalicos), C-3/C-3C "
      "(modulo de metales) y C-4 (modulo de no metalicos). 201 filas por edicion.\n"
-     "DB_NoMetalicos — Apendice B (HDS y presion admisible de tuberia no metalica).\n"
+     "DB_B31_B1 / DB_B31_B1C — Tabla B-1 / B-1C del Apendice B: esfuerzo de diseno "
+     "hidrostatico (HDS) de tuberia termoplastica y limites de temperatura recomendados. "
+     "36 filas por edicion, con el HDS tabulado a 23, 38, 82 y 93 °C (73, 100, 180 y "
+     "200 °F).\n"
+     "Del Apendice B, este libro carga SOLO la Tabla B-1 / B-1C. Las Tablas B-2 y B-3 "
+     "(listados de especificacion de RTR y RPM) y B-4, B-5 y B-6 (presiones admisibles "
+     "de concreto, vidrio borosilicato y PEX-AL-PEX) NO estan cargadas, y el arbol lo "
+     "dice con una tarjeta marcador. Para esas cinco tablas, el codigo impreso manda.\n"
      "MAP_Factores (Ej/Ec) · MAP_Grupo · Notas_Codigo · DB_Listas · _meta (trazabilidad)."),
     ("3b. Propiedades fisicas: que motor usar",
      "Buscar_Prop_B31_3 — Apendice C del B31.3, para TUBERIA. Se elige primero QUE "
@@ -5442,8 +6212,17 @@ INSTRUCCIONES = [
      "Lleva conmutador SI/US: cambia de HOJA (DB_E/DB_TE_G/DB_PRD en SI, "
      "DB_EC/DB_TE_GC/DB_PRDC en US), nunca convierte. El rotulo de GRUPO no cambia entre "
      "ediciones: solo el valor leido para ese grupo.\n"
-     "Buscar_NoMetalicos — solo Apendice B: esfuerzo de diseno hidrostatico y presion "
-     "admisible. Ya no ofrece propiedades fisicas."),
+     "Buscar_B31_B1 — Tabla B-1 / B-1C: esfuerzo de diseno hidrostatico (HDS) de tuberia "
+     "TERMOPLASTICA, frente a la temperatura. Es el valor que entra como S en la eq. (26a) "
+     "del para. A304.1.2, t = PD/(2S+P). Tres reglas de rango, todas del Capitulo VII y "
+     "distintas de las de los metales: se INTERPOLA linealmente (para. A302.3.1(b)); por "
+     "debajo de la primera temperatura tabulada se SOSTIENE ese HDS y no se extrapola "
+     "(Nota (3) de la tabla, concordante con el para. A323.2.2(b)); y se BLOQUEA por "
+     "arriba tanto en el limite maximo recomendado de las Notas (1) y (2) como en el "
+     "ultimo punto tabulado (para. A323.2.1(a)), con aviso distinto para cada causa. "
+     "Conmutador SI/US: cambia de HOJA (B-1 <-> B-1C), nunca convierte. Es lo UNICO del "
+     "Apendice B que este libro carga: las Tablas B-2 a B-6 no tienen buscador ni hoja "
+     "de datos aqui, y el arbol lo declara con una tarjeta marcador."),
     ("4. Conmutador de unidades SI / US",
      "Cada buscador tiene la celda 'Sistema de unidades'. En SI lee la tabla metrica del "
      "codigo (MPa, C); en US lee la tabla nativa en unidades inglesas (ksi, F): el B31.3 usa "
@@ -5566,7 +6345,7 @@ def uniques(ws, last_row, key_col, val_col):
 
 
 # ---------------------------------------------------------------------------
-# Dashboard y capa de navegacion (Rev. 3)
+# Dashboard y capa de navegacion (Rev. 5 — arbol jerarquico)
 # ---------------------------------------------------------------------------
 # El libro se entrega como .xlsm: la unica hoja visible es el Dashboard y la
 # macro conmuta la visibilidad del resto. Los estados se graban ademas en el
@@ -5574,16 +6353,9 @@ def uniques(ws, last_row, key_col, val_col):
 # ninguna base de datos.
 DASH = "Dashboard"
 
-# Hojas que el usuario puede llegar a abrir. Todo lo demas queda veryHidden.
-# Esta lista DEBE coincidir con HojasNavegables() de vba/mod_nav.vba.
-NAVEGABLES = ["Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
-              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
-              "Buscar_Prop_B31_3", "Buscar_NoMetalicos", "Buscar_Ec_A2",
-              "Buscar_Ej_A3"] + NAV_SECII + ["Instrucciones"]
-
 # La clave de destino de cada boton se guarda oculta en (fila del boton,
 # COL_CLAVE_BASE + columna del boton). Depende de la columna, y no solo de la
-# fila, porque el Dashboard pone tres tarjetas por banda: con una unica
+# fila, porque cada nivel pone tres tarjetas por banda: con una unica
 # columna de claves las tres escribirian en la misma celda.
 #
 # La base es 66 (BN) porque BM es la columna mas alta que usa cualquier hoja
@@ -5591,16 +6363,433 @@ NAVEGABLES = ["Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
 # listas de cascada.
 # DEBE coincidir con COL_CLAVE_BASE de vba/mod_nav.vba.
 COL_CLAVE_BASE = 66
-CLAVE_VOLVER = "VOLVER"
 
 # Celda del aviso de macros. DEBE coincidir con CELDA_AVISO de vba/mod_nav.vba.
 FILA_AVISO = 4
 
-# Celda donde cada hoja navegable lleva su enlace de retorno. Se elige por
-# hoja porque los tres tipos de layout diferen: los buscadores y el motor
-# fusionan la fila 1 (y la 2) y congelan en A4, dejando la fila 3 libre;
-# Instrucciones no congela y empieza en B2, dejando libre la fila 1.
-ANCLA_VOLVER = {n: (3, 1, 3) for n in NAVEGABLES}    # (fila, col_ini, col_fin)
+
+# ---------------------------------------------------------------------------
+# El arbol de navegacion: se declara UNA sola vez y todo lo demas se deriva
+# ---------------------------------------------------------------------------
+# El Dashboard conserva sus tres bandas por TIPO DE ARTEFACTO -motores de
+# calculo, motores de busqueda y bases de datos-, que es la primera pregunta
+# que se hace quien abre el libro: «que quiero hacer». Y solo DESPUES de esa
+# separacion empieza la categorizacion, con el arbol con el que se CITA una
+# norma:
+#
+#     PUBLICANTE > DISCIPLINA > CODIGO DE LA DISCIPLINA > STANDARD CONCRETO
+#
+# Cada banda tiene su PROPIA rama completa, y por eso la tarjeta ASME aparece
+# tres veces: la del BPVC que lleva a los cinco buscadores de la Parte D no es
+# la misma que la que lleva a las nueve hojas de datos de las Partes A, B y C.
+# La separacion por tipo atraviesa todo el recorrido y un motor nunca se cruza
+# con una hoja de datos. El precio son tres cascadas paralelas; lo que compra
+# es que en cada pantalla todo lo que se ve es del mismo tipo.
+#
+# De este arbol se derivan, en preorden y sin escribir nada dos veces:
+# HOJAS_NAV, NAVEGABLES, DESTINOS, PADRE, ROTULO y ANCLA_VOLVER. Anadir manana
+# el B31.1 es anadir un Nodo aqui: no toca el constructor de hojas, ni el
+# mecanismo de navegacion, ni -salvo la lista literal que el VBA tiene que
+# repetir- una sola linea de VBA.
+class Nodo(NamedTuple):
+    """Un nivel del arbol de navegacion.
+
+    `hoja`     nombre de la hoja NAV_* propia del nodo. Solo la tienen los
+               nodos interiores (y el Dashboard, que es la raiz).
+    `destino`  hoja final del libro a la que lleva la tarjeta. Solo la tienen
+               las hojas del arbol. Un nodo tiene `hoja` o `destino`, nunca
+               las dos: la tarjeta de un nodo interior lleva a su NAV_*.
+    `corto`    rotulo con el que este nodo aparece en la miga de pan y en el
+               boton VOLVER de sus hijos.
+    `grupo`    rotulo de la banda bajo la que el PADRE agrupa esta tarjeta.
+               Solo lo usa NAV_SEC_II, que reparte sus catorce destinos en
+               tres bandas; en el resto se usa `banda` del padre.
+    `banda`    rotulo de la banda unica bajo la que este nodo agrupa a los
+               hijos que no declaran `grupo`.
+    `cargado`  False -> tarjeta marcador: gris, sin hipervinculo y sin clave.
+               Es un rotulo de documento -cero dato normativo, asi que no roza
+               la Regla n.1- y existe para que un nivel con un solo hijo
+               cargado siga explicando la taxonomia en vez de parecer una
+               pantalla vacia, y para que se vea de un vistazo que falta.
+    """
+    titulo: str
+    corto: str = ""
+    subtitulo: str = ""
+    lineas: tuple = ()
+    hoja: str | None = None
+    destino: str | None = None
+    grupo: str = ""
+    banda: str = ""
+    hijos: tuple = ()
+    cargado: bool = True
+    nota: str = ""          # linea al pie de la hoja NAV_*, sin enlace
+
+
+def _hoja_final(titulo, l1, l2, destino, grupo=""):
+    """Tarjeta que abre una hoja real del libro: es una hoja del arbol."""
+    return Nodo(titulo=titulo, lineas=(l1, l2), destino=destino, grupo=grupo)
+
+
+def _marcador(titulo, l1, l2):
+    """Tarjeta marcador: documento que existe en la norma y no en este libro."""
+    return Nodo(titulo=titulo, lineas=(l1, l2), cargado=False)
+
+
+# Sub-bandas de la hoja SEC. II. Es el unico nivel que agrupa, porque sus
+# destinos no son homogeneos ni siquiera dentro de una misma banda: en BASES DE
+# DATOS conviven el volcado integro de las Partes A, B y C con cinco hojas
+# transversales a todas ellas. Sin las sub-bandas serian nueve tarjetas
+# indistinguibles.
+G_ABC = "PARTES A, B y C · volcado integro, una fila por fila impresa"
+G_TRV = "TRANSVERSAL A LAS PARTES"
+
+SIN_EXTRAER = "Sin extraccion en resources/"
+
+# Rotulos de las tres bandas del Dashboard. El tipo de artefacto se decide
+# ANTES que la norma: es la primera pregunta de quien abre el libro.
+B_CALCULO = "1 · MOTORES DE CALCULO — dimensionan una reparacion"
+B_BUSQUEDA = "2 · MOTORES DE BUSQUEDA — consultan un valor tabulado"
+B_DATOS = "3 · BASES DE DATOS — especificaciones de material, sin buscador"
+B_MANUAL = "4 · TRANSVERSAL A TODA NORMA"
+
+T_CAL, T_BUS, T_DAT = "MOTORES DE CALCULO", "MOTORES DE BUSQUEDA", "BASES DE DATOS"
+
+
+def _rama_bpvc(pre, tipo, sub_secii, lineas_secii, hijos_secii, nota=""):
+    """La cascada PRESSURE VESSELS > BPVC > SEC. II, que dos bandas comparten.
+
+    Los buscadores de la Parte D y las nueve hojas de datos de las Partes A, B
+    y C viven en bandas distintas, asi que cada una necesita su propia rama de
+    hojas NAV_* -no se cruzan por diseno-. Pero los tres niveles de arriba son
+    literalmente la misma cita del codigo, y escribirlos dos veces era
+    garantizar que un dia dijeran cosas distintas. Solo cambian el prefijo de
+    las hojas, el rotulo del tipo y lo que cuelga del ultimo nivel.
+    """
+    return Nodo(
+        titulo="PRESSURE VESSELS",
+        corto="PRESSURE VESSELS",
+        subtitulo=f"{tipo} · Recipientes a presion · elija el codigo",
+        lineas=("Boiler and Pressure Vessel Code",
+                "Materiales y reglas de diseno"),
+        hoja=f"NAV_{pre}_PVESSELS",
+        banda="CODIGOS DE LA DISCIPLINA",
+        hijos=(
+            Nodo(
+                titulo="BPVC · BOILER AND PRESSURE VESSEL CODE",
+                corto="BPVC",
+                subtitulo=f"{tipo} · ASME BPVC · elija la seccion",
+                lineas=("Seccion II materiales · Seccion VIII diseno",
+                        "Solo la Seccion II esta cargada"),
+                hoja=f"NAV_{pre}_BPVC",
+                banda="SECCIONES DEL BPVC",
+                hijos=(
+                    Nodo(
+                        titulo="SEC. II · MATERIALES",
+                        corto="SEC. II",
+                        subtitulo=f"{tipo} · BPVC Seccion II 2025",
+                        lineas=lineas_secii,
+                        hoja=f"NAV_{pre}_SEC_II",
+                        banda=sub_secii,
+                        hijos=hijos_secii,
+                        nota=nota),
+                    _marcador("SEC. VIII DIV. 1 · RECIPIENTES A PRESION",
+                              "Reglas de diseno por formula", SIN_EXTRAER),
+                )),
+        ))
+
+
+ARBOL = Nodo(
+    titulo="MOTOR DE CALCULO ASME PCC          Rev. 4",
+    corto="DASHBOARD",
+    subtitulo="Ingenieria de reparacion · ASME PCC-2 · B31.3-2024 · BPVC VIII-1 "
+              "con II-D 2025 · unidades SI",
+    hoja=DASH,
+    hijos=(
+        # ---- 1 · MOTORES DE CALCULO -------------------------------------
+        Nodo(
+            titulo="ASME",
+            corto="ASME · CALCULO",
+            subtitulo=f"{T_CAL} · American Society of Mechanical Engineers · "
+                      f"elija la disciplina",
+            lineas=("Motores que dimensionan una reparacion",
+                    "Hoy solo la familia Post Construction (PCC)"),
+            hoja="NAV_CAL_ASME",
+            grupo=B_CALCULO,
+            banda="DISCIPLINAS CON MOTOR DE CALCULO",
+            hijos=(
+                Nodo(
+                    titulo="REPARACIONES",
+                    corto="REPARACIONES",
+                    subtitulo=f"{T_CAL} · Reparacion de equipos en servicio · "
+                              f"elija el codigo",
+                    lineas=("Post Construction Code (PCC)",
+                            "Reparacion, pernos y evaluacion de aptitud"),
+                    hoja="NAV_CAL_REPARACION",
+                    banda="CODIGOS DE LA DISCIPLINA",
+                    hijos=(
+                        Nodo(
+                            titulo="PCC · POST CONSTRUCTION CODE",
+                            corto="PCC",
+                            subtitulo=f"{T_CAL} · Familia ASME PCC · elija el documento",
+                            lineas=("PCC-1 pernos · PCC-2 reparacion · PCC-3 riesgo",
+                                    "Solo PCC-2 esta cargado"),
+                            hoja="NAV_CAL_PCC",
+                            banda="DOCUMENTOS DE LA FAMILIA PCC",
+                            hijos=(
+                                Nodo(
+                                    titulo="PCC-2 · REPARACION DE EQUIPOS A PRESION",
+                                    corto="PCC-2",
+                                    subtitulo=f"{T_CAL} · ASME PCC-2 · articulos "
+                                              f"cargados en el libro",
+                                    lineas=("Metodos de reparacion por articulo",
+                                            "Solo el Art. 212 esta cargado"),
+                                    hoja="NAV_CAL_PCC2",
+                                    banda="ARTICULOS CARGADOS",
+                                    hijos=(
+                                        _hoja_final(
+                                            "ART. 212 · PARCHE DE PLANCHA",
+                                            "Parche con soldadura de filete, Art. 212/206",
+                                            "Tuberia B31.3 · virola BPVC VIII-1",
+                                            "Parche_PCC2_Art212"),
+                                        _marcador(
+                                            "RESTO DE ARTICULOS DE PCC-2",
+                                            "Manguitos, envolventes, obturaciones",
+                                            SIN_EXTRAER),
+                                    )),
+                                _marcador("PCC-1 · APRIETE DE UNIONES BRIDADAS",
+                                          "Montaje y apriete de pernos", SIN_EXTRAER),
+                                _marcador("PCC-3 · INSPECCION BASADA EN RIESGO",
+                                          "Planificacion de inspeccion", SIN_EXTRAER),
+                            )),
+                    )),
+            )),
+
+        # ---- 2 · MOTORES DE BUSQUEDA ------------------------------------
+        Nodo(
+            titulo="ASME",
+            corto="ASME · BUSQUEDA",
+            subtitulo=f"{T_BUS} · American Society of Mechanical Engineers · "
+                      f"elija la disciplina",
+            lineas=("Consulta de valores tabulados por el codigo",
+                    "Tuberia B31.3 y materiales BPVC Seccion II"),
+            hoja="NAV_BUS_ASME",
+            grupo=B_BUSQUEDA,
+            banda="DISCIPLINAS",
+            hijos=(
+                Nodo(
+                    titulo="PIPING",
+                    corto="PIPING",
+                    subtitulo=f"{T_BUS} · Tuberia a presion · elija el codigo",
+                    lineas=("Codigo B31 de tuberia a presion",
+                            "Bridas, accesorios y valvulas B16"),
+                    hoja="NAV_BUS_PIPING",
+                    banda="CODIGOS DE LA DISCIPLINA",
+                    hijos=(
+                        Nodo(
+                            titulo="B31 · CODIGO DE TUBERIA A PRESION",
+                            corto="B31",
+                            subtitulo=f"{T_BUS} · ASME B31 · elija la seccion",
+                            lineas=("Una seccion por servicio de tuberia",
+                                    "Solo B31.3 esta cargado"),
+                            hoja="NAV_BUS_B31",
+                            banda="SECCIONES DEL B31",
+                            hijos=(
+                                Nodo(
+                                    titulo="B31.3 · PROCESS PIPING",
+                                    corto="B31.3",
+                                    subtitulo=f"{T_BUS} · ASME B31.3-2024 · tablas y "
+                                              f"apendices cargados en el libro",
+                                    lineas=("Tuberia de proceso · edicion 2024",
+                                            "Apendices A, B y C y factores de calidad"),
+                                    hoja="NAV_BUS_B31_3",
+                                    banda="TABLAS Y APENDICES CARGADOS",
+                                    hijos=(
+                                        _hoja_final(
+                                            "B31.3 · TABLAS A-1 y A-4",
+                                            "Esfuerzo admisible S",
+                                            "MPa (SI) y ksi (US)", "Buscar_B31_3"),
+                                        _hoja_final(
+                                            "B31.3 · APENDICE C",
+                                            "Propiedades fisicas: dilatacion y modulo",
+                                            "Metales y no metalicos · SI y US",
+                                            "Buscar_Prop_B31_3"),
+                                        _hoja_final(
+                                            "B31.3 · TABLA B-1",
+                                            "Esfuerzo de diseno hidrostatico HDS",
+                                            "Tuberia termoplastica · MPa (SI) y ksi (US)",
+                                            "Buscar_B31_B1"),
+                                        _hoja_final(
+                                            "B31.3 · TABLA A-2",
+                                            "Factor de calidad de fundicion Ec",
+                                            "Basico y con examen suplementario",
+                                            "Buscar_Ec_A2"),
+                                        _hoja_final(
+                                            "B31.3 · TABLA A-3",
+                                            "Factor de calidad de junta longitudinal Ej",
+                                            "Por tipo de junta soldada", "Buscar_Ej_A3"),
+                                        # Ultimo del nivel, a proposito: lo
+                                        # cargado va primero y el marcador
+                                        # cierra. Se retiro en la Rev. 4d por
+                                        # decision de alcance; la extraccion
+                                        # sigue intacta en resources/ y lo que
+                                        # no se carga es la hoja.
+                                        _marcador(
+                                            "B31.3 · APENDICE B (B-2 a B-6)",
+                                            "Presiones admisibles y listados de spec.",
+                                            "Concreto, vidrio borosilicato y PEX-AL-PEX"),
+                                    )),
+                                _marcador("B31.1 · B31.4 · B31.5",
+                                          "Potencia, hidrocarburos liquidos, refrigeracion",
+                                          SIN_EXTRAER),
+                                _marcador("B31.8 · B31.9 · B31.12",
+                                          "Gas, servicios de edificio e hidrogeno",
+                                          SIN_EXTRAER),
+                            )),
+                        _marcador("B16 · BRIDAS, ACCESORIOS Y VALVULAS",
+                                  "B16.5, B16.9, B16.34 y familia", SIN_EXTRAER),
+                    )),
+                _rama_bpvc(
+                    "BUS", T_BUS,
+                    sub_secii="PARTE D · propiedades de diseno",
+                    lineas_secii=("Parte D: esfuerzos admisibles y propiedades",
+                                  "Cinco motores de busqueda"),
+                    hijos_secii=(
+                        _hoja_final("BPVC II-D · TABLA 1A",
+                                    "Esfuerzo admisible S, ferrosos",
+                                    "MPa (SI) y ksi (US)", "Buscar_BPVC_IID"),
+                        _hoja_final("BPVC II-D · TABLAS 1B y 3",
+                                    "Esfuerzo admisible S, no ferrosos",
+                                    "MPa (SI) y ksi (US)", "Buscar_BPVC_IID_B"),
+                        _hoja_final("BPVC II-D · TABLA U",
+                                    "Resistencia a la traccion Su",
+                                    "MPa (SI) y ksi (US)", "Buscar_Su"),
+                        _hoja_final("BPVC II-D · TABLA Y-1",
+                                    "Limite de fluencia Sy",
+                                    "MPa (SI) y ksi (US)", "Buscar_Sy"),
+                        _hoja_final("BPVC II-D · TM, TE y PRD",
+                                    "Modulo E, dilatacion, Poisson y densidad",
+                                    "por grupo de material · ver MAP_Grupo",
+                                    "Buscar_Prop_IID"),
+                    ),
+                    # No es un marcador: las Partes A, B y C SI estan cargadas.
+                    # Lo que no tienen es buscador, y por eso viven en la banda
+                    # 3 del Dashboard. Decirlo aqui evita que se busquen en la
+                    # rama equivocada; enlazarlas cruzaria las dos bandas, que
+                    # es justo lo que esta separacion evita.
+                    nota="Las Partes A, B y C no llevan buscador: su volcado integro "
+                         "esta en la banda 3 · BASES DE DATOS del Dashboard."),
+            )),
+
+        # ---- 3 · BASES DE DATOS ------------------------------------------
+        Nodo(
+            titulo="ASME",
+            corto="ASME · DATOS",
+            subtitulo=f"{T_DAT} · American Society of Mechanical Engineers · "
+                      f"elija la disciplina",
+            lineas=("Volcado integro de especificaciones de material",
+                    "Hojas de datos: sin buscador y sin una sola formula"),
+            hoja="NAV_DAT_ASME",
+            grupo=B_DATOS,
+            banda="DISCIPLINAS",
+            hijos=(
+                _rama_bpvc(
+                    "DAT", T_DAT,
+                    sub_secii="",
+                    lineas_secii=("Partes A, B y C: 379 especificaciones",
+                                  "54 198 filas tal como estan impresas"),
+                    hijos_secii=(
+                        _hoja_final("SEC. II · PARTE A vol. 1",
+                                    "Volcado integro de SA-6 a SA-450",
+                                    "Una fila por fila impresa", "DB_SecII_A1",
+                                    grupo=G_ABC),
+                        _hoja_final("SEC. II · PARTE A vol. 2",
+                                    "Volcado integro de SA-451 en adelante",
+                                    "Una fila por fila impresa", "DB_SecII_A2",
+                                    grupo=G_ABC),
+                        _hoja_final("SEC. II · PARTE B", "No ferrosos: SB-",
+                                    "Una fila por fila impresa", "DB_SecII_B",
+                                    grupo=G_ABC),
+                        _hoja_final("SEC. II · PARTE C",
+                                    "Consumibles de soldadura: SFA-",
+                                    "Una fila por fila impresa", "DB_SecII_C",
+                                    grupo=G_ABC),
+                        _hoja_final("SEC. II · CATALOGO",
+                                    "379 entradas: specs, paginas PDF y folios",
+                                    "Partes A (2 vol.), B y C · 2025",
+                                    "CAT_SecII", grupo=G_TRV),
+                        _hoja_final("SEC. II · INDICE DE TABLAS",
+                                    "2 572 tablas logicas y su reparto",
+                                    "Dice cuanto quedo tabulado y por que",
+                                    "IDX_SecII_Tablas", grupo=G_TRV),
+                        _hoja_final("SEC. II · NOTAS AL PIE",
+                                    "Notas de tabla con su marcador",
+                                    "Restringen lo que dice la tabla",
+                                    "DB_SecII_Notas", grupo=G_TRV),
+                        _hoja_final("SEC. II · QUIMICA",
+                                    "Composicion normalizada por elemento",
+                                    "Solo tablas de encabezado resuelto",
+                                    "DB_SecII_Quimica", grupo=G_TRV),
+                        _hoja_final("SEC. II · TRACCION",
+                                    "Rm, Re, alargamiento y dureza",
+                                    "Solo tablas de encabezado resuelto",
+                                    "DB_SecII_Traccion", grupo=G_TRV),
+                    ),
+                    nota="El 45,8 % de las filas llega marcada AMBIGUA: conserva su "
+                         "texto impreso ENTERO en la celda C01, pero no quedo "
+                         "repartida en columnas. IDX_SecII_Tablas lo dice tabla a "
+                         "tabla."),
+            )),
+
+        # ---- 4 · TRANSVERSAL --------------------------------------------
+        _hoja_final("MANUAL DE USO", "Convenciones, alcance y limitaciones",
+                    "Leer antes de calcular", "Instrucciones", grupo=B_MANUAL),
+    ))
+
+
+def _preorden(nodo):
+    """Recorre el arbol en preorden. Es el orden en que se derivan las listas."""
+    yield nodo
+    for h in nodo.hijos:
+        yield from _preorden(h)
+
+
+def _mapa_padre(nodo, hoja_padre, out):
+    propia = nodo.hoja or nodo.destino
+    if propia and hoja_padre:
+        out[propia] = hoja_padre
+    for h in nodo.hijos:
+        _mapa_padre(h, nodo.hoja or hoja_padre, out)
+
+
+# Dashboard + las diez hojas NAV_*. Son las que construye build_arbol().
+HOJAS_NAV = [n.hoja for n in _preorden(ARBOL) if n.hoja]
+
+# Las hojas del arbol que ya existen en el libro (motores, buscadores y datos).
+DESTINOS = [n.destino for n in _preorden(ARBOL) if n.destino]
+
+# Hojas que el usuario puede llegar a abrir. Todo lo demas queda veryHidden.
+# DEBE coincidir, en contenido y EN ORDEN, con HojasNavegables() de
+# vba/mod_nav.vba. El Dashboard no entra: es la unica hoja visible.
+NAVEGABLES = [n.hoja or n.destino for n in _preorden(ARBOL)
+              if (n.hoja or n.destino) and n.hoja != DASH]
+
+# Padre de cada hoja alcanzable. Sustituye a la antigua clave literal "VOLVER":
+# con un arbol de cinco niveles, subir tiene que llevar al PADRE y no a la raiz,
+# asi que la celda oculta guarda SIEMPRE el nombre de la hoja destino, se este
+# bajando o subiendo. El VBA queda con una sola rama y deja de crecer con el
+# arbol.
+PADRE: dict[str, str] = {}
+_mapa_padre(ARBOL, None, PADRE)
+
+# Rotulo corto de cada hoja NAV_*, para la miga de pan y el boton de retorno.
+ROTULO = {n.hoja: (n.corto or n.titulo) for n in _preorden(ARBOL) if n.hoja}
+
+# Celda donde cada hoja DESTINO lleva su enlace de retorno. Se elige por hoja
+# porque los tres tipos de layout difieren: los buscadores y el motor fusionan
+# la fila 1 (y la 2) y congelan en A4, dejando la fila 3 libre; Instrucciones
+# no congela y empieza en B2, dejando libre la fila 1. Las hojas NAV_* no
+# entran aqui: build_nav() escribe su propia barra de acciones.
+ANCLA_VOLVER = {n: (3, 1, 3) for n in DESTINOS}    # (fila, col_ini, col_fin)
 ANCLA_VOLVER["Instrucciones"] = (1, 2, 3)
 # Las nueve hojas de la Seccion II dejan libre la fila 3 a proposito (ver
 # R_HDR_SECII): asi anclan el boton donde lo anclan los buscadores, sin pisar
@@ -5618,22 +6807,60 @@ PIE_F = Font(name="Calibri", size=9, italic=True, color="595959")
 PIE_FILL = PatternFill("solid", fgColor=GREY)
 KPI_AMBAR_F = Font(name="Calibri", size=18, bold=True, color="BF8F00")
 
+# Tarjeta marcador: gris apagado, sin hipervinculo y sin clave.
+MARK_FILL = PatternFill("solid", fgColor="F7F7F7")
+MARK_BAR_FILL = PatternFill("solid", fgColor="D9D9D9")
+MARK_TIT_F = Font(name="Calibri", size=11, bold=True, color="808080")
+MARK_TXT_F = Font(name="Calibri", size=9, color="A6A6A6")
+MARK_BAR_F = Font(name="Calibri", size=10, bold=True, color="767171")
+MARK_BORDER = Border(left=Side("thin", color="D9D9D9"), right=Side("thin", color="D9D9D9"),
+                     top=Side("thin", color="D9D9D9"), bottom=Side("thin", color="D9D9D9"))
+TXT_NO_CARGADO = "NO CARGADO EN ESTE LIBRO"
 
-def _boton(ws, fila, c1, c2, texto, clave):
-    """Celda-boton con hipervinculo inocuo y la clave de destino en COL_CLAVE.
+# Barra inferior de la tarjeta. El texto distingue el nivel: ENTRAR baja un
+# nivel del arbol, ABRIR llega a la hoja final.
+TXT_ENTRAR = "▸ ENTRAR"
+TXT_ABRIR = "▸ ABRIR"
+TXT_MANUAL = "? MANUAL DE USO"
+
+# Miga de pan: fila 4 de toda hoja NAV_*.
+MIGA_FILL = PatternFill("solid", fgColor="DCE6F5")
+MIGA_F = Font(name="Calibri", size=9, bold=True, color=BLUE, underline="single")
+MIGA_AQUI_F = Font(name="Calibri", size=9, bold=True, color="595959")
+
+# Filas fijas de una hoja NAV_*. El Dashboard NO usa FILA_ACCIONES ni
+# FILA_MIGA: es la raiz (no tiene padre) y su fila 4 la ocupa el aviso de
+# macros, cuya direccion esta acoplada a CELDA_AVISO = "A4" del VBA.
+FILA_ACCIONES = 3
+FILA_MIGA = 4
+FILA_PRIMERA_BANDA = 6
+
+
+def _enlace(ws, cel, fila, columna, clave):
+    """Hipervinculo senuelo + clave de destino en la celda oculta.
 
     El hipervinculo apunta siempre a Dashboard!A1 y no navega por si mismo:
     solo existe para que Excel dispare Workbook_SheetFollowHyperlink. Un
     hipervinculo directo a la hoja destino seria invalido, porque la hoja
     esta oculta cuando se hace clic.
+
+    LLAMAR ANTES DE APLICAR NINGUN ESTILO a la celda: openpyxl le asigna el
+    estilo "Hyperlink" (azul subrayado) si aun no tiene uno propio, y taparia
+    el boton o la tarjeta.
     """
+    texto = "" if cel.value is None else str(cel.value)
+    cel.hyperlink = Hyperlink(ref=cel.coordinate, location=f"'{DASH}'!A1", display=texto)
+    _celda_clave(ws, fila, columna).value = clave
+    return cel
+
+
+def _boton(ws, fila, c1, c2, texto, clave):
+    """Celda-boton con hipervinculo inocuo y la clave de destino en COL_CLAVE."""
     b = _mrg(ws, fila, c1, c2, texto)
-    b.hyperlink = Hyperlink(ref=b.coordinate, location=f"'{DASH}'!A1", display=texto)
-    # El estilo se aplica DESPUES del hipervinculo: al asignarlo, Excel pinta
-    # la celda con el estilo "Hyperlink" (azul subrayado) y taparia el boton.
+    _enlace(ws, b, fila, c1, clave)
+    # El estilo se aplica DESPUES del hipervinculo (ver _enlace).
     b.font, b.fill = BTN_F, BTN_FILL
     b.alignment = Alignment(horizontal="center", vertical="center")
-    _celda_clave(ws, fila, c1).value = clave
     return b
 
 
@@ -5647,23 +6874,48 @@ def _ocultar_columnas_clave(ws, cols_boton):
         ws.column_dimensions[get_column_letter(c)].hidden = True
 
 
-def _tarjeta(ws, fila, c1, ancho, titulo, lineas, clave):
-    """Tarjeta de 4 filas: titulo, dos lineas de detalle y el boton ABRIR."""
+def _tarjeta(ws, fila, c1, ancho, titulo, lineas, clave,
+             pie=TXT_ABRIR, cargado=True):
+    """Tarjeta de 4 filas: titulo, dos lineas de detalle y la barra de accion.
+
+    La tarjeta ENTERA es clicable, no solo la barra inferior: las cuatro filas
+    llevan hipervinculo y su propia celda de clave, en (fila+i, COL_CLAVE_BASE
+    + c1). Son cuatro celdas distintas -difieren en la fila-, asi que las
+    claves siguen sin pisarse. La barra se conserva como senal visual de que el
+    bloque navega, y su texto dice adonde: ENTRAR baja un nivel del arbol,
+    ABRIR llega a la hoja final.
+
+    `cargado=False` da la tarjeta marcador: gris, sin hipervinculo y sin clave,
+    rotulada NO CARGADO EN ESTE LIBRO.
+    """
     c2 = c1 + ancho - 1
-    t = _mrg(ws, fila, c1, c2, titulo)
-    t.font = CARD_TIT_F
-    t.alignment = Alignment(vertical="center", indent=1)
-    for i, linea in enumerate(lineas[:2]):
-        d = _mrg(ws, fila + 1 + i, c1, c2, linea)
-        d.font = CARD_TXT_F
-        d.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
-    _boton(ws, fila + 3, c1, c2, "▸ ABRIR", clave)
+    detalle = list(lineas[:2]) + [""] * (2 - len(lineas[:2]))
+    textos = [titulo, detalle[0], detalle[1],
+              pie if cargado else TXT_NO_CARGADO]
+
+    for i, texto in enumerate(textos):
+        cel = _mrg(ws, fila + i, c1, c2, texto)
+        if cargado:
+            _enlace(ws, cel, fila + i, c1, clave)
+        if i == 0:
+            cel.font = CARD_TIT_F if cargado else MARK_TIT_F
+            cel.alignment = Alignment(vertical="center", indent=1)
+        elif i < 3:
+            cel.font = CARD_TXT_F if cargado else MARK_TXT_F
+            cel.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+        else:
+            cel.font = BTN_F if cargado else MARK_BAR_F
+            cel.fill = BTN_FILL if cargado else MARK_BAR_FILL
+            cel.alignment = Alignment(horizontal="center", vertical="center")
+
+    fondo = CARD_FILL if cargado else MARK_FILL
+    borde = CARD_BORDER if cargado else MARK_BORDER
     for r in range(fila, fila + 4):
         for c in range(c1, c2 + 1):
             cel = ws.cell(r, c)
             if r != fila + 3:
-                cel.fill = CARD_FILL
-            cel.border = CARD_BORDER
+                cel.fill = fondo
+            cel.border = borde
     ws.row_dimensions[fila].height = 20
     ws.row_dimensions[fila + 1].height = 14
     ws.row_dimensions[fila + 2].height = 14
@@ -5711,58 +6963,131 @@ def normalizar_textos_como_formula(wb):
     return n
 
 
-# Tarjetas de la banda 4 del Dashboard. Son hojas de DATOS, no motores: no
-# llevan buscador ni una sola formula, y la tarjeta lo dice para que nadie
-# espere de ellas lo que dan las de la banda 2.
-TARJETAS_SECII = [
-    ("SEC. II · CATALOGO", ["379 entradas: specs, paginas PDF y folios",
-                            "Partes A (2 vol.), B y C · 2025"], "CAT_SecII"),
-    ("SEC. II · INDICE DE TABLAS", ["2 572 tablas logicas y su reparto",
-                                    "Dice cuanto quedo tabulado y por que"],
-     "IDX_SecII_Tablas"),
-    ("SEC. II · PARTE A vol. 1", ["Volcado integro de SA-6 a SA-450",
-                                  "Una fila por fila impresa"], "DB_SecII_A1"),
-    ("SEC. II · PARTE A vol. 2", ["Volcado integro de SA-451 en adelante",
-                                  "Una fila por fila impresa"], "DB_SecII_A2"),
-    ("SEC. II · PARTE B", ["No ferrosos: SB-", "Una fila por fila impresa"],
-     "DB_SecII_B"),
-    ("SEC. II · PARTE C", ["Consumibles de soldadura: SFA-",
-                           "Una fila por fila impresa"], "DB_SecII_C"),
-    ("SEC. II · NOTAS AL PIE", ["Notas de tabla con su marcador",
-                                "Restringen lo que dice la tabla"],
-     "DB_SecII_Notas"),
-    ("SEC. II · QUIMICA", ["Composicion normalizada por elemento",
-                           "Solo tablas de encabezado resuelto"],
-     "DB_SecII_Quimica"),
-    ("SEC. II · TRACCION", ["Rm, Re, alargamiento y dureza",
-                            "Solo tablas de encabezado resuelto"],
-     "DB_SecII_Traccion"),
-]
-
-
-def build_dashboard(wb, kpis, fecha):
-    """Portada unica del libro. `kpis` es una lista de (titulo, valor, unidad, ambar)."""
-    ws = wb.create_sheet(DASH)
+def _cabecera_nav(ws, nodo):
+    """Titulo y subtitulo: filas 1 y 2 de toda hoja del arbol, Dashboard incluido."""
     ws.sheet_view.showGridLines = False
     ws.sheet_properties.tabColor = NAVY
     for c in range(1, DASH_NCOLS + 1):
         ws.column_dimensions[get_column_letter(c)].width = DASH_ANCHO_COL
-    # Las tarjetas se anclan en las columnas 1, 5 y 9 (tres por banda).
-    _ocultar_columnas_clave(ws, (1, 5, 9))
 
-    # --- cabecera ---------------------------------------------------------
-    t = _mrg(ws, 1, 1, DASH_NCOLS, "MOTOR DE CALCULO ASME PCC          Rev. 4")
+    t = _mrg(ws, 1, 1, DASH_NCOLS, nodo.titulo)
     t.font = Font(name="Calibri", size=16, bold=True, color="FFFFFF")
     t.fill = TITLE_FILL
     t.alignment = Alignment(vertical="center", indent=1)
     ws.row_dimensions[1].height = 32
-    s = _mrg(ws, 2, 1, DASH_NCOLS,
-             "Ingenieria de reparacion · ASME PCC-2 · B31.3-2024 · BPVC VIII-1 con II-D 2025 · "
-             "unidades SI")
+    s = _mrg(ws, 2, 1, DASH_NCOLS, nodo.subtitulo)
     s.font = Font(name="Calibri", size=9, italic=True, color="FFFFFF")
     s.fill = TITLE_FILL
     s.alignment = Alignment(vertical="center", indent=1)
     ws.row_dimensions[2].height = 16
+
+
+def _texto_volver(hoja_padre):
+    return ("◂ VOLVER AL DASHBOARD" if hoja_padre == DASH
+            else f"◂ VOLVER A {ROTULO[hoja_padre]}")
+
+
+def _miga(ws, fila, ruta, nodo):
+    """Miga de pan clicable: cada ancestro enlaza con su propia hoja.
+
+    Sale gratis con el mismo mecanismo de clave que las tarjetas, y evita que
+    subir cuatro niveles cueste cuatro clics. El ultimo segmento es el nodo
+    actual: se rotula pero no se enlaza, porque ya se esta en el.
+    """
+    cols = []
+    segmentos = [(n.hoja, ROTULO[n.hoja]) for n in ruta] + [(None, ROTULO[nodo.hoja])]
+    for i, (hoja, rotulo) in enumerate(segmentos):
+        c1 = 1 + i * 2
+        cel = _mrg(ws, fila, c1, c1 + 1, rotulo if i == 0 else f"› {rotulo}")
+        if hoja:
+            _enlace(ws, cel, fila, c1, hoja)
+            cel.font = MIGA_F
+            cols.append(c1)
+        else:
+            cel.font = MIGA_AQUI_F
+        cel.alignment = Alignment(vertical="center", indent=1)
+    for c in range(1, DASH_NCOLS + 1):
+        ws.cell(fila, c).fill = MIGA_FILL
+    ws.row_dimensions[fila].height = 16
+    return cols
+
+
+def _tarjetas_de(ws, r, nodo):
+    """Dibuja los hijos de `nodo` en bandas de tres tarjetas.
+
+    Cada hijo va bajo la banda que declara en `grupo`; si no declara ninguna,
+    bajo la banda unica del padre (`banda`). Devuelve las columnas ancla usadas
+    -para ocultar sus columnas de clave- y la primera fila libre.
+    """
+    grupos: list[tuple[str, list]] = []
+    for h in nodo.hijos:
+        rotulo = h.grupo or nodo.banda
+        if not grupos or grupos[-1][0] != rotulo:
+            grupos.append((rotulo, []))
+        grupos[-1][1].append(h)
+
+    cols = set()
+    for rotulo, hijos in grupos:
+        if rotulo:
+            banda(ws, r, rotulo, DASH_NCOLS)
+            r += 1
+        for i, h in enumerate(hijos):
+            # El salto de fila va ANTES de dibujar: la primera terna usa la
+            # fila que dejo banda().
+            if i and i % 3 == 0:
+                r += 5
+            c1 = 1 + (i % 3) * 4
+            cols.add(c1)
+            _tarjeta(ws, r, c1, 4, h.titulo, h.lineas, h.hoja or h.destino,
+                     pie=TXT_ENTRAR if h.hoja else TXT_ABRIR, cargado=h.cargado)
+        r += 5
+    return cols, r
+
+
+def build_nav(wb, nodo, ruta):
+    """Hoja NAV_* de un nodo interior. `ruta` son sus ancestros, raiz -> padre.
+
+    Layout comun a todos los niveles del arbol: cabecera, barra de acciones,
+    miga de pan y las tarjetas de sus hijos. El Dashboard comparte cabecera y
+    tarjetas pero no barra ni miga: es la raiz -no tiene padre- y su fila 4 la
+    ocupa el aviso de macros, acoplado a CELDA_AVISO = "A4" del VBA.
+    """
+    ws = wb.create_sheet(nodo.hoja)
+    _cabecera_nav(ws, nodo)
+
+    # Barra de acciones. El manual es transversal a las normas -no cuelga de
+    # ningun codigo- y por eso esta siempre a un clic desde cualquier nivel,
+    # ademas de tener su tarjeta en la raiz.
+    padre = ruta[-1]
+    _boton(ws, FILA_ACCIONES, 1, 3, _texto_volver(padre.hoja), padre.hoja)
+    _boton(ws, FILA_ACCIONES, 10, 12, TXT_MANUAL, "Instrucciones")
+    ws.row_dimensions[FILA_ACCIONES].height = 18
+
+    cols = {1, 10} | set(_miga(ws, FILA_MIGA, ruta, nodo))
+    ws.row_dimensions[FILA_MIGA + 1].height = 6
+
+    cols_tarjetas, r = _tarjetas_de(ws, FILA_PRIMERA_BANDA, nodo)
+    if nodo.nota:
+        # Texto, sin enlace: dice donde esta lo que NO cuelga de esta rama.
+        # Enlazarlo cruzaria dos bandas del Dashboard, que es justo lo que la
+        # separacion por tipo de artefacto evita.
+        n = _mrg(ws, r, 1, DASH_NCOLS, nodo.nota)
+        n.font = SRC_F
+        n.alignment = Alignment(vertical="center", indent=1, wrap_text=True)
+        ws.row_dimensions[r].height = 26
+    _ocultar_columnas_clave(ws, cols | cols_tarjetas)
+    return ws
+
+
+def build_dashboard(wb, nodo, kpis, fecha):
+    """Portada unica del libro y raiz del arbol.
+
+    `kpis` es una lista de (titulo, valor, unidad, ambar). Los indicadores y el
+    pie de responsabilidad se quedan aqui: el Dashboard sigue siendo la unica
+    portada, aunque ya no sea un indice plano.
+    """
+    ws = wb.create_sheet(nodo.hoja)
+    _cabecera_nav(ws, nodo)
     ws.row_dimensions[3].height = 6
 
     # Aviso de macros. Se graba en rojo: es el estado correcto para un archivo
@@ -5774,68 +7099,11 @@ def build_dashboard(wb, kpis, fecha):
     ws.row_dimensions[FILA_AVISO].height = 22
     ws.row_dimensions[FILA_AVISO + 1].height = 6
 
-    # --- 1. motores de calculo -------------------------------------------
-    r = FILA_AVISO + 2
-    banda(ws, r, "1 · MOTORES DE CALCULO — ASME PCC-2", DASH_NCOLS)
-    r += 1
-    _tarjeta(ws, r, 1, 4, "ART. 212 · PARCHE DE PLANCHA",
-             ["Parche con soldadura de filete, PCC-2 Art. 212/206",
-              "Tuberia B31.3 · virola BPVC VIII-1"],
-             "Parche_PCC2_Art212")
-    r += 5
+    cols, r = _tarjetas_de(ws, FILA_PRIMERA_BANDA, nodo)
+    _ocultar_columnas_clave(ws, cols)
 
-    # --- 2. motores de busqueda ------------------------------------------
-    banda(ws, r, "2 · MOTORES DE BUSQUEDA — bases normativas", DASH_NCOLS)
-    r += 1
-    buscadores = [
-        ("B31.3 · TABLAS A-1 y A-4", ["Esfuerzo admisible S", "MPa (SI) y ksi (US)"],
-         "Buscar_B31_3"),
-        ("BPVC II-D · TABLA 1A", ["Esfuerzo admisible S, ferrosos", "MPa (SI) y ksi (US)"],
-         "Buscar_BPVC_IID"),
-        ("BPVC II-D · TABLAS 1B y 3", ["Esfuerzo admisible S, no ferrosos", "MPa (SI) y ksi (US)"],
-         "Buscar_BPVC_IID_B"),
-        ("BPVC II-D · TABLA U", ["Resistencia a la traccion Su", "MPa (SI) y ksi (US)"],
-         "Buscar_Su"),
-        ("BPVC II-D · TABLA Y-1", ["Limite de fluencia Sy", "MPa (SI) y ksi (US)"],
-         "Buscar_Sy"),
-        ("BPVC II-D · TM y PRD", ["Modulo E, Poisson y densidad",
-                                  "por grupo de material · ver MAP_Grupo"],
-         "Buscar_Prop_IID"),
-        ("B31.3 · APENDICE C", ["Propiedades fisicas: dilatacion y modulo",
-                                "Metales y no metalicos · SI y US"],
-         "Buscar_Prop_B31_3"),
-        ("B31.3 · APENDICE B", ["Esfuerzo de diseno hidrostatico",
-                                "Tuberia no metalica · presion admisible"],
-         "Buscar_NoMetalicos"),
-        ("B31.3 · TABLA A-2", ["Factor de calidad de fundicion Ec",
-                               "Basico y con examen suplementario"],
-         "Buscar_Ec_A2"),
-        ("B31.3 · TABLA A-3", ["Factor de calidad de junta longitudinal Ej",
-                               "Por tipo de junta soldada"],
-         "Buscar_Ej_A3"),
-        ("MANUAL DE USO", ["Convenciones, alcance y limitaciones", "Leer antes de calcular"],
-         "Instrucciones"),
-    ]
-    for i, (titulo, lineas, clave) in enumerate(buscadores):
-        col = 1 + (i % 3) * 4
-        if i and i % 3 == 0:
-            r += 5
-        _tarjeta(ws, r, col, 4, titulo, lineas, clave)
-    r += 5
-
-    # --- 3. bases de datos de la Seccion II -------------------------------
-    banda(ws, r, "3 · BASES DE DATOS — ASME BPVC SECCION II, PARTES A, B y C "
-                 "(hojas de datos, sin buscador)", DASH_NCOLS)
-    r += 1
-    for i, (titulo, lineas, clave) in enumerate(TARJETAS_SECII):
-        col = 1 + (i % 3) * 4
-        if i and i % 3 == 0:
-            r += 5
-        _tarjeta(ws, r, col, 4, titulo, lineas, clave)
-    r += 5
-
-    # --- 4. estado del libro ---------------------------------------------
-    banda(ws, r, "4 · ESTADO DEL LIBRO", DASH_NCOLS)
+    # --- estado del libro -------------------------------------------------
+    banda(ws, r, "5 · ESTADO DEL LIBRO", DASH_NCOLS)
     r += 1
     # Cuatro KPI por banda: el Dashboard tiene DASH_NCOLS columnas y cada KPI
     # ocupa tres. El quinto se salia del ancho de la hoja y quedaba invisible.
@@ -5881,19 +7149,44 @@ def build_dashboard(wb, kpis, fecha):
     return ws
 
 
+def build_arbol(wb, kpis, fecha):
+    """Crea el Dashboard y las diez hojas NAV_* recorriendo el arbol en preorden.
+
+    Devuelve HOJAS_NAV: el orden en que main() las coloca en el libro.
+    """
+    def recorrer(nodo, ruta):
+        if not nodo.hoja:                       # tarjeta destino o marcador
+            return
+        if nodo.hoja == DASH:
+            build_dashboard(wb, nodo, kpis, fecha)
+        else:
+            build_nav(wb, nodo, ruta)
+        for h in nodo.hijos:
+            recorrer(h, ruta + [nodo])
+
+    recorrer(ARBOL, [])
+    return HOJAS_NAV
+
+
 def link_volver(wb):
-    """Escribe el enlace de retorno al Dashboard en las 9 hojas navegables.
+    """Escribe el enlace de retorno en cada hoja DESTINO del arbol.
+
+    La clave que se graba es la hoja PADRE, no un literal "VOLVER": subir un
+    nivel es navegar como cualquier otro, y por eso el VBA tiene una sola rama.
+    Las hojas NAV_* no pasan por aqui: build_nav() escribe su propia barra de
+    acciones, con el mismo mecanismo.
 
     La celda se desbloquea explicitamente: Parche_PCC2_Art212 e Instrucciones
     se entregan protegidas, y aunque Excel permite seguir un hipervinculo en
     celda bloqueada, dejarla desbloqueada evita depender de ese detalle.
     """
-    for nombre in NAVEGABLES:
+    for nombre in DESTINOS:
         if nombre not in wb.sheetnames:
             continue
         ws = wb[nombre]
         fila, c1, c2 = ANCLA_VOLVER[nombre]
-        b = _boton(ws, fila, c1, c2, "◂ VOLVER AL DASHBOARD", CLAVE_VOLVER)
+        padre = PADRE[nombre]
+        b = _boton(ws, fila, c1, c2, _texto_volver(padre), padre)
         b.protection = Protection(locked=False)
         _celda_clave(ws, fila, c1).protection = Protection(locked=False)
         _ocultar_columnas_clave(ws, (c1,))
@@ -5958,7 +7251,9 @@ def main(argv=None):
     apxc = build_apendice_c(res, wb, "SI")
     apxcc = build_apendice_c(res, wb, "US")
     verificar_paridad_apendice_c(apxc, apxcc)
-    nm = build_nometalicos(res, wb)
+    b1 = build_b1(res, wb, "SI")
+    b1c = build_b1(res, wb, "US")
+    verificar_paridad_b1(b1, b1c)
     fac = build_map_factores(res, wb)
     ec_inc = build_ec_incremento(res, wb)
     a2 = build_factores(res, wb, "A-2")
@@ -5974,11 +7269,10 @@ def main(argv=None):
     sec2 = build_secii(res, wb)
 
     # listas simples de los buscadores por grupo
-    wse, wste, wsprd, wsnm = wb["DB_E"], wb["DB_TE_G"], wb["DB_PRD"], wb["DB_NoMetalicos"]
+    wse, wste, wsprd = wb["DB_E"], wb["DB_TE_G"], wb["DB_PRD"]
     e_pairs = uniques(wse, e_si["last_row"], 3, 4)
     te_pairs = uniques(wste, te_g_si["last_row"], 3, 4)
     prd_pairs = uniques(wsprd, prd["last_row"], 3, 4)
-    nm_pairs = uniques(wsnm, nm["last_row"], 2, 4)
     simples = [
         ("E_TABLA", sorted({k for k, _ in e_pairs})),
         ("E_K", [k for k, _ in e_pairs]), ("E_V", [v for _, v in e_pairs]),
@@ -5986,15 +7280,18 @@ def main(argv=None):
         ("TE_K", [k for k, _ in te_pairs]), ("TE_V", [v for _, v in te_pairs]),
         ("PRD_TABLA", sorted({k for k, _ in prd_pairs if k})),
         ("PRD_K", [k for k, _ in prd_pairs]), ("PRD_V", [v for _, v in prd_pairs]),
-        ("NM_TABLA", sorted({k for k, _ in nm_pairs})),
-        ("NM_MATK", [k for k, _ in nm_pairs]), ("NM_MATV", [v for _, v in nm_pairs]),
     ]
     # El Apendice C entra en build_listas como una base mas: su contrato de las
     # 8 primeras columnas es identico al de STRESS_COLS, asi que la funcion no
     # necesita ni una linea de cambio.
+    # La base de la Tabla B-1 entra aqui como una mas: su contrato de las 8
+    # primeras columnas es el mismo (assert en APXB1_COLS), asi que build_listas
+    # no necesita ni una linea de cambio. Solo entra la edicion SI: los rotulos
+    # de la cascada son los nombres impresos en la metrica y el motor resuelve la
+    # fila US por clave_bi, igual que hace Buscar_Prop_B31_3.
     rangos = build_listas(wb, [("B313", b313), ("IID1A", iid), ("IIDB", iidb),
                                ("SU", su), ("SY", sy), ("APXC", apxc),
-                               ("A2EC", a2), ("A3EJ", a3)], simples)
+                               ("APXB1", b1), ("A2EC", a2), ("A3EJ", a3)], simples)
 
     curvas = wb.create_sheet("_Curvas")
     curvas["A1"] = ("Datos auxiliares de las graficas. Hoja oculta: no editar. "
@@ -6003,19 +7300,35 @@ def main(argv=None):
 
     busc = [
         ("Buscar_B31_3", "BUSCADOR — ASME B31.3-2024, Apendice A (Tablas A-1 y A-4)",
-         "B313", b313, b313c, "MPa", "ksi", "S admisible"),
+         "B313", b313, b313c, "MPa", "ksi", "S admisible",
+         # Este buscador reune DOS tablas con funciones distintas y hay que
+         # decirlo antes de que el usuario elija: el admisible de un perno no es
+         # el de un componente a presion. La ficha lo repite fila a fila.
+         "Reune las DOS tablas de admisibles del Apendice A: la A-1 (A-1C en US) "
+         "publica los ESFUERZOS BASICOS ADMISIBLES EN TRACCION de los metales "
+         "—tuberia, placa, forja y fundicion—, y la A-4 (A-4C en US) publica los "
+         "ESFUERZOS DE DISENO DE LA PERNERIA —pernos, esparragos y tuercas de "
+         "union bridada—. La ficha del material dice de cual de las dos sale la "
+         "fila resuelta y que publica esa tabla."),
         ("Buscar_BPVC_IID", "BUSCADOR — ASME BPVC II-D 2025, Tabla 1A (ferrosos)",
-         "IID1A", iid, iidc, "MPa", "ksi", "S admisible"),
+         "IID1A", iid, iidc, "MPa", "ksi", "S admisible",
+         "Tabla 1A: esfuerzos admisibles de materiales FERROSOS."),
         ("Buscar_BPVC_IID_B", "BUSCADOR — ASME BPVC II-D 2025, Tablas 1B (no ferrosos) y 3",
-         "IIDB", iidb, iidbc, "MPa", "ksi", "S admisible"),
+         "IIDB", iidb, iidbc, "MPa", "ksi", "S admisible",
+         "Reune dos tablas: la 1B publica los admisibles de los materiales NO "
+         "FERROSOS y la 3 los de la PERNERIA. La ficha dice de cual sale la fila."),
         ("Buscar_Su", "BUSCADOR — Resistencia a la traccion Su (ASME BPVC II-D, Tabla U)",
-         "SU", su, suc, "MPa", "ksi", "Su"),
+         "SU", su, suc, "MPa", "ksi", "Su",
+         "Tabla U: resistencia a la traccion minima especificada frente a la "
+         "temperatura. No es un esfuerzo admisible."),
         ("Buscar_Sy", "BUSCADOR — Limite de fluencia Sy (ASME BPVC II-D, Tabla Y-1)",
-         "SY", sy, syc, "MPa", "ksi", "Sy"),
+         "SY", sy, syc, "MPa", "ksi", "Sy",
+         "Tabla Y-1: limite de fluencia minimo especificado frente a la "
+         "temperatura. No es un esfuerzo admisible."),
     ]
-    for i, (nme, ttl, pref, m, u, us_, uu, vl) in enumerate(busc):
+    for i, (nme, ttl, pref, m, u, us_, uu, vl, nta) in enumerate(busc):
         ctx = build_buscador(wb, curvas, nme, ttl, pref, rangos[pref], m, u,
-                             us_, uu, vl)
+                             us_, uu, vl, nota=nta)
         finish_buscador(ctx, wb, curvas, i)
 
     e_tab = sorted({k for k, _ in e_pairs})
@@ -6025,7 +7338,6 @@ def main(argv=None):
     mx_e = max(_Cnt(k for k, _ in e_pairs).values())
     mx_te = max(_Cnt(k for k, _ in te_pairs).values())
     mx_prd = max(_Cnt(k for k, _ in prd_pairs).values())
-    mx_nm = max(_Cnt(k for k, _ in nm_pairs).values())
     build_buscador_grupo(wb, curvas, [
         dict(titulo="MODULO DE ELASTICIDAD E — ASME BPVC II-D, Tablas TM-1 a TM-5",
              lst_tabla="E_TABLA", nm_key="E_K", nm_val="E_V", default_tabla=e_tab[0],
@@ -6059,6 +7371,7 @@ def main(argv=None):
                      ("Densidad", 6, "kg/m3", "lb/in3")]),
     ], rangos)
     build_buscador_prop_c(wb, curvas, rangos["APXC"], apxc, apxcc)
+    build_buscador_b1(wb, curvas, rangos["APXB1"], b1, b1c)
 
     # --- los dos motores de factores de calidad ---------------------------
     par34, nota34, filas34 = texto_incremento_ej(res)
@@ -6122,7 +7435,6 @@ def main(argv=None):
              "Tabla A-3 y esta tabla, asi que el motor no la infiere.",
              Font(name="Calibri", size=9, bold=True, color="9C0006")),
         ] + bloques_tabla_ej(filas34)))
-    build_buscador_nm(wb, nm, rangos, mx_nm)
 
     integrate_motor(wb, b313, iid, iidb, fac, rangos)
     deprecate_datos_ref(wb)
@@ -6168,7 +7480,7 @@ def main(argv=None):
     # para los que II-D no publica el dato. Las filas AUTO no entran: citan la
     # nota que las sostiene y son auditables 1:1.
     n_sin_resolver = map_stats.get(E_TEXTUAL, 0) + map_stats.get(E_SIN, 0)
-    build_dashboard(wb, [
+    build_arbol(wb, [
         ("MATERIALES B31.3 · A-1 y A-4", b313["last_row"] - R_DATA + 1, "registros", False),
         ("MATERIALES II-D · TABLA 1A", iid["last_row"] - R_DATA + 1, "registros", False),
         ("MAP_Grupo SIN GRUPO NORMATIVO", n_sin_resolver,
@@ -6182,16 +7494,18 @@ def main(argv=None):
 
     link_volver(wb)
 
-    order = [DASH,
+    # El Dashboard tiene que quedar en el indice 0; detras van las diez hojas
+    # de navegacion, en el orden de preorden del arbol.
+    order = [DASH] + HOJAS_NAV[1:] + [
              "Instrucciones", "Parche_PCC2_Art212", "Buscar_B31_3", "Buscar_BPVC_IID",
              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
-             "Buscar_Prop_B31_3", "Buscar_Ec_A2", "Buscar_Ej_A3",
-             "Buscar_NoMetalicos", "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
+             "Buscar_Prop_B31_3", "Buscar_B31_B1", "Buscar_Ec_A2", "Buscar_Ej_A3",
+             "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
              "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_TE_G", "DB_TE_GC",
              "DB_PRD", "DB_PRDC",
-             "DB_B31_C", "DB_B31_CC",
-             "DB_NoMetalicos", "MAP_Factores", "DB_A2_Ec", "DB_A3_Ej",
+             "DB_B31_C", "DB_B31_CC", "DB_B31_B1", "DB_B31_B1C",
+             "MAP_Factores", "DB_A2_Ec", "DB_A3_Ej",
              "DB_Ec_Incremento", "MAP_Grupo", "MAP_GrupoC",
              "Notas_Codigo"] + NAV_SECII + ["DB_Listas",
              "_meta", "_Curvas"]
