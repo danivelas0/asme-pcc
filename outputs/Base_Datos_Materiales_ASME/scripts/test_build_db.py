@@ -390,6 +390,60 @@ class TestCondicionesTratamientoTE1:
         assert set(si["17CR-4NI-4CU"]) == set(us["17CR-4NI-4CU"])
 
 
+class TestEtiquetaColumnaBTE1:
+    """etiqueta_columna_b_te1 alimenta DB_TE_G/DB_TE_GC (la base que pivota
+    TE-1..5 por grupo para Buscar_Prop_IID). Su rotulo tiene que ser
+    IDENTICO al que build_map_grupo escribe en `grupo_te`: si divergen, la
+    seleccion del buscador no casa con lo que MAP_Grupo le dice al
+    ingeniero que elija."""
+
+    def test_reconoce_grupo_numerado(self):
+        assert B.etiqueta_columna_b_te1(
+            "Coefficients for Carbon and Low Alloy Steels (Group 1) [Note (1)] B"
+        ) == "Group 1"
+
+    def test_reconoce_columna_con_cuerpo(self):
+        assert B.etiqueta_columna_b_te1("Coefficients for 27Cr Steels B") == \
+            "Coefficients for 27Cr Steels"
+
+    def test_conserva_los_artefactos_de_extraccion(self):
+        # «(In- cluding...)» es un artefacto del salto de linea del PDF; el
+        # rotulo lo conserva tal como esta impreso, igual que hace
+        # columnas_nombradas_te1 con su `etiqueta`.
+        e = B.etiqueta_columna_b_te1(
+            "Coefficients for 9Cr–1Mo Steels (In- cluding Grades 9, 91, 911, and 92) B")
+        assert e is not None and "In- cluding" in e
+
+    def test_columna_b_suelta_sin_cuerpo_no_se_inventa(self):
+        # TE-2 (Aluminum Alloys) tiene un unico grupo por tabla entera: sus
+        # columnas son "A", "B", "C" sueltas, sin rotulo propio en el titulo.
+        # No hay con que identificar la fila sin inventar un nombre que el
+        # codigo no imprime: debe devolver None, nunca la letra "B" sola.
+        assert B.etiqueta_columna_b_te1("B") is None
+
+    def test_ignora_columnas_a_y_c(self):
+        assert B.etiqueta_columna_b_te1("Coefficients for 27Cr Steels A") is None
+        assert B.etiqueta_columna_b_te1("Coefficients for 27Cr Steels C") is None
+
+    def test_clave_fila_resuelve_toda_columna_b_identificada_en_te_1_a_5(self):
+        # Puente rotulo impreso (`columns`) -> clave real de `rows` (snake_case,
+        # sin el pie de nota entre corchetes). Si este puente se rompe, DB_TE_G
+        # queda vacia -y `max()` revienta al construir el buscador- sin que el
+        # build lo explique.
+        import json
+        base = Path(__file__).resolve().parents[3] / "resources"
+        for edicion in ("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025",
+                        "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"):
+            for i in range(1, 6):
+                ruta = base / edicion / f"table_te_{i}.json"
+                with open(ruta, encoding="utf-8") as fh:
+                    d = json.load(fh)
+                claves_filas = {k for row in d["rows"] for k in row}
+                for col in d["columns"]:
+                    if B.etiqueta_columna_b_te1(col):
+                        assert B._clave_fila_te1(col) in claves_filas, col
+
+
 class TestFormulas:
     def test_cascada_es_offset_clasico(self):
         f = B.cascade_formula("V", "K", "$C$5")

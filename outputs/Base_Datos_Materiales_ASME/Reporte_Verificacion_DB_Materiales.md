@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  43 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  45 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -59,6 +59,8 @@ No es un muestreo: de CADA fila del JSON del codigo se toma su vector completo d
 |---|---|---|---|---|
 | DB_E | 135 | 135 | 1456 | 0 |
 | DB_EC | 135 | 135 | 1629 | 0 |
+| DB_TE_G | 53 | 53 | 1364 | 0 |
+| DB_TE_GC | 53 | 53 | 1259 | 0 |
 | DB_B31_C | 201 | 201 | 2795 | 0 |
 | DB_B31_CC | 201 | 201 | 1931 | 0 |
 | DB_A2_Ec | 24 | 24 | 96 | 0 |
@@ -195,7 +197,7 @@ Dictamen global del modulo: **APTO** (OK).
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
 | Las 12 hojas navegables estan hidden | 12 hojas | OK |
-| El resto esta veryHidden | 30 hojas | OK |
+| El resto esta veryHidden | 32 hojas | OK |
 | Ninguna base de datos alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
 | Los botones cubren las 12 hojas navegables | 12 botones | OK |

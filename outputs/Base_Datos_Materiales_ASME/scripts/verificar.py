@@ -475,11 +475,60 @@ def auditar():
         log(f"| {sh} | {njson} | {w.max_row - R_DATA + 1} | {nval} | {mal} |")
         return mal
 
+    def audita_grupo_te(sh, rels):
+        """DB_TE_G / DB_TE_GC: compara, por GRUPO/columna, el vector del
+        Coeficiente B contra TE-1..5. Usa la MISMA clasificacion de columnas
+        que el builder (`B.etiqueta_columna_b_te1` / `B._clave_fila_te1`): si
+        alguien cambia esa logica, esta auditoria la ejerce cambiada, en vez
+        de poder divergir con una copia propia."""
+        from collections import Counter
+        cj, npts = Counter(), 0
+        for rel in rels:
+            d = RES.load(rel)
+            cols = d.get("columns", [])
+            if not cols:
+                continue
+            temp_key = B._clave_fila_te1(cols[0])
+            clasif = {}
+            for col in cols[1:]:
+                etq = B.etiqueta_columna_b_te1(col)
+                if etq:
+                    clasif[B._clave_fila_te1(col)] = etq
+            grupos: dict = {}
+            for row in d["rows"]:
+                tnum = temp_to_number(row.get(temp_key))
+                if tnum is None:
+                    continue
+                for col_key, etq in clasif.items():
+                    v = num(row.get(col_key))
+                    if v is not None:
+                        grupos.setdefault(etq, {})[tnum] = v
+            for vals in grupos.values():
+                npts += len(vals)
+                cj[tuple(sorted(vals.items()))] += 1
+        w = wb[sh]
+        temps = printed_temps(w)
+        ni = n_ident(w)
+        cs = Counter()
+        for r in range(R_DATA, w.max_row + 1):
+            vals = {}
+            for k, t in enumerate(temps):
+                v = w.cell(r, ni + 1 + k).value
+                if v is not None:
+                    vals[t] = v
+            if vals:
+                cs[tuple(sorted(vals.items()))] += 1
+        falt = sum((cj - cs).values())
+        log(f"| {sh} | {sum(cj.values())} | {w.max_row - R_DATA + 1} | {npts} | {falt} |")
+        return falt
+
     ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"
     edc = "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
     extra_bad = 0
     extra_bad += audita_grupo("DB_E", [f"{ed}/table_tm_{k}.json" for k in range(1, 6)], 4)
     extra_bad += audita_grupo("DB_EC", [f"{edc}/table_tm_{k}.json" for k in range(1, 6)], 4)
+    extra_bad += audita_grupo_te("DB_TE_G", [f"{ed}/table_te_{k}.json" for k in range(1, 6)])
+    extra_bad += audita_grupo_te("DB_TE_GC", [f"{edc}/table_te_{k}.json" for k in range(1, 6)])
     extra_bad += audita_apendice_c("DB_B31_C", True)
     extra_bad += audita_apendice_c("DB_B31_CC", False)
 

@@ -638,6 +638,121 @@ def build_te(res, wb, system):
                 "Dilatacion termica por grupo (bloques tal como estan impresos).")
 
 
+# TE-1..5 publican, por cada grupo/columna, TRES coeficientes (A = instantaneo,
+# B = medio de 20 C a T, C = expansion acumulada) en columnas consecutivas del
+# mismo bloque. `build_te` los conserva tal como estan impresos (temperatura en
+# filas, grupo en columnas) para auditar; para un buscador por MATERIAL hace
+# falta el pivote inverso -grupo en filas, temperatura en columnas-, que es
+# exactamente lo que `build_modulo` ya hace para TM-1..5.
+#
+# Solo se pivota el Coeficiente B (medio): es el que se usa en calculo de
+# dilatacion/flexibilidad (la misma magnitud que "alfa" en el Apendice C del
+# B31.3, Tabla C-1). Los Coeficientes A y C siguen impresos tal cual en
+# DB_TE/DB_TEC -no se pierden, solo no alimentan este buscador-: decision de
+# alcance declarada ("Un dato, un motor"), no un hueco silencioso.
+#
+# El ROTULO de cada fila tiene que ser IDENTICO al que build_map_grupo escribe
+# en `Grupo dilatacion (TE)` de MAP_Grupo/MAP_GrupoC, para que la seleccion en
+# Buscar_Prop_IID case letra a letra con lo que ahi se lee: "Group N" cuando el
+# titulo de columna lo declara (los Grupos 1..4 de las Notas), o el titulo
+# integro de la columna B menos el sufijo " B" en cualquier otro caso -con los
+# artefactos de extraccion que trae impreso incluidos ("(In- cluding...")-,
+# que es exactamente `etiqueta` en `columnas_nombradas_te1`.
+_TE_COL_B = re.compile(r"(?:^|\s)B$")
+_TE_GROUP_NUM = re.compile(r"\(Group\s+(\d+)\)")
+
+
+def etiqueta_columna_b_te1(titulo):
+    """Rotulo de grupo de una columna Coeficiente B de TE-1..5, identico al
+    que usa `build_map_grupo` para `grupo_te`. None si el titulo no es una
+    columna B identificable (p. ej. una "B" suelta, truncada en la extraccion
+    sin cuerpo que la acompañe: no hay con que rotular la fila sin inventar)."""
+    t = txt(titulo)
+    if not t or not _TE_COL_B.search(t):
+        return None
+    m = _TE_GROUP_NUM.search(t)
+    if m:
+        return f"Group {m.group(1)}"
+    etq = _TE_COL_B.sub("", t).strip()
+    return etq or None
+
+
+def _clave_fila_te1(titulo):
+    """`columns` trae el rotulo IMPRESO de cada columna; las claves de `rows`
+    son ese mismo rotulo reducido a snake_case (sin el pie de nota entre
+    corchetes). Hace falta este puente porque las filas no se indexan por el
+    texto impreso, y las filas son ademas dispersas -una columna sin dato en
+    esa temperatura no trae su clave-, asi que no vale alinear por posicion."""
+    s = re.sub(r"\[[^\]]*\]", "", titulo)
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9]+", "_", s).strip("_")
+    return s
+
+
+def build_dilatacion_grupo(res, wb, system):
+    si = system == "SI"
+    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    temps, recs, sin_rotulo = set(), [], []
+    for i in range(1, 6):
+        d = res.load(f"{ed}/table_te_{i}.json")
+        tid = d.get("table_id")
+        cols = d.get("columns", [])
+        if not cols:
+            continue
+        temp_key = _clave_fila_te1(cols[0])
+        clasif = {}
+        for col in cols[1:]:
+            etq = etiqueta_columna_b_te1(col)
+            if etq:
+                clasif[_clave_fila_te1(col)] = etq
+            elif txt(col) and _TE_COL_B.search(txt(col)):
+                sin_rotulo.append(f"{tid}: columna Coeficiente B «{txt(col)}» sin "
+                                  "rotulo de grupo identificable (truncada en la "
+                                  "extraccion); no se incorpora a este buscador.")
+        grupos: dict[str, dict] = {}
+        for row in d["rows"]:
+            tnum = temp_to_number(row.get(temp_key))
+            if tnum is None:
+                continue
+            for col_key, etq in clasif.items():
+                v = num(row.get(col_key))
+                if v is not None:
+                    grupos.setdefault(etq, {})[tnum] = v
+        for etq, vals in grupos.items():
+            temps |= set(vals)
+            recs.append(dict(tid=tid, mat=etq, vals=vals))
+    if sin_rotulo:
+        ISSUES.append(f"DB_TE_G ({system}): " + " | ".join(sin_rotulo))
+    temps = sorted(temps)
+    recs.sort(key=lambda d: (d["tid"], txt(d["mat"]).upper()))
+    keys, _ = make_unique([f"{d['tid']} | {txt(d['mat'])}" for d in recs],
+                          list(range(1, len(recs) + 1)))
+    records = [([k, d["tid"], d["tid"], d["mat"], "Coeficiente B (medio)",
+                 search_key(d["mat"]), len(d["vals"])], d["vals"])
+               for k, d in zip(keys, recs)]
+    name = "DB_TE_G" if si else "DB_TE_GC"
+    unidad = "10^-6 mm/mm/C" if si else "10^-6 in/in/F"
+    ws = new_sheet(wb, name,
+                   "BASE DE PROPIEDADES — Dilatacion termica, Coeficiente B (medio, de 20 C "
+                   f"a T) · ASME BPVC II-D 2025, Tablas TE-1 a TE-5 ({unidad})",
+                   f"Fuente: resources/{ed}/table_te_1..5.json · Edicion 2025 · "
+                   "Pivotada por GRUPO/columna (Coeficiente B unicamente); la banda tal como "
+                   "esta impresa, con los Coeficientes A y C, esta en "
+                   f"{'DB_TE' if si else 'DB_TEC'}. Indexada por GRUPO: ver "
+                   f"{'MAP_Grupo' if si else 'MAP_GrupoC'}.")
+    n = write_headers(ws, GRP_COLS, temps)
+    last = write_rows(ws, records, n, temps)
+    t0, v0, npack = append_packed(ws, records, n, temps, 7)
+    autosize(ws, {"A": 60, "B": 8, "C": 8, "D": 60, "E": 22, "F": 30})
+    ws.column_dimensions["C"].hidden = True
+    ws.column_dimensions["F"].hidden = True
+    ws.auto_filter.ref = f"A{R_HDR}:{get_column_letter(n + len(temps))}{last}"
+    record_meta(name, "TE-1..TE-5 (Coef. B)", f"{ed}/table_te_1..5.json", "2025", system,
+                last - R_DATA + 1, "Dilatacion termica media (Coeficiente B), por grupo.")
+    return dict(sheet=name, n_ident=n, temps=temps, last_row=last,
+                pack_t0=t0, pack_v0=v0, npack=npack, npts_col=7)
+
+
 # ---------------------------------------------------------------------------
 # Apendice C del B31.3 y no metalicos
 # ---------------------------------------------------------------------------
@@ -2911,7 +3026,8 @@ def finish_buscador(ctx, wb, curvas, cidx):
 
 def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
     """Propiedades de la II-D indexadas por GRUPO de material (no por
-    especificacion): modulo E (TM-1..5) y Poisson/densidad (PRD).
+    especificacion): modulo E (TM-1..5), dilatacion termica (TE-1..5,
+    Coeficiente B) y Poisson/densidad (PRD).
 
     GRUPO es el rotulo normativo impreso en TM-1 / TE-1 («Material Group C»,
     «Group 3»), no la FAMILIA de db_lib, que es una agrupacion derivada solo
@@ -2924,13 +3040,15 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
     """
     ws = new_sheet(wb, name,
                    "BUSCADOR DE PROPIEDADES POR GRUPO DE MATERIAL — ASME BPVC Seccion "
-                   "II-D 2025: modulo E (TM-1..5), Poisson y densidad (PRD)",
+                   "II-D 2025: modulo E (TM-1..5), dilatacion termica (TE-1..5, "
+                   "Coeficiente B) y Poisson/densidad (PRD)",
                    "Estas tablas del codigo se indexan por GRUPO de material, no por "
                    "especificacion: elija primero la tabla y despues el grupo. Para saber "
-                   "que grupo corresponde a su material consulte MAP_Grupo. Valores en "
-                   "unidades metricas (edicion SI del codigo). La unica celda que se "
-                   "escribe es la temperatura de consulta. Las propiedades fisicas del "
-                   "Apendice C del B31.3 estan en Buscar_Prop_B31_3.")
+                   "que grupo corresponde a su material consulte MAP_Grupo (columnas "
+                   "'Grupo E (TM)' y 'Grupo dilatacion (TE)'). Valores en unidades "
+                   "metricas (edicion SI del codigo). La unica celda que se escribe es la "
+                   "temperatura de consulta. Las propiedades fisicas del Apendice C del "
+                   "B31.3 estan en Buscar_Prop_B31_3.")
     ws.freeze_panes = "A4"
     _mrg(ws, 1, 1, NCOLS)
     _mrg(ws, 2, 1, NCOLS)
@@ -4533,8 +4651,10 @@ INSTRUCCIONES = [
      "porque la 1A no imprime 175/225/275 C y la 1B/3 si; mezclarlas dejaria huecos en la "
      "banda de valores y romperia la interpolacion.\n"
      "DB_Su / DB_Sy — Tablas U y Y-1 (resistencia a la traccion y fluencia por temperatura).\n"
-     "DB_E — Tablas TM-1..5 (modulo E) · DB_TE — Tablas TE-1..5 (dilatacion) · DB_PRD — "
-     "Poisson y densidad. Estas tres se indexan por GRUPO de material (el rotulo impreso "
+     "DB_E — Tablas TM-1..5 (modulo E) · DB_TE — Tablas TE-1..5, tal como estan impresas "
+     "(Coeficientes A, B y C por temperatura) · DB_TE_G — las mismas TE-1..5, pivotadas por "
+     "GRUPO (solo Coeficiente B), la que alimenta Buscar_Prop_IID · DB_PRD — Poisson y "
+     "densidad. DB_E, DB_TE_G y DB_PRD se indexan por GRUPO de material (el rotulo impreso "
      "en TM-1 / TE-1, no la familia de navegacion): ver MAP_Grupo.\n"
      "DB_B31_C / DB_B31_CC — Apendice C del B31.3 ENTERO en una sola base por edicion: "
      "C-1/C-1C (dilatacion de metales), C-2 (dilatacion de no metalicos), C-3/C-3C "
@@ -4560,8 +4680,9 @@ INSTRUCCIONES = [
      "El Apendice C no publica columna 'Temp. max.': el limite es el primer y el ultimo "
      "punto que la propia fila tabula. Fuera de ellos el resultado queda BLOQUEADO — "
      "sostener el ultimo valor seria extrapolar, que es lo que prohibe el codigo.\n"
-     "Buscar_Prop_IID — modulo E (TM-1..5) y Poisson/densidad (PRD) de la II-D, para "
-     "RECIPIENTES. Se indexa por GRUPO de material: consulte MAP_Grupo.\n"
+     "Buscar_Prop_IID — modulo E (TM-1..5), dilatacion termica (TE-1..5, Coeficiente B, "
+     "medio) y Poisson/densidad (PRD) de la II-D, para RECIPIENTES. Se indexa por GRUPO de "
+     "material: consulte MAP_Grupo, columnas 'Grupo E (TM)' y 'Grupo dilatacion (TE)'.\n"
      "Buscar_NoMetalicos — solo Apendice B: esfuerzo de diseno hidrostatico y presion "
      "admisible. Ya no ofrece propiedades fisicas."),
     ("4. Conmutador de unidades SI / US",
@@ -5022,6 +5143,8 @@ def main(argv=None):
 
     e_si, e_us = build_modulo(res, wb, "SI"), build_modulo(res, wb, "US")
     build_te(res, wb, "SI"); build_te(res, wb, "US")
+    te_g_si = build_dilatacion_grupo(res, wb, "SI")
+    build_dilatacion_grupo(res, wb, "US")
     prd, prdc = build_prd(res, wb, "SI"), build_prd(res, wb, "US")
     apxc = build_apendice_c(res, wb, "SI")
     apxcc = build_apendice_c(res, wb, "US")
@@ -5041,13 +5164,16 @@ def main(argv=None):
     build_notas(res, wb)
 
     # listas simples de los buscadores por grupo
-    wse, wsprd, wsnm = wb["DB_E"], wb["DB_PRD"], wb["DB_NoMetalicos"]
+    wse, wste, wsprd, wsnm = wb["DB_E"], wb["DB_TE_G"], wb["DB_PRD"], wb["DB_NoMetalicos"]
     e_pairs = uniques(wse, e_si["last_row"], 3, 4)
+    te_pairs = uniques(wste, te_g_si["last_row"], 3, 4)
     prd_pairs = uniques(wsprd, prd["last_row"], 3, 4)
     nm_pairs = uniques(wsnm, nm["last_row"], 2, 4)
     simples = [
         ("E_TABLA", sorted({k for k, _ in e_pairs})),
         ("E_K", [k for k, _ in e_pairs]), ("E_V", [v for _, v in e_pairs]),
+        ("TE_TABLA", sorted({k for k, _ in te_pairs})),
+        ("TE_K", [k for k, _ in te_pairs]), ("TE_V", [v for _, v in te_pairs]),
         ("PRD_TABLA", sorted({k for k, _ in prd_pairs if k})),
         ("PRD_K", [k for k, _ in prd_pairs]), ("PRD_V", [v for _, v in prd_pairs]),
         ("NM_TABLA", sorted({k for k, _ in nm_pairs})),
@@ -5083,9 +5209,11 @@ def main(argv=None):
         finish_buscador(ctx, wb, curvas, i)
 
     e_tab = sorted({k for k, _ in e_pairs})
+    te_tab = sorted({k for k, _ in te_pairs})
     prd_tab = sorted({k for k, _ in prd_pairs if k})
     from collections import Counter as _Cnt
     mx_e = max(_Cnt(k for k, _ in e_pairs).values())
+    mx_te = max(_Cnt(k for k, _ in te_pairs).values())
     mx_prd = max(_Cnt(k for k, _ in prd_pairs).values())
     mx_nm = max(_Cnt(k for k, _ in nm_pairs).values())
     build_buscador_grupo(wb, curvas, [
@@ -5094,6 +5222,16 @@ def main(argv=None):
              info=e_si, n_ident=e_si["n_ident"], temps=e_si["temps"],
              valor_lbl="Modulo E (valor tabulado)", unidad="x10^3 MPa", max_grupo=mx_e,
              nota="El valor real de E = valor tabulado x 10^3 MPa (factor del titulo de la tabla)."),
+        dict(titulo="DILATACION TERMICA — ASME BPVC II-D, Tablas TE-1 a TE-5 "
+                    "(Coeficiente B, medio)",
+             lst_tabla="TE_TABLA", nm_key="TE_K", nm_val="TE_V", default_tabla=te_tab[0],
+             info=te_g_si, n_ident=te_g_si["n_ident"], temps=te_g_si["temps"],
+             valor_lbl="Dilatacion (Coeficiente B, medio de 20 C a T)",
+             unidad="x10^-6 mm/mm/C", max_grupo=mx_te,
+             nota="Coeficiente B (medio, de 20 C a T): el que se usa en calculo de "
+                  "dilatacion/flexibilidad. Los Coeficientes A (instantaneo) y C "
+                  "(expansion acumulada) siguen impresos tal cual, por temperatura, "
+                  "en DB_TE."),
         dict(titulo="POISSON Y DENSIDAD — ASME BPVC II-D, Tabla PRD",
              lst_tabla="PRD_TABLA", nm_key="PRD_K", nm_val="PRD_V",
              default_tabla=prd_tab[0], info=prd, temps=None,
@@ -5217,7 +5355,8 @@ def main(argv=None):
              "Buscar_Prop_B31_3", "Buscar_Ec_A2", "Buscar_Ej_A3",
              "Buscar_NoMetalicos", "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
-             "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_PRD", "DB_PRDC",
+             "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_TE_G", "DB_TE_GC",
+             "DB_PRD", "DB_PRDC",
              "DB_B31_C", "DB_B31_CC",
              "DB_NoMetalicos", "MAP_Factores", "DB_A2_Ec", "DB_A3_Ej",
              "DB_Ec_Incremento", "MAP_Grupo", "MAP_GrupoC",

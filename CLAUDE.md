@@ -102,7 +102,7 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
-(43 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
+(45 hojas, **una sola visible**). Se **genera por script**, nunca se edita a mano.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación a los
 doce motores (Art. 212, los 10 buscadores, `Instrucciones`) la hace un proyecto VBA de
@@ -117,7 +117,7 @@ las macros bloqueadas no se expone ninguna base de datos.
 | `Buscar_BPVC_IID` | S admisible, ferrosos | II-D Tabla 1A |
 | `Buscar_BPVC_IID_B` | S admisible, no ferrosos y pernería | II-D Tablas 1B y 3 |
 | `Buscar_Su` · `Buscar_Sy` | Su y Sy frente a T | II-D Tablas U y Y-1 |
-| `Buscar_Prop_IID` | Módulo E, Poisson y densidad **por grupo** | II-D TM-1..5 y PRD |
+| `Buscar_Prop_IID` | Módulo E, dilatación (Coef. B) y Poisson/densidad **por grupo** | II-D TM-1..5, TE-1..5 y PRD |
 | `Buscar_Prop_B31_3` | Dilatación y módulo, metales y no metálicos | B31.3 Apéndice C, C-1..C-4 |
 | `Buscar_NoMetalicos` | Esfuerzo de diseño hidrostático y presión admisible | B31.3 Apéndice B |
 | `Buscar_Ec_A2` | Factor de calidad de fundición **Ec** | B31.3 Tabla A-2 + 302.3.3-1 |
@@ -125,10 +125,45 @@ las macros bloqueadas no se expone ninguna base de datos.
 
 **Un dato, un motor.** El Apéndice C salió de `Buscar_Propiedades` (que pasó a
 llamarse `Buscar_Prop_IID`) y de `Buscar_NoMetalicos`, y tiene motor propio con
-conmutador SI ↔ US. `Buscar_Prop_IID` **no expone la dilatación de la II-D**:
-`DB_TE`/`DB_TEC` se siguen construyendo y auditando, pero TE-1 se indexa por
-temperatura × columnas de grupo, no por material, y ningún motor la consulta
-todavía. Es un pendiente declarado, no un olvido.
+conmutador SI ↔ US.
+
+**`Buscar_Prop_IID` expone la dilatación de la II-D (Rev. 4b), pero solo el
+Coeficiente B.** TE-1..5 publican tres coeficientes por grupo —A (instantáneo),
+B (medio, de 20 °C a T) y C (expansión acumulada)— indexados por temperatura ×
+columnas de grupo, no por material (`DB_TE`/`DB_TEC` conservan esa banda tal
+como está impresa, para auditar). El motor solo pivota y expone **B**: es el
+que se usa en cálculo de dilatación/flexibilidad, la misma magnitud que "alfa"
+en la Tabla C-1 del Apéndice C del B31.3. Los coeficientes A y C **no
+alimentan el buscador** —siguen impresos tal cual en `DB_TE`/`DB_TEC`—: decisión
+de alcance declarada, no un hueco silencioso.
+
+`DB_TE_G`/`DB_TE_GC` son la base pivotada (grupo en filas, temperatura en
+columnas) que sostiene el bloque nuevo, construida por
+`build_dilatacion_grupo()`. El rótulo de cada fila —`etiqueta_columna_b_te1()`—
+tiene que ser idéntico al que `build_map_grupo()` escribe en `Grupo dilatación
+(TE)` de `MAP_Grupo`/`MAP_GrupoC`, letra a letra, o la selección en el
+buscador no encontraría la fila que el ingeniero fue a buscar; `_clave_fila_te1()`
+traduce ese rótulo impreso a la clave snake_case real de `rows` (las filas de
+TE-1..5 son dispersas: una columna sin dato en esa temperatura no trae su
+clave, así que no vale alinear por posición). `verificar.py` (`audita_grupo_te`)
+compara, fila a fila y usando esas mismas dos funciones —nunca una copia—, el
+vector de la hoja contra el JSON de TE-1..5.
+
+**Tabla TE-2 (aleaciones de aluminio) queda fuera, declarada.** Es la única de
+las cinco tablas TE con un solo grupo para toda la tabla: sus columnas son
+"A", "B", "C" sueltas, sin rótulo propio impreso. No hay con qué identificar
+la fila sin inventar un nombre que el código no imprime, así que
+`etiqueta_columna_b_te1()` devuelve `None` y el builder lo declara en
+`ISSUES` en vez de omitirlo en silencio. Las aleaciones de aluminio no tienen
+dilatación en `Buscar_Prop_IID` — ni tampoco grupo en `MAP_Grupo`: el mismo
+patrón de columna bloquea a `columnas_nombradas_te1()`.
+
+Como `Buscar_Prop_IID` es hoy **SI-only** —no lleva la celda "Sistema de
+unidades" de la Regla 10; solo opera con la edición métrica del código, a
+diferencia del resto de los buscadores—, el bloque de dilatación solo consume
+`DB_TE_G`. `DB_TE_GC` (edición US) se construye y audita igual que `DB_EC`,
+por paridad, pero ningún motor la consulta. Esto es una condición preexistente
+de la hoja, no algo que introdujo Rev. 4b: pendiente aparte, no cerrado aquí.
 
 ### Reconstruir
 
@@ -233,7 +268,7 @@ comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
 Dos trampas ya pagadas, documentadas en el código:
 
 - **El VBA referencia hojas por `.Name`, nunca por CodeName.** openpyxl no asigna
-  `codeName` a las 35 hojas que crea; Excel se los inventa al abrir.
+  `codeName` a las 37 hojas que crea; Excel se los inventa al abrir.
 - **Toda declaración de módulo (`Const`, `Dim`, `Type`) precede a la primera rutina.**
   Si no, VBA reporta «Variable not defined» en cada uso, Excel abre un diálogo modal al
   compilar durante `SaveAs`, y la automatización se cuelga sin mensaje. `make_vba_seed.py`
