@@ -560,6 +560,30 @@ elementos en otro orden, y que ninguna de las ambigüedades de UNS restantes
 sus candidatas son composiciones reales y distintas impresas en filas limpias
 del Apéndice A, así que elegir entre ellas sí sería criterio no respaldado.
 
+**Comprobado también contra Sección II Partes A/B/C (2026-09-08).** Las 379
+especificaciones ya extraídas en `resources/ASME_BPVC/Sec_II/{a_1,a_2,b,c}`
+—no volcadas al libro, ver más abajo— no aportan ninguna cita nueva: sus
+tablas de composición imprimen rangos numéricos (%Cr, %Ni, %Mo), y
+`comp_key()` exige coincidencia literal con el vocabulario taquigráfico de
+las Notas de TM-1/TE-1 ("12Cr", "9Cr-1Mo"). Son formatos incompatibles por
+diseño, no una pérdida de extracción. Para las filas de mayor peso (aleaciones
+de níquel tipo 353 MA, Incoloy, Hastelloy) se confirmó que TM-1/TE-1
+sencillamente no las tabula, ni por UNS ni por Nota: II-D no publica el dato
+para esa familia, no es un hueco de esta base.
+
+Sí se encontró una vía real —pero en el Apéndice A del B31.3, ya indexado, no
+en Sección II— para tres de los cuatro UNS ambiguos: `S41000`, `J91150` y
+`S41003` desambiguan limpio **por especificación** (perno vs. tuerca, forjado
+vs. fundición imprimen cada uno su propia composición sin ambigüedad).
+**No se aplicó**: el mecanismo de `decisiones_map_grupo.json` decide por UNS
+entero, no por (UNS, especificación); una decisión global le asignaría el
+grupo también a las filas de la especificación que no lo respalda, que es
+exactamente el tipo de invención que prohíbe la Regla 1. Resolverlo bien
+exigiría que `_composicion_prestada`/`comp_idx` desambigüen por
+(UNS, Spec. No.) en vez de por UNS solo — cambio de código, no de datos,
+evaluado y **no acometido**: queda como mejora declarada, no como pendiente
+silencioso.
+
 **Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
 el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en
 TE-1 —`Condition 1075` y `Condition 1150`, con valores distintos— y `class_condition_temper`
