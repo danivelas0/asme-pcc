@@ -166,21 +166,52 @@ clave, así que no vale alinear por posición). `verificar.py` (`audita_grupo_te
 compara, fila a fila y usando esas mismas dos funciones —nunca una copia—, el
 vector de la hoja contra el JSON de TE-1..5.
 
-**Tabla TE-2 (aleaciones de aluminio) queda fuera, declarada.** Es la única de
-las cinco tablas TE con un solo grupo para toda la tabla: sus columnas son
-"A", "B", "C" sueltas, sin rótulo propio impreso. No hay con qué identificar
-la fila sin inventar un nombre que el código no imprime, así que
-`etiqueta_columna_b_te1()` devuelve `None` y el builder lo declara en
-`ISSUES` en vez de omitirlo en silencio. Las aleaciones de aluminio no tienen
-dilatación en `Buscar_Prop_IID` — ni tampoco grupo en `MAP_Grupo`: el mismo
-patrón de columna bloquea a `columnas_nombradas_te1()`.
+**Tabla TE-2 (aleaciones de aluminio) queda fuera, declarada — verificado en
+las dos ediciones, no solo en la SI.** `table_te_2.json` de
+`bpvc_ii_d_metric_2025` y de `bpvc_ii_d_customary_2025` imprimen exactamente
+las mismas cuatro columnas: `Temperature` + "A", "B", "C" sueltas, sin
+rótulo de grupo ni de aleación en el título de columna (a diferencia de TE-1,
+TE-3, TE-4 y TE-5, que sí nombran el grupo o la designación en cada columna).
+Es la única de las cinco tablas TE con un solo grupo para toda la tabla, y no
+hay con qué distinguir esa fila sin inventar un nombre que el código no
+imprime — exactamente la heurística que la Rev. 3 prohíbe (ver "No
+reintroducir una heurística de composición" más abajo). Por eso
+`etiqueta_columna_b_te1()` devuelve `None` para las tres columnas y el
+builder lo declara en `ISSUES` en vez de omitirlo en silencio.
+Consecuencias, explícitas: las aleaciones de aluminio (i) no tienen fila de
+dilatación en `Buscar_Prop_IID` (el bloque TE del buscador no puede ofrecer
+un grupo que no existe), (ii) tampoco tienen `Grupo dilatación (TE)` en
+`MAP_Grupo`/`MAP_GrupoC` — mismo patrón de columna bloquea a
+`columnas_nombradas_te1()` — y (iii) sí conservan el dato íntegro, tal como
+está impreso, en `DB_TE`/`DB_TEC` (regla 9): no se pierde, solo no alimenta
+este buscador. No hay una vía de extracción alternativa que resuelva esto:
+el código mismo no imprime el dato que identificaría la fila, así que
+cerrarlo exigiría una convención inventada por fuera del texto normativo —
+lo que la Regla nº 1 de este proyecto prohíbe. Queda cerrado como límite de
+la fuente, no como pendiente de ingeniería.
 
-Como `Buscar_Prop_IID` es hoy **SI-only** —no lleva la celda "Sistema de
-unidades" de la Regla 10; solo opera con la edición métrica del código, a
-diferencia del resto de los buscadores—, el bloque de dilatación solo consume
-`DB_TE_G`. `DB_TE_GC` (edición US) se construye y audita igual que `DB_EC`,
-por paridad, pero ningún motor la consulta. Esto es una condición preexistente
-de la hoja, no algo que introdujo Rev. 4b: pendiente aparte, no cerrado aquí.
+**`Buscar_Prop_IID` lleva conmutador SI ↔ US (Regla 10), cerrado tras Rev. 4b.**
+Hasta esa revisión la hoja era SI-only —sin la celda "Sistema de unidades"—
+y el bloque de dilatación solo consumía `DB_TE_G`; `DB_TE_GC` (edición US) se
+construía y auditaba igual que `DB_EC`, por paridad, pero ningún motor la
+consultaba. Los tres bloques (módulo E, dilatación, Poisson/densidad) son
+una tabla por edición, no columnas de una tabla compartida, así que el
+conmutador cambia de **hoja** (`DB_E`/`DB_EC`, `DB_TE_G`/`DB_TE_GC`,
+`DB_PRD`/`DB_PRDC`), igual que en `Buscar_Prop_B31_3`, nunca convierte. El
+rótulo de GRUPO («Material Group A», «Group 1») no es un valor físico y el
+código lo imprime idéntico en las dos ediciones, así que la lista de grupos
+por tabla se lee siempre de la edición SI: lo único que cambia con el
+selector es de qué hoja se lee el valor para ese grupo. Un matiz que **no**
+es una conversión encubierta: el origen del Coeficiente B de dilatación no es
+la misma temperatura en las dos ediciones — 20 °C en la SI, **70 °F** en la
+US (primer punto impreso de TE-1 US, no 20 °F) — porque son extracciones
+independientes de lo que cada edición imprime (Regla 9), no una traducción de
+unidades del mismo origen. Validado en Excel real (no solo por `verificar.py`,
+que no inspecciona el layout de celdas de este buscador): módulo E de
+`Material Group A [Note (1)]` en Tabla TM-1 da 200×10³ MPa a 25 °C en SI y
+29,26×10⁶ psi a 25 °F en US (fila US interpola entre -100 °F y 70 °F, que es
+la banda que esa edición imprime); Poisson/densidad de `A02040` da
+2800 kg/m³ en SI y 0,101 lb/in³ en US.
 
 ### Reconstruir
 
@@ -626,6 +657,26 @@ Total: **14 filas menos en SIN MAPEO** por edición (628→621), sin tocar
 ingeniería. `test_build_db.py::TestComposicionPrestadaPorEspecificacion`
 cubre las dos ramas (desambigua por spec cuando el UNS es ambiguo; no
 desambigua si la propia spec también lo es, caso `G41400`).
+
+**Cierre declarado de las filas residuales de estos cuatro UNS — no son un
+hueco de extracción, son composiciones que II-D sencillamente no tabula.**
+Las 12 filas que quedan sin resolver (6 de `S41000`/SA-479, 2 de
+`J91150`/SA-217, 4 de `S41003`/SA-1010) tienen todas la misma causa raíz, y
+es la única que justifica dejarlas bloqueadas sin seguir buscando: la
+especificación impresa en la fila ya identifica sin ambigüedad qué
+composición es (`13Cr`, `12Cr`, `12Cr-1Ni`), pero esa composición **no
+aparece en ninguna Nota de TM-1 ni TE-1** de ninguna de las dos ediciones —
+se comprobó letra a letra, no por similitud. No es que el mapeo no sepa
+identificar el material; es que el código, una vez identificado, no publica
+módulo E ni dilatación para él. Insistir aquí con otra fuente (Sección II
+A/B/C, ya se probó y no aporta nada compatible — ver más arriba) o con otra
+heurística de texto no cerraría el hueco: lo cerraría solo que ASME
+publicase el dato, que hoy no publica. `G41400` es un caso distinto y
+también cerrado: la propia especificación (SA-193) imprime más de una
+composición para el mismo UNS (`B7` vs `B7M`), así que ni siquiera el
+criterio más fino disponible —(UNS, Spec. No.)— tiene un candidato único; ir
+más allá exigiría un criterio de ingeniería sin respaldo textual, que es
+exactamente lo que la Regla nº 1 prohíbe inventar.
 
 **Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
 el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en

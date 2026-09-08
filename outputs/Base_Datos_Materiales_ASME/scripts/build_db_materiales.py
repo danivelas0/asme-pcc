@@ -3097,6 +3097,15 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
     «Group 3»), no la FAMILIA de db_lib, que es una agrupacion derivada solo
     para acortar listas desplegables y no interviene en ningun calculo.
 
+    Conmutador SI/US (Regla 10): DB_E/DB_EC, DB_TE_G/DB_TE_GC y DB_PRD/DB_PRDC
+    son UNA TABLA POR EDICION -no columnas de una tabla compartida-, asi que el
+    conmutador cambia de HOJA, igual que en Buscar_Prop_B31_3. La lista de
+    GRUPOS que existen por tabla se lee siempre de la edicion SI: el rotulo de
+    grupo («Material Group C», «Group 3») no es un valor fisico y el codigo lo
+    imprime identico en las dos ediciones (pertenencia verificada grupo a
+    grupo, ver MAP_Grupo/MAP_GrupoC); lo que cambia con el selector es de que
+    hoja se lee el VALOR para ese grupo.
+
     El Apendice C del B31.3 —que antes compartia esta hoja— tiene motor propio
     (Buscar_Prop_B31_3): se indexa por material, no por grupo, y necesita
     conmutador SI/US, rama de dato puntual y bloqueo por la propia banda
@@ -3109,29 +3118,47 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
                    "Estas tablas del codigo se indexan por GRUPO de material, no por "
                    "especificacion: elija primero la tabla y despues el grupo. Para saber "
                    "que grupo corresponde a su material consulte MAP_Grupo (columnas "
-                   "'Grupo E (TM)' y 'Grupo dilatacion (TE)'). Valores en unidades "
-                   "metricas (edicion SI del codigo). La unica celda que se escribe es la "
-                   "temperatura de consulta. Las propiedades fisicas del Apendice C del "
-                   "B31.3 estan en Buscar_Prop_B31_3.")
+                   "'Grupo E (TM)' y 'Grupo dilatacion (TE)'). El selector 'Sistema de "
+                   "unidades' cambia la edicion del codigo leida (metrica o U.S. "
+                   "Customary): los dos sistemas estan IMPRESOS, el conmutador nunca "
+                   "convierte. La unica celda que se escribe es la temperatura de "
+                   "consulta. Las propiedades fisicas del Apendice C del B31.3 estan en "
+                   "Buscar_Prop_B31_3.")
     ws.freeze_panes = "A4"
     _mrg(ws, 1, 1, NCOLS)
     _mrg(ws, 2, 1, NCOLS)
     ws.cell(2, 1).alignment = Alignment(wrap_text=True, vertical="top")
     ws.row_dimensions[2].height = 30
+    SEL = '$D$5="SI"'
     banda(ws, 4, "PARAMETROS DE CONSULTA")
-    e = _mrg(ws, 5, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
+    com_sist = ("Entrada: SI lee DB_E / DB_TE_G / DB_PRD (edicion metrica); US lee "
+                "DB_EC / DB_TE_GC / DB_PRDC (edicion U.S. Customary). Los dos sistemas "
+                "estan IMPRESOS en el codigo: el conmutador nunca convierte.")
+    e = _mrg(ws, 5, 1, 3, "Sistema de unidades")
+    e.font = LBL_F
+    e.alignment = Alignment(vertical="center", indent=1)
+    _nota(e, com_sist)
+    c = _mrg(ws, 5, 4, 6, "SI")
+    c.font, c.fill, c.border = IN_F, IN_FILL, BOX
+    dv_list(ws, "D5", '"SI,US"', com_sist)
+    e = _mrg(ws, 6, 1, 3, "TEMPERATURA DE CONSULTA   (unica celda de escritura)")
     e.font = Font(name="Calibri", size=10, bold=True, color="C00000")
     e.alignment = Alignment(vertical="center", indent=1)
-    com_temp = ("Entrada: la UNICA celda de escritura libre de toda la hoja, en °C. "
-               "Se aplica por igual a los 4 bloques de abajo (modulo E, dilatacion "
-               "C-1, modulo C-3 y Poisson/densidad).")
+    com_temp = ("Entrada: la UNICA celda de escritura libre de toda la hoja, en la "
+               "unidad que muestra la celda de la derecha (segun el selector 'Sistema "
+               "de unidades' de arriba). Se aplica por igual a los bloques de abajo "
+               "(modulo E, dilatacion y Poisson/densidad).")
     _nota(e, com_temp)
-    c = _mrg(ws, 5, 4, 5, 25)
+    c = _mrg(ws, 6, 4, 5, 25)
     c.font, c.fill = IN_F, TEMP_INPUT_FILL
     c.border = Border(*[Side("medium", color="C00000")] * 4)
     _nota(c, com_temp)
-    ws.cell(5, 6, "°C").font = UNIT_F
-    e = _mrg(ws, 6, 1, 3, "Modo de lectura")
+    u_tmp = ws.cell(6, 6)
+    u_tmp.value = f'=IF({SEL},"°C","°F")'
+    u_tmp.font = UNIT_F
+    _nota(u_tmp, "Calculo: unidad de la temperatura de consulta; cambia entre °C y °F "
+                 "segun el selector 'Sistema de unidades' (D5).")
+    e = _mrg(ws, 7, 1, 3, "Modo de lectura")
     e.font = LBL_F
     e.alignment = Alignment(vertical="center", indent=1)
     com_modo = ("Entrada: 'Interpolado' aplica la interpolacion lineal del codigo "
@@ -3139,12 +3166,13 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
                "consulta. 'Tabulado-conservador' adopta directamente el valor "
                "tabulado superior (T2), sin interpolar.")
     _nota(e, com_modo)
-    c = _mrg(ws, 6, 4, 6, "Interpolado")
+    c = _mrg(ws, 7, 4, 6, "Interpolado")
     c.font, c.fill, c.border = IN_F, IN_FILL, BOX
-    dv_list(ws, "D6", '"Interpolado,Tabulado-conservador"', com_modo)
+    dv_list(ws, "D7", '"Interpolado,Tabulado-conservador"', com_modo)
 
-    r = 8
+    r = 9
     for i2, b in enumerate(bloques):
+        info_si, info_us = b["info_si"], b["info_us"]
         banda(ws, r, b["titulo"])
         r += 1
         e = _mrg(ws, r, 1, 3, "Tabla / familia del codigo")
@@ -3164,7 +3192,9 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
         com_grupo = ("Entrada: elija el GRUPO de material tal como lo imprime el "
                     "codigo (p. ej. «Material Group C», «Group 3»), no la familia de "
                     "navegacion. Para saber que grupo corresponde a un material "
-                    "especifico, consulte MAP_Grupo.")
+                    "especifico, consulte MAP_Grupo. El rotulo de grupo es identico "
+                    "en las dos ediciones del codigo: esta lista no cambia con el "
+                    "selector 'Sistema de unidades'.")
         _nota(e, com_grupo)
         c = _mrg(ws, r, 4, 8, "")
         c.font, c.fill, c.border = IN_F, IN_FILL, BOX
@@ -3181,19 +3211,26 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
         dv_list(ws, f"D{r}", f"=${LL}${R_DATA}:${LL}${R_DATA + mx - 1}", com_grupo)
         gcell = f"$D${r}"
         r += 1
-        info = b["info"]
-        idn = f"{info['sheet']}!$D${R_DATA}:$D${info['last_row']}"
-        ws.cell(r, 60).value = f'=IFERROR(MATCH({gcell},{idn},0),"")'
+        idn_si = f"{info_si['sheet']}!$D${R_DATA}:$D${info_si['last_row']}"
+        idn_us = f"{info_us['sheet']}!$D${R_DATA}:$D${info_us['last_row']}"
+        ws.cell(r, 60).value = (f'=IF({SEL},IFERROR(MATCH({gcell},{idn_si},0),""),'
+                                f'IFERROR(MATCH({gcell},{idn_us},0),""))')
         frow = f"$BH${r}"
         ws.column_dimensions["BH"].hidden = True
         if b.get("temps"):
-            rf = packed_refs(info)
-            ws.cell(r, 61).value = f'=IF({frow}="","",IFERROR(INDEX({rf["npts"]},{frow}),0))'
+            u_val = f'IF({SEL},"{b["unidad_si"]}","{b["unidad_us"]}")'
+            u_tmp_f = f'IF({SEL},"°C","°F")'
+            rm, ru = packed_refs(info_si), packed_refs(info_us)
+            ws.cell(r, 61).value = (f'=IF({frow}="","",IF({SEL},'
+                                    f'IFERROR(INDEX({rm["npts"]},{frow}),0),'
+                                    f'IFERROR(INDEX({ru["npts"]},{frow}),0)))')
             NP = f"$BI${r}"
             ws.column_dimensions["BI"].hidden = True
-            tr = f'OFFSET({rf["t_anchor"]},{frow}-1,0,1,MAX(1,{NP}))'
-            vr = f'OFFSET({rf["v_anchor"]},{frow}-1,0,1,MAX(1,{NP}))'
-            P1 = f'IFERROR(MATCH($D$5,{tr},1),1)'
+            T_ANC = f'IF({SEL},{rm["t_anchor"]},{ru["t_anchor"]})'
+            V_ANC = f'IF({SEL},{rm["v_anchor"]},{ru["v_anchor"]})'
+            tr = f'OFFSET({T_ANC},{frow}-1,0,1,MAX(1,{NP}))'
+            vr = f'OFFSET({V_ANC},{frow}-1,0,1,MAX(1,{NP}))'
+            P1 = f'IFERROR(MATCH($D$6,{tr},1),1)'
             for k2, fml in enumerate([f'=IF({frow}="","",IFERROR(INDEX({tr},{P1}),""))',
                                       f'=IF({frow}="","",IFERROR(INDEX({vr},{P1}),""))',
                                       f'=IF({frow}="","",IFERROR(INDEX({tr},{P1}+1),""))',
@@ -3207,49 +3244,51 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             t.alignment = Alignment(vertical="center", indent=1)
             v = _mrg(ws, r, 4, 5)
             v.value = (f'=IF({frow}="","(elija grupo)",' +
-                       interp_value(T1C, S1C, T2C, S2C, "$D$5", "$D$6")[1:] + ')')
+                       interp_value(T1C, S1C, T2C, S2C, "$D$6", "$D$7")[1:] + ')')
             v.font, v.fill = KPI_VAL_F, KPI_FILL
             v.alignment = Alignment(horizontal="center", vertical="center")
             _nota(v, f'Calculo: {b["valor_lbl"]} interpolado (o tabulado-conservador, '
-                     'segun el Modo de lectura de D6) a la temperatura de consulta '
-                     '(D5), entre los puntos tabulados T1/T2 de abajo, para el grupo '
-                     'elegido arriba.')
-            u = _mrg(ws, r, 6, 8, b["unidad"])
+                     'segun el Modo de lectura de D7) a la temperatura de consulta '
+                     '(D6), entre los puntos tabulados T1/T2 de abajo, para el grupo '
+                     'elegido arriba y la edicion elegida en D5.')
+            u = _mrg(ws, r, 6, 8)
+            u.value = f"={u_val}"
             u.font, u.fill = UNIT_F, KPI_FILL
             ws.row_dimensions[r].height = 26
             valr = r
             r += 1
-            campo(ws, r, 1, "T1 — tabulada inferior", f"={T1C}", "°C",
+            campo(ws, r, 1, "T1 — tabulada inferior", f"={T1C}", f"={u_tmp_f}",
                  com_val="Calculo: temperatura tabulada inmediatamente inferior (o "
                         "igual) a la temperatura de consulta, para el grupo elegido.")
-            campo(ws, r, 7, "Valor en T1", f"={S1C}", b["unidad"],
+            campo(ws, r, 7, "Valor en T1", f"={S1C}", f"={u_val}",
                  com_val=f'Calculo: {b["valor_lbl"]} tabulado en T1 para el grupo '
                         'elegido.')
             r += 1
-            campo(ws, r, 1, "T2 — tabulada superior", f"={T2C}", "°C",
+            campo(ws, r, 1, "T2 — tabulada superior", f"={T2C}", f"={u_tmp_f}",
                  com_val="Calculo: temperatura tabulada inmediatamente superior a la "
                         "de consulta. Vacia si T1 es el ultimo punto tabulado.")
-            campo(ws, r, 7, "Valor en T2", f"={S2C}", b["unidad"],
+            campo(ws, r, 7, "Valor en T2", f"={S2C}", f"={u_val}",
                  com_val=f'Calculo: {b["valor_lbl"]} tabulado en T2 para el grupo '
                         'elegido. Vacio si T1 es el ultimo punto tabulado.')
             r += 1
-            n2 = _mrg(ws, r, 1, NCOLS, b.get("nota", ""))
+            n2 = _mrg(ws, r, 1, NCOLS)
+            n2.value = f'=IF({SEL},"{b.get("nota_si", "")}","{b.get("nota_us", "")}")'
             n2.font = SRC_F
             r += 1
             c0 = 200 + i2 * 6
-            npack = info["npack"]
+            npack = max(info_si["npack"], info_us["npack"])
             q = f"'{ws.title}'!"
             trq = tr.replace(frow, q + frow).replace(NP, q + NP)
             vrq = vr.replace(frow, q + frow).replace(NP, q + NP)
             curvas.cell(1, c0, f"{b['titulo'][:38]} — curva").font = SRC_F
-            curvas.cell(2, c0, "Temperatura, °C").font = HDR_F
-            curvas.cell(2, c0 + 1, f'{b["valor_lbl"]}, {b["unidad"]}').font = HDR_F
+            curvas.cell(2, c0, "Temperatura").font = HDR_F
+            curvas.cell(2, c0 + 1, f'{b["valor_lbl"]}').font = HDR_F
             for k in range(1, npack + 1):
                 curvas.cell(2 + k, c0).value = f'=IFERROR(INDEX({trq},{k}),NA())'
                 curvas.cell(2 + k, c0 + 1).value = f'=IFERROR(INDEX({vrq},{k}),NA())'
             curvas.cell(2, c0 + 3, "T consulta").font = HDR_F
             curvas.cell(2, c0 + 4, "Punto consultado").font = HDR_F
-            curvas.cell(3, c0 + 3).value = f"={q}$D$5"
+            curvas.cell(3, c0 + 3).value = f"={q}$D$6"
             curvas.cell(3, c0 + 4).value = f"={q}$D${valr}"
 
             from openpyxl.chart import Reference, Series, ScatterChart
@@ -3260,8 +3299,9 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             ch = ScatterChart()
             ch.title = f'{b["valor_lbl"]} frente a la temperatura'
             ch.scatterStyle = "line"
-            ch.x_axis.title = "Temperatura  [°C]"
-            ch.y_axis.title = f'{b["valor_lbl"]}  [{b["unidad"]}]'
+            ch.x_axis.title = "Temperatura  [°C en SI  ·  °F en US]"
+            ch.y_axis.title = (f'{b["valor_lbl"]}  [{b["unidad_si"]} en SI  ·  '
+                               f'{b["unidad_us"]} en US]')
             ch.height, ch.width = 7.5, 20
             ch.x_axis.delete = False
             ch.y_axis.delete = False
@@ -3288,13 +3328,17 @@ def build_buscador_grupo(wb, curvas, bloques, rangos, name="Buscar_Prop_IID"):
             ws.add_chart(ch, f"A{r}")
             r += 15
         else:
-            for lbl, col, uni in b["campos"]:
+            for lbl, col, uni_si, uni_us in b["campos"]:
+                Lc = get_column_letter(col)
+                val_si = f"{info_si['sheet']}!${Lc}${R_DATA}:${Lc}${info_si['last_row']}"
+                val_us = f"{info_us['sheet']}!${Lc}${R_DATA}:${Lc}${info_us['last_row']}"
                 campo(ws, r, 1, lbl,
-                      f'=IF({frow}="","—",INDEX({info["sheet"]}!'
-                      f'${get_column_letter(col)}${R_DATA}:'
-                      f'${get_column_letter(col)}${info["last_row"]},{frow}))', uni,
+                      f'=IF({frow}="","—",IF({SEL},INDEX({val_si},{frow}),'
+                      f'INDEX({val_us},{frow})))',
+                      f'=IF({SEL},"{uni_si}","{uni_us}")',
                       com_val=f"Calculo: {lbl} impreso por la Tabla PRD para el grupo "
-                              "elegido arriba. No depende de la temperatura de "
+                              "elegido arriba y la edicion elegida en 'Sistema de "
+                              "unidades' (D5). No depende de la temperatura de "
                               "consulta (la Tabla PRD no tabula frente a T).")
                 r += 1
             r += 1
@@ -4746,7 +4790,10 @@ INSTRUCCIONES = [
      "sostener el ultimo valor seria extrapolar, que es lo que prohibe el codigo.\n"
      "Buscar_Prop_IID — modulo E (TM-1..5), dilatacion termica (TE-1..5, Coeficiente B, "
      "medio) y Poisson/densidad (PRD) de la II-D, para RECIPIENTES. Se indexa por GRUPO de "
-     "material: consulte MAP_Grupo, columnas 'Grupo E (TM)' y 'Grupo dilatacion (TE)'.\n"
+     "material: consulte MAP_Grupo, columnas 'Grupo E (TM)' y 'Grupo dilatacion (TE)'. "
+     "Lleva conmutador SI/US: cambia de HOJA (DB_E/DB_TE_G/DB_PRD en SI, "
+     "DB_EC/DB_TE_GC/DB_PRDC en US), nunca convierte. El rotulo de GRUPO no cambia entre "
+     "ediciones: solo el valor leido para ese grupo.\n"
      "Buscar_NoMetalicos — solo Apendice B: esfuerzo de diseno hidrostatico y presion "
      "admisible. Ya no ofrece propiedades fisicas."),
     ("4. Conmutador de unidades SI / US",
@@ -5208,7 +5255,7 @@ def main(argv=None):
     e_si, e_us = build_modulo(res, wb, "SI"), build_modulo(res, wb, "US")
     build_te(res, wb, "SI"); build_te(res, wb, "US")
     te_g_si = build_dilatacion_grupo(res, wb, "SI")
-    build_dilatacion_grupo(res, wb, "US")
+    te_g_us = build_dilatacion_grupo(res, wb, "US")
     prd, prdc = build_prd(res, wb, "SI"), build_prd(res, wb, "US")
     apxc = build_apendice_c(res, wb, "SI")
     apxcc = build_apendice_c(res, wb, "US")
@@ -5283,25 +5330,34 @@ def main(argv=None):
     build_buscador_grupo(wb, curvas, [
         dict(titulo="MODULO DE ELASTICIDAD E — ASME BPVC II-D, Tablas TM-1 a TM-5",
              lst_tabla="E_TABLA", nm_key="E_K", nm_val="E_V", default_tabla=e_tab[0],
-             info=e_si, n_ident=e_si["n_ident"], temps=e_si["temps"],
-             valor_lbl="Modulo E (valor tabulado)", unidad="x10^3 MPa", max_grupo=mx_e,
-             nota="El valor real de E = valor tabulado x 10^3 MPa (factor del titulo de la tabla)."),
+             info_si=e_si, info_us=e_us, temps=e_si["temps"],
+             valor_lbl="Modulo E (valor tabulado)",
+             unidad_si="x10^3 MPa", unidad_us="x10^6 psi", max_grupo=mx_e,
+             nota_si="El valor real de E = valor tabulado x 10^3 MPa (factor del "
+                     "titulo de la tabla).",
+             nota_us="El valor real de E = valor tabulado x 10^6 psi (factor del "
+                     "titulo de la tabla)."),
         dict(titulo="DILATACION TERMICA — ASME BPVC II-D, Tablas TE-1 a TE-5 "
                     "(Coeficiente B, medio)",
              lst_tabla="TE_TABLA", nm_key="TE_K", nm_val="TE_V", default_tabla=te_tab[0],
-             info=te_g_si, n_ident=te_g_si["n_ident"], temps=te_g_si["temps"],
-             valor_lbl="Dilatacion (Coeficiente B, medio de 20 C a T)",
-             unidad="x10^-6 mm/mm/C", max_grupo=mx_te,
-             nota="Coeficiente B (medio, de 20 C a T): el que se usa en calculo de "
-                  "dilatacion/flexibilidad. Los Coeficientes A (instantaneo) y C "
-                  "(expansion acumulada) siguen impresos tal cual, por temperatura, "
-                  "en DB_TE."),
+             info_si=te_g_si, info_us=te_g_us, temps=te_g_si["temps"],
+             valor_lbl="Dilatacion (Coeficiente B, medio)",
+             unidad_si="x10^-6 mm/mm/C", unidad_us="x10^-6 in/in/F", max_grupo=mx_te,
+             nota_si="Coeficiente B (medio, de 20 C a T): el que se usa en calculo de "
+                     "dilatacion/flexibilidad. Los Coeficientes A (instantaneo) y C "
+                     "(expansion acumulada) siguen impresos tal cual, por temperatura, "
+                     "en DB_TE.",
+             nota_us="Coeficiente B (medio, de 70 F a T, el origen que imprime la "
+                     "edicion US): el que se usa en calculo de dilatacion/"
+                     "flexibilidad. Los Coeficientes A (instantaneo) y C (expansion "
+                     "acumulada) siguen impresos tal cual, por temperatura, en "
+                     "DB_TEC."),
         dict(titulo="POISSON Y DENSIDAD — ASME BPVC II-D, Tabla PRD",
              lst_tabla="PRD_TABLA", nm_key="PRD_K", nm_val="PRD_V",
-             default_tabla=prd_tab[0], info=prd, temps=None,
-             valor_lbl="", unidad="", max_grupo=mx_prd,
-             campos=[("Coeficiente de Poisson", 5, "adimensional"),
-                     ("Densidad", 6, "kg/m3")]),
+             default_tabla=prd_tab[0], info_si=prd, info_us=prdc, temps=None,
+             valor_lbl="", max_grupo=mx_prd,
+             campos=[("Coeficiente de Poisson", 5, "adimensional", "adimensional"),
+                     ("Densidad", 6, "kg/m3", "lb/in3")]),
     ], rangos)
     build_buscador_prop_c(wb, curvas, rangos["APXC"], apxc, apxcc)
 
