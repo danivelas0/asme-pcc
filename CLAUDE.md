@@ -74,6 +74,23 @@ correr en verde quien tenga los PDF en disco. Esto **no** afecta a
 `verificar.py`, que audita el libro contra los JSON y sí corre en cualquier
 copia del repositorio.
 
+### Dónde están los PDF fuente
+
+`C:\Users\dvelasquez\OneDrive - INSPECTRA SA\Engineering\0-STANDARDS AND CODES`
+tiene los códigos y normas en PDF (II-D métrica/US, Secciones II A/B/C, B31.3)
+que alimentan `--pdf`/`--pdfs` en los scripts de arriba y en
+`verificar_resources.py`/`verificar_seccion_ii.py`.
+
+**Nunca se añaden PDF a este repositorio** (copyright de ASME; ver
+`.gitignore`). Y el PDF **solo se usa para corregir y verificar** los JSON de
+`resources/` —auditar folios, reconstruir una tabla colapsada, resolver una
+ambigüedad de extracción—, **nunca para poblar un motor o un cálculo
+directamente**: todo dato que entra a un motor sale de `resources/`, tal como
+exige la Regla nº 1. Un PDF que aporta un dato nuevo pasa primero por un
+script de extracción/corrección que lo escribe en el JSON correspondiente
+(con su `extraction_amendments` o metadato de procedencia), y solo entonces
+ese JSON alimenta el builder.
+
 ### Sección II, partes A, B y C — cómo está troceada
 
 379 especificaciones de material (SA-, SB-, SFA-), una por archivo en
@@ -185,9 +202,9 @@ python make_vba_seed.py
 # Solo si se repone la extraccion de II-D: notas de grupo de TM-1 / TE-1.
 # Una corrida por edicion; nunca copiar las notas de una en la otra.
 python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
-    --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+    --pdf "C:\Users\dvelasquez\OneDrive - INSPECTRA SA\Engineering\0-STANDARDS AND CODES\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
 python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
-    --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
+    --pdf "C:\Users\dvelasquez\OneDrive - INSPECTRA SA\Engineering\0-STANDARDS AND CODES\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 
 # Solo si se repone la extraccion de los Apendices B o C del B31.3. Los dos son
 # idempotentes y NO tocan ningun valor: solo la capa de metadatos. El PDF del
@@ -446,9 +463,9 @@ está impreso en las Notas al pie de esas dos tablas. Viven en `resources/` bajo
 
 ```powershell
 python extraer_notas_ii_d.py --edicion si --resources ..\..\..\resources `
-    --pdf "<...>\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
+    --pdf "C:\Users\dvelasquez\OneDrive - INSPECTRA SA\Engineering\0-STANDARDS AND CODES\SECCION II\D Metric 2025\D Metric 2025 _p1201-p1500.pdf"
 python extraer_notas_ii_d.py --edicion us --resources ..\..\..\resources `
-    --pdf "<...>\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
+    --pdf "C:\Users\dvelasquez\OneDrive - INSPECTRA SA\Engineering\0-STANDARDS AND CODES\SECCION II\D Customary 2025\D Customary 2025 _p1201-p1500.pdf"
 ```
 
 Solo hay que reejecutarlo si se repone la extracción de II-D. El builder **aborta**
