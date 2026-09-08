@@ -45,6 +45,27 @@ Ante una duda de alcance, pregunta antes de producir.
 
 ---
 
+### `pdf_pages` no usa la misma base en todas las extracciones
+
+Cuesta caro equivocarse aquí, y ya se pagó una vez: una «corrección» de 16 citas
+de II-D que en realidad las rompió, revertida después.
+
+| Fuente | Base de `pdf_pages` | Cómo se comprobó |
+|---|---|---|
+| BPVC **II-D** (métrica y US) | **1-based** inclusiva | El UNS `K01700` de la Tabla 1A está en la página 58, la primera que declara |
+| BPVC **II A, B y C** | **0-based** inclusiva | `[56, 119]` de SA-6/SA-6M son las páginas 57 a 120; la 56 está en blanco |
+| B31.3 (capítulos, apéndices, tablas) | 1-based | El rótulo de cada tabla cae en la página que declara |
+
+**No se detecta el desplazamiento con el rótulo de la tabla**: se repite en cada
+página de continuación, así que casa con las dos convenciones y no distingue
+nada. Hay que usar algo que aparezca **una sola vez** — un UNS, o una fila
+concreta. Ese fue exactamente el error.
+
+`verificar_resources.py` audita PCC-2, los capítulos del B31.3, sus apéndices
+D–Z y las dos ediciones de II-D. `verificar_seccion_ii.py` audita **solo** las
+partes A, B y C: la II-D se le quitó para no mantener dos scripts con dos
+convenciones.
+
 ### Sección II, partes A, B y C — cómo está troceada
 
 379 especificaciones de material (SA-, SB-, SFA-), una por archivo en

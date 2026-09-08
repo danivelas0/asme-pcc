@@ -247,88 +247,8 @@ def auditar(parte, carpeta, pdf_path, log):
     return fallos
 
 
-IID = {
-    "bpvc_ii_d_metric_2025": "D Metric 2025 .pdf",
-    "bpvc_ii_d_customary_2025": "D Customary 2025 .pdf",
-}
 
 
-def auditar_iid(parte, carpeta, pdf_path, log):
-    """La II-D no es texto troceado sino tablas de valores: lo que se audita es
-    que cada tabla empiece donde dice y que las filas cargadas sean las que
-    declara. El desplazamiento de pagina se DETECTA, no se supone: las dos
-    extracciones del proyecto no usan la misma convencion."""
-    import pdfplumber
-
-    tablas = []
-    for f in sorted(carpeta.glob("table_*.json")):
-        j = json.loads(f.read_text(encoding="utf-8"))
-        if isinstance(j, dict) and j.get("pdf_pages") and j.get("table_id"):
-            tablas.append((f.name, j))
-    fallos = 0
-
-    with pdfplumber.open(pdf_path) as pdf:
-        npag = len(pdf.pages)
-        cache = {}
-
-        def texto(i):
-            if i not in cache:
-                cache[i] = plano(pdf.pages[i].extract_text() or "") \
-                    if 0 <= i < npag else ""
-            return cache[i]
-
-        # 1. deteccion del desplazamiento sobre las 8 primeras tablas
-        votos = {}
-        for _, j in tablas[:8]:
-            # `table_id` ya viene como "Table 1A": no se le antepone nada.
-            ancla = plano(str(j["table_id"]))
-            p = j["pdf_pages"][0]
-            for off in (0, -1, 1):
-                if ancla and ancla in texto(p + off):
-                    votos[off] = votos.get(off, 0) + 1
-        off = max(votos, key=votos.get) if votos else 0
-        log("| %s | convencion de `pdf_pages` | desplazamiento %+d (%d de %d "
-            "tablas de muestra) | %s |"
-            % (parte, off, votos.get(off, 0), min(8, len(tablas)),
-               "OK" if votos else "REVISAR"))
-        fallos += 0 if votos else 1
-
-        # 2. anclaje de cada tabla y coherencia de row_count
-        sin_ancla, mal_filas, fuera = [], [], []
-        for nombre, j in tablas:
-            p0, p1 = j["pdf_pages"][0] + off, j["pdf_pages"][1] + off
-            if not (0 <= p0 < npag and 0 <= p1 < npag):
-                fuera.append((j["table_id"], j["pdf_pages"]))
-                continue
-            # `table_id` ya viene como "Table 1A": no se le antepone nada.
-            ancla = plano(str(j["table_id"]))
-            # La cabecera se repite en cada pagina de la tabla: basta con que
-            # aparezca en alguna de las tres primeras del rango.
-            if not any(ancla in texto(p) for p in range(p0, min(p0 + 3, p1 + 1))):
-                sin_ancla.append((j["table_id"], p0 + 1))
-            rc, real = j.get("row_count"), len(j.get("rows") or [])
-            if rc is not None and rc != real:
-                mal_filas.append((j["table_id"], rc, real))
-
-        log("| %s | tablas cuyo `table_id` aparece en su primera pagina | %d de %d | %s |"
-            % (parte, len(tablas) - len(sin_ancla) - len(fuera), len(tablas),
-               "OK" if not sin_ancla else "REVISAR"))
-        fallos += 0 if not sin_ancla else 1
-        log("| %s | rangos dentro del PDF | %d de %d (el PDF tiene %d paginas) | %s |"
-            % (parte, len(tablas) - len(fuera), len(tablas), npag,
-               "OK" if not fuera else "REVISAR"))
-        fallos += 0 if not fuera else 1
-        log("| %s | `row_count` coincide con las filas cargadas | %d de %d | %s |"
-            % (parte, len(tablas) - len(mal_filas), len(tablas),
-               "OK" if not mal_filas else "REVISAR"))
-        fallos += 0 if not mal_filas else 1
-        for s in sin_ancla[:8]:
-            log("|   | sin anclaje | Tabla %s, pagina PDF %d | REVISAR |" % s)
-        for s in mal_filas[:8]:
-            log("|   | filas | Tabla %s: declara %s, trae %d | REVISAR |" % s)
-        for s in fuera[:4]:
-            log("|   | rango | Tabla %s: %s queda fuera del PDF | REVISAR |" % s)
-    return fallos
 
 
 def main():
@@ -368,18 +288,11 @@ def main():
             continue
         total += auditar(parte, carpeta, ruta_pdf, log)
 
-    for parte, pdf in IID.items():
-        carpeta = a.resources / SEC_II / parte
-        ruta_pdf = a.pdfs / pdf
-        if not carpeta.is_dir():
-            log("| %s | carpeta | no existe en resources/ | REVISAR |" % parte)
-            total += 1
-        elif not ruta_pdf.is_file():
-            log("| %s | PDF | no encontrado en %s | REVISAR |" % (parte, ruta_pdf))
-            total += 1
-        else:
-            total += auditar_iid(parte, carpeta, ruta_pdf, log)
-
+    log("")
+    log("> La Seccion II-D **no** se audita aqui, sino en `verificar_resources.py`, "
+        "que la comprueba fila a fila por su UNS. Tener dos scripts mirando lo "
+        "mismo con dos convenciones de pagina fue justo lo que produjo un error: "
+        "II-D numera `pdf_pages` en base 1 y las partes A, B y C en base 0.")
     log("")
     log("**Total de fallos: %d.**" % total)
     if a.report:

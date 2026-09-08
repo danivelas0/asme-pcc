@@ -40,13 +40,7 @@ Cada especificacion troceada se contrasta con su PDF de origen: que el corte emp
 | bpvc_ii_c | rangos que se solapan | 0 | OK |
 | bpvc_ii_c | paginas cubiertas por las entradas | 1110 de 1153 (42 preliminares, 1 finales, 0 en huecos interiores) | OK |
 | bpvc_ii_c | figuras PNG | 150 declaradas / 150 en disco | OK |
-| bpvc_ii_d_metric_2025 | convencion de `pdf_pages` | desplazamiento +0 (8 de 8 tablas de muestra) | OK |
-| bpvc_ii_d_metric_2025 | tablas cuyo `table_id` aparece en su primera pagina | 27 de 27 | OK |
-| bpvc_ii_d_metric_2025 | rangos dentro del PDF | 27 de 27 (el PDF tiene 1537 paginas) | OK |
-| bpvc_ii_d_metric_2025 | `row_count` coincide con las filas cargadas | 27 de 27 | OK |
-| bpvc_ii_d_customary_2025 | convencion de `pdf_pages` | desplazamiento +0 (8 de 8 tablas de muestra) | OK |
-| bpvc_ii_d_customary_2025 | tablas cuyo `table_id` aparece en su primera pagina | 27 de 27 | OK |
-| bpvc_ii_d_customary_2025 | rangos dentro del PDF | 27 de 27 (el PDF tiene 1533 paginas) | OK |
-| bpvc_ii_d_customary_2025 | `row_count` coincide con las filas cargadas | 27 de 27 | OK |
+
+> La Seccion II-D **no** se audita aqui, sino en `verificar_resources.py`, que la comprueba fila a fila por su UNS. Tener dos scripts mirando lo mismo con dos convenciones de pagina fue justo lo que produjo un error: II-D numera `pdf_pages` en base 1 y las partes A, B y C en base 0.
 
 **Total de fallos: 0.**

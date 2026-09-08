@@ -9,8 +9,8 @@
   "table_id": "Table TE-5",
   "title": "Thermal Expansion for Titanium Alloys",
   "pdf_pages": [
-    1222,
-    1222
+    1223,
+    1223
   ],
   "page_count": 1,
   "row_count": 17,
@@ -245,11 +245,5 @@
       "coefficients_for_titanium_alloy_c": 3.8
     }
   ],
-  "subpart": "Subpart 2 - Physical Properties Tables",
-  "extraction_amendments": {
-    "fecha": "2026-09-07",
-    "script": "completar_seccion_ii.py",
-    "alcance": "Solo la cita de pagina. Ningun valor ni ninguna fila se toca: `row_count` ya coincidia con las filas cargadas en las 27 tablas.",
-    "cambio": "pdf_pages [1223, 1223] -> [1222, 1222], medido buscando el rotulo impreso de la tabla en el PDF de origen"
-  }
+  "subpart": "Subpart 2 - Physical Properties Tables"
 }
