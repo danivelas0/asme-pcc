@@ -23,3 +23,13 @@ __pycache__/
 # completar_apendice_c.py; se le pasa la ruta con --ocr.
 **/appendix_*/fuente/
 **/ocr_apendice_*.json
+
+# Skills instalados: los archivos reales viven en .agents/skills/ y SI se
+# versionan, junto con skills-lock.json. Lo que hay en .claude/skills/ son
+# JUNCTIONS de Windows que apuntan a esos mismos archivos, y git no sabe
+# representar una junction: la sigue y graba el contenido, asi que versionar
+# las dos rutas guardaria cada SKILL.md DOS veces. Peor aun, al clonar en
+# Linux o macOS .claude/skills/ dejaria de ser un enlace y pasaria a ser una
+# copia de verdad, que a la primera edicion diverge de su original.
+# El gestor de skills recrea esta capa de enlaces en cada maquina.
+.claude/skills/
