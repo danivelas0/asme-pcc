@@ -421,7 +421,7 @@ Estado por hoja (3 454 filas cada una):
 | VALIDADO POR INGENIERO | 17 | `decisiones_map_grupo.json`; hoy solo el 9Cr-1Mo-V |
 | SIN MAPEO | 655 | II-D no publica el dato; cálculo bloqueado |
 
-**Cobertura:** 2 451 filas con módulo E y 1 318 con dilatación, de 3 454. Una
+**Cobertura:** 2 451 filas con módulo E y 1 325 con dilatación, de 3 454. Una
 fila puede tener uno y no el otro — TM-1 y TE-1 no enumeran los mismos
 materiales — y la columna `Motivo` lo dice fila a fila.
 
@@ -478,10 +478,19 @@ ni columna, así que II-D no publica E ni dilatación y **lo correcto es que sig
 bloqueadas**. Verificado que ninguna coincide con una nota con los elementos en
 otro orden.
 
-**Dos columnas de TE-1 no se resuelven solas y no deben forzarse:** las del
-`17Cr–4Ni–4Cu`, partidas en `Condition 1075` y `Condition 1150` con valores
-distintos. La tabla de materiales no imprime el tratamiento, así que esas 12
-filas quedan sin dilatación y el `Motivo` explica dónde leerla a mano.
+**Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
+el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en
+TE-1 —`Condition 1075` y `Condition 1150`, con valores distintos— y `class_condition_temper`
+de `table_1a.json`/`table_3.json` (columna `Clase/Cond./Temple` del libro) sí
+imprime cuál aplica (`H1075`, `H1100`, `H1150`) fila a fila. `columnas_nombradas_te1`
+sigue colapsando esa condición a una sola por diseño (es la "pegajosa" que evita
+perder la condición cuando el rótulo viene truncado); `condiciones_tratamiento_te1`
+no colapsa nada y guarda las dos, y `build_map_grupo` las casa contra el
+tratamiento impreso en la fila. De las 12 filas del `17Cr–4Ni–4Cu`: **7 (4×H1150,
+3×H1075) resuelven automáticamente**, citando el dato impreso; **5 (H1100) quedan
+bloqueadas porque TE-1 sencillamente no publica columna para esa condición** —no
+es ambigüedad de mapeo, es que el código no tiene el dato— y el `Motivo` lo dice
+así, distinto del caso en que la fila no imprime tratamiento alguno.
 
 `validado_por` es **opcional**: se registra si está, pero no se exige. Lo que
 separa una decisión de un dato del código es el **estado** de la fila

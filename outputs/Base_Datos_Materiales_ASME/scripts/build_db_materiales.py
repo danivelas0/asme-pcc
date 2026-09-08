@@ -1546,6 +1546,36 @@ def columnas_nombradas_te1(datos):
     return out
 
 
+# `columnas_nombradas_te1` colapsa el tratamiento termico a UNA sola condicion
+# por composicion (la "pegajosa": ver su docstring y el test que lo exige),
+# porque asume una unica condicion por material. El 17Cr-4Ni-4Cu tiene DOS
+# columnas B reales -Condition 1075 y Condition 1150-, y la segunda se pierde
+# ahi. Esta funcion no colapsa nada: guarda TODAS las condiciones impresas
+# para poder casarlas contra el tratamiento que la propia fila de materiales
+# imprime en `Clase/Cond./Temple` (columna `class_condition_temper` de
+# table_1a.json / table_3.json).
+_COND_TRATAMIENTO = re.compile(r",?\s*Condition\s+(\d{3,4})\s*[ABC]?$")
+
+
+def condiciones_tratamiento_te1(datos):
+    """{clave_composicion: {numero_tratamiento: etiqueta_columna}} desde TE-1."""
+    out: dict[str, dict[str, str]] = {}
+    for col in datos.get("columns", []):
+        texto = txt(col)
+        m = _COND_TRATAMIENTO.search(texto)
+        if not m:
+            continue
+        cuerpo = texto[:m.start()]
+        cuerpo = re.sub(r"^Coefficients for\s+", "", cuerpo)
+        cuerpo = re.sub(r"^Precipitation Hardened\s+", "", cuerpo)
+        cuerpo = re.sub(r"\s+Stainless(\s+Steels?)?$", "", cuerpo).strip()
+        if not cuerpo or not _ES_COMPOSICION.match(cuerpo):
+            continue
+        etiqueta = re.sub(r"\s+[ABC]$", "", texto)
+        out.setdefault(comp_key(cuerpo), {})[m.group(1)] = etiqueta
+    return out
+
+
 def cargar_notas_de_grupo(res, ed):
     """Indice {clave_composicion: [(tabla, nota, grupo)]} desde resources/.
 
@@ -1781,7 +1811,9 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     conflictos = {}
 
     notas_idx, textuales = cargar_notas_de_grupo(res, ed)
-    cols_te = columnas_nombradas_te1(res.load(f"{ed}/table_te_1.json"))
+    te1_datos = res.load(f"{ed}/table_te_1.json")
+    cols_te = columnas_nombradas_te1(te1_datos)
+    cond_te = condiciones_tratamiento_te1(te1_datos)
 
     ws = new_sheet(wb, nombre,
                    f"MAPEO material -> grupo de propiedades (TM / TE / PRD) · "
@@ -1842,14 +1874,37 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                         estado = E_NOTA
                 elif condicion.startswith("Condition"):
                     # Condicion de TRATAMIENTO TERMICO: TE-1 parte este material
-                    # en dos columnas con valores distintos y la tabla de
-                    # materiales no imprime cual aplica. Elegir una seria
-                    # inventar; se deja sin dilatacion y se dice por que.
-                    motivo = (f"TE-1 publica la dilatacion de «{txt(comp)}» en dos "
-                              f"columnas segun el tratamiento termico "
-                              f"(«{condicion}» y la otra), con valores distintos, "
-                              f"y la tabla de materiales no imprime cual aplica. "
-                              f"Determine la condicion y lea la columna en DB_TE.")
+                    # en varias columnas con valores distintos. La propia fila SI
+                    # suele imprimir su tratamiento en "Clase/Cond./Temple"
+                    # (class_condition_temper: H1075, H1100, H1150...); si coincide
+                    # con una columna de TE-1, se resuelve citando ese dato impreso.
+                    # Elegir sin ese respaldo si seria inventar.
+                    opciones = cond_te.get(ck, {})
+                    temple = txt(src.cell(r, C["Clase/Cond./Temple"]).value)
+                    m_temple = re.search(r"(\d{3,4})", temple)
+                    if m_temple and m_temple.group(1) in opciones:
+                        grp_te = opciones[m_temple.group(1)]
+                        fuente_te = (f"TE-1 columna impresa · tratamiento "
+                                     f"«{temple}» impreso en Clase/Cond./Temple")
+                        if estado not in (E_UNS, E_NOTA, E_COMP_AJENA):
+                            estado = E_NOTA
+                    elif m_temple:
+                        # La fila imprime un tratamiento real, pero TE-1 no
+                        # publica columna para el: no es ambiguedad de mapeo,
+                        # es que el codigo no tiene ese dato.
+                        motivo = (f"La fila imprime el tratamiento «{temple}» en "
+                                  f"Clase/Cond./Temple, pero TE-1 solo publica "
+                                  f"dilatacion de «{txt(comp)}» para "
+                                  + " y ".join(f"«Condition {c}»" for c in sorted(opciones))
+                                  + ". El codigo no publica el dato para esta "
+                                  f"condicion.")
+                    else:
+                        motivo = (f"TE-1 publica la dilatacion de «{txt(comp)}» en "
+                                  f"columnas segun el tratamiento termico "
+                                  + " y ".join(f"«Condition {c}»" for c in sorted(opciones))
+                                  + ", con valores distintos, y esta fila no imprime "
+                                  f"el tratamiento en Clase/Cond./Temple. Determine "
+                                  f"la condicion y lea la columna en DB_TE.")
             elif grp_te is None:
                 # La columna condiciona la pertenencia a un GRADO, no a la
                 # composicion: «9Cr-1Mo Steels (Including Grades 9, 91, 911, and

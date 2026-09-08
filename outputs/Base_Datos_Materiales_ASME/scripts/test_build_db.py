@@ -359,6 +359,37 @@ class TestColumnasNombradasTE1:
         assert c["17CR-4NI-4CU"][1].startswith("Condition")
 
 
+class TestCondicionesTratamientoTE1:
+    """columnas_nombradas_te1 colapsa el tratamiento a UNA condicion por
+    composicion (pegajosa, ver arriba); condiciones_tratamiento_te1 no
+    colapsa nada, para poder resolver la fila contra su propio tratamiento
+    impreso (Clase/Cond./Temple)."""
+
+    @staticmethod
+    def _cond(edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
+        import json
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / edicion /
+                "table_te_1.json")
+        with open(ruta, encoding="utf-8") as fh:
+            return B.condiciones_tratamiento_te1(json.load(fh))
+
+    def test_conserva_las_dos_condiciones_del_17cr_4ni_4cu(self):
+        c = self._cond()
+        assert set(c["17CR-4NI-4CU"]) == {"1075", "1150"}
+        assert "Condition 1075" in c["17CR-4NI-4CU"]["1075"]
+        assert "Condition 1150" in c["17CR-4NI-4CU"]["1150"]
+
+    def test_no_incluye_columnas_sin_tratamiento_numerico(self):
+        # «9Cr-1Mo Steels (Including Grades 9, 91, 911, and 92)» condiciona por
+        # GRADO, no por tratamiento termico: no debe aparecer aqui.
+        c = self._cond()
+        assert "9CR-1MO" not in c
+
+    def test_las_dos_ediciones_dan_las_mismas_condiciones(self):
+        si, us = self._cond(), self._cond("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")
+        assert set(si["17CR-4NI-4CU"]) == set(us["17CR-4NI-4CU"])
+
+
 class TestFormulas:
     def test_cascada_es_offset_clasico(self):
         f = B.cascade_formula("V", "K", "$C$5")
