@@ -1768,76 +1768,179 @@ def _spec_num(spec_txt) -> str:
     return m.group(0) if m else ""
 
 
-def _composicion_prestada(comp_idx, comp_idx_spec, uns_txt, spec_txt, ck, notas_idx):
-    """Recupera la composicion de una fila que no la imprime, via su UNS.
+def _publicada_por_iid(comp_p, notas_idx, cols_te):
+    """Mecanismos LITERALES por los que TM-1/TE-1 publican una composicion.
 
-    Primero intenta el UNS a secas, IGUAL que siempre: si el libro trae una
-    sola composicion para ese UNS, se toma de ahi (comportamiento sin cambios
-    para los casos ya resueltos, y con el mismo motivo de siempre).
+    Son dos, y los dos estan impresos en el codigo con el mismo rango: la lista
+    de miembros de una Nota, y el titulo de una columna de TE-1 que se
+    autodescribe («Coefficients for 8Ni and 9Ni Steels»). El motor ya usaba los
+    dos para las filas que SI imprimen su composicion; esta funcion existe para
+    que el camino de composicion prestada por UNS use exactamente los mismos y
+    no se quede solo con las Notas —que era el hueco: el 9Ni de K81340 tiene
+    columna propia en TE-1 y aun asi salia como «II-D no publica el dato»—.
+
+    Solo se acepta la columna SIN condicion. Una columna condicionada por grado
+    («Including Grades 9, 91, 911, and 92») o por tratamiento («Condition
+    1075») no la resuelve la composicion: la resuelve un dato que la fila tiene
+    que imprimir aparte, y con la composicion prestada ese dato no se ha
+    comprobado. Devolverla aqui seria elegir a ciegas entre columnas con
+    valores distintos.
+
+    Devuelve (origenes_de_nota, etiqueta_de_columna_o_None).
+    """
+    k = comp_key(comp_p)
+    col = cols_te.get(k)
+    return notas_idx.get(k), (col[0] if col and col[1] is None else None)
+
+
+# Vias por las que se puede identificar el material de una fila que no imprime
+# su composicion. Las tres se apoyan en un dato que la PROPIA FILA imprime -el
+# UNS, la especificacion, el grado-, nunca en un criterio elegido aparte.
+VIA_UNS, VIA_SPEC, VIA_GRADO = None, "spec", "grado"
+
+
+def _candidatas_por_uns(comp_idx, comp_idx_spec, comp_idx_grado,
+                        uns_txt, spec_txt, grado_txt):
+    """Genera (composicion, hojas, via, clave) para el UNS de la fila.
+
+    Primero el UNS a secas, IGUAL que siempre: si el libro trae una sola
+    composicion para ese UNS, se toma de ahi (comportamiento sin cambios para
+    los casos ya resueltos, y con el mismo motivo de siempre).
 
     Solo cuando el UNS a secas es AMBIGUO -mas de una composicion global- se
-    prueba una segunda via, mas fina: (UNS, especificacion impresa en la
-    propia fila). Resuelve los casos donde esa ambiguedad global es en
-    realidad el codigo repartiendo la composicion por especificacion -perno
-    vs. tuerca en A193/A194, fundicion vs. tubo fundido en A217/A426- sin
-    inventar nada, porque la especificacion la imprime la propia fila, no un
-    criterio elegido aparte. Probar esto SOLO como fallback -nunca primero-
-    importa: si se probara siempre, un UNS con una unica composicion global
-    tambien tendria un unico candidato en cualquier spec suya, y el motivo
-    cambiaria de redaccion sin necesidad para las 200 filas que ya resolvia
-    bien el camino simple.
+    prueban dos vias mas finas, en este orden:
 
-    Si ni el spec desambigua, sigue sin resolverse: la fila no imprime
-    especificacion, o el codigo tampoco es consistente ahi (el caso de
-    G41400, que reparte composicion incluso DENTRO de una misma
-    especificacion por grado -B7 vs B7M en la propia A193-; ahi ni el indice
-    fino desambigua, y con razon: no hay con que elegir sin inventar).
+      (UNS, especificacion impresa en la fila). Resuelve donde la ambiguedad
+      global es en realidad el codigo repartiendo la composicion por
+      especificacion: perno vs. tuerca en A193/A194, fundicion vs. tubo
+      fundido en A217/A426.
 
-    Condiciones para devolver algo, en cualquiera de las dos vias:
+      (UNS, grado impreso en la fila). Resuelve donde el codigo la reparte por
+      GRADO, dentro o a traves de las especificaciones: G41400 imprime
+      «Cr-Mo» para el B7 de A193 y «Cr-0.2Mo» para el B7M de la misma A193, de
+      modo que la especificacion no basta; y S41000/SA-479 no tiene fila en el
+      Apendice A, pero su grado impreso -«410»- si la tiene alli (A240 Gr.
+      410, «13Cr»), y es el mismo grado, impreso igual por las dos fuentes.
+
+    Probar las finas SOLO como fallback -nunca primero- importa: si se
+    probaran siempre, un UNS con una unica composicion global tambien tendria
+    un unico candidato en cualquier spec o grado suyo, y el motivo cambiaria
+    de redaccion sin necesidad para las ~200 filas que ya resolvia bien el
+    camino simple.
+
+    Cuando ninguna de las tres deja un candidato UNICO, no se genera nada: no
+    hay con que elegir sin inventar.
+    """
+    spec_n = _spec_num(spec_txt)
+    grado_k = txt(grado_txt).upper()
+    for tok in _uns_tokens(uns_txt):
+        candidatas = comp_idx.get(tok)
+        if not candidatas:
+            continue
+        if len(candidatas) == 1:
+            comp_p, hojas = next(iter(candidatas.items()))
+            yield comp_p, hojas, VIA_UNS, tok
+            continue
+        for indice, clave, via in ((comp_idx_spec, spec_n, VIA_SPEC),
+                                   (comp_idx_grado, grado_k, VIA_GRADO)):
+            if not clave:
+                continue
+            finas = indice.get((tok, clave))
+            if finas and len(finas) == 1:
+                comp_p, hojas = next(iter(finas.items()))
+                yield comp_p, hojas, via, clave
+                break
+
+
+def _composicion_prestada(comp_idx, comp_idx_spec, comp_idx_grado, uns_txt,
+                          spec_txt, grado_txt, ck, notas_idx, cols_te):
+    """Recupera la composicion de una fila que no la imprime, via su UNS.
+
+    Condiciones para devolver algo, en cualquiera de las tres vias de
+    `_candidatas_por_uns`:
       1. la fila no trae composicion propia,
       2. el candidato es UNICO para la clave que se prueba,
-      3. esa composicion figura en alguna Nota de TM-1 o TE-1.
-    Devuelve (composicion, hojas_de_origen, origenes_de_nota, spec_usada) con
-    `spec_usada` en None cuando se resolvio por el UNS global, no por spec.
+      3. TM-1 o TE-1 publican esa composicion por alguno de sus dos mecanismos
+         literales: la lista de miembros de una Nota, o el titulo de una
+         columna de TE-1 que se autodescribe (ver _publicada_por_iid).
+    Devuelve (composicion, hojas_de_origen, origenes_de_nota, columna_te, via,
+    clave_usada) con `via` en None cuando se resolvio por el UNS global.
     """
     if ck:
         return None
-    spec_n = _spec_num(spec_txt)
-    for tok in _uns_tokens(uns_txt):
-        candidatas = comp_idx.get(tok)
-        if candidatas and len(candidatas) == 1:
-            comp_p, hojas = next(iter(candidatas.items()))
-            origenes = notas_idx.get(comp_key(comp_p))
-            if origenes:
-                return comp_p, hojas, origenes, None
-            continue
-        if candidatas and len(candidatas) > 1 and spec_n:
-            candidatas_spec = comp_idx_spec.get((tok, spec_n))
-            if candidatas_spec and len(candidatas_spec) == 1:
-                comp_p, hojas = next(iter(candidatas_spec.items()))
-                origenes = notas_idx.get(comp_key(comp_p))
-                if origenes:
-                    return comp_p, hojas, origenes, spec_n
+    for comp_p, hojas, via, clave in _candidatas_por_uns(
+            comp_idx, comp_idx_spec, comp_idx_grado, uns_txt, spec_txt, grado_txt):
+        origenes, col_te = _publicada_por_iid(comp_p, notas_idx, cols_te)
+        if origenes or col_te:
+            return comp_p, hojas, origenes, col_te, via, clave
     return None
 
 
-def _motivo_sin_composicion(comp_idx, uns_txt) -> str:
-    """Explica POR QUE no se pudo recuperar la composicion. El motivo importa:
-    no es lo mismo que el UNS no aparezca en ningun lado que el codigo lo
-    imprima con dos composiciones distintas."""
+# Cierre de una fila que el codigo no resuelve. NO es un estado del mapeo -la
+# fila sigue igual de bloqueada en los dos casos-: responde a otra pregunta,
+# «queda esto esperando a alguien?». Sin ella, las 113 filas de la revision se
+# presentaban todas como decisiones pendientes de firma, cuando la inmensa
+# mayoria no admite decision alguna: el codigo sencillamente no publica el dato,
+# y firmar ahi seria inventarlo. Distinguirlas es lo que permite CERRAR la
+# revision sin rellenar ni una casilla que el codigo no respalde.
+CIERRE_LIMITE = "CERRADA (limite de la fuente)"
+CIERRE_ABIERTA = "ABIERTA (admite criterio de ingenieria)"
+
+
+def _motivo_sin_composicion(comp_idx, comp_idx_spec, comp_idx_grado, uns_txt,
+                            spec_txt, grado_txt, cols_te=None) -> tuple[str, str]:
+    """(motivo, cierre) para una fila que no imprime composicion nominal.
+
+    El motivo importa, y el cierre mas: no es lo mismo que el UNS no aparezca
+    en ningun lado (nada que decidir, y nada que buscar: el indice ya recorre
+    las dos ediciones de II-D y las dos del Apendice A del B31.3), que el
+    codigo lo imprima con dos composiciones REALES y distintas que ni la
+    especificacion ni el grado deshacen (ahi si hay algo que elegir), o que la
+    composicion SI la publique TE-1 pero condicionada por un dato que esta fila
+    no imprime (tambien decidible, con el codigo delante).
+
+    Usa exactamente las mismas vias que `_composicion_prestada`: si una de
+    ellas identifica el material y aun asi no hay grupo, el hueco es del
+    codigo, no del mapeo, y la fila se CIERRA en vez de quedar pidiendo una
+    firma que no cambiaria nada.
+    """
+    cols_te = cols_te or {}
+    _COMO = {VIA_UNS: "", VIA_SPEC: "la especificacion", VIA_GRADO: "el grado"}
+    for comp_p, _hojas, via, clave in _candidatas_por_uns(
+            comp_idx, comp_idx_spec, comp_idx_grado, uns_txt, spec_txt, grado_txt):
+        tok = next(iter(_uns_tokens(uns_txt)), "")
+        if via is VIA_UNS:
+            quien = f"Su UNS «{tok}» aparece como «{comp_p}»"
+        else:
+            quien = (f"Su UNS «{tok}» trae varias composiciones en el libro, pero "
+                     f"{_COMO[via]} que la propia fila imprime («{clave}») deja "
+                     f"una sola: «{comp_p}»")
+        col = cols_te.get(comp_key(comp_p))
+        if col and col[1]:
+            # El dato SI esta publicado, pero la columna lo condiciona a un
+            # grado o tratamiento. Decirlo asi -y no «II-D no publica el
+            # dato»- es la diferencia entre un hueco de la fuente y una
+            # decision que el ingeniero puede tomar con el codigo delante.
+            return (f"La fila no imprime composicion nominal. {quien}, y TE-1 SI "
+                    f"publica dilatacion para esa composicion, pero en una columna "
+                    f"condicionada («{col[1]}»). La condicion no la resuelve la "
+                    f"composicion prestada: exige un dato que esta fila tendria que "
+                    f"imprimir y no se ha comprobado. No se elige por cuenta propia.",
+                    CIERRE_ABIERTA)
+        return (f"La fila no imprime composicion nominal. {quien}. El material queda "
+                f"identificado; lo que falta es el dato: esa composicion no figura en "
+                f"ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. "
+                f"II-D no publica E ni dilatacion para ella.", CIERRE_LIMITE)
     for tok in _uns_tokens(uns_txt):
         candidatas = comp_idx.get(tok)
         if candidatas and len(candidatas) > 1:
             return (f"La fila no imprime composicion nominal y el libro asocia a su "
-                    f"UNS «{tok}» mas de una: {'; '.join(candidatas)}. No se elige "
-                    f"por cuenta propia.")
-        if candidatas:
-            return (f"La fila no imprime composicion nominal. Su UNS «{tok}» aparece "
-                    f"como «{next(iter(candidatas))}», pero esa composicion no figura "
-                    f"en ninguna Nota de TM-1 ni TE-1.")
+                    f"UNS «{tok}» mas de una: {'; '.join(candidatas)}. Ni la "
+                    f"especificacion ni el grado que la propia fila imprime dejan una "
+                    f"sola. No se elige por cuenta propia.", CIERRE_ABIERTA)
     return ("La fila no imprime composicion nominal y su UNS no aparece con "
             "composicion en ninguna tabla del libro: no hay dato con el que "
-            "buscar el grupo.")
+            "buscar el grupo.", CIERRE_LIMITE)
 
 
 def cargar_prd_por_uns(res, ed):
@@ -1862,8 +1965,8 @@ def cargar_prd_por_uns(res, ed):
 
 
 def indice_composicion_por_uns(wb, infos):
-    """Indice {UNS: {composicion: [hojas que la imprimen]}} y su version fina
-    {(UNS, num. de especificacion): {composicion: [hojas]}}.
+    """Indice {UNS: {composicion: [hojas que la imprimen]}} y sus dos versiones
+    finas, {(UNS, num. de especificacion): ...} y {(UNS, grado impreso): ...}.
 
     Sirve para las filas que NO imprimen composicion nominal: su UNS suele
     aparecer con composicion en otra tabla del mismo libro. El UNS lo asigna
@@ -1876,24 +1979,37 @@ def indice_composicion_por_uns(wb, infos):
     ya no es "el UNS trae una composicion" sino "el UNS CON ESTA
     ESPECIFICACION, que la fila ya imprime, trae una unica composicion" —nada
     que el ingeniero deba confirmar a criterio.
+
+    El indice por GRADO existe por el mismo motivo y con el mismo rango: hay
+    UNS que el codigo reparte por grado y no por especificacion (G41400 imprime
+    «Cr-Mo» para el B7 de A193 y «Cr-0.2Mo» para el B7M de la MISMA A193), y
+    hay filas cuya especificacion no aparece en la tabla que trae la
+    composicion pero cuyo grado si (S41000/SA-479 no tiene fila en el Apendice
+    A; su grado «410» si, en A240 Gr. 410). El grado se compara LITERAL, sin
+    normalizar: A194 Gr. «6» y A193 Gr. «B6» son grados distintos del mismo
+    UNS con composiciones distintas, y reducirlos a su digito los confundiria.
     """
     idx: dict[str, dict[str, list]] = {}
     idx_spec: dict[tuple, dict[str, list]] = {}
+    idx_grado: dict[tuple, dict[str, list]] = {}
     for info in infos:
         ws = wb[info["sheet"]]
         for r in range(R_DATA, info["last_row"] + 1):
             uns = txt(ws.cell(r, C["UNS / Alloy"]).value).upper()
             comp = txt(ws.cell(r, C["Composicion nominal"]).value)
             spec = _spec_num(ws.cell(r, C["Spec. No."]).value)
+            grado = txt(ws.cell(r, C["Tipo/Grado"]).value).upper()
             if uns and comp:
                 idx.setdefault(uns, {}).setdefault(comp, [])
                 if info["sheet"] not in idx[uns][comp]:
                     idx[uns][comp].append(info["sheet"])
-                if spec:
-                    celda = idx_spec.setdefault((uns, spec), {}).setdefault(comp, [])
+                for fino, clave in ((idx_spec, spec), (idx_grado, grado)):
+                    if not clave:
+                        continue
+                    celda = fino.setdefault((uns, clave), {}).setdefault(comp, [])
                     if info["sheet"] not in celda:
                         celda.append(info["sheet"])
-    return idx, idx_spec
+    return idx, idx_spec, idx_grado
 
 
 # Estados del mapeo. No existe ya un estado «PROPUESTA»: o el codigo lo dice y
@@ -1993,7 +2109,8 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                 tm_index[tok] = (tid, txt(mat))
             tm_index.setdefault(key, (tid, txt(mat)))
     prd_por_uns = cargar_prd_por_uns(res, ed)
-    comp_idx, comp_idx_spec = indice_composicion_por_uns(wb, comp_infos)
+    comp_idx, comp_idx_spec, comp_idx_grado = indice_composicion_por_uns(
+        wb, comp_infos)
     dec_comp, dec_uns = cargar_decisiones(ruta_decisiones)
     conflictos = {}
 
@@ -2028,6 +2145,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
             comp = src.cell(r, C["Composicion nominal"]).value
 
             grp_e = fuente_e = grp_te = fuente_te = motivo = estado = None
+            cierre = None
 
             # 1) UNS literal en TM-1..TM-5: el mapeo mas fuerte, fila contra fila.
             key = txt(uns).upper()
@@ -2126,6 +2244,10 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                 if cand:
                     tabla, nota, grupo, miembro = cand[0]
                     estado = E_TEXTUAL
+                    # El codigo redacta un criterio y no lista: eso SI es una
+                    # decision de ingenieria, y la unica clase que queda abierta
+                    # con respaldo textual.
+                    cierre = CIERRE_ABIERTA
                     motivo = (f"{tabla} Nota {nota} lista «{miembro}». Aplicar la regla "
                               f"y confirmar si este material queda dentro de {grupo} "
                               f"(afecta solo al modulo E; la dilatacion, si figura, "
@@ -2133,48 +2255,75 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
 
             # 3b) Nada resolvio: recuperar la composicion por UNS, o declarar el hueco.
             if hit is None and not (grp_e or grp_te) and estado != E_TEXTUAL:
-                prestada = _composicion_prestada(comp_idx, comp_idx_spec, key,
-                                                  spec, ck, notas_idx)
+                grado = txt(src.cell(r, C["Tipo/Grado"]).value)
+                prestada = _composicion_prestada(
+                    comp_idx, comp_idx_spec, comp_idx_grado, key, spec, grado,
+                    ck, notas_idx, cols_te)
                 if prestada:
                     # La fila no imprime composicion, pero su UNS -o su (UNS,
-                    # especificacion) cuando eso es lo que desambigua- aparece
-                    # con una sola composicion en otra tabla del libro, y esa
-                    # composicion si figura en una Nota. Es lectura del codigo,
-                    # no criterio: el UNS identifica el material de forma
-                    # univoca (y la especificacion, cuando hace falta, la
-                    # imprime la propia fila). Se resuelve, citando la tabla de
-                    # la que sale la composicion.
-                    comp_p, hojas_p, origenes, spec_usada = prestada
-                    for tabla, nota, grupo in origenes:
+                    # especificacion) o su (UNS, grado) cuando eso es lo que
+                    # desambigua- aparece con una sola composicion en otra tabla
+                    # del libro, y esa composicion si la publica II-D. Es lectura
+                    # del codigo, no criterio: el UNS identifica el material de
+                    # forma univoca, y la especificacion y el grado, cuando hacen
+                    # falta, los imprime la propia fila. Se resuelve, citando la
+                    # tabla de la que sale la composicion.
+                    comp_p, hojas_p, origenes, col_te_p, via_p, clave_p = prestada
+                    for tabla, nota, grupo in (origenes or ()):
                         if tabla == "TM-1" and grp_e is None:
                             grp_e, fuente_e = grupo, f"TM-1 Nota {nota} · comp. de {hojas_p[0]}"
                         elif tabla == "TE-1" and grp_te is None:
                             grp_te, fuente_te = grupo, f"TE-1 Nota {nota} · comp. de {hojas_p[0]}"
+                    # Las columnas nombradas de TE-1 son tan normativas como sus
+                    # Notas, y hasta aqui solo las veian las filas que imprimen
+                    # su composicion. Sin esto, un 9Ni recuperado por UNS se
+                    # quedaba sin la dilatacion que el codigo SI publica para el,
+                    # y las filas que la Nota resolvia solo para el modulo E
+                    # (13Cr, 15Cr, 17Cr, 13Cr-4Ni) perdian su alfa en silencio.
+                    if grp_te is None and col_te_p:
+                        grp_te = col_te_p
+                        fuente_te = f"TE-1 columna impresa · comp. de {hojas_p[0]}"
                     estado = E_COMP_AJENA
-                    if spec_usada:
+                    publica = " y ".join(
+                        p for p in (("figura en Nota" if origenes else ""),
+                                    ("tiene columna propia en TE-1" if col_te_p else ""))
+                        if p)
+                    if via_p is not VIA_UNS:
+                        que = ("LA ESPECIFICACION" if via_p is VIA_SPEC
+                               else "EL GRADO")
+                        cual = "la especificacion" if via_p is VIA_SPEC else "el grado"
                         motivo = (f"La fila no imprime composicion nominal. Para su UNS "
-                                  f"«{key}» el libro imprime mas de una composicion segun "
-                                  f"la especificacion, pero PARA LA ESPECIFICACION QUE "
-                                  f"IMPRIME ESTA FILA («{txt(spec)}») hay una sola: "
+                                  f"«{key}» el libro imprime mas de una composicion, "
+                                  f"pero PARA {que} QUE IMPRIME ESTA FILA "
+                                  f"(«{clave_p}») hay una sola: "
                                   f"«{comp_p}», en {', '.join(hojas_p)}. Esa composicion "
-                                  f"figura en Nota. El UNS junto con la especificacion "
-                                  f"impresa identifica el material de forma univoca, asi "
+                                  f"{publica}. El UNS junto con {cual} "
+                                  f"impreso identifica el material de forma univoca, asi "
                                   f"que el grupo se toma de ahi.")
                     else:
                         motivo = (f"La fila no imprime composicion nominal. Su UNS «{key}» "
                                   f"aparece como «{comp_p}» en {', '.join(hojas_p)}, y esa "
-                                  f"composicion figura en Nota. El UNS identifica el "
+                                  f"composicion {publica}. El UNS identifica el "
                                   f"material de forma univoca, asi que el grupo se toma "
                                   f"de ahi.")
                 elif not ck:
                     # Sin composicion impresa y sin forma de recuperarla: la fila
                     # del codigo no trae el dato de entrada.
                     estado = E_SIN
-                    motivo = _motivo_sin_composicion(comp_idx, key)
+                    motivo, cierre = _motivo_sin_composicion(
+                        comp_idx, comp_idx_spec, comp_idx_grado, key, spec,
+                        grado, cols_te)
                 else:
                     estado = E_SIN
+                    # La fila IMPRIME su composicion: el material esta
+                    # identificado y el contraste contra las dos vias literales
+                    # del codigo ya se hizo. No queda nada que decidir salvo
+                    # inventar el dato, asi que la fila se cierra como limite de
+                    # la fuente en vez de quedar pidiendo una firma.
+                    cierre = CIERRE_LIMITE
                     motivo = ("El UNS no figura en TM-1..TM-5 y la composicion nominal "
-                              "no esta listada en ninguna Nota de TM-1 ni TE-1. "
+                              "no esta listada en ninguna Nota de TM-1 ni TE-1 ni en "
+                              "ninguna columna nombrada de TE-1. "
                               "II-D no publica E ni dilatacion para este material.")
             elif grp_e is None or grp_te is None:
                 # `motivo or` porque un motivo especifico —el del tratamiento
@@ -2231,7 +2380,8 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
                 else:
                     tok = next(iter(_uns_tokens(key)), "")
                     clave = ("uns", tok) if tok else ("composicion", "")
-                pendientes.append((clave, estado, motivo, txt(spec), txt(uns)))
+                pendientes.append((clave, estado, motivo, txt(spec), txt(uns),
+                                   cierre or CIERRE_LIMITE))
             recs.append(([mid, spec, uns, comp, grp_e, fuente_e, grp_te, fuente_te,
                           prd, estado, motivo,
                           search_key(mid, spec, uns, comp)], {}))
@@ -2275,20 +2425,45 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     return last, stats, pendientes
 
 
+def _filas_revision(entradas, inicio: int) -> list[str]:
+    """Filas de la tabla de revision, con su casilla de grupo y de firma."""
+    out = []
+    for i, ((clave, estado), g) in enumerate(entradas, start=inicio):
+        tipo, valor = clave
+        specs = ", ".join(s for s, _ in g["specs"].most_common(3))
+        if len(g["specs"]) > 3:
+            specs += f", +{len(g['specs']) - 3} mas"
+        motivo = (g["motivo"] or "").replace("\n", " ")
+        etiqueta = f"`{valor}`" + (" (UNS)" if tipo == "uns" else "")
+        out.append(f"| {i} | {etiqueta} | {g['n']} | {estado} | {motivo} "
+                   f"<br>Especificaciones: {specs or '—'} |  |  |")
+    return out
+
+
 def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
-    """Hoja de revision: lo que el codigo NO resuelve, agrupado para firmar.
+    """Hoja de revision: lo que el codigo NO resuelve, agrupado y CERRADO.
 
     Se agrupa por COMPOSICION NOMINAL porque es la unidad en que el codigo
     decide: las 3 454 filas de material se reducen a unas decenas de decisiones
     reales, y revisar fila a fila seria repetir el mismo juicio cientos de
     veces. Se acompana el recuento de materiales afectados para que se vea que
     pesa cada decision.
+
+    El documento va en DOS bloques, y esa separacion es lo importante. Hasta la
+    Rev. 4b todo lo no resuelto se listaba junto, bajo el rotulo «decisiones a
+    tomar», con una casilla de firma al lado. Eso describia mal la realidad:
+    solo una fraccion minima admite decision. En el resto, el material esta
+    identificado sin ambiguedad y es II-D quien no tabula el dato — firmar ahi
+    no seria decidir, seria inventar el valor que el codigo no publica. Se
+    separan por `cierre`, que el motor deriva del mismo camino por el que llego
+    al hueco, no de una lectura del texto del motivo.
     """
     from collections import Counter, OrderedDict
     grupos: "OrderedDict[tuple, dict]" = OrderedDict()
-    for clave, estado, motivo, spec, uns in pendientes:
+    for clave, estado, motivo, spec, uns, cierre in pendientes:
         g = grupos.setdefault((clave, estado), {"motivo": motivo, "n": 0,
-                                                "specs": Counter(), "uns": Counter()})
+                                                "specs": Counter(), "uns": Counter(),
+                                                "cierre": cierre})
         g["n"] += 1
         if spec:
             g["specs"][spec] += 1
@@ -2301,6 +2476,8 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
 
     orden = {E_TEXTUAL: 0, E_SIN: 1}
     filas = sorted(grupos.items(), key=lambda kv: (orden[kv[0][1]], -kv[1]["n"]))
+    abiertas = [f for f in filas if f[1]["cierre"] == CIERRE_ABIERTA]
+    cerradas = [f for f in filas if f[1]["cierre"] != CIERRE_ABIERTA]
 
     L = ["# Revision de MAP_Grupo — grupos de propiedades sin resolver por el codigo",
          "",
@@ -2319,8 +2496,20 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
     for k, v in stats.items():
         L.append(f"| {k} | {v} |")
     L += ["",
-          f"Decisiones distintas a tomar: **{len(filas)}** "
-          f"(sobre {sum(v['n'] for _, v in grupos.items())} filas de material)."]
+          f"Casos distintos sin resolver por el codigo: **{len(filas)}** "
+          f"(sobre {sum(v['n'] for _, v in grupos.items())} filas de material).",
+          "",
+          f"- **{len(abiertas)} ABIERTOS** — admiten criterio de ingenieria: el codigo "
+          f"dice algo sobre ese material (una regla redactada, una columna condicionada, "
+          f"o dos composiciones reales entre las que elegir) y una persona puede "
+          f"resolverlo con el codigo delante.",
+          f"- **{len(cerradas)} CERRADOS** — limite de la fuente: el material esta "
+          f"identificado sin ambiguedad y II-D sencillamente no tabula ni modulo E ni "
+          f"dilatacion para el. **No hay nada que firmar aqui.** Rellenar una casilla "
+          f"seria inventar un valor que el codigo no publica, que es justo lo que la "
+          f"Regla n.º 1 del proyecto prohibe. Se listan para que conste que se miraron "
+          f"y por que vias.",
+          ]
     if sin_comp:
         L += ["",
               f"Aparte, **{sin_comp['n']} filas no imprimen composicion nominal** y su "
@@ -2328,16 +2517,36 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
               "No entran en esta revision porque no hay dato de entrada que juzgar: para",
               "asignarles grupo habria que identificar el material por otra via (la",
               "especificacion y el grado en la tabla de origen)."]
+
     L += ["",
-          "## Decisiones",
-          "",
           "Las filas se cuentan sobre las DOS ediciones (metrica y U.S. Customary):",
-          "una misma decision desbloquea el material en ambas, porque la pertenencia a",
-          "grupo no depende del sistema de unidades.",
+          "un mismo caso afecta al material en ambas, porque la pertenencia a grupo no",
+          "depende del sistema de unidades.",
           "",
-          "| # | Se decide sobre | Filas | Estado | Que hay que decidir | Grupo asignado | Firma / fecha |",
-          "|---:|---|---:|---|---|---|---|"]
-    for i, ((clave, estado), g) in enumerate(filas, start=1):
+          "## 1. Casos ABIERTOS — admiten criterio de ingenieria",
+          ""]
+    if abiertas:
+        L += ["| # | Se decide sobre | Filas | Estado | Que hay que decidir | Grupo asignado | Firma / fecha |",
+              "|---:|---|---:|---|---|---|---|"]
+        L += _filas_revision(abiertas, 1)
+    else:
+        L += ["*Ninguno.* Todo lo que el codigo permitia decidir esta decidido y "
+              "registrado en `decisiones_map_grupo.json`; el resto es limite de la "
+              "fuente y esta cerrado en el bloque siguiente."]
+    L += ["",
+          "## 2. Casos CERRADOS — limite de la fuente, no requieren firma",
+          "",
+          "Para cada uno se agotaron las dos vias literales que el codigo publica —la",
+          "lista de miembros de una Nota de TM-1/TE-1 y el titulo de una columna",
+          "nombrada de TE-1— en LAS DOS ediciones, y la identificacion del material se",
+          "intento ademas por UNS y por (UNS, especificacion impresa en la propia fila)",
+          "contra las cuatro tablas indexadas del libro (II-D 1A y 1B/3, y Apendice A",
+          "del B31.3, cada una en sus dos ediciones). El resultado es el correcto: la",
+          "fila queda BLOQUEADA para modulo E y dilatacion.",
+          "",
+          "| # | Material | Filas | Estado | Por que esta cerrado |",
+          "|---:|---|---:|---|---|"]
+    for i, ((clave, estado), g) in enumerate(cerradas, start=1):
         tipo, valor = clave
         specs = ", ".join(s for s, _ in g["specs"].most_common(3))
         if len(g["specs"]) > 3:
@@ -2345,13 +2554,14 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
         motivo = (g["motivo"] or "").replace("\n", " ")
         etiqueta = f"`{valor}`" + (" (UNS)" if tipo == "uns" else "")
         L.append(f"| {i} | {etiqueta} | {g['n']} | {estado} | {motivo} "
-                 f"<br>Especificaciones: {specs or '—'} |  |  |")
+                 f"<br>Especificaciones: {specs or '—'} |")
     L += ["",
           "## Como usar este documento",
           "",
-          "1. Para cada fila, decida el grupo de TM-1 (modulo E) y/o TE-1 (dilatacion)",
-          "   que corresponde, o confirme que II-D no publica el dato para ese material.",
-          "2. Anote el grupo en la columna correspondiente y firme.",
+          "1. El bloque 2 no se rellena. Esta cerrado: la unica forma de darle grupo a",
+          "   esos materiales seria que ASME publicase el dato, que hoy no publica.",
+          "2. En el bloque 1, decida el grupo de TM-1 (modulo E) y/o TE-1 (dilatacion)",
+          "   que corresponde, anotelo y firme.",
           "3. Mientras una fila siga sin grupo, el motor deja el calculo BLOQUEADO para",
           "   esos materiales. Es el comportamiento correcto: el codigo prohibe",
           "   extrapolar y prohibe inventar la pertenencia a un grupo.",
@@ -2394,18 +2604,31 @@ def escribir_revision_map_grupo(pendientes, stats, ruta: Path) -> int:
         "_aviso": ("Dejar grupo_tm y grupo_te vacios equivale a no decidir: la fila "
                    "sigue bloqueada. Una decision nunca sobreescribe un grupo que el "
                    "codigo si asigna."),
+        "_solo_lo_decidible": (
+            "`decisiones` trae UNICAMENTE los casos ABIERTOS de "
+            "Revision_MAP_Grupo.md: aquellos en que el codigo dice algo que una "
+            "persona puede aplicar. Los CERRADOS por limite de la fuente van "
+            "aparte, en `_cerrados_sin_decision`, y NO se rellenan: el material "
+            "esta identificado y es II-D quien no publica el dato. Ofrecerlos con "
+            "una casilla vacia invitaba a rellenarla, que es inventar el valor."),
         "decisiones": [
             {("uns" if tipo == "uns" else "composicion"): valor,
              "grupo_tm": "", "grupo_te": "",
              "justificacion": "", "validado_por": "", "fecha": "",
              "_filas_afectadas": g["n"], "_estado_actual": estado,
              "_motivo": (g["motivo"] or "").replace("\n", " ")}
-            for ((tipo, valor), estado), g in filas
+            for ((tipo, valor), estado), g in abiertas
+        ],
+        "_cerrados_sin_decision": [
+            {("uns" if tipo == "uns" else "composicion"): valor,
+             "_filas_afectadas": g["n"], "_estado_actual": estado,
+             "_por_que_esta_cerrado": (g["motivo"] or "").replace("\n", " ")}
+            for ((tipo, valor), estado), g in cerradas
         ],
     }
     ruta.with_name("decisiones_map_grupo.plantilla.json").write_text(
         json.dumps(plantilla, ensure_ascii=False, indent=2), encoding="utf-8")
-    return len(filas)
+    return len(abiertas), len(cerradas)
 
 
 def iter_notas(d):
@@ -5493,10 +5716,11 @@ def main(argv=None):
     # no al libro: es documentacion de respaldo, no un entregable suelto.
     ruta_rev = Path(a.revision) if a.revision else \
         Path(__file__).resolve().parent.parent / "Revision_MAP_Grupo.md"
-    n_decisiones = escribir_revision_map_grupo(
+    n_abiertas, n_cerradas = escribir_revision_map_grupo(
         map_pend + mapc_pend, map_stats, ruta_rev)
-    ISSUES.append(f"MAP_Grupo: {n_decisiones} decisiones distintas pendientes de "
-                  f"validacion del ingeniero -> {ruta_rev.name}")
+    ISSUES.append(f"MAP_Grupo: {n_abiertas} casos abiertos (admiten criterio de "
+                  f"ingenieria) y {n_cerradas} cerrados por limite de la fuente "
+                  f"(II-D no publica el dato; no se firman) -> {ruta_rev.name}")
 
     report = {"salida": a.out, "hojas": wb.sheetnames, "conteos": counts,
               "visibilidad": estados, "limitaciones": ISSUES, "meta": META,

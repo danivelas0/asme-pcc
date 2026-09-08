@@ -217,14 +217,15 @@ Cada hoja se audita contra las Notas de SU edicion: no numeran igual, asi que cr
 | Las dos ediciones traen sus Notas de grupo | 4/4 archivos con note_members | OK |
 | Lo decidido por una persona se declara como tal | 0 filas VALIDADO sin marca en la fuente | OK |
 | Toda composicion tomada por UNS cita su tabla de origen | 0 filas sin citar la tabla de origen | OK |
+| La columna de TE-1 citada existe en esa edicion | 0 citas a una columna que el JSON no imprime | OK |
 
 | Estado del mapeo | Filas |
 |---|---:|
 | AUTO (composicion en Nota) | 2594 |
 | AUTO (UNS exacto) | 2584 |
-| SIN MAPEO | 1242 |
-| AUTO (composicion via UNS en otra tabla) | 400 |
-| VALIDADO POR INGENIERO | 88 |
+| SIN MAPEO | 1182 |
+| AUTO (composicion via UNS en otra tabla) | 456 |
+| VALIDADO POR INGENIERO | 92 |
 
 Las filas SIN MAPEO no son un defecto de la extraccion: son materiales para los que II-D no publica modulo ni dilatacion. En ellas el calculo queda bloqueado, que es lo que exige el codigo.
 

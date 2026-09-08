@@ -10,1249 +10,644 @@
     "fecha": "AAAA-MM-DD"
   },
   "_aviso": "Dejar grupo_tm y grupo_te vacios equivale a no decidir: la fila sigue bloqueada. Una decision nunca sobreescribe un grupo que el codigo si asigna.",
-  "decisiones": [
+  "_solo_lo_decidible": "`decisiones` trae UNICAMENTE los casos ABIERTOS de Revision_MAP_Grupo.md: aquellos en que el codigo dice algo que una persona puede aplicar. Los CERRADOS por limite de la fuente van aparte, en `_cerrados_sin_decision`, y NO se rellenan: el material esta identificado y es II-D quien no publica el dato. Ofrecerlos con una casilla vacia invitaba a rellenarla, que es inventar el valor.",
+  "decisiones": [],
+  "_cerrados_sin_decision": [
     {
       "composicion": "23Cr-25Ni-5.5Mo-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 42,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
-    },
-    {
-      "uns": "K81340",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 38,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K81340» aparece como «9Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "19Cr-15Ni-4Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 38,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "25Cr-22Ni-2Mo-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 36,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "42Fe-33Ni-21Cr",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 36,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "60Ni-25Cr-9.5Fe-2.1Al",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 36,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "23Cr-12Ni-Cb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 32,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "25Cr-20Ni-Cb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 32,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "37Ni-33Fe-25Cr",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 30,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "47Ni-22Cr-20Fe-7Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 30,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "58Ni-33Cr-8Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 30,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "59Ni-23Cr-16Mo-1.6Cu",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 30,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "62Ni-22Mo-15Cr",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 30,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "60Ni-19Cr-19Mo-1.8Ta",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 26,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "21Cr-5Mn-1.5Ni-Cu-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 24,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "33Ni-42Fe-21Cr",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 24,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "21Ni-30Fe-22Cr-18Co-3Mo-3W",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 22,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "26Ni-43Fe-22Cr-5Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 22,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "18Cr-3Ni-12Mn",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 20,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "49Ni-25Cr-18Fe-6Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 18,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "C-Mn-Si-V-Cb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 16,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "G41400",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 16,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y el libro asocia a su UNS «G41400» mas de una: Cr-0.2Mo; Cr-Mo; Cr-1∕5Mo; Cr-Mo Stainless Steel. No se elige por cuenta propia."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «G41400» trae varias composiciones en el libro, pero el grado que la propia fila imprime («B7») deja una sola: «Cr-Mo». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "composicion": "60Ni-23Cr-Fe",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 16,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "20Cr-3Ni-1.5Mo-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 14,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "17Cr-4Ni-6Mn",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 12,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "27Ni-22Cr-7Mo-Mn-Cu-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 12,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "18Cr-12Ni-2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 12,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "K14073",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 12,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "1Cr-1Mn-1/4Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 12,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "21/4Cr-1Mo-V",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "3Ni-13/4Cr-1/2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "26Cr-3Ni-3Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "26Cr-4Ni-Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "26Cr-4Ni-Mo-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "27Cr-1Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 10,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "K21903",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K21903» aparece como «21∕4Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «K21903» aparece como «21∕4Ni». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "S43035",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "29Cr-4Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "29Cr-4Mo-2Ni",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "35Ni-30Fe-24Cr-6Mo-Cu",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "37Ni-33Fe-23Cr-4Mo-Cu",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 8,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "K13047",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "G41350",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "G41370",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «G41370» aparece como «Cr-Mo», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «G41370» aparece como «Cr-Mo». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "K13548",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
-    },
-    {
-      "uns": "K71340",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 6,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K71340» aparece como «8Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K12521",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K12023",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K11422",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "23/4Ni-11/2Cr-1/2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
-    },
-    {
-      "uns": "S41000",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 6,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y el libro asocia a su UNS «S41000» mas de una: 12Cr; 13Cr. No se elige por cuenta propia."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "18Cr-2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "27Cr-1Mo-Ti",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "J13002",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K14072",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K14072» aparece como «Cr-Mo-V», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «K14072» aparece como «Cr-Mo-V». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "G40370",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 6,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «G40370» aparece como «Cr-Mo», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «G40370» aparece como «Cr-Mo». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "K13050",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K61365",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "19Cr-9Ni-2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "S40300",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S41003",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y el libro asocia a su UNS «S41003» mas de una: 12Cr; 12Cr-1Ni. No se elige por cuenta propia."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «S41003» trae varias composiciones en el libro, pero la especificacion que la propia fila imprime («1010») deja una sola: «12Cr-1Ni». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "S30100",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S40800",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S43036",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «S43036» aparece como «18Cr-Ti», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «S43036» aparece como «18Cr-Ti». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "composicion": "16Cr-12Ni-2Mo-Cb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "16Cr-4Ni-6Mn",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "16Cr-9Mn-2Ni-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "18Cr-9Ni-3Cu-Cb-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "20.5Cr-8.8Ni-Mo-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "25Cr-20Ni-Cb-N",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "25Cr-4Ni-4Mo-Ti",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "29Cr-4Mo-Ti",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
-    },
-    {
-      "uns": "J82090",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 4,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «J82090» aparece como «9Cr-1Mo», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "19Cr-10Ni-3Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "19Cr-9Ni-1/2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "Mn-1/4Mo-V",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "G40420",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "G41420",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "G41450",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "Co-26Cr-9Ni-5Mo-3Fe-2W",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "S30300",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «S30300» aparece como «18Cr-9Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «S30300» aparece como «18Cr-9Ni». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "composicion": "12Cr-1Mo-V-W",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "67Ni-28Cu-3Al",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "A02040",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 4,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K12520",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K22036",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K14508",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K32026",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K21703",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K21703» aparece como «21∕4Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «K21703» aparece como «21∕4Ni». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "K22103",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K22103» aparece como «21∕4Ni», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
-    },
-    {
-      "uns": "K41583",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 2,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «K41583» aparece como «5Ni-1∕4Mo», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «K22103» aparece como «21∕4Ni». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "uns": "K11224",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "K12047",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "11/2Si-1/2Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "13/4Ni-3/4Cr-Mo",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "S41500",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S40910",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S40920",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S40930",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "uns": "S43932",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
-    },
-    {
-      "uns": "S44600",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 2,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «S44600» aparece como «27Cr», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "20Cr-10Ni",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "J31545",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal. Su UNS «J31545» aparece como «3Cr-Mo», pero esa composicion no figura en ninguna Nota de TM-1 ni TE-1."
-    },
-    {
-      "uns": "J91150",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
-      "_filas_afectadas": 2,
-      "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y el libro asocia a su UNS «J91150» mas de una: 12Cr; 13Cr. No se elige por cuenta propia."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal. Su UNS «J31545» aparece como «3Cr-Mo». El material queda identificado; lo que falta es el dato: esa composicion no figura en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para ella."
     },
     {
       "composicion": "17Cr-4Ni-3Cu",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "K50100",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "2Ni-3/4Cr-1/3Mo-V",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "32Ni-45Fe-20Cr-Cb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "53Ni-17Mo-16Cr-6Fe-5W",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "59Ni-22Cr-14Mo-4Fe-3W",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "composicion": "62Ni-28Mo-5Fe",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     },
     {
       "uns": "R61702",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
+      "_por_que_esta_cerrado": "La fila no imprime composicion nominal y su UNS no aparece con composicion en ninguna tabla del libro: no hay dato con el que buscar el grupo."
     },
     {
       "composicion": "95.5Zr + 2.5Nb",
-      "grupo_tm": "",
-      "grupo_te": "",
-      "justificacion": "",
-      "validado_por": "",
-      "fecha": "",
       "_filas_afectadas": 2,
       "_estado_actual": "SIN MAPEO",
-      "_motivo": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1. II-D no publica E ni dilatacion para este material."
+      "_por_que_esta_cerrado": "El UNS no figura en TM-1..TM-5 y la composicion nominal no esta listada en ninguna Nota de TM-1 ni TE-1 ni en ninguna columna nombrada de TE-1. II-D no publica E ni dilatacion para este material."
     }
   ]
 }

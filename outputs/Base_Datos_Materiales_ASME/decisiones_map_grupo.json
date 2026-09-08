@@ -69,6 +69,16 @@
       "fecha": "2026-09-08",
       "_filas_afectadas": 8,
       "_nota": "Ambiguedad de UNS resuelta por evidencia interna (dos filas limpias del mismo UNS), no por composicion elegida a criterio."
+    },
+    {
+      "uns": "J82090",
+      "grupo_tm": "Material Group E",
+      "grupo_te": "",
+      "justificacion": "La fila de II-D no imprime composicion nominal, pero el Apendice A del B31.3 SI la imprime para este mismo UNS, y limpia, en sus dos ediciones: '9Cr-1Mo' para A217 Gr. C12 y para A426 Gr. CP9 (DB_B31_3 y DB_B31_3C). Identificado el material como un 9Cr-1Mo, el modulo E lo resuelve la Nota (5) de TM-1, que define el Material Group E e incluye la entrada redactada '9Cr-Mo, including variations thereof': un 9Cr-1Mo moldeado es un acero 9Cr-Mo, y es el mismo fundamento normativo que ya sostiene las decisiones de 9Cr-1Mo-V (K90901) y 9Cr-1Mo forjado (K90941). Es interpretacion de la regla redactada, no lectura literal, y por eso va como decision y no como AUTO. DILATACION DELIBERADAMENTE VACIA: TE-1 publica el 9Cr-1Mo en una columna condicionada por grado -'(In- cluding Grades 9, 91, 911, and 92)'- y los grados que estas filas imprimen son C12 y CP9, designaciones de pieza moldeada que esa columna no nombra. Hacer casar el '9' de 'CP9' con el 'Grade 9' de la columna seria coincidencia de digitos, no una afirmacion del codigo: exactamente la heuristica que la Rev. 3 elimino. El material queda con modulo E y sin dilatacion, y la columna Motivo de MAP_Grupo lo dice fila a fila.",
+      "validado_por": "",
+      "fecha": "2026-09-08",
+      "_filas_afectadas": 4,
+      "_nota": "Unico caso ABIERTO de Revision_MAP_Grupo.md que admitia decision con respaldo textual. Los demas casos sin resolver estan CERRADOS por limite de la fuente: II-D no publica el dato y firmarlos seria inventarlo."
     }
   ]
 }

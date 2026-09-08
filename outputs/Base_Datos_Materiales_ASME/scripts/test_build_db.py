@@ -231,29 +231,147 @@ class TestComposicionPrestada:
 
     NOTAS = {"C-1/2MO": [("TM-1", "(1)", "Material Group A")],
              "13CR": [("TM-1", "(2)", "Material Group B")]}
+    COLS = {}
 
     def test_recupera_cuando_el_uns_tiene_una_sola_composicion(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
-        r = B._composicion_prestada(idx, {}, "K11522", "", "", self.NOTAS)
+        r = B._composicion_prestada(idx, {}, {}, "K11522", "", "", "",
+                                    self.NOTAS, self.COLS)
         assert r is not None
-        comp, hojas, origenes, spec_usada = r
+        comp, hojas, origenes, col_te, via, _clave = r
         assert hojas == ["DB_B31_3"] and origenes[0][2] == "Material Group A"
-        assert spec_usada is None
+        assert col_te is None and via is B.VIA_UNS
 
     def test_no_elige_cuando_el_codigo_da_dos_composiciones(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
-        assert B._composicion_prestada(idx, {}, "K11522", "", "", self.NOTAS) is None
+        assert B._composicion_prestada(idx, {}, {}, "K11522", "", "", "",
+                                       self.NOTAS, self.COLS) is None
 
     def test_no_se_usa_si_la_fila_ya_trae_composicion_propia(self):
         idx = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
-        assert B._composicion_prestada(idx, {}, "K11522", "", "18CR-8NI", self.NOTAS) is None
+        assert B._composicion_prestada(idx, {}, {}, "K11522", "", "", "18CR-8NI",
+                                       self.NOTAS, self.COLS) is None
 
     def test_el_motivo_distingue_por_que_fallo(self):
         dos = {"K11522": {"C–1∕2Mo": ["DB_B31_3"], "C–1Mo": ["DB_Su"]}}
-        assert "mas de una" in B._motivo_sin_composicion(dos, "K11522")
+        assert "mas de una" in \
+            B._motivo_sin_composicion(dos, {}, {}, "K11522", "", "")[0]
         una = {"K11522": {"C–1∕2Mo": ["DB_B31_3"]}}
-        assert "no figura en ninguna Nota" in B._motivo_sin_composicion(una, "K11522")
-        assert "no aparece con" in B._motivo_sin_composicion({}, "K11522")
+        assert "no figura en ninguna Nota" in \
+            B._motivo_sin_composicion(una, {}, {}, "K11522", "", "")[0]
+        assert "no aparece con" in \
+            B._motivo_sin_composicion({}, {}, {}, "K11522", "", "")[0]
+
+
+class TestColumnaNombradaViaUns:
+    """El hueco que dejaba sin dilatacion a materiales que II-D SI publica.
+
+    TE-1 reparte la mayor parte de su alfa por columnas que se autodescriben
+    («Coefficients for 8Ni and 9Ni Steels»), no por Notas. El motor ya las leia
+    para las filas que imprimen su composicion, pero el camino de composicion
+    prestada por UNS solo miraba las Notas: el 9Ni de K81340 (38 filas entre
+    las dos ediciones) salia como «II-D no publica el dato» teniendo columna
+    propia impresa, y las filas resueltas por Nota solo para el modulo E —13Cr,
+    15Cr, 17Cr, 13Cr-4Ni— perdian su alfa en silencio.
+    """
+
+    NOTAS = {"13CR": [("TM-1", "(6)", "Material Group F")]}
+    COLS = {"9NI": ("Coefficients for 8Ni and 9Ni Steels", None),
+            "13CR": ("Coefficients for 12Cr, 13Cr Steels", None),
+            "9CR-1MO": ("Coefficients for 9Cr-1Mo Steels",
+                        "Including Grades 9, 91, 911, and 92")}
+
+    def test_la_columna_sin_condicion_resuelve_aunque_no_haya_nota(self):
+        idx = {"K81340": {"9Ni": ["DB_B31_3"]}}
+        r = B._composicion_prestada(idx, {}, {}, "K81340", "SA-333", "9", "",
+                                    self.NOTAS, self.COLS)
+        assert r is not None
+        comp, hojas, origenes, col_te, _via, _clave = r
+        assert comp == "9Ni" and not origenes
+        assert col_te == "Coefficients for 8Ni and 9Ni Steels"
+
+    def test_la_nota_y_la_columna_conviven(self):
+        # 13Cr: la Nota da el modulo E y la columna la dilatacion. Antes solo
+        # llegaba la primera y la fila se quedaba a medias sin decirlo.
+        idx = {"S41000": {"13Cr": ["DB_B31_3"]}}
+        _, _, origenes, col_te, _via, _clave = B._composicion_prestada(
+            idx, {}, {}, "S41000", "SA-182", "F6a", "", self.NOTAS, self.COLS)
+        assert origenes[0][2] == "Material Group F"
+        assert col_te == "Coefficients for 12Cr, 13Cr Steels"
+
+    def test_la_columna_condicionada_no_se_aplica_a_ciegas(self):
+        # 9Cr-1Mo: TE-1 la condiciona por grado, y con la composicion prestada
+        # ese grado no se ha comprobado. Elegir seria inventar.
+        idx = {"J82090": {"9Cr-1Mo": ["DB_B31_3"]}}
+        assert B._composicion_prestada(idx, {}, {}, "J82090", "SA-217", "C12",
+                                       "", {}, self.COLS) is None
+
+    def test_el_motivo_dice_que_el_dato_existe_pero_condicionado(self):
+        # No es lo mismo «II-D no publica el dato» que «lo publica, pero la
+        # columna lo condiciona a un grado». El primero se cierra; el segundo
+        # es una decision que una persona puede tomar con el codigo delante.
+        idx = {"J82090": {"9Cr-1Mo": ["DB_B31_3"]}}
+        motivo, cierre = B._motivo_sin_composicion(idx, {}, {}, "J82090",
+                                                   "SA-217", "C12", self.COLS)
+        assert "columna condicionada" in motivo
+        assert cierre == B.CIERRE_ABIERTA
+
+
+class TestCierreDeLaRevision:
+    """Un hueco de la fuente no es una decision pendiente de firma."""
+
+    def test_sin_dato_de_entrada_se_cierra(self):
+        motivo, cierre = B._motivo_sin_composicion({}, {}, {}, "K14073",
+                                                   "SA-540", "")
+        assert cierre == B.CIERRE_LIMITE and "no aparece con" in motivo
+
+    def test_composicion_identificada_pero_no_publicada_se_cierra(self):
+        idx = {"S43036": {"18Cr-Ti": ["DB_B31_3"]}}
+        _, cierre = B._motivo_sin_composicion(idx, {}, {}, "S43036", "SA-268",
+                                              "TP439", {})
+        assert cierre == B.CIERRE_LIMITE
+
+    def test_uns_ambiguo_que_la_spec_deshace_se_cierra(self):
+        # J91150/SA-217: la spec deja una sola composicion, «12Cr», y esa
+        # composicion no la publica II-D. El material esta identificado: no
+        # queda decision, queda hueco del codigo.
+        idx = {"J91150": {"12Cr": ["DB_B31_3"], "13Cr": ["DB_B31_3"]}}
+        idx_spec = {("J91150", "217"): {"12Cr": ["DB_B31_3"]}}
+        motivo, cierre = B._motivo_sin_composicion(idx, idx_spec, {}, "J91150",
+                                                   "SA-217", "CA15", {})
+        assert cierre == B.CIERRE_LIMITE
+        assert "deja una sola" in motivo and "12Cr" in motivo
+
+    def test_el_grado_impreso_desambigua_donde_la_spec_no_llega(self):
+        # G41400: la propia A193 reparte por grado (B7 vs B7M), asi que el
+        # indice por spec no desambigua. El grado, que la fila SI imprime, si.
+        idx = {"G41400": {"Cr-Mo": ["DB_B31_3"], "Cr-0.2Mo": ["DB_B31_3"]}}
+        idx_spec = {("G41400", "193"): {"Cr-Mo": ["DB_B31_3"],
+                                        "Cr-0.2Mo": ["DB_B31_3"]}}
+        idx_grado = {("G41400", "B7"): {"Cr-Mo": ["DB_B31_3"]},
+                     ("G41400", "B7M"): {"Cr-0.2Mo": ["DB_B31_3"]}}
+        motivo, cierre = B._motivo_sin_composicion(idx, idx_spec, idx_grado,
+                                                   "G41400", "SA-193", "B7M", {})
+        assert cierre == B.CIERRE_LIMITE
+        assert "grado" in motivo and "Cr-0.2Mo" in motivo
+
+    def test_el_grado_no_se_reduce_a_su_digito(self):
+        # A194 Gr. «6» y A193 Gr. «B6» son grados DISTINTOS del mismo UNS con
+        # composiciones distintas. Compararlos por su digito los confundiria y
+        # daria una composicion a la fila equivocada.
+        idx = {"S41000": {"12Cr": ["DB_B31_3"], "13Cr": ["DB_B31_3"]}}
+        idx_grado = {("S41000", "6"): {"12Cr": ["DB_B31_3"]},
+                     ("S41000", "B6"): {"13Cr": ["DB_B31_3"]}}
+        r = B._composicion_prestada(idx, {}, idx_grado, "S41000", "SA-194", "6",
+                                    "", {"12CR": [("TM-1", "(6)", "G-12")],
+                                         "13CR": [("TM-1", "(6)", "G-13")]}, {})
+        assert r[0] == "12Cr"
+
+    def test_uns_ambiguo_que_nada_deshace_sigue_abierto(self):
+        idx = {"X99999": {"A-Mo": ["DB_B31_3"], "B-Mo": ["DB_B31_3"]}}
+        _, cierre = B._motivo_sin_composicion(idx, {}, {}, "X99999", "SA-1",
+                                              "G1", {})
+        assert cierre == B.CIERRE_ABIERTA
 
 
 class TestComposicionPrestadaPorEspecificacion:
@@ -269,20 +387,24 @@ class TestComposicionPrestadaPorEspecificacion:
         idx_spec = {("S41000", "193"): {"13Cr": ["DB_B31_3"]},
                     ("S41000", "194"): {"12Cr": ["DB_B31_3"]}}
         # La fila en cuestion imprime "SA-193": debe resolver a 13Cr, no a 12Cr.
-        r = B._composicion_prestada(idx, idx_spec, "S41000", "SA-193", "", self.NOTAS)
+        r = B._composicion_prestada(idx, idx_spec, {}, "S41000", "SA-193", "B6",
+                                    "", self.NOTAS, {})
         assert r is not None
-        comp, hojas, origenes, spec_usada = r
-        assert comp == "13Cr" and spec_usada == "193"
+        comp, hojas, origenes, col_te, via, clave = r
+        assert comp == "13Cr" and via is B.VIA_SPEC and clave == "193"
 
-    def test_no_desambigua_si_la_propia_spec_tambien_es_ambigua(self):
-        # G41400: incluso DENTRO de A193 el codigo reparte por grado (B7/B7M),
-        # asi que ni el indice fino por spec tiene un candidato unico. No hay
-        # con que elegir sin inventar: sigue sin resolverse.
+    def test_no_desambigua_si_ni_la_spec_ni_el_grado_deshacen(self):
+        # Incluso DENTRO de A193 el codigo puede repartir por grado, asi que el
+        # indice fino por spec no tiene candidato unico; si el grado tampoco lo
+        # tiene, no hay con que elegir sin inventar y sigue sin resolverse.
         idx = {"G41400": {"Cr-0.2Mo": ["DB_B31_3"], "Cr-Mo": ["DB_B31_3"]}}
         idx_spec = {("G41400", "193"): {"Cr-0.2Mo": ["DB_B31_3"], "Cr-Mo": ["DB_B31_3"]}}
-        assert B._composicion_prestada(idx, idx_spec, "G41400", "A193", "",
-                                        {"CR-0.2MO": [("TM-1", "(1)", "X")],
-                                         "CR-MO": [("TM-1", "(1)", "X")]}) is None
+        idx_grado = {("G41400", "B7"): {"Cr-0.2Mo": ["DB_B31_3"],
+                                        "Cr-Mo": ["DB_B31_3"]}}
+        assert B._composicion_prestada(idx, idx_spec, idx_grado, "G41400",
+                                       "A193", "B7", "",
+                                       {"CR-0.2MO": [("TM-1", "(1)", "X")],
+                                        "CR-MO": [("TM-1", "(1)", "X")]}, {}) is None
 
     def test_spec_num_ignora_prefijo_y_puntuacion(self):
         assert B._spec_num("SA–217") == "217"

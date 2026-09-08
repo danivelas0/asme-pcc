@@ -1230,13 +1230,28 @@ def auditar():
                         (tabla, nota["nota"], nota["grupo"]))
         return out
 
+    # Rotulos de columna que TE-1 imprime en cada edicion. La dilatacion no
+    # llega solo por Notas: la mayoria de las columnas de TE-1 se autodescriben
+    # («Coefficients for 8Ni and 9Ni Steels») y son igual de normativas. Una
+    # fila que cite «TE-1 columna impresa» tiene que nombrar una columna que
+    # exista de verdad en el JSON de SU edicion; si no, es una etiqueta
+    # inventada y el buscador por grupo no encontraria esa fila.
+    def columnas_de(ed):
+        te1 = RES.load(f"{ed}/table_te_1.json")
+        etiquetas = {e for e, _ in B.columnas_nombradas_te1(te1).values()}
+        for opciones in B.condiciones_tratamiento_te1(te1).values():
+            etiquetas.update(opciones.values())
+        return etiquetas
+
     estados = Counter()
     sin_cita = huerfanas = validado_sin_marca = prestada_sin_origen = 0
+    columna_inventada = 0
     for hoja, ed in (("MAP_Grupo", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"),
                      ("MAP_GrupoC", "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")):
         ws_map = wb0[hoja]
         cm = col_map(ws_map)
         respaldo = respaldo_de(ed)
+        columnas_te = columnas_de(ed)
         for r in range(R_DATA, ws_map.max_row + 1):
             est = str(ws_map.cell(r, cm["Estado"]).value or "")
             if not est:
@@ -1257,6 +1272,11 @@ def auditar():
                 # Una composicion tomada de otra tabla tiene que declarar su origen.
                 if "otra tabla" in est and "comp. de " not in fuente:
                     prestada_sin_origen += 1
+                # Toda cita de columna de TE-1 tiene que nombrar una columna que
+                # el JSON de esa edicion imprima de verdad, venga la composicion
+                # de la propia fila o prestada por UNS.
+                if "columna impresa" in fuente and str(grupo) not in columnas_te:
+                    columna_inventada += 1
                 if "Nota" not in fuente or "comp. de " in fuente or "Validado" in fuente:
                     continue                # UNS impreso, comp. prestada o decision
                 nota = fuente.split("Nota")[-1].strip()
@@ -1312,6 +1332,9 @@ def auditar():
         ("Toda composicion tomada por UNS cita su tabla de origen",
          f"{prestada_sin_origen} filas sin citar la tabla de origen",
          prestada_sin_origen == 0),
+        ("La columna de TE-1 citada existe en esa edicion",
+         f"{columna_inventada} citas a una columna que el JSON no imprime",
+         columna_inventada == 0),
     ]
     for etiqueta, detalle, ok in filas9:
         map_bad += 0 if ok else 1

@@ -520,22 +520,83 @@ Estado por hoja (3 454 filas cada una):
 |---|---:|---|
 | AUTO (UNS exacto) | 1 292 | UNS impreso en TM-1…TM-5 |
 | AUTO (composición en Nota o columna) | 1 297 | Nota, o columna nombrada de TE-1, citada en la propia fila |
-| AUTO (composición vía UNS en otra tabla) | 200 | el código imprime esa composición para el mismo UNS en otra de sus tablas, o —cuando el UNS a secas es ambiguo— para el mismo (UNS, especificación impresa en la propia fila); el UNS (con esa especificación, si hizo falta) identifica el material de forma unívoca |
-| VALIDADO POR INGENIERO | 44 | `decisiones_map_grupo.json`; 6 decisiones (ver abajo) |
-| SIN MAPEO | 621 | II-D no publica el dato; cálculo bloqueado |
+| AUTO (composición vía UNS en otra tabla) | 228 | el código imprime esa composición para el mismo UNS en otra de sus tablas, o —cuando el UNS a secas es ambiguo— para el mismo (UNS, **especificación**) o (UNS, **grado**) que la propia fila imprime; el UNS, con ese segundo dato si hizo falta, identifica el material de forma unívoca |
+| VALIDADO POR INGENIERO | 46 | `decisiones_map_grupo.json`; 7 decisiones (ver abajo) |
+| SIN MAPEO | 591 | II-D no publica el dato; cálculo bloqueado |
 
-**Cobertura:** 2 485 filas con módulo E y 1 352 con dilatación, de 3 454. Una
+**Cobertura:** 2 490 filas con módulo E y 1 396 con dilatación, de 3 454. Una
 fila puede tener uno y no el otro — TM-1 y TE-1 no enumeran los mismos
 materiales — y la columna `Motivo` lo dice fila a fila.
+
+### Cómo se identifica el material, y cómo se busca su grupo
+
+Son dos preguntas distintas y el motor las separa. Confundirlas fue el origen
+de los dos huecos que cerró la Rev. 4c.
+
+**Identificar el material** (solo si la fila no imprime composición nominal):
+tres vías, todas apoyadas en un dato que **la propia fila imprime**, probadas
+en este orden y solo mientras la anterior deje más de un candidato —
+`_candidatas_por_uns()`:
+
+| Vía | Cuándo | Ejemplo |
+|---|---|---|
+| UNS a secas | el libro trae una sola composición para ese UNS | `K81340` → `9Ni` |
+| (UNS, **especificación**) | el código reparte por spec: perno vs. tuerca, fundición vs. tubo fundido | `J91150`: SA-426 → `13Cr`, SA-217 → `12Cr` |
+| (UNS, **grado**) | el código reparte por grado, dentro o a través de las specs | `G41400`: A193 Gr. B7 → `Cr-Mo`, Gr. B7M → `Cr-0.2Mo` |
+
+El grado se compara **literal**, sin normalizar. A194 Gr. «6» y A193 Gr. «B6»
+son grados distintos del mismo UNS `S41000` con composiciones distintas
+(`12Cr` y `13Cr`): reducirlos a su dígito los confundiría y daría la
+composición equivocada a una de las dos filas.
+
+**Buscar su grupo**: dos mecanismos, los dos impresos en el código y con el
+mismo rango — `_publicada_por_iid()`:
+
+- la lista de miembros de una **Nota** de TM-1/TE-1;
+- el **título de una columna nombrada** de TE-1 («Coefficients for 8Ni and 9Ni
+  Steels»), que se autodescribe.
+
+Hasta la Rev. 4b el segundo solo lo veían las filas que imprimen su
+composición. El camino de composición prestada por UNS miraba **solo las
+Notas**, y eso dejaba sin dilatación a materiales para los que II-D **sí la
+publica**: el `9Ni` de `K81340` (38 filas entre las dos ediciones) salía como
+«II-D no publica el dato» teniendo columna propia impresa, y las filas que la
+Nota resolvía solo para el módulo E — `13Cr`, `15Cr`, `17Cr`, `13Cr-4Ni` —
+perdían su alfa en silencio.
+
+**Una columna condicionada no se aplica con composición prestada.** «9Cr-1Mo
+Steels (Including Grades 9, 91, 911, and 92)» o «Condition 1075» no las
+resuelve la composición: las resuelve un dato que la fila tiene que imprimir
+aparte, y con la composición prestada ese dato no se ha comprobado. Ahí el
+motor declara el caso —«TE-1 SÍ publica el dato, pero condicionado»— en vez de
+elegir a ciegas entre columnas con valores distintos.
+
+`verificar.py` §9 audita que toda cita a «TE-1 columna impresa» nombre una
+columna que el JSON de **esa** edición imprima de verdad.
 
 `verificar.py` §9 audita ambas hojas fila a fila: que toda cita exista realmente
 en el JSON, que lo validado por una persona se declare como tal y que toda
 composición prestada diga de dónde salió.
 
-**Vía de retorno de las decisiones.** `Revision_MAP_Grupo.md` lista las
-**113 decisiones distintas** que quedan abiertas (de 118, tras las 6 ya
-resueltas — ver abajo), por composición o por UNS cuando la fila no
-imprime composición. Para que lleguen al cálculo, copiar
+**Vía de retorno de las decisiones.** `Revision_MAP_Grupo.md` va en dos
+bloques, y esa separación es lo importante: **casos ABIERTOS** (admiten
+criterio de ingeniería) y **casos CERRADOS por límite de la fuente**. Hasta la
+Rev. 4b todo lo no resuelto se listaba junto, bajo el rótulo «decisiones a
+tomar» y con una casilla de firma al lado; eso describía mal la realidad, y
+alguien podía rellenarla creyendo que decidía. La clase la deriva el motor del
+mismo camino por el que llegó al hueco (`CIERRE_ABIERTA` / `CIERRE_LIMITE`),
+nunca de leer el texto del motivo.
+
+**Estado tras la Rev. 4c: 0 abiertos, 106 cerrados.** No queda ninguna decisión
+pendiente de firma. Un caso se cierra cuando el material queda **identificado
+sin ambigüedad** por alguna de las tres vías de arriba y aun así ni las Notas
+ni las columnas de TM-1/TE-1 publican su grupo: ahí no hay nada que decidir —
+firmar sería inventar el valor que el código no publica, justo lo que la Regla
+n.º 1 prohíbe— y lo correcto es que la fila siga BLOQUEADA.
+
+La plantilla lo refleja: `decisiones` trae solo los casos abiertos, y los
+cerrados van aparte en `_cerrados_sin_decision`, sin casilla que rellenar.
+Para que una decisión llegue al cálculo, copiar
 `decisiones_map_grupo.plantilla.json` a `decisiones_map_grupo.json` y rellenarlo:
 esas filas pasan al estado `VALIDADO POR INGENIERO`, **siempre separado de las
 AUTO**. Una decisión **nunca sobreescribe** un grupo que el código sí asigna: el
@@ -566,7 +627,8 @@ el grado está impreso en la propia fila.
 
 ### Las decisiones tomadas, y por qué
 
-`decisiones_map_grupo.json` contiene **seis**.
+`decisiones_map_grupo.json` contiene **siete**, y son **todas** las que quedan:
+tras la Rev. 4c `Revision_MAP_Grupo.md` no lista ni un caso abierto.
 
 La primera: `9Cr-1Mo-V` (Grado 91 / P91 / F91 /
 T91, 17 filas) → `Material Group E` para el **módulo E**. TM-1 **no** lo asigna
@@ -598,15 +660,27 @@ la composición limpia.
 `K90901` (Grado 91) y `K90941` (Grado 9) son UNS distintos: esta decisión no
 sustituye ni contradice la del 9Cr-1Mo-V.
 
-Las **113** restantes no admiten propuesta: su composición no figura en
-ninguna Nota ni columna (o el UNS no aparece con composición en ningún otro
-sitio del libro), así que II-D no publica E ni dilatación y **lo correcto es
-que sigan bloqueadas**. Verificado que ninguna coincide con una nota con los
-elementos en otro orden, y que ninguna de las ambigüedades de UNS restantes
-—`S41000`/`J91150` (`12Cr` vs `13Cr`), `S41003` (`12Cr` vs `12Cr-1Ni`),
-`G41400` (cuatro composiciones distintas)— es el mismo artefacto de costura:
-sus candidatas son composiciones reales y distintas impresas en filas limpias
-del Apéndice A, así que elegir entre ellas sí sería criterio no respaldado.
+**La séptima (Rev. 4c): `J82090`, el 9Cr-1Mo moldeado** (SA-217 Gr. C12 y
+SA-426 Gr. CP9, 4 filas) → `Material Group E`, `grupo_te` **deliberadamente
+vacío**. La fila de II-D no imprime composición, pero el Apéndice A del B31.3
+sí la imprime limpia para ese mismo UNS en sus dos ediciones: `9Cr-1Mo`.
+Identificado el material, el módulo E lo resuelve la Nota (5) de TM-1
+—*«9Cr–Mo, including variations thereof»*—, el mismo fundamento normativo que
+ya sostiene `K90901` y `K90941`; por ser regla redactada y no lista literal, va
+como decisión y no como AUTO. La **dilatación se deja vacía a propósito**:
+TE-1 publica el 9Cr-1Mo en una columna condicionada por grado —«Including
+Grades 9, 91, 911, and 92»— y los grados impresos aquí son `C12` y `CP9`,
+designaciones de pieza moldeada que esa columna no nombra. Hacer casar el «9»
+de `CP9` con el «Grade 9» de la columna sería coincidencia de dígitos, no una
+afirmación del código.
+
+Los **106 casos restantes están CERRADOS por límite de la fuente**, no
+pendientes: el material queda identificado sin ambigüedad por alguna de las
+tres vías, y aun así su composición no figura en ninguna Nota ni columna de
+TM-1/TE-1 (o el UNS no aparece con composición en ningún otro sitio del
+libro). II-D no publica E ni dilatación y **lo correcto es que sigan
+bloqueadas**. Verificado que ninguna coincide con una nota con los elementos
+en otro orden.
 
 **Comprobado también contra Sección II Partes A/B/C (2026-09-08).** Las 379
 especificaciones ya extraídas en `resources/ASME_BPVC/Sec_II/{a_1,a_2,b,c}`
@@ -620,63 +694,31 @@ sencillamente no las tabula, ni por UNS ni por Nota: II-D no publica el dato
 para esa familia, no es un hueco de esta base.
 
 Sí se encontró una vía real —pero en el Apéndice A del B31.3, ya indexado, no
-en Sección II— para tres de los cuatro UNS ambiguos: `S41000`, `J91150` y
-`S41003` desambiguan limpio **por especificación** (perno vs. tuerca, forjado
-vs. fundición imprimen cada uno su propia composición sin ambigüedad).
+en Sección II— para los cuatro UNS ambiguos: desambiguan limpio **por
+especificación** o **por grado**, los dos datos impresos en la propia fila.
+`indice_composicion_por_uns` construye los dos índices finos y
+`_composicion_prestada` los consulta como *fallback*, nunca primero. Probarlos
+siempre —no solo como fallback— habría cambiado la redacción del motivo en las
+~200 filas que el camino simple ya resolvía bien, sin necesidad;
+`verificar.py` §9 lo detectó en la primera versión del cambio (270 filas sin la
+cita esperada) y obligó a corregir el orden. Ni la especificación ni el grado
+son criterios elegidos aparte, así que el resultado es `AUTO (composición vía
+UNS en otra tabla)`, nunca una decisión de ingeniería.
 
-**Aplicada (2026-09-08).** `indice_composicion_por_uns` construye ahora,
-además del índice por UNS a secas, uno fino por `(UNS, número de
-especificación)`; `_composicion_prestada` lo consulta como *fallback*, nunca
-primero: solo cuando el UNS a secas trae más de una composición global prueba
-si `(UNS, especificación impresa en la propia fila)` tiene un único
-candidato. Probarlo siempre —no solo como fallback— habría cambiado la
-redacción del motivo en las ~200 filas que el camino simple ya resolvía bien,
-sin necesidad; `verificar.py` §9 lo detectó en la primera versión del cambio
-(270 filas sin la cita esperada) y obligó a corregir el orden. La
-especificación la imprime la propia fila del código: no es un criterio
-elegido aparte, así que el resultado sigue siendo `AUTO (composición vía UNS
-en otra tabla)`, nunca una decisión de ingeniería.
+Desenlace de los cuatro, tras añadir la vía por grado (Rev. 4c):
 
-Resultado real, no el ideal — y por diseño no cierra los cuatro casos:
-- `S41000`: de 18 filas, 12 resuelven (specs SA-182/SA-268/SA-240/SA-193 →
-  `13Cr`). Las 6 de SA-479 siguen bloqueadas: el Apéndice A no trae ninguna
-  fila de esa especificación para este UNS, así que tampoco hay de dónde
-  tomar el dato por spec.
-- `J91150`: de 4 filas, 2 resuelven (spec SA-426 → `13Cr`). Las 2 de SA-217
-  (`12Cr`) siguen bloqueadas: el spec sí desambigua, pero `12Cr` **no figura
-  en ninguna Nota de TM-1/TE-1** — II-D no publica el dato para esa
-  composición, con o sin ambigüedad de UNS.
-- `S41003`: sus 4 filas (spec SA-1010 → `12Cr-1Ni`) siguen bloqueadas por el
-  mismo motivo: `12Cr-1Ni` tampoco es miembro de ninguna Nota.
-- `G41400` queda intacto, como se esperaba: reparte composición incluso
-  DENTRO de una misma especificación (`B7` vs `B7M` en la propia A193), así
-  que ni el índice fino por spec tiene un candidato único ahí.
+| UNS | Desambigua por | Composición | Resultado |
+|---|---|---|---|
+| `S41000` | **grado** `410` (A240 Gr. 410 en el Apéndice A) | `13Cr` | **resuelto entero**: Grupo F + columna TE-1. La vía por spec no llegaba —el Apéndice A no trae fila de SA-479 para este UNS— pero su grado impreso sí está allí |
+| `J91150` | especificación (SA-426 / SA-217) | `13Cr` / `12Cr` | **resuelto**: SA-426 da Grupo F y columna TE-1; SA-217 solo columna TE-1 (`12Cr` no es miembro de ninguna Nota de TM-1, así que no hay módulo E) |
+| `S41003` | especificación (SA-1010) | `12Cr-1Ni` | **cerrado**: identificado, pero `12Cr-1Ni` no figura en ninguna Nota ni columna |
+| `G41400` | **grado** (`B7` → `Cr-Mo`, `B7M` → `Cr-0.2Mo`) | según grado | **cerrado**: identificado, pero ni `Cr-Mo` ni `Cr-0.2Mo` figuran en ninguna Nota ni columna |
 
-Total: **14 filas menos en SIN MAPEO** por edición (628→621), sin tocar
-`decisiones_map_grupo.json` — es lectura más fina del código, no criterio de
-ingeniería. `test_build_db.py::TestComposicionPrestadaPorEspecificacion`
-cubre las dos ramas (desambigua por spec cuando el UNS es ambiguo; no
-desambigua si la propia spec también lo es, caso `G41400`).
-
-**Cierre declarado de las filas residuales de estos cuatro UNS — no son un
-hueco de extracción, son composiciones que II-D sencillamente no tabula.**
-Las 12 filas que quedan sin resolver (6 de `S41000`/SA-479, 2 de
-`J91150`/SA-217, 4 de `S41003`/SA-1010) tienen todas la misma causa raíz, y
-es la única que justifica dejarlas bloqueadas sin seguir buscando: la
-especificación impresa en la fila ya identifica sin ambigüedad qué
-composición es (`13Cr`, `12Cr`, `12Cr-1Ni`), pero esa composición **no
-aparece en ninguna Nota de TM-1 ni TE-1** de ninguna de las dos ediciones —
-se comprobó letra a letra, no por similitud. No es que el mapeo no sepa
-identificar el material; es que el código, una vez identificado, no publica
-módulo E ni dilatación para él. Insistir aquí con otra fuente (Sección II
-A/B/C, ya se probó y no aporta nada compatible — ver más arriba) o con otra
-heurística de texto no cerraría el hueco: lo cerraría solo que ASME
-publicase el dato, que hoy no publica. `G41400` es un caso distinto y
-también cerrado: la propia especificación (SA-193) imprime más de una
-composición para el mismo UNS (`B7` vs `B7M`), así que ni siquiera el
-criterio más fino disponible —(UNS, Spec. No.)— tiene un candidato único; ir
-más allá exigiría un criterio de ingeniería sin respaldo textual, que es
-exactamente lo que la Regla nº 1 prohíbe inventar.
+Los dos cerrados ya no son «no se elige por cuenta propia» sino «identificado,
+y el código no publica el dato»: es la diferencia entre una firma pendiente y
+un límite de la fuente. `test_build_db.py::TestComposicionPrestadaPorEspecificacion`
+y `::TestCierreDeLaRevision` cubren las cuatro ramas, incluida la que exige que
+el grado **no** se reduzca a su dígito.
 
 **Las columnas de TE-1 partidas por tratamiento térmico sí se resuelven, contra
 el dato impreso en la propia fila.** El `17Cr–4Ni–4Cu` tiene dos columnas B en
