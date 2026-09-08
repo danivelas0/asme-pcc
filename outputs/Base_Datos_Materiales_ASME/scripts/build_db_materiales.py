@@ -1358,11 +1358,12 @@ def build_factores(res, wb, cual):
 def texto_incremento_ej(res):
     """Lo que el codigo dice sobre subir Ej, leido de resources/ (no de memoria).
 
-    Devuelve (parrafo 302.3.4(b), Nota (1) de la Tabla 302.3.4-1, hueco).
-    `hueco` es el aviso a mostrar cuando la extraccion de la Tabla 302.3.4-1 no
-    permite ofrecer un factor: su cuerpo se colapso dentro de los encabezados de
-    columna, asi que el motor cita el parrafo y remite al impreso en vez de
-    inventar una cifra.
+    Devuelve (parrafo 302.3.4(b), Nota (1) de la Tabla 302.3.4-1, filas).
+    `filas` es el cuerpo reconstruido de la Tabla 302.3.4-1 (10 filas: No.,
+    tipo de junta, tipo de costura, examen, Ej), que completar_tabla_302_3_4.py
+    escribe en resources/ a partir del folio impreso. Si la extraccion volviera
+    a colapsarse (el sintoma que declaraba el hueco original), esto aborta en
+    vez de mostrar un motor que aparenta tener el dato y no lo tiene.
     """
     cap = res.load("ASME B31/ASME B31.3/CHAPTERS/chapter_02.json")
 
@@ -1393,16 +1394,37 @@ def texto_incremento_ej(res):
             break
     cabeceras = " ".join(clean((c or {}).get("header")) or ""
                          for c in t34.get("columns") or [])
-    inservible = bool(re.search(r"Factor,\s*Ej\s*0\.\d", cabeceras))
-    hueco = None
-    if inservible:
-        hueco = (f"HUECO DECLARADO: la extraccion de {t34.get('table_id')} en "
-                 "resources/ colapso el cuerpo de la tabla dentro de los "
-                 "encabezados de columna, asi que este motor NO ofrece un factor "
-                 "incrementado. Lea la tabla en el impreso "
-                 f"(PDF {'-'.join(str(p) for p in t34.get('pdf_pages') or [])}). "
-                 "No se aproxima ningun valor.")
-    return parrafo, nota1, hueco
+    if re.search(r"Factor,\s*Ej\s*0\.\d", cabeceras):
+        raise SystemExit(
+            "table_302_3_4_1.json volvio a colapsar su cuerpo dentro de los "
+            "encabezados de columna (el sintoma que completar_tabla_302_3_4.py "
+            "corrigio). No se construye Buscar_Ej_A3 con un dato que no esta: "
+            "vuelva a correr completar_tabla_302_3_4.py --pdf <folio 302.3.4-1>.")
+    filas = t34.get("rows") or []
+    if len(filas) != 10 or any(r.get("factor_ej") is None for r in filas):
+        raise SystemExit(
+            f"table_302_3_4_1.json trae {len(filas)} filas y se esperan 10 "
+            "(la Tabla 302.3.4-1 tiene 2 juntas sin subdividir + 3(a)/3(b) a "
+            "tres examenes + la junta 4 a dos). Revise si alguien la toco a "
+            "mano; no se construye el motor con un cuerpo distinto del que "
+            "completar_tabla_302_3_4.py declaro.")
+    return parrafo, nota1, filas
+
+
+def bloques_tabla_ej(filas34):
+    """Filas de Table 302.3.4-1 en el formato (texto, estilo) que consume el
+    bloque 'declarado' de build_buscador_factor. Una linea por fila, integra y
+    auditable: no se agrupan las filas de 3(a)/3(b)/4 para no esconder ninguna
+    combinacion de junta/costura/examen detras de otra."""
+    out = []
+    for f in filas34:
+        marca = "  [Nota (1): NO admite incremento por examen adicional]" \
+            if f.get("note") else ""
+        texto = (f"No. {f['no']} — {f['type_of_joint']} · Costura: "
+                 f"{f['type_of_seam']} · Examen: {f['examination']} · "
+                 f"Ej = {f['factor_ej']:.2f}{marca}")
+        out.append((texto, Font(name="Calibri", size=9)))
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -5082,7 +5104,7 @@ def main(argv=None):
     build_buscador_prop_c(wb, curvas, rangos["APXC"], apxc, apxcc)
 
     # --- los dos motores de factores de calidad ---------------------------
-    par34, nota34, hueco34 = texto_incremento_ej(res)
+    par34, nota34, filas34 = texto_incremento_ej(res)
     build_buscador_factor(
         wb, "Buscar_Ec_A2",
         f"FACTOR DE CALIDAD DE FUNDICION Ec — ASME B31.3-2024, {a2['tabla']}",
@@ -5128,17 +5150,21 @@ def main(argv=None):
         "Ej",
         dict(tipo="declarado", bloques=[
             ("SI: el codigo publica un mecanismo para subir Ej, y no es una tabla "
-             "aparte como la 302.3.3-1 del Ec.",
+             "aparte como la 302.3.3-1 del Ec — son las propias filas de la "
+             "Table 302.3.4-1, transcrita integra abajo.",
              Font(name="Calibri", size=10, bold=True, color=NAVY)),
             (f"para. 302.3.4(b), transcrito: {par34}",
              Font(name="Calibri", size=9)),
             (f"Table 302.3.4-1, Nota (1): {nota34}" if nota34 else
              "No se pudo leer la Nota (1) de la Tabla 302.3.4-1 en resources/.",
              Font(name="Calibri", size=9, bold=True, color="9C6500")),
-            (hueco34 or "La Tabla 302.3.4-1 esta disponible en resources/: revise "
-                        "este bloque.",
+            ("El factor Ej lo decide el TIPO DE JUNTA/COSTURA/EXAMEN de la fila "
+             "abajo, no la especificacion de material seleccionada arriba: "
+             "identifique cual de las diez filas describe su junta y lea su Ej. "
+             "El codigo no imprime una correspondencia fila a fila entre la "
+             "Tabla A-3 y esta tabla, asi que el motor no la infiere.",
              Font(name="Calibri", size=9, bold=True, color="9C0006")),
-        ]))
+        ] + bloques_tabla_ej(filas34)))
     build_buscador_nm(wb, nm, rangos, mx_nm)
 
     integrate_motor(wb, b313, iid, iidb, fac, rangos)

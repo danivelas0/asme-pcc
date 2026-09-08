@@ -78,7 +78,7 @@
   "fecha": "2026-09-08",
   "script": "declarar_tablas_canonicas.py",
   "archivo": "table_302_3_4_1.json",
-  "clase": "IDENTICO",
-  "motivo": "duplicado por doble prefijo de la extraccion. los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada. Cite siempre el canonico; este archivo se conserva como testigo."
+  "clase": "RECONSTRUIDA_DEL_FOLIO_IMPRESO",
+  "motivo": "duplicado por doble prefijo de la extraccion. el canonico no se recompuso a partir de su propio gemelo -como los otros pares- sino que se reconstruyo desde el folio impreso del codigo, aportado por el ingeniero fuera de resources/ (ver extraction_amendments en el propio archivo). El gemelo sigue trayendo solo los dos fragmentos que la extraccion original alcanzo a leer antes de colapsar, y ya no es comparable columna a columna con el canonico: se conserva como testigo del fallo de extraccion, no como fuente alternativa. Cite siempre el canonico; este archivo se conserva como testigo."
  }
 }

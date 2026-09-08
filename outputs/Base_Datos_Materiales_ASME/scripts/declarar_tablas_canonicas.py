@@ -91,7 +91,8 @@ NOTAS = "NOTAS_MAS_COMPLETAS"
 RECOMPUESTAS = "FILAS_RECOMPUESTAS"
 CONTINUACION = "CONTINUACION_NORMALIZADA"
 ETIQUETA = "ETIQUETA_DE_GRUPO_NO_REPETIDA"
-CLASES = (IDENTICO, NOTAS, RECOMPUESTAS, CONTINUACION, ETIQUETA)
+EXTERNA = "RECONSTRUIDA_DEL_FOLIO_IMPRESO"
+CLASES = (IDENTICO, NOTAS, RECOMPUESTAS, CONTINUACION, ETIQUETA, EXTERNA)
 
 MOTIVOS = {
     IDENTICO: "los dos archivos traen el mismo contenido; el prefijo 'table_' "
@@ -109,7 +110,24 @@ MOTIVOS = {
               "de cada columna coincide colapsando las repeticiones consecutivas: "
               "no se pierde ningun dato, solo una copia de un rotulo que el codigo "
               "reimprime en cada fila",
+    EXTERNA: "el canonico no se recompuso a partir de su propio gemelo -como los "
+             "otros pares- sino que se reconstruyo desde el folio impreso del "
+             "codigo, aportado por el ingeniero fuera de resources/ (ver "
+             "extraction_amendments en el propio archivo). El gemelo sigue "
+             "trayendo solo los dos fragmentos que la extraccion original "
+             "alcanzo a leer antes de colapsar, y ya no es comparable columna a "
+             "columna con el canonico: se conserva como testigo del fallo de "
+             "extraccion, no como fuente alternativa",
 }
+
+# Pares donde el criterio MECANICO de este script no se aplica: el canonico no
+# se recompuso fusionando fragmentos del propio gemelo (los otros 31 pares),
+# sino con datos que la extraccion nunca tuvo -el folio impreso, aportado
+# aparte-. clasificar() compara columna a columna y aqui devolveria None sin
+# remedio, porque las CLAVES de columna del canonico ya no coinciden con las
+# del gemelo a proposito. Se documenta la exclusion en vez de dejar que el
+# script aborte "sin criterio" por un par que nunca pudo resolver mecanicamente.
+EXCLUIDOS_DEL_CRITERIO_MECANICO = {"table_302_3_4_1.json"}
 
 # El codigo imprime el apostrofo tipografico (U+2019) en (Cont'd); la extraccion
 # conserva a veces el recto. Se aceptan los dos.
@@ -229,7 +247,10 @@ def main(argv=None):
     for simple, doble in pares:
         da = json.loads((base / simple).read_text(encoding="utf-8"))
         db = json.loads((base / doble).read_text(encoding="utf-8"))
-        clase = clasificar(da, db)
+        if simple in EXCLUIDOS_DEL_CRITERIO_MECANICO:
+            clase = EXTERNA
+        else:
+            clase = clasificar(da, db)
         # Donde completar_tabla_302_3_3.py ya declaro, se comprueba la coherencia.
         previo = (da.get("extraction_amendments") or {}).get("archivo_canonico")
         if previo and previo != simple:

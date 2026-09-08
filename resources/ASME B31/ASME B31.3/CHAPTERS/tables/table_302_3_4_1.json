@@ -15,41 +15,31 @@
  ],
  "columns": [
   {
-   "key": "no_1_2_3_4",
-   "header": "No. 1 2 3 4",
-   "banners": []
-  },
-  {
-   "key": "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification",
-   "header": "Furnace butt weld, continuous weld Electric resistance weld Electric fusion weld (a) Single butt weld (with or without filler metal) (b) Double butt weld Specific specification",
-   "banners": [
-    "Type of Joint"
-   ]
+   "key": "no",
+   "header": "No."
   },
   {
    "key": "type_of_joint",
-   "header": null,
-   "banners": [
-    "Type of Joint"
-   ]
+   "header": "Type of Joint"
   },
   {
-   "key": "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below",
-   "header": "Type of Seam Straight Straight or spiral (helical seam) (except as provided in 4 below)",
-   "banners": []
+   "key": "type_of_seam",
+   "header": "Type of Seam"
   },
   {
-   "key": "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code",
-   "header": "Examination As required by listed specification As required by listed specification or this Code Additionally spot radiographed in accordance with para. 341.5.1 Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1 or this Code",
-   "banners": []
+   "key": "examination",
+   "header": "Examination"
   },
   {
-   "key": "factor_ej_0_60_0_85_0_80_0_90_1_00",
-   "header": "Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00",
-   "banners": []
+   "key": "factor_ej",
+   "header": "Factor, Ej"
+  },
+  {
+   "key": "note",
+   "header": "Note"
   }
  ],
- "row_count": 2,
+ "row_count": 10,
  "notes": [
   "NOTE: (1) It is not permitted to increase the joint quality factor by additional examination for joint 1 or 2. Si = any computed displacement stress range smaller When determining the required wall thickness for than SE internal pressure in accordance with para. 304, for each coincident operating pressure–temperature condition under consideration, the product of the basic allowWhen the total number of significant stress cycles due to able stress and the applicable weld quality factor, SE, shall all causes exceeds 100 000, and with the owner’s approval, be multiplied by W. the designer may elect to apply the alternative fatigue W is equal to 1.0 when evaluating occasional loads, e.g., assessment rules in Appendix W to satisfy the displacewind and earthquake, or when evaluating permissible ment stress range requirements of this paragraph and of variations in accordance with para. 302.2.4. Application para. 319. A significant stress cycle is defined in para. of W is not required when determining the pressure rating W300. When the alternative rules of Appendix W are for the occasional load or permissible variation condition. applied, the calculations shall be documented in the engiIt is also not required when calculating the allowable neering design. stress range for displacement stresses, SA, in (d).",
   "(e) Weld Joint Strength Reduction Factor, W. At elevated For other than occasional loads or permissible variatemperatures, the long-term strength of weld joints may tions, W shall be in accordance with Table 302.3.5-1 be lower than the long-term strength of the base material. except as provided in (f). The weld joint strength reduction factor, W, is the ratio",
@@ -58,41 +48,111 @@
  ],
  "rows": [
   {
-   "no_1_2_3_4": null,
-   "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification": "API 5L, electric fusion",
-   "type_of_joint": null,
-   "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below": "Straight (with one or two",
-   "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code": "As required by specification",
-   "factor_ej_0_60_0_85_0_80_0_90_1_00": 0.95
+   "no": "1",
+   "type_of_joint": "Furnace butt weld, continuous weld",
+   "type_of_seam": "Straight",
+   "examination": "As required by listed specification",
+   "factor_ej": 0.6,
+   "note": "(1)"
   },
   {
-   "no_1_2_3_4": null,
-   "type_of_joint_furnace_butt_weld_continuous_weld_electric_resistance_weld_electric_fusion_weld_a_single_butt_weld_with_or_without_filler_metal_b_double_butt_weld_specific_specification": "weld, double butt seam",
-   "type_of_joint": null,
-   "type_of_seam_straight_straight_or_spiral_helical_seam_except_as_provided_in_4_below": "seams) or spiral (helical seam)",
-   "examination_as_required_by_listed_specification_as_required_by_listed_specification_or_this_code_additionally_spot_radiographed_in_accordance_with_para_341_5_1_additionally_100pct_radiographed_in_accordance_with_para_344_5_1_and_table_341_3_2_1_or_this_code": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
-   "factor_ej_0_60_0_85_0_80_0_90_1_00": 1.0
+   "no": "2",
+   "type_of_joint": "Electric resistance weld",
+   "type_of_seam": "Straight or spiral (helical seam)",
+   "examination": "As required by listed specification",
+   "factor_ej": 0.85,
+   "note": "(1)"
+  },
+  {
+   "no": "3(a)",
+   "type_of_joint": "Electric fusion weld — (a) Single butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam)",
+   "examination": "As required by listed specification or this Code",
+   "factor_ej": 0.8,
+   "note": null
+  },
+  {
+   "no": "3(a)",
+   "type_of_joint": "Electric fusion weld — (a) Single butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam)",
+   "examination": "Additionally spot radiographed in accordance with para. 341.5.1",
+   "factor_ej": 0.9,
+   "note": null
+  },
+  {
+   "no": "3(a)",
+   "type_of_joint": "Electric fusion weld — (a) Single butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam)",
+   "examination": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
+   "factor_ej": 1.0,
+   "note": null
+  },
+  {
+   "no": "3(b)",
+   "type_of_joint": "Electric fusion weld — (b) Double butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam) (except as provided in 4 below)",
+   "examination": "As required by listed specification or this Code",
+   "factor_ej": 0.85,
+   "note": null
+  },
+  {
+   "no": "3(b)",
+   "type_of_joint": "Electric fusion weld — (b) Double butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam) (except as provided in 4 below)",
+   "examination": "Additionally spot radiographed in accordance with para. 341.5.1",
+   "factor_ej": 0.9,
+   "note": null
+  },
+  {
+   "no": "3(b)",
+   "type_of_joint": "Electric fusion weld — (b) Double butt weld (with or without filler metal)",
+   "type_of_seam": "Straight or spiral (helical seam) (except as provided in 4 below)",
+   "examination": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
+   "factor_ej": 1.0,
+   "note": null
+  },
+  {
+   "no": "4",
+   "type_of_joint": "Specific specification — API 5L, electric fusion weld, double butt seam",
+   "type_of_seam": "Straight (with one or two seams) or spiral (helical seam)",
+   "examination": "As required by specification",
+   "factor_ej": 0.95,
+   "note": null
+  },
+  {
+   "no": "4",
+   "type_of_joint": "Specific specification — API 5L, electric fusion weld, double butt seam",
+   "type_of_seam": "Straight (with one or two seams) or spiral (helical seam)",
+   "examination": "Additionally 100% radiographed in accordance with para. 344.5.1 and Table 341.3.2-1",
+   "factor_ej": 1.0,
+   "note": null
   }
  ],
  "canonical_declaration": {
   "fecha": "2026-09-08",
   "script": "declarar_tablas_canonicas.py",
   "archivo_canonico": "table_302_3_4_1.json",
-  "clase": "IDENTICO",
-  "motivo": "los dos archivos traen el mismo contenido; el prefijo 'table_' se aplico dos veces y descartar el gemelo no pierde nada",
+  "clase": "RECONSTRUIDA_DEL_FOLIO_IMPRESO",
+  "motivo": "el canonico no se recompuso a partir de su propio gemelo -como los otros pares- sino que se reconstruyo desde el folio impreso del codigo, aportado por el ingeniero fuera de resources/ (ver extraction_amendments en el propio archivo). El gemelo sigue trayendo solo los dos fragmentos que la extraccion original alcanzo a leer antes de colapsar, y ya no es comparable columna a columna con el canonico: se conserva como testigo del fallo de extraccion, no como fuente alternativa",
   "alcance": "Solo metadatos. Ningun valor ni nombre de fila se altera.",
   "duplicado_descartado": {
    "archivo": "table_table_302_3_4_1.json",
-   "sha256": "85f9903920ae3cb5c1ac40f3bc3a85a6bacceede42338d47ee5d4e5cdbda4e09"
+   "sha256": "fc5237aaaa23edf4ab0dc3525d6ad35f42018ada5a8a927287ea32bbced2d3c7"
   }
  },
- "extraction_gap": {
+ "extraction_amendments": {
   "fecha": "2026-09-08",
-  "script": "completar_tabla_302_3_3.py",
-  "que_falta": "el CUERPO de la tabla. Las filas se colapsaron dentro de los encabezados de columna y `rows` solo conserva dos fragmentos sueltos.",
-  "sintoma": "el encabezado de la columna del factor contiene los propios valores: 'Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00'. Es la comprobacion que hace este script.",
-  "que_si_esta": "los encabezados con el texto crudo de las columnas -tipo de junta, tipo de costura y examen- y la Nota (1), que prohibe incrementar el factor para las juntas 1 y 2.",
-  "consecuencia": "no se puede ofrecer el factor Ej incrementado del para. 302.3.4(b). Buscar_Ej_A3 declara el hueco, transcribe el parrafo y la Nota (1) y remite al folio impreso; no aproxima ningun valor.",
-  "como_cerrarlo": "hace falta el folio impreso de esta tabla -pagina 51-51 del PDF del codigo- o su OCR estructurado, como se hizo con el Apendice C. Ni el PDF de los capitulos ni su OCR estan en el repositorio."
+  "script": "completar_tabla_302_3_4.py",
+  "alcance": "Reconstruye columns/rows: la extraccion original colapso el cuerpo de la tabla dentro de los encabezados de columna (ver el `extraction_gap` que este script retira, declarado por completar_tabla_302_3_3.py). No toca notes, title, table_id ni canonical_declaration.",
+  "metodo": "Transcripcion literal de las 10 filas contra el folio impreso, aportado por el ingeniero como PDF de 3 paginas (pagina 3 de ese archivo = folio impreso \"18\" del codigo = folio 51, el que ya declaraba `pdf_pages`). La tabla tiene reglas de celda impresas: no es un problema de geometria de fuente proporcional (a diferencia de la Seccion II, ver secii_tablas.py); las diez filas se leen sin ambiguedad.",
+  "verificacion_cruzada": "los cinco primeros valores de Ej en orden de aparicion -0.60, 0.85, 0.80, 0.90, 1.00- coinciden exactamente con los que la extraccion colapsada ya mostraba en su encabezado roto ('Factor, Ej 0.60 [Note (1)] 0.85 0.80 0.90 1.00'), antes de perder el resto de la tabla.",
+  "fuente": {
+   "archivo": "ASME B31.3-WELD JOINT AND CASTING QUALITY FACTORS.pdf",
+   "sha256": "61c310f22c991957d309af873af19e2a12ed802f16a456238aa7d750d80e7d5c",
+   "descripcion": "PDF de 3 paginas, 'ASME B31.3-WELD JOINT AND CASTING QUALITY FACTORS', aportado por el ingeniero fuera del repositorio (copyright ASME, no se versiona).",
+   "pagina_del_pdf_aportado": 3,
+   "folio_impreso_del_codigo": "18"
+  },
+  "nota_1": "No es permitido incrementar el factor Ej de las juntas 1 (furnace butt weld) y 2 (ERW) por examen adicional: lo dice la propia Nota (1) de la tabla, ya presente en `notes`."
  }
 }

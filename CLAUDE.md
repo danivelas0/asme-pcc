@@ -169,16 +169,22 @@ python completar_apendice_c.py --resources ..\..\..\resources
 python completar_apendice_b.py --resources ..\..\..\resources
 python completar_apendice_a.py --resources ..\..\..\resources
 
-# Solo si se repone la extraccion de las tablas del cuerpo del B31.3. Los dos
-# son idempotentes y solo escriben metadatos.
-#   302_3_3: declara el canonico del par de la Tabla 302.3.3-1, recupera sus
-#            rotulos de columna del para. 302.3.3(c) y deja escrito, DENTRO de
-#            table_302_3_4_1.json, el hueco de esa tabla. El builder ABORTA si
-#            no se ha corrido.
+# Solo si se repone la extraccion de las tablas del cuerpo del B31.3. Los tres
+# son idempotentes y solo escriben metadatos (302_3_4 tambien columns/rows de
+# table_302_3_4_1.json, pero solo una vez: la segunda corrida no toca nada).
+#   302_3_3: declara el canonico del par de la Tabla 302.3.3-1 y recupera sus
+#            rotulos de columna del para. 302.3.3(c).
+#   302_3_4: reconstruye el CUERPO de la Tabla 302.3.4-1 (Ej), que la
+#            extraccion original colapso dentro de los encabezados de columna.
+#            Exige el folio impreso -PDF pagina 51 del codigo- porque no esta
+#            en el repo (copyright ASME); el ingeniero lo aporta con --pdf. El
+#            builder ABORTA si no se ha corrido (o si el cuerpo vuelve a
+#            colapsarse): Buscar_Ej_A3 no se construye con un dato que no esta.
 #   canonicas: resuelve los 32 pares de doble prefijo de CHAPTERS/tables. Si
-#            algun par deja de encajar en una de las cinco clases mecanicas, no
-#            escribe nada y lo dice.
+#            algun par deja de encajar en una de las clases mecanicas o
+#            declaradas EXTERNA, no escribe nada y lo dice.
 python completar_tabla_302_3_3.py --resources ..\..\..\resources
+python completar_tabla_302_3_4.py --resources ..\..\..\resources --pdf "<PDF con el folio impreso de la Tabla 302.3.4-1>"
 python declarar_tablas_canonicas.py --resources ..\..\..\resources
 
 python build_db_materiales.py --resources ..\..\..\resources `
@@ -291,8 +297,22 @@ Dos trampas ya pagadas, documentadas en el código:
     estado de las notas que cita **la propia fila**, nunca de una suposición, y
     contempla los cuatro casos: solo (4), solo (5), **las dos** —A451 es la única
     fila que las cita juntas— y ninguna. Para `Ej` el mecanismo existe
-    (para. 302.3.4(b) y Tabla 302.3.4-1) pero la extracción de esa tabla está
-    inservible, así que el motor **declara el hueco y no ofrece número**.
+    (para. 302.3.4(b) y Tabla 302.3.4-1). La extracción de esa tabla en
+    `resources/` estaba inservible —el cuerpo se había colapsado dentro de los
+    encabezados de columna— y `completar_tabla_302_3_4.py` la reconstruyó desde
+    el folio impreso (aportado por el ingeniero fuera del repo, copyright ASME;
+    su SHA-256 queda en `extraction_amendments` de `table_302_3_4_1.json` para
+    auditoría). A diferencia de Ec, el B31.3 **no imprime una correspondencia
+    fila a fila** entre la Tabla A-3 y la 302.3.4-1: el factor lo decide el tipo
+    de junta/costura/examen, no la especificación de material, así que
+    `Buscar_Ej_A3` no infiere esa correspondencia —sería exactamente la clase de
+    heurística que la Rev. 3 eliminó— y en su lugar transcribe las diez filas
+    íntegras de la 302.3.4-1 para que el ingeniero identifique la suya y lea su
+    Ej directamente. La Nota (1) —prohíbe incrementar Ej en las juntas 1 y 2— se
+    marca en cada una de esas dos filas. El par `table_302_3_4_1.json` /
+    `table_table_302_3_4_1.json` queda excluido del criterio mecánico de
+    `declarar_tablas_canonicas.py` (clase `RECONSTRUIDA_DEL_FOLIO_IMPRESO`): su
+    canónico ya no es comparable columna a columna con el gemelo a propósito.
 
 ### Estilo de diseño de los buscadores — no romper
 

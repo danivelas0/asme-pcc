@@ -983,15 +983,26 @@ class TestFactoresDeCalidad:
         for c in cols:
             assert "302.3.3(c)" in c["fuente_derivacion"]
 
-    def test_el_incremento_de_ej_existe_y_su_hueco_esta_declarado(self):
+    def test_el_incremento_de_ej_existe_y_su_tabla_se_reconstruyo(self):
         # Tercera pregunta de la Fase 0: si el codigo publica un mecanismo
-        # analogo para Ej. Lo publica —para. 302.3.4(b)— pero la extraccion de
-        # la Tabla 302.3.4-1 colapso su cuerpo dentro de los encabezados de
-        # columna, asi que el motor declara el hueco en vez de dar un numero.
-        par, nota1, hueco = B.texto_incremento_ej(self._res())
+        # analogo para Ej. Lo publica —para. 302.3.4(b)— y completar_tabla_302_3_4.py
+        # reconstruyo el cuerpo de la Tabla 302.3.4-1 (colapsado en la
+        # extraccion original) desde el folio impreso: el motor ya puede
+        # ofrecer las diez filas en vez de declarar un hueco.
+        par, nota1, filas = B.texto_incremento_ej(self._res())
         assert "higher joint quality factors" in par
         assert nota1 and "not permitted to increase" in nota1
-        assert hueco and "HUECO DECLARADO" in hueco
+        assert len(filas) == 10
+        factores = [f["factor_ej"] for f in filas]
+        assert factores[:5] == [0.60, 0.85, 0.80, 0.90, 1.00]
+        assert sum(1 for f in filas if f.get("note")) == 2   # juntas 1 y 2
+
+    def test_bloques_tabla_ej_no_esconde_ninguna_fila(self):
+        _, _, filas = B.texto_incremento_ej(self._res())
+        bloques = B.bloques_tabla_ej(filas)
+        assert len(bloques) == 10
+        assert all("Ej = " in t for t, _ in bloques)
+        assert sum(1 for t, _ in bloques if "NO admite incremento" in t) == 2
 
     def test_el_conmutador_si_us_degenerado_esta_rotulado(self):
         # Regla 10: todo motor lleva conmutador SI/US. Ec y Ej son
@@ -1043,9 +1054,15 @@ class TestTablasCanonicas:
     def test_el_criterio_sigue_resolviendo_todos_los_pares(self):
         # Si una reextraccion futura cambia uno de los dos archivos de un par de
         # forma que el criterio mecanico ya no lo resuelva, esto lo detiene antes
-        # de que nadie cite el equivocado.
+        # de que nadie cite el equivocado. table_302_3_4_1.json esta EXCLUIDO a
+        # proposito: su canonico se reconstruyo desde el folio impreso, no desde
+        # su gemelo, asi que clasificar() nunca lo resolveria mecanicamente.
         import declarar_tablas_canonicas as D
         for simple, doble in self._pares():
+            if simple in D.EXCLUIDOS_DEL_CRITERIO_MECANICO:
+                assert (self._json(simple)["canonical_declaration"]["clase"]
+                        == D.EXTERNA)
+                continue
             clase = D.clasificar(self._json(simple), self._json(doble))
             assert clase is not None, f"{simple} vs {doble}"
             assert clase == self._json(simple)["canonical_declaration"]["clase"]
@@ -1058,25 +1075,25 @@ class TestTablasCanonicas:
                 == d["canonical_declaration"]["archivo_canonico"]
                 == "table_302_3_3_1.json")
 
-    def test_el_hueco_de_la_302_3_4_1_esta_declarado_en_su_archivo(self):
-        # El motor de A-3 lo dice, pero quien abra el JSON tiene que verlo sin
-        # salir de el: un hueco que solo se nombra en la herramienta que lo
-        # consume se cita a ciegas desde cualquier otra.
+    def test_la_302_3_4_1_ya_no_declara_hueco(self):
+        # completar_tabla_302_3_4.py reconstruyo el cuerpo desde el folio
+        # impreso que aporto el ingeniero. El hueco se retira del archivo -no
+        # se acumula junto al arreglo- y queda la constancia de como se cerro.
         d = self._json("table_302_3_4_1.json")
-        g = d.get("extraction_gap")
-        assert g, "table_302_3_4_1.json no declara su hueco"
-        for k in ("que_falta", "sintoma", "que_si_esta", "consecuencia",
-                  "como_cerrarlo"):
-            assert g.get(k), k
-        assert "302.3.4(b)" in g["consecuencia"]
+        assert d.get("extraction_gap") is None, \
+            "table_302_3_4_1.json sigue declarando el hueco ya cerrado"
+        am = d.get("extraction_amendments")
+        assert am and am["script"] == "completar_tabla_302_3_4.py"
+        assert len(am["fuente"]["sha256"]) == 64
 
-    def test_el_sintoma_del_hueco_sigue_siendo_cierto(self):
-        # El dia que la extraccion se reponga bien, esta prueba falla y avisa de
-        # que hay que retirar la declaracion de hueco y construir el bloque de
-        # incremento de Ej de verdad.
+    def test_el_cuerpo_de_la_302_3_4_1_esta_reconstruido(self):
+        # El sintoma que declaraba el hueco -el factor dentro del encabezado de
+        # columna- ya no debe aparecer, y las 10 filas tienen que estar.
         import re
         d = self._json("table_302_3_4_1.json")
         cab = " ".join(str((c or {}).get("header") or "") for c in d["columns"])
-        assert re.search(r"Factor,\s*Ej\s*0\.\d", cab), (
-            "la Tabla 302.3.4-1 ya no trae los valores dentro del encabezado: "
-            "revise si el hueco sigue existiendo")
+        assert not re.search(r"Factor,\s*Ej\s*0\.\d", cab), (
+            "la Tabla 302.3.4-1 volvio a colapsar el cuerpo dentro del "
+            "encabezado")
+        assert d["row_count"] == 10 == len(d["rows"])
+        assert [r["factor_ej"] for r in d["rows"][:5]] == [0.60, 0.85, 0.80, 0.90, 1.00]
