@@ -273,10 +273,18 @@ def main(argv=None) -> int:
     aqui = Path(__file__).resolve().parent
     raiz = aqui.parents[2]  # scripts -> Base_Datos_Materiales_ASME -> outputs -> repo
 
+    # El respaldo Rev. 0 ya cambio de carpeta una vez -vivia en
+    # outputs/Base_Datos_Materiales_ASME/ y hoy esta en outputs/-, asi que se
+    # busca en los dos sitios en vez de fijar uno. Fijar uno solo deja este paso
+    # roto con un "no existe la entrada" cada vez que alguien mueve el archivo,
+    # y es un paso que se corre tan de tarde en tarde que nadie recuerda por que.
+    candidatos = tuple(d / "Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx"
+                       for d in (aqui.parents[1], aqui.parent))
+
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--in", dest="inp", type=Path,
-                    default=aqui.parent / "Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx")
+                    default=next((p for p in candidatos if p.exists()), candidatos[0]))
     ap.add_argument("--out", dest="out", type=Path,
                     default=raiz / "templates" / "maestro_con_macros.xlsm")
     ap.add_argument("--vba", dest="vba", type=Path, default=aqui / "vba")
@@ -284,6 +292,11 @@ def main(argv=None) -> int:
 
     if not a.inp.exists():
         print(f"ERROR: no existe la entrada {a.inp}", file=sys.stderr)
+        if a.inp in candidatos:
+            print("  Buscado en:\n    " + "\n    ".join(str(p) for p in candidatos),
+                  file=sys.stderr)
+            print("  Si el respaldo Rev. 0 esta en otro sitio, pase --in.",
+                  file=sys.stderr)
         return 2
     for src in (SRC_THIS_WORKBOOK, SRC_MOD_NAV):
         if not (a.vba / src).exists():

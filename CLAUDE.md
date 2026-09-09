@@ -436,8 +436,14 @@ II desde la hoja y las contrasta contra una reconstrucción independiente hecha
 desde `resources/`.
 
 La entrada del builder es el maestro sembrado en `templates/`, que a su vez sale de
-`outputs/Base_Datos_Materiales_ASME/Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx`
-(3 hojas). El `Motor_de_Calculo_ASME_PCC.xlsx` de la raíz **no está en el repo**.
+`outputs/Motor_de_Calculo_ASME_PCC_Rev0_respaldo.xlsx` (3 hojas). El
+`Motor_de_Calculo_ASME_PCC.xlsx` de la raíz **no está en el repo**.
+
+Ese respaldo estuvo en `outputs/Base_Datos_Materiales_ASME/` y se movió a
+`outputs/`; `make_vba_seed.py` lo busca **en los dos sitios** y solo pide `--in`
+si no está en ninguno. Es un paso que se corre de tarde en tarde, y fijar una
+sola ruta lo dejaba roto —con un «no existe la entrada»— cada vez que el archivo
+cambiaba de carpeta.
 
 `verificar.py` devuelve 0 solo si todo pasa. Audita **fila a fila** cada valor
 tabulado contra el JSON del código (271 276 valores de esfuerzos, más 4 726 del
