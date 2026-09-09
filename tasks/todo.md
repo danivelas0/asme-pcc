@@ -20,6 +20,28 @@ valor que el código no imprime. Lo correcto es que esas filas sigan bloqueadas.
 `Revision_MAP_Grupo.md` separa los dos bloques y solo el de ABIERTOS lleva
 casilla. Si un día vuelve a haber una, aparecerá ahí sola.
 
+## Alcance del libro: solo ASME PCC
+
+**Este libro es el de la familia PCC, y nada más.** Piping y recipientes a
+presión tendrán **su propio libro**, cada uno por separado; no se cargan aquí.
+Decisión del ingeniero, 2026-09-08.
+
+Lo que sí queda dentro del alcance es el resto de la familia PCC: los demás
+artículos de PCC-2, el PCC-1 y el PCC-3. Están en el árbol como tarjeta
+marcador y son el único crecimiento previsto de la banda 1.
+
+Las bandas 2 y 3 —los cinco buscadores del B31.3, los cinco de la Parte D y las
+nueve hojas de datos de las Partes A, B y C— **no contradicen esto**: son el
+insumo normativo que PCC-2 necesita para dimensionar una reparación (el Art. 212
+calcula la tubería contra el B31.3 y la virola contra la Sección VIII, con los
+admisibles de la II-D). Están aquí como soporte del motor de cálculo, no como
+entregable de piping ni de recipientes.
+
+Consecuencia para las tarjetas marcador de B31.1, B16 y SEC. VIII: siguen
+diciendo `NO CARGADO EN ESTE LIBRO`, que es exacto y no promete nada. Explican
+la taxonomía de la cita —por qué la rama del B31 tiene un solo hijo cargado—, no
+un pendiente.
+
 ## Límites declarados, que no son deuda
 
 Ninguno de estos es un hueco por cerrar: es la fuente la que no publica el dato,
@@ -35,7 +57,8 @@ creyendo que se olvidaron.
 | 24 812 filas AMBIGUAS de la Sección II (45,8 %) | límite de la fuente: sin `Span` no hay posición de palabra | `IDX_SecII_Tablas`, tabla a tabla |
 | Las normalizadas de química y tracción cubren 220 y 182 filas | límite de la fuente: los encabezados llegan sin partir | `Revision_Tablas_SecII.md`, con los dos motivos contados |
 | `Ej` sin correspondencia fila a fila entre A-3 y 302.3.4-1 | el B31.3 no la imprime; se transcriben las 10 filas | `CLAUDE.md`, regla 11 |
-| B31.1, B16, SEC. VIII, PCC-1, PCC-3 y el resto de PCC-2 | alcance: no cargados | tarjeta marcador `NO CARGADO EN ESTE LIBRO` |
+| B31.1, B16 y SEC. VIII | alcance: **de otro libro**, no de este (ver arriba) | tarjeta marcador `NO CARGADO EN ESTE LIBRO` |
+| PCC-1, PCC-3 y el resto de PCC-2 | alcance: no cargados **todavía**; son el crecimiento previsto de este libro | tarjeta marcador `NO CARGADO EN ESTE LIBRO` |
 
 ## Lo único que exige una máquina concreta
 
