@@ -6102,13 +6102,23 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
     _nota(ws["D44"], "Calculo: repite el Ej resuelto en la seccion 7 (E128) a partir "
                     "de la clave de junta longitudinal elegida en D128. No se edita "
                     "aqui.")
-    ws["F90"] = ('=IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
-                 'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),"APTO","REVISAR"))')
-    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. REVISAR — MATERIAL FUERA "
-                    "DE RANGO si el metal base o el collar quedaron fuera de rango "
-                    "en la seccion 7; APTO solo si ademas las 4 verificaciones de la "
-                    "seccion 5 (filete, excentricidad, conformado en frio, espesor "
-                    "de pared) dan CUMPLE; REVISAR en cualquier otro caso.")
+    # El dictamen distingue "sin material" de "fuera de rango": son estados
+    # distintos y confundirlos hacia leer un formulario recien abierto (cascada
+    # vacia) como un material rechazado por temperatura. "ELIJA MATERIAL" invita
+    # a completar la seccion 7; "FUERA DE RANGO" solo aparece cuando ya hay
+    # material y la T supera lo que el codigo tabula.
+    ws["F90"] = ('=IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
+                 '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
+                 'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
+                 'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
+                 '"APTO","REVISAR")))')
+    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. ELIJA MATERIAL (Seccion 7) "
+                    "si el metal base o el collar aun no estan seleccionados en la "
+                    "cascada; REVISAR — MATERIAL FUERA DE RANGO si ya hay material "
+                    "pero quedo fuera de rango de temperatura; APTO solo si ademas "
+                    "las 4 verificaciones de la seccion 5 (filete, excentricidad, "
+                    "conformado en frio, espesor de pared) dan CUMPLE; REVISAR en "
+                    "cualquier otro caso.")
     nota131 = ws.cell(131, 1, "La cascada filtra la base ASME por familia, composicion "
                     "nominal, forma de producto, especificacion y tipo/grado. Si un "
                     "material no aparece, localicelo en el buscador correspondiente y "
@@ -6119,10 +6129,84 @@ def integrate_motor(wb, b313, iid1a, iidb, fac_info, rangos):
     _nota(nota131, "Aviso fijo: como usar la cascada de la seccion 7 y que hacer si "
                   "un material no aparece en ella. No se edita.")
 
+    corregir_art212_fase1(ws)
+
     comentar_art212_base(ws)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
+
+
+# material_id del caso precargado (Linea 12"-CWS-46-032-B1), verificados contra
+# DB_B31_3. Se siembran en la celda 'Variante' (paso 5) de la seccion 7, que es la
+# via de escape declarada de la cascada (fila 115: D115=IF(D114<>"",D114,...)): un
+# unico MATCH del material_id contra la columna A de la base, sin depender de las
+# columnas ocultas de la cascada. El build ABORTA si el id no esta en la base.
+SEED_ART212_BASE = 'A-1 | A106 | B | Pipe & tube | K03006 | P-1'      # tuberia (D)
+SEED_ART212_COLLAR = 'A-1 | A516 | 70 | Plate, bar, shps., sheet | K02700 | P-1'  # (E)
+
+
+def corregir_art212_fase1(ws):
+    """Fase 1 del motor Art. 212: tres correcciones sobre la hoja heredada del
+    maestro, escritas aqui (no en el maestro Rev.0) para que la revision las
+    posea y no queden ancladas al respaldo Rev.0.
+
+    A) Espesor de pared robusto. El lookup heredado de la cedula
+       (=INDEX(...,MATCH($D$19,Datos_Ref!$C$4:$P$4,0))) casa la cedula tecleada
+       contra la fila de encabezados, que el maestro guarda como TEXTO ('5',
+       '10', '20'... porque incluye STD/XS/XXS). Al elegir "20" del desplegable,
+       Excel lo mete como NUMERO 20 y MATCH(20, {texto}, 0) devuelve #N/D, que
+       arrastraba toda la geometria (Dm, Rm, e, t_req, esfuerzos, P_max). El
+       ""& fuerza el valor a texto: idempotente si ya es texto, y tolera tanto
+       el numero como STD/XS/XXS. Es el unico cambio que hace falta; OD (D20) no
+       toca la cedula, por eso salia bien.
+
+    B) Caso precargado que SI calcula. El titulo promete "caso precargado", pero
+       la cascada de material (D109..E114) se entrega vacia, asi que Sa_c/Sa_b
+       arrancaban en #N/D y el dictamen decia MATERIAL. Se siembra el material
+       del caso real por la celda Variante (ver SEED_*), con lo que la seccion 7
+       resuelve S(T=25 C) de A106 Gr.B (base) y A516 Gr.70 (collar) y el motor
+       calcula de punta a punta. El ingeniero cambia esas celdas para su caso.
+
+    C) Descriptores del material de la seccion 1. D22/D23 son rotulos heredados
+       que YA no alimentan el calculo (lo rige la seccion 7); su nota lateral lo
+       dice, para que no compitan visualmente con la fuente real del S(T).
+    """
+    # --- A) espesor de pared robusto al tipo de la cedula ------------------
+    ws["D21"] = ('=INDEX(Datos_Ref!$C$5:$P$37,'
+                 'MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
+                 'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))')
+    # El comentario de D21 lo escribe comentar_art212_base (row 21 de `simples`),
+    # ya actualizado para describir el ""&; asi la celda tiene una sola nota.
+
+    # --- B) sembrar el caso precargado por la celda Variante ---------------
+    db = ws.parent["DB_B31_3"]
+    ids = {db.cell(r, 1).value for r in range(R_DATA, db.max_row + 1)}
+    for etiqueta, mid in (("base", SEED_ART212_BASE), ("collar", SEED_ART212_COLLAR)):
+        if mid not in ids:
+            raise SystemExit(
+                f"Art.212 Fase 1: el material_id sembrado ({etiqueta}) no existe en "
+                f"DB_B31_3: {mid!r}. La siembra del caso precargado no puede apuntar "
+                "a un material que no esta en la base (Regla n.1).")
+    ws["D114"] = SEED_ART212_BASE
+    ws["E114"] = SEED_ART212_COLLAR
+    _nota(ws["D114"], "Entrada (Variante): sembrada con el material_id del metal base "
+                     "del caso precargado (A106 Gr.B). Es la via de escape de la "
+                     "cascada; cambiela por el material de su caso o vacie y use la "
+                     "cascada (pasos 0-4).")
+    _nota(ws["E114"], "Entrada (Variante): sembrada con el material_id del collar/"
+                     "parche del caso precargado (A516 Gr.70). Cambiela por el "
+                     "material de su caso o vacie y use la cascada (pasos 0-4).")
+
+    # --- C) descriptores de material de la seccion 1 -----------------------
+    ws["G22"] = "Descriptivo · el S(T) rige en la Seccion 7"
+    ws["G23"] = "Descriptivo · el S(T) rige en la Seccion 7"
+
+    # --- titulos: este motor es Art. 212 (parche); el collar es Art. 206 ---
+    ws["A1"] = "MOTOR DE CALCULO — PARCHE SOLDADO (ASME PCC-2 Art. 212)"
+    ws["A2"] = ("ASME PCC-2 Art. 212 (Fillet Welded Patches). El collar de encierro "
+                "total (Art. 206) es un motor aparte. Caso precargado: Linea "
+                "12\"-CWS-46-032-B1 (U46).")
 
 
 def comentar_art212_base(ws):
@@ -6155,7 +6239,10 @@ def comentar_art212_base(ws):
         20: "Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
             "tabla B36.10M de Datos_Ref.",
         21: "Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
-            "(D19) en la tabla B36.10M de Datos_Ref.",
+            "(D19) en la tabla B36.10M de Datos_Ref. El \"\"&$D$19 fuerza la "
+            "cedula a texto para casar con la fila de encabezados (guardada como "
+            "texto por incluir STD/XS/XXS); sin esto, una cedula numerica del "
+            "desplegable daba #N/D y arrastraba toda la geometria.",
         22: "Entrada: material del componente reparado (metal base), de la "
             "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
             "cascada de la seccion 7.",
