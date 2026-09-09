@@ -3,24 +3,32 @@
 build_db_materiales.py — Construye las bases de datos de materiales del
 Motor de Calculo ASME PCC a partir de los JSON de resources/.
 
-PLAN-DB-MAT-001 · Rev. 2
+PLAN-DB-MAT-001
 
-Cambios de la Rev. 2 frente a la Rev. 1
----------------------------------------
-* El libro NO usa ninguna funcion de matriz dinamica (FILTER / SORT / UNIQUE /
-  XLOOKUP / VSTACK). Toda la logica es INDEX / MATCH / OFFSET / COUNTIF, que
-  funciona en cualquier version de Excel. Era la causa de que los buscadores no
-  devolvieran resultados.
-* La busqueda por texto libre se sustituye por CASCADA DE LISTAS DESPLEGABLES:
-  Spec. No. -> Forma de producto -> Material. La unica celda donde el usuario
-  escribe es la temperatura de consulta.
-* Las bases se ordenan por (Spec, Forma, clave) para que cada bloque de la
-  cascada sea contiguo y las listas se resuelvan con OFFSET/MATCH/COUNTIF.
-* Clave bilingue: enlaza cada fila metrica con su homologa U.S. Customary y
-  verifica la paridad entre ediciones.
+Que escribe
+-----------
+El libro entero, de una sola pasada y sin edicion manual: las bases `DB_*` y
+`MAP_*` leidas de resources/, los doce motores (Art. 212, los diez buscadores
+e `Instrucciones`), las nueve hojas de volcado de la Seccion II, el `Dashboard`
+y las quince hojas `NAV_*` del arbol de navegacion, con los estados de
+visibilidad grabados en el archivo.
+
+Aqui NO va el historial por revision: ese vive en
+`outputs/Base_Datos_Materiales_ASME/LEEME_Nota_de_Version.md`, que es su sitio.
+Un changelog duplicado al principio de un modulo de 7 000 lineas se queda
+viejo sin que nadie lo note — este llego a describir la Rev. 2 con el libro ya
+por la 4.
+
+Reglas de diseno que gobiernan todo lo que se emite (ver CLAUDE.md):
+* Cero funciones de matriz dinamica. Solo INDEX / MATCH / OFFSET / COUNTIF.
+* Validacion de datos por rango literal, nunca por formula.
+* Cascada contigua de listas desplegables; la unica celda que se teclea es la
+  temperatura de consulta.
+* Clave bilingue: cada fila metrica enlaza con su homologa U.S. Customary y la
+  paridad entre ediciones se verifica al construir.
 
 Uso:
-    python build_db_materiales.py --resources <ruta> --in <xlsx> --out <xlsx>
+    python build_db_materiales.py --resources <ruta> --in <xlsm> --out <xlsm>
 """
 from __future__ import annotations
 
@@ -6538,7 +6546,10 @@ def rewrite_instrucciones(wb, version_note):
 
 
 def build_meta(wb, counts):
-    ws = new_sheet(wb, "_meta", "TRAZABILIDAD DE LAS BASES DE DATOS — PLAN-DB-MAT-001 Rev.2",
+    # Sin revision escrita a mano en el rotulo: la anterior se quedo en
+    # "Rev.2" mientras el libro iba por la 4, y una hoja de TRAZABILIDAD que
+    # se equivoca sobre su propia version es lo contrario de trazable.
+    ws = new_sheet(wb, "_meta", "TRAZABILIDAD DE LAS BASES DE DATOS — PLAN-DB-MAT-001",
                    "Cada base referencia el archivo de resources/ del que procede "
                    "(regla 5.4 de knowledge/claude.md). Al cambiar de edicion del codigo, "
                    "re-ejecutar build_db_materiales.py sobre los nuevos JSON.")

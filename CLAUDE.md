@@ -26,7 +26,8 @@ concreto de `resources/` del que procede, para permitir auditoría posterior.
 ```
 knowledge/     Instrucciones de cálculo ASME PCC-2 en SI. Leer antes de cualquier tarea.
 resources/     Códigos y normas (JSON). Fuente única de verdad.
-               ├─ ASME B31/ASME B31.3/APPEX/   Apéndices A, B y C
+               ├─ ASME B31/ASME B31.3/
+               │  ├─ APPEX/                    Apéndices A, B y C
                │  └─ CHAPTERS/tables/          Tablas del cuerpo normativo
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
                └─ ASME_BPVC/Sec_II/
@@ -35,11 +36,23 @@ resources/     Códigos y normas (JSON). Fuente única de verdad.
                   ├─ bpvc_ii_d_metric_2025/    II-D métrica (MPa, °C)
                   └─ bpvc_ii_d_customary_2025/ II-D U.S. Customary (ksi, °F)
 outputs/       Entregables.
+               ├─ Base_Datos_Materiales_ASME/  Los scripts del motor y sus informes.
+               ├─ plans/                       Planes EN CURSO.
+               │  └─ registro/                 Planes ya ejecutados; ver su LEEME.md.
+               └─ <proyecto>/                  Un entregable de ingeniería por carpeta.
 templates/     maestro_con_macros.xlsm — Rev. 0 + proyecto VBA, entrada del builder.
                Se genera con scripts/make_vba_seed.py; no se edita a mano.
+tools/         b31_3_extractor: el extractor con el que se produjo el B31.3 de
+               resources/. Solo se toca para reponer esa extracción.
+tasks/         lessons.md — errores ya pagados y la regla que dejó cada uno.
+Generales/     Material de referencia suelto (el PNG del layout del Dashboard).
+.agents/skills/  Skills instalados + skills-lock.json. `.claude/skills/` son
+                 junctions a estos y no se versionan.
 ```
 
-**Nunca leas `outputs/` ni `templates/`** salvo que se te señale un archivo.
+**Nunca leas `outputs/` ni `templates/`** salvo que se te señale un archivo. La
+excepción es `outputs/Base_Datos_Materiales_ASME/scripts/`, que es **código
+fuente**, no entregable: ahí vive el builder y sus pruebas.
 **Guarda todo entregable en `outputs/` dentro de una subcarpeta** con nombre de proyecto.
 
 Ante una duda de alcance, pregunta antes de producir.
@@ -446,10 +459,10 @@ sola ruta lo dejaba roto —con un «no existe la entrada»— cada vez que el a
 cambiaba de carpeta.
 
 `verificar.py` devuelve 0 solo si todo pasa. Audita **fila a fila** cada valor
-tabulado contra el JSON del código (271 276 valores de esfuerzos, más 4 726 del
-Apéndice C, 720 de la Tabla B-1 —incluidos los dos límites de temperatura
-recomendados de cada fila, que son lo que bloquea el resultado— y 743 de los
-factores de calidad), la contigüidad de la cascada,
+tabulado contra el JSON del código (271 536 valores de esfuerzos, más 5 708 de
+módulo E y dilatación de la II-D, 4 726 del Apéndice C, 720 de la Tabla B-1
+—incluidos los dos límites de temperatura recomendados de cada fila, que son lo
+que bloquea el resultado— y 743 de los factores de calidad), la contigüidad de la cascada,
 la ausencia de fórmulas de matriz dinámica, la interpolación recalculada en hoja, el
 caso semilla y la capa de navegación. **Requiere Excel instalado**: recalcula con el
 motor real, no con LibreOffice. **Ejecútalo siempre después de tocar el builder.**

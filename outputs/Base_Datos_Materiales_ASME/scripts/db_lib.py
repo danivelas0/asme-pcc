@@ -10,8 +10,10 @@ los JSON extraidos de los codigos.
 Unidades: se cargan tal como estan impresas en cada edicion (SI y US son
 extracciones independientes, no conversiones).
 
-Rev. 2 — el libro no usa ninguna funcion de matriz dinamica: toda la logica
-es INDEX / MATCH / OFFSET / COUNTIF, compatible con cualquier version de Excel.
+El libro no usa ninguna funcion de matriz dinamica: toda la logica es
+INDEX / MATCH / OFFSET / COUNTIF, compatible con cualquier version de Excel.
+Es la regla 1 de diseno del libro y no caduca con la revision, asi que no
+lleva numero de revision al lado.
 """
 from __future__ import annotations
 

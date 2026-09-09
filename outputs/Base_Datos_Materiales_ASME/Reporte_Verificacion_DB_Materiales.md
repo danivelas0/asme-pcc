@@ -1,4 +1,4 @@
-# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3
+# Reporte de verificacion — PLAN-DB-MAT-001
 
 Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  70 hojas
 

@@ -4,6 +4,11 @@ __pycache__/
 # Archivos temporales de Excel al abrir un libro
 ~$*.xls*
 
+# OneDrive escribe un desktop.ini por carpeta para el icono y el nombre
+# localizado. No es contenido del proyecto y se regenera solo: versionarlo
+# metia 45 archivos de adorno y un conflicto por cada maquina que sincroniza.
+desktop.ini
+
 # Seccion II, partes A, B y C: el volcado integro del extractor.
 # Son 269 MB en cuatro archivos que el propio index.json describe como
 # "full-fidelity marker output, inline base64 images retained". NO hacen falta

@@ -192,7 +192,11 @@ def auditar():
     # Copia intacta para la seccion 8: `wb` recibe la hoja _QA en la seccion 6
     # y deja de reflejar el entregable.
     wb0 = openpyxl.load_workbook(WB)
-    log("# Reporte de verificacion — PLAN-DB-MAT-001 Rev. 3")
+    # El titulo NO lleva revision escrita a mano: la anterior se quedo en
+    # "Rev. 3" mientras el informe auditaba ya el Rev. 4, y un informe que
+    # miente sobre que audito no sirve para auditar nada. La revision sale de
+    # la linea de abajo, que la lee del nombre del libro que se acaba de abrir.
+    log("# Reporte de verificacion — PLAN-DB-MAT-001")
     log("")
     log(f"Libro verificado: `{Path(WB).name}`  ·  {len(wb.sheetnames)} hojas")
     log("")

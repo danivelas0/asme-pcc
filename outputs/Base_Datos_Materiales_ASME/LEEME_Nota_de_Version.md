@@ -5,6 +5,148 @@
 
 ---
 
+# Rev. 4e — Un solo sistema visual para las 70 hojas (2026-09-08)
+
+El libro tenía **dos sistemas a la vez**: el azul corporativo de la Rev. 0 en las
+tres hojas que trae el maestro sembrado, y el del builder en las otras 67. Ahora
+hay uno solo —**Swiss Industrial Print**— y lo declara un bloque único de tokens
+al principio de `build_db_materiales.py`: papel de documentación sin blanquear
+(`F4F4F0`), tinta carbón (`050505`) y **un** acento rojo (`E61919`), con Arial
+Black para la estructura y las cifras de KPI y Consolas para todo el dato.
+Desaparecen `NAVY`/`BLUE`/`GREY`/`YELL` y los 24 hex sueltos: ni un color ni una
+fuente se escriben fuera de ese bloque.
+
+Las dos fuentes vienen instaladas con Windows **a propósito**. Una que Excel no
+encuentra la sustituye en silencio y deshace la retícula, así que aquí no entra
+ninguna de descarga por bien que encaje en el estilo.
+
+## Qué cambia
+
+- **El sustrato se graba a nivel de COLUMNA, no celda a celda.** Excel admite un
+  estilo por columna, así que las 54 198 filas del volcado de la Sección II
+  heredan papel y mono sin un solo estilo de celda: el mismo resultado visual sin
+  multiplicar el tamaño del `.xlsm` por 2,6 millones de celdas con formato
+  (11,52 → 11,56 MB). Toda celda con estilo propio lo pisa, que es lo que se
+  quiere.
+- **`retonar_heredadas()` traduce al construir** las tres hojas del maestro
+  (10 686 celdas). Es una tabla de equivalencia **exacta**, no una aproximación
+  por cercanía de color: así es idempotente, no puede tocar una celda que ya
+  nació en el sistema nuevo, y lo que quede sin traducir se declara en `ISSUES`
+  en vez de quedarse con el aspecto de la Rev. 0. La plantilla no se edita a mano.
+- **`estilizar_chart()` en los cuatro sitios que crean gráfica**: curva en tinta,
+  punto consultado en el rojo del acento, marco de tinta, malla en trama de 25 %
+  y texto mono. Fuera `ch.style`, que trae la paleta de series de Office y es
+  justo lo que este sistema no admite.
+- **El semáforo conserva sus tres estados**, retonados a bloque macizo con tinta
+  encima. Es la excepción declarada al acento único: en un libro de cálculo el
+  estado de la consulta es información de seguridad y hay que verla sin leerla.
+  El rojo mantiene un único significado en todo el libro: **bloqueado**.
+- **Se reescriben los textos que DESCRIBÍAN la convención vieja**, que caducan
+  con ella: el párrafo 10 de `Instrucciones` y el rótulo del motor que hablaba de
+  celdas azules sobre fondo amarillo. `TEXTOS_HEREDADOS` comprueba el texto antes
+  de reescribirlo y, si el maestro cambia, lo declara en vez de pisar a ciegas.
+  `mod_nav.vba` queda en sincronía con el aviso que graba el builder —texto y
+  color—, porque reescribe `A4` al abrir: si divergen, el libro cambia de aspecto
+  en cuanto se abre.
+
+## Tres trampas, comprobadas mirando la hoja exportada desde Excel
+
+openpyxl no sirve para verificar nada de esto, y por eso las tres se pagaron:
+
+- **En un rango fusionado el RELLENO se hereda de la celda ancla, pero el BORDE
+  no.** La banda de tinta sale entera poniéndosela solo a la ancla; la franja
+  roja puesta igual sale como un muñón de una columna. `franja()` recorre el
+  rango.
+- **openpyxl miente en los dos sentidos.** Al leer reconstruye el borde de la
+  ancla sobre todo el rango —parece que estuviera— y al escribir no propaga nada
+  si el estilo se puso después de fusionar.
+- **Un campo de formulario es una LÍNEA, no una caja.** Siete campos seguidos con
+  caja completa se ven como una escalera de barrotes, y el borde de un campo
+  compite con el de su vecino en la arista que comparten, que es donde se perdía
+  el recuadro rojo de la única celda que se teclea. Con la línea, la caja roja es
+  el único rectángulo cerrado de la zona de selección.
+
+## Verificación
+
+`test_dashboard.py::TestSistemaVisual` recorre los **2,4 millones de celdas con
+formato** del libro construido —resolviendo cada estilo por su índice— y falla si
+aparece un relleno o un color de texto fuera de la paleta, una fuente que no sea
+una de las dos, una hoja sin sustrato, o el rojo de relleno en algún sitio que no
+sea el aviso de macros.
+
+**207 pruebas en verde. `verificar.py` devuelve 0 fallos en las diez secciones**
+sobre el libro de 70 hojas, recalculando en Excel real.
+
+---
+
+# Rev. 4d — Dashboard jerárquico de 5 niveles y el HDS de la Tabla B-1 (2026-09-08)
+
+Son dos actividades y van **juntas a propósito**: comparten la declaración del
+árbol de navegación —`ARBOL` nombra `Buscar_B31_B1` y retira `Buscar_NoMetalicos`—,
+así que separarlas exigiría inventar un estado intermedio que nunca se construyó
+ni se verificó.
+
+De 54 hojas a **70**: 1 visible, 36 navegables, 33 `veryHidden`.
+
+## 1 · Dashboard jerárquico
+
+El Dashboard **conserva sus tres bandas por tipo de artefacto** —esa es la
+primera pregunta de quien abre el libro: *qué quiero hacer*— y la categorización
+por la cita normativa (`PUBLICANTE > DISCIPLINA > CÓDIGO DE LA DISCIPLINA >
+STANDARD CONCRETO`) empieza **dentro** de cada banda. Cada banda lleva su rama
+completa (`NAV_CAL_*`, `NAV_BUS_*`, `NAV_DAT_*`), de ahí que `ASME` aparezca tres
+veces: la rama del BPVC que lleva a los buscadores de la Parte D **no** es la que
+lleva a las nueve hojas de datos de las Partes A, B y C. Lo que sí se comparte es
+el **código**: `_rama_bpvc()` emite la cascada repetida una sola vez.
+
+- **El árbol se declara una sola vez**, en `ARBOL`, y de él se derivan en preorden
+  `HOJAS_NAV`, `DESTINOS`, `NAVEGABLES`, `PADRE`, `ROTULO` y `ANCLA_VOLVER`.
+  Añadir el B31.1 mañana es añadir un `Nodo`.
+- **La clave es siempre el destino.** Con cinco niveles, subir tiene que llevar al
+  **padre**: `CLAVE_VOLVER` y `VolverAlDashboard` desaparecen, `AbrirHoja` pasa a
+  `IrAHoja(destino, origen)` —una sola rama, que ya no crece con el árbol— y
+  `PADRE` es la fuente del botón de retorno. El guardarraíl «el origen debe ser el
+  Dashboard» se retira por redundante: `EsNavegable` ya impide destapar una `DB_*`
+  o una `MAP_*`.
+- **La tarjeta entera es clicable**, no solo la barra inferior: sus cuatro filas
+  llevan hipervínculo y clave propia, en filas distintas de la misma columna.
+  Migas de pan clicables para no gastar cuatro clics en subir cuatro niveles.
+- `HojasNavegables()` se arma **concatenando** (`s = s & "|…"` + `Split`), no con
+  `Array( _ … )`: 36 hojas pasan del límite de continuaciones de línea de VBA.
+- Lo que la norma publica y el libro no carga (B31.1, B16, SEC. VIII, PCC-1,
+  PCC-3) va como **tarjeta marcador** `NO CARGADO EN ESTE LIBRO`: solo un rótulo
+  de documento, cero dato normativo. Lo que sí está cargado pero **en otra banda**
+  se dice con texto, no con marcador — un marcador ahí sería falso.
+
+## 2 · `Buscar_B31_B1` — el HDS del Apéndice B
+
+La Tabla B-1 / B-1C sale de `Buscar_NoMetalicos`, que **se retira**. Era una
+ficha campo/valor sin temperatura de consulta y con clave solo por designación de
+material; como el código publica `PE2708` bajo D2737, D3035 y F714 con HDS
+distinto, **17 de las 36 filas eran inalcanzables**. La cascada es ahora
+material → Spec. No. → designación de tubería → Cell Class → variante.
+
+- Conmutador SI ↔ US **de hoja** (`DB_B31_B1` / `DB_B31_B1C`), nunca conversión.
+  El enlace entre ediciones es **posicional** y `verificar_paridad_b1()` es su
+  contrapartida obligatoria: aborta si la identidad no casa fila a fila.
+- **Las tres reglas de rango son del Capítulo VII** y van citadas una a una:
+  interpolación (`para. A302.3.1(b)`); por debajo del primer punto tabulado **no
+  se extrapola, se sostiene** —Nota (3), única excepción declarada a la regla 4 y
+  la escribe el código—; y bloqueo por arriba en **dos sitios distintos**, primero
+  el límite máximo recomendado y después el último punto tabulado, con aviso
+  distinto para cada uno. El orden no es cosmético: «el código no publica el dato»
+  no es «el material no se recomienda ahí».
+- **B-2 a B-6 se retiran del libro por alcance.** La extracción sigue intacta en
+  `resources/` —que es la fuente de verdad— y quedan como tarjeta marcador.
+
+## Verificación
+
+**200 pruebas en verde. `verificar.py` devuelve 0 fallos** sobre el libro de 70
+hojas, con §6d recalculando en Excel 11 casos de la Tabla B-1 con la misma
+expresión que emite el motor, y §8 comprobando la conexidad del árbol.
+
+---
+
 # Rev. 4c — La Sección II entra al libro y MAP_Grupo queda cerrado (2026-09-08)
 
 De 45 hojas a **54**. El libro pasa de 5 a **11 MB** y el build de 20 a **45 s**.
