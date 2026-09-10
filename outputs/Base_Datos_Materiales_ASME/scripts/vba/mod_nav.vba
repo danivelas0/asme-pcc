@@ -112,6 +112,7 @@ Public Function HojasNavegables() As Variant
     s = s & "|NAV_CAL_PCC"
     s = s & "|NAV_CAL_PCC2"
     s = s & "|Parche_PCC2_Art212"
+    s = s & "|Collar_PCC2_Art206"
     s = s & "|NAV_BUS_ASME"
     s = s & "|NAV_BUS_PIPING"
     s = s & "|NAV_BUS_B31"

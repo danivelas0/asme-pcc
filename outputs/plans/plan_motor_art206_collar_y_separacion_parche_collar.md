@@ -1,11 +1,20 @@
 # Motor Art. 206 (collar de encierro total) y separación parche / collar
 
-**Estado:** EN CURSO. Fase 1 ejecutada y pusheada (commit `e91efcc`,
-rama `claude/hello-q26l5p`), **pendiente de validar en Excel real**.
-Fases 2-4 sin ejecutar.
+**Estado:** EN CURSO. Fase 1 validada en Excel real por el ingeniero. Fase 2
+ejecutada: `construir_seccion7_material()` extraída (con test de paridad que
+fija las fórmulas de Art. 212 antes/después) y `Collar_PCC2_Art206` (Type
+A/B) construida 100% en código, verificada con `verificar.py` §1-10 (0
+fallos, recálculo real incluido) y a mano en Excel para un caso Type A y uno
+Type B. Fase 3 (nodo del árbol + `mod_nav.vba`) quedó resuelta como parte de
+la Fase 2, ya que sin la sincronía de navegación la hoja nueva no pasaba
+`test_dashboard.py::TestSincroniaPythonVba`. **Fase 4 (desanclar el 212 del
+Rev0) sin ejecutar** — el ingeniero decidió alcance "Total", pendiente de un
+plan propio dado el riesgo de reescribir ~130 filas de fórmulas ya validadas
+sin poder volver a validarlas en este entorno salvo con Excel real.
 
 Libro que cita este plan: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`,
-**70 hojas**, un solo motor de cálculo (`Parche_PCC2_Art212`).
+**71 hojas**, dos motores de cálculo (`Parche_PCC2_Art212`,
+`Collar_PCC2_Art206`).
 
 ---
 
