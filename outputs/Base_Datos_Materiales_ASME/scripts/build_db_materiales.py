@@ -6665,7 +6665,87 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(35, 2, "L_def").font = Font(name=MONO, size=10, color=TINTA)
     inp("D35", 40, com35)
 
-    # --- Seccion 2 y siguientes: las anaden las Tareas 5-8 -------------------
+    # --- 2. Parametros de calculo (filas 37-48) — Tarea 5 --------------------
+    # A37: banda de seccion, fusionada A37:G37 (confirmado en "fusionados" del
+    # oracle), texto literal transcrito tal cual -sin pasar por rotulo(): no
+    # lleva numeral "2." ni mayusculas forzadas, mismo criterio que A1/A2 y
+    # A16 arriba (Ruling del controlador, tasks-3-8-common.md: la banda/
+    # encabezado que precede inmediatamente el rango de esta tarea y titula
+    # esta seccion es parte de su alcance). Encabezado de fila 38: mismo
+    # patron que la fila 17 (Parametro/Simbolo/Unidad/Valor/Referencia con
+    # mayus/minus mixtas), tampoco compatible con header() (fuerza .upper()).
+    ws.merge_cells("A37:G37")
+    ws.cell(37, 1, "PARÁMETROS DE CÁLCULO (constantes — editables)")
+    ws.cell(37, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(37, j).fill = BAND_FILL
+    franja(ws, 37, 1, 7)
+
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Valor"), (7, "Referencia / Notas")):
+        c38 = ws.cell(38, col_idx, texto)
+        c38.font, c38.fill, c38.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    # D39/D40 (y G39/G40) ya los escribio el cableado Seccion 7 -> Seccion
+    # 1/3 de la Tarea 2 (mas arriba, junto con D44/G44/F90) — no se tocan;
+    # aqui solo A/B/C de estas dos filas.
+    lab(39, "Esf. admisible del collar", unidad="MPa")
+    ws.cell(39, 2, "Sa_c").font = Font(name=MONO, size=10, color=TINTA)
+    lab(40, "Esf. admisible del metal base", unidad="MPa")
+    ws.cell(40, 2, "Sa_b").font = Font(name=MONO, size=10, color=TINTA)
+
+    com41 = ("Calculo: esfuerzo admisible gobernante, el menor entre el del "
+             "collar (D39) y el del metal base (D40).")
+    lab(41, "Esf. admisible gobernante", unidad="MPa",
+        ref="menor de collar / base", com=com41)
+    ws.cell(41, 2, "Sa").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D41", "=MIN($D$39,$D$40)", com41)
+
+    com42 = "Entrada: eficiencia de junta de filete del Art. 212, ec. 4."
+    lab(42, "Eficiencia de junta de filete", unidad="—",
+        ref="Art. 212 ec. 4", com=com42)
+    ws.cell(42, 2, "E").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D42", 0.55, com42)
+
+    com43 = "Entrada: factor Y de B31.3 Tabla 304.1.1."
+    lab(43, "Factor Y (B31.3)", unidad="—",
+        ref="B31.3 Tabla 304.1.1", com=com43)
+    ws.cell(43, 2, "Y").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D43", 0.4, com43)
+
+    # D44/G44 ya los escribio la Tarea 2 (cableado Seccion 7) — no se tocan;
+    # aqui solo A/B/C de esta fila.
+    lab(44, "Eficiencia de junta long. (E)", unidad="—")
+    ws.cell(44, 2, "E_j").font = Font(name=MONO, size=10, color=TINTA)
+
+    com45 = ("Entrada: densidad del acero, en kg/m³, para el peso estimado "
+             "(seccion 4).")
+    lab(45, "Densidad del acero", unidad="kg/m³", com=com45)
+    ws.cell(45, 2, "ρ").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D45", 7850, com45)
+
+    com46 = "Entrada: factor de prueba hidrostatica, B31.3 345.4.2."
+    lab(46, "Factor de prueba hidrostática", unidad="—",
+        ref="B31.3 345.4.2", com=com46)
+    ws.cell(46, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D46", 1.5, com46)
+
+    com47 = ("Entrada: factor de conversion de presion de kg/cm² a MPa "
+             "(1 kg/cm² = 0,0980665 MPa).")
+    lab(47, "Conversión de presión", unidad="—",
+        ref="1 kg/cm²=0,0980665 MPa", com=com47)
+    ws.cell(47, 2, "kg/cm²→MPa").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D47", 0.0980665, com47)
+
+    com48 = ("Calculo: limite de esfuerzo para la verificacion de "
+             "excentricidad (seccion 5), 1,5 veces el esfuerzo admisible "
+             "gobernante Sa (Art. 212 ec. 5).")
+    lab(48, "Límite de esfuerzo (excentricidad)", unidad="MPa",
+        ref="Art. 212 ec. 5", com=com48)
+    ws.cell(48, 2, "1,5·Sa").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D48", "=1.5*$D$41", com48)
+
+    # --- Seccion 3 y siguientes: las anaden las Tareas 6-8 -------------------
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

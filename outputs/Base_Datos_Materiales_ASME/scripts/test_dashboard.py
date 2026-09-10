@@ -821,3 +821,36 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_4:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 5 — Seccion 2, esfuerzos admisibles y factores (filas 39-48).
+    # Incluye la banda A37 (fusionada A37:G37, "PARAMETROS DE CALCULO
+    # (constantes - editables)") y el encabezado de fila 38
+    # (Parametro/Simbolo/Unidad/Valor/Referencia): preceden inmediatamente el
+    # rango 39-48 y titulan esta seccion, no una anterior (Ruling del
+    # controlador, tasks-3-8-common.md). Cubre TODAS las celdas que el
+    # *oracle* declara en el rango 37-48 — A/B/C/D/G de las diez filas de
+    # datos (B39-B48 y C39-C48 incluidas, sin G45 porque el *oracle* no lo
+    # declara), mismo criterio de exhaustividad que ANCLAS_SECCION_3 y
+    # ANCLAS_SECCION_4. D39/D40/D44 ya los cubre ANCLAS_T2 (Tarea 2); se
+    # repiten aqui para que esta seccion quede completa por si sola —
+    # redundante pero correcto (ver task-5-brief.md).
+    ANCLAS_SECCION_5 = (
+        "A37",
+        "A38", "B38", "C38", "D38", "G38",
+        "A39", "B39", "C39", "D39", "G39",
+        "A40", "B40", "C40", "D40", "G40",
+        "A41", "B41", "C41", "D41", "G41",
+        "A42", "B42", "C42", "D42", "G42",
+        "A43", "B43", "C43", "D43", "G43",
+        "A44", "B44", "C44", "D44", "G44",
+        "A45", "B45", "C45", "D45",
+        "A46", "B46", "C46", "D46", "G46",
+        "A47", "B47", "C47", "D47", "G47",
+        "A48", "B48", "C48", "D48", "G48",
+    )
+
+    def test_seccion_5(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_SECCION_5:
+            assert ws[celda].value == oracle["formulas"][celda], celda
