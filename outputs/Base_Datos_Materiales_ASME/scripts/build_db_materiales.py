@@ -6434,7 +6434,60 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
                      "parche del caso precargado (A516 Gr.70). Cambiela por el "
                      "material de su caso o vacie y use la cascada (pasos 0-4).")
 
-    # --- Secciones 1-6: las anaden las Tareas 3-8 ---------------------------
+    # --- Aplicacion y codigo de construccion (filas 10-14) — Tarea 3 --------
+    # La banda de seccion (fila 8, "APLICACION Y CODIGO DE CONSTRUCCION...",
+    # A8:G8 fusionada, texto literal del oracle sin pasar por rotulo() —
+    # confirmado con el mismo criterio que aplico la Tarea 2 en A1/A2) y la
+    # fila de encabezado (fila 9: A9=Parametro, B9=Simbolo, C9=Unidad,
+    # D9=Valor, G9=Referencia / Notas) quedan FUERA del alcance literal de
+    # esta tarea: el brief de la Tarea 3 acota "filas 10-14" y sus Anclas no
+    # las incluye. Mismo patron que la Tarea 2 dejo pendientes A4/G5/G6
+    # (ver task-2-report.md, Desviaciones 2 y 3) — documentado en
+    # task-3-report.md para quien las asigne despues.
+    #
+    # Columna B (Simbolo) de estas cinco filas no la escribe ninguno de los
+    # cinco helpers (lab/inp/calc/band/header): lab() solo cubre A+C+G. El
+    # oracle trae ahi "MODO"/"kf" en D11/D14 y "—" de relleno en las demas,
+    # asi que se escribe directo con el mismo font que usa lab() en columna A.
+    com10 = ("Entrada: selector que conmuta el modo geometrico (tuberia, virola "
+             "cilindrica o cabezal/esfera) y por tanto el codigo de construccion, "
+             "la fuente del esfuerzo admisible y el factor kf de toda la hoja.")
+    lab(10, "Aplicación / geometría", unidad="—", ref="Lista desplegable", com=com10)
+    ws.cell(10, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D10", "Tubería (B31.3)", com10)
+    dv_list(ws, "D10",
+            '"Tubería (B31.3),Virola cilíndrica (VIII-1),Cabezal/esfera (VIII-1)"',
+            com10)
+
+    com11 = ("Calculo: MODO = 1 si D10 es 'Tuberia (B31.3)', 3 si es 'Cabezal/"
+             "esfera (VIII-1)', 2 en cualquier otro caso (virola cilindrica).")
+    lab(11, "Modo (1=tubería, 2=virola, 3=cabezal)", unidad="—",
+        ref="Derivado del selector", com=com11)
+    ws.cell(11, 2, "MODO").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D11", '=IF($D$10="Tubería (B31.3)",1,IF($D$10="Cabezal/esfera (VIII-1)",3,2))',
+         com11)
+
+    com12 = ("Calculo: ASME B31.3 si MODO=1 (tuberia); ASME BPVC VIII-1 en los "
+             "demas casos (virola o cabezal/esfera).")
+    lab(12, "Código de construcción", unidad="—", ref="Automático", com=com12)
+    ws.cell(12, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D12", '=IF($D$11=1,"ASME B31.3","ASME BPVC VIII-1")', com12)
+
+    com13 = ("Calculo: cita la tabla del codigo activo de la que sale el esfuerzo "
+             "admisible S — Tabla A-1 del B31.3 si MODO=1, Tabla 1A de ASME II-D "
+             "en los demas casos.")
+    lab(13, "Fuente del esfuerzo admisible", unidad="—", ref="Automático", com=com13)
+    ws.cell(13, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D13", '=IF($D$11=1,"B31.3 Tabla A-1","ASME II-D Tabla 1A")', com13)
+
+    com14 = ("Calculo: factor de geometria de la ecuacion de membrana, kf = 0,25 "
+             "para esfera (MODO=3) o 0,5 para cilindro (tuberia o virola).")
+    lab(14, "Factor de geometría (membrana)", unidad="—",
+        ref="Cil.=0,5 · Esfera=0,25", com=com14)
+    ws.cell(14, 2, "kf").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D14", '=IF($D$11=3,0.25,0.5)', com14)
+
+    # --- Secciones 1,2,4,5,6: las anaden las Tareas 4-8 ---------------------
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

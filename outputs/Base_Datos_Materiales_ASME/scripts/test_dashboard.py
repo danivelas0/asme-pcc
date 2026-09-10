@@ -766,3 +766,21 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_T2:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 3 — Aplicacion y codigo de construccion (filas 10-14). Cubre
+    # TODAS las celdas que el oracle declara en ese rango: A/B/C/D/G de las
+    # cinco filas (B10-B14 y C10-C14 incluidas, aunque el brief solo pedia
+    # D10-D14 + rotulos A10-A14 como minimo — ver task-3-report.md).
+    ANCLAS_SECCION_3 = (
+        "A10", "B10", "C10", "D10", "G10",
+        "A11", "B11", "C11", "D11", "G11",
+        "A12", "B12", "C12", "D12", "G12",
+        "A13", "B13", "C13", "D13", "G13",
+        "A14", "B14", "C14", "D14", "G14",
+    )
+
+    def test_seccion_3(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_SECCION_3:
+            assert ws[celda].value == oracle["formulas"][celda], celda
