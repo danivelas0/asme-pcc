@@ -6745,7 +6745,75 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(48, 2, "1,5·Sa").font = Font(name=MONO, size=10, color=TINTA)
     calc("D48", "=1.5*$D$41", com48)
 
-    # --- Seccion 3 y siguientes: las anaden las Tareas 6-8 -------------------
+    # --- 2. Geometria y propiedades derivadas (filas 52-57) — Tarea 6 -------
+    # A50: banda de seccion, fusionada A50:G50 (confirmado en "fusionados" del
+    # oracle), texto literal transcrito tal cual -sin pasar por rotulo(), con
+    # el numeral "2." tal como lo imprime el oracle (aunque la banda de la
+    # Tarea 5 en la fila 37, "PARAMETROS DE CALCULO...", no lleve numeral: es
+    # lo que el maestro trae impreso, Regla n.1) y el doble espacio entre
+    # "2." y "GEOMETRIA" preservado letra a letra, mismo criterio que A1/A2,
+    # A16 y A37 (Ruling del controlador, tasks-3-8-common.md: la banda y el
+    # encabezado que preceden inmediatamente el rango de esta tarea y titulan
+    # esta seccion son parte de su alcance). Encabezado de fila 51: mismo
+    # patron que las filas 17/38 (mayus/minus mixtas, no compatible con
+    # header() porque fuerza .upper()), pero con G51 = "Formula / Referencia"
+    # en vez de "Referencia / Notas" -asi lo trae el oracle para esta fila
+    # especifica, no se asume igual al resto-.
+    ws.merge_cells("A50:G50")
+    ws.cell(50, 1, "2.  GEOMETRÍA Y PROPIEDADES DERIVADAS")
+    ws.cell(50, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(50, j).fill = BAND_FILL
+    franja(ws, 50, 1, 7)
+
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Valor"), (7, "Fórmula / Referencia")):
+        c51 = ws.cell(51, col_idx, texto)
+        c51.font, c51.fill, c51.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    # Los comentarios (com) de D52-D57 repiten el texto que ya trae el dict
+    # "simples" de comentar_art212_base para estas mismas filas (52-57): no
+    # se inventa contenido nuevo, se reusa el que documenta la formula tal
+    # como esta en el maestro. comentar_art212_base() solo la llama la Tarea
+    # 8 al final; escribirlo aqui tambien dobla el criterio de las Tareas 3-5
+    # (com18, com22... alli) y deja la seccion legible por si sola mientras
+    # tanto — la Tarea 8 lo sobreescribira con el mismo texto (idempotente).
+    com52 = "Calculo: diametro a media pared, Dm = OD − t."
+    lab(52, "Diámetro a media pared", unidad="mm", ref="Dm = OD − t", com=com52)
+    ws.cell(52, 2, "Dm").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D52", "=$D$20-$D$21", com52)
+
+    com53 = "Calculo: radio medio, Rm = Dm/2."
+    lab(53, "Radio medio", unidad="mm", ref="Rm = Dm/2", com=com53)
+    ws.cell(53, 2, "Rm").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D53", "=$D$52/2", com53)
+
+    com54 = "Calculo: radio interior, Ri = OD/2 − t."
+    lab(54, "Radio interior", unidad="mm", ref="Ri = OD/2 − t", com=com54)
+    ws.cell(54, 2, "R_i").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D54", "=$D$20/2-$D$21", com54)
+
+    com55 = "Calculo: excentricidad de la carga, e = (T_parche + t_pared)/2."
+    lab(55, "Excentricidad de la carga", unidad="mm", ref="e = (T + t)/2", com=com55)
+    ws.cell(55, 2, "e").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D55", "=($D$29+$D$21)/2", com55)
+
+    com56 = ("Calculo: radio de conformado de la fibra media, Rf = OD/2 + luz "
+             "+ T_parche/2; se usa en la deformacion por conformado (ec. 7).")
+    lab(56, "Radio de conformado (fibra media)", unidad="mm",
+        ref="Rf = OD/2 + luz + T/2", com=com56)
+    ws.cell(56, 2, "Rf").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D56", "=$D$20/2+$D$31+$D$29/2", com56)
+
+    com57 = ("Calculo: coeficiente C_sw tal que S_w = P·C_sw; relaciona la "
+             "presion evaluada con el esfuerzo de soldadura (ec. 1 y 5 "
+             "combinadas).")
+    lab(57, "Coef. de esfuerzo por presión", unidad="MPa/MPa",
+        ref="S_w = P·C_sw", com=com57)
+    ws.cell(57, 2, "C_sw").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D57", "=$D$14*$D$52/$D$29*(1+6*$D$55/$D$29)", com57)
+
+    # --- Seccion 4 y siguientes: las anaden las Tareas 7-8 -------------------
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

@@ -854,3 +854,31 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_5:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 6 — Geometria y propiedades derivadas (filas 52-57). Incluye la
+    # banda A50 (fusionada A50:G50, "2.  GEOMETRIA Y PROPIEDADES DERIVADAS",
+    # con el numeral y el doble espacio tal como los imprime el *oracle*) y
+    # el encabezado de fila 51 (Parametro/Simbolo/Unidad/Valor/"Formula /
+    # Referencia" — distinto de "Referencia / Notas" de las filas 17/38):
+    # preceden inmediatamente el rango 52-57 y titulan esta seccion, no una
+    # anterior (Ruling del controlador, tasks-3-8-common.md). Cubre TODAS las
+    # celdas que el *oracle* declara en el rango 50-57 — A/B/C/D/G de las
+    # seis filas de datos, mismo criterio de exhaustividad que
+    # ANCLAS_SECCION_3/4/5. El *oracle* no declara ninguna validacion de
+    # datos en este rango (verificado en task-6-report.md).
+    ANCLAS_SECCION_6 = (
+        "A50",
+        "A51", "B51", "C51", "D51", "G51",
+        "A52", "B52", "C52", "D52", "G52",
+        "A53", "B53", "C53", "D53", "G53",
+        "A54", "B54", "C54", "D54", "G54",
+        "A55", "B55", "C55", "D55", "G55",
+        "A56", "B56", "C56", "D56", "G56",
+        "A57", "B57", "C57", "D57", "G57",
+    )
+
+    def test_seccion_6(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_SECCION_6:
+            assert ws[celda].value == oracle["formulas"][celda], celda
