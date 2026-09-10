@@ -6284,6 +6284,162 @@ def corregir_art212_fase1(ws):
                 "12\"-CWS-46-032-B1 (U46).")
 
 
+def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
+    """Motor Art. 212 (parche soldado), 100% en codigo — desanclado del maestro
+    Rev0 (Fase 4). Antes vivia heredado + corregido por integrate_motor/
+    corregir_art212_fase1; ahora nace con new_sheet como Collar_PCC2_Art206.
+    Reutiliza construir_seccion7_material (Seccion 7, compartida con el 206) y el
+    lookup de Datos_Ref robustecido con ""& contra la cedula. Las formulas de las
+    secciones 1-6 se transcriben del oracle parche_art212_ref.json (Regla n.1:
+    no se reescriben de memoria); TestParidadHojaParche las fija al caracter.
+
+    Tarea 2 (esqueleto): solo escribe la identificacion (filas 5-6), la Seccion
+    7 y el cableado D39/D40/D44/F90. Las secciones 1-6 completas las anaden las
+    Tareas 3-8; hasta entonces esta hoja no reproduce el oracle entero (solo las
+    celdas que fija TestBuildParcheContraOracle.ANCLAS_T2)."""
+    if MOTOR in wb.sheetnames:        # el maestro aun trae la hoja heredada
+        del wb[MOTOR]
+    ws = new_sheet(
+        wb, MOTOR,
+        "MOTOR DE CALCULO — PARCHE SOLDADO (ASME PCC-2 Art. 212)",
+        'ASME PCC-2 Art. 212 (Fillet Welded Patches). El collar de encierro '
+        'total (Art. 206) es un motor aparte. Caso precargado: Linea '
+        '12"-CWS-46-032-B1 (U46).')
+    autosize(ws, {"A": 44, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
+    # new_sheet() escribe A1/A2 con rotulo() (formato de banda: "[ ... ]" en
+    # mayusculas). El titulo de ESTA hoja va literal, tal como lo capturo el
+    # *oracle* desde el maestro Rev0 (corregir_art212_fase1 lo hacia igual,
+    # sobreescribiendo el A1/A2 heredado del maestro) — por eso se reescribe
+    # aqui sin pasar por rotulo(). Solo cambia el VALOR de la celda; la fuente
+    # y el relleno de titulo que puso new_sheet (TITLE_F/TITLE_FILL, tokens
+    # del sistema) se conservan.
+    ws["A1"] = "MOTOR DE CALCULO — PARCHE SOLDADO (ASME PCC-2 Art. 212)"
+    ws["A2"] = ("ASME PCC-2 Art. 212 (Fillet Welded Patches). El collar de encierro "
+                "total (Art. 206) es un motor aparte. Caso precargado: Linea "
+                "12\"-CWS-46-032-B1 (U46).")
+
+    def lab(r, text, unidad=None, ref=None, com=None):
+        cl = ws.cell(r, 1, text)
+        cl.font = Font(name=MONO, size=10, color=TINTA)
+        if unidad:
+            ws.cell(r, 3).value = unidad
+        if ref:
+            ws.cell(r, 7, ref).font = Font(name=MONO, size=9, color=GRIS)
+        if com:
+            _nota(cl, com)
+
+    def inp(cell, value="", com=None):
+        c = ws[cell]
+        c.value = value
+        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
+        c.protection = Protection(locked=False)
+        if com:
+            _nota(c, com)
+
+    def calc(cell, formula, com=None):
+        c = ws[cell]
+        c.value = formula
+        if com:
+            _nota(c, com)
+        return c
+
+    def band(r, texto):
+        ws.cell(r, 1, rotulo(texto))
+        ws.cell(r, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+        for j in range(1, 8):
+            ws.cell(r, j).fill = BAND_FILL
+        franja(ws, r, 1, 7)
+
+    def header(r, cols):
+        for j, h in enumerate(cols, start=1):
+            c = ws.cell(r, j, h.upper())
+            c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    # --- Seccion 7: cascada de material base + collar/parche ----------------
+    construir_seccion7_material(
+        ws, 105, b313, iid1a, iidb, fac_info, rangos,
+        columnas=(("D", "Metal base"), ("E", "Collar / parche")),
+        modo_cell="$D$11", temp_fuente_cell="$D$25", incluir_ej_ec=True,
+        destino_st="D39/D40 de la seccion 3",
+        nota_extra_cascada="La lista corta de Datos_Ref queda como respaldo "
+        "historico y ya no alimenta el calculo.")
+
+    # --- Identificacion (filas 5-6) ------------------------------------------
+    # Solo estas dos filas: la banda "IDENTIFICACION" (fila 4) y las bandas
+    # siguientes (fila 8 en adelante) son parte de las Secciones 1-6 que anaden
+    # las Tareas 3-8, con su texto transcrito literal del oracle (acentuado,
+    # sin rotulo()) igual que A1/A2 arriba.
+    lab(5, "Documento",
+       com="Entrada: identificador del documento de este calculo (numero de MC).")
+    inp("D5", "MC-REP-U46-CWS-032",
+        com="Entrada: identificador del documento de este calculo (numero de MC).")
+    lab(6, "Componente / servicio",
+       com="Entrada: descripcion del componente y el servicio reparado.")
+    inp("D6", 'Cuello de brida WN 12" Cl.150 · Agua de enfriamiento',
+        com="Entrada: descripcion del componente y el servicio reparado.")
+
+    # --- Cableado Seccion 7 -> Secciones 1/3 (D39/D40/D44/F90) --------------
+    # Transcrito literal del oracle (coincide con integrate_motor 6171-6205):
+    ws["D39"] = '=IF($E$125="OK",$E$126,NA())'
+    ws["G39"] = "S(T) del collar — base de datos ASME (seccion 7)"
+    _nota(ws["D39"], "Calculo: trae el S(T) del collar/parche resuelto en la seccion "
+                    "7 (E126) si su Dictamen de rango es OK; NA() si no. Alimenta "
+                    "'Esf. admisible del collar' de la seccion 1 (D39 original del "
+                    "maestro queda sustituido por este valor).")
+    ws["D40"] = '=IF($D$125="OK",$D$126,NA())'
+    ws["G40"] = "S(T) del metal base — base de datos ASME (seccion 7)"
+    _nota(ws["D40"], "Calculo: trae el S(T) del metal base resuelto en la seccion 7 "
+                    "(D126) si su Dictamen de rango es OK; NA() si no.")
+    ws["D44"] = "=$E$128"
+    ws["G44"] = "Ej por lookup (B31.3 Tabla A-3) — seccion 7"
+    ws["D44"].font = Font(name=MONO, size=10, color=TINTA)
+    ws["D44"].fill = PAPEL_FILL
+    ws["D44"].protection = Protection(locked=True)
+    _nota(ws["D44"], "Calculo: repite el Ej resuelto en la seccion 7 (E128) a partir "
+                    "de la clave de junta longitudinal elegida en D128. No se edita "
+                    "aqui.")
+    # El dictamen distingue "sin material" de "fuera de rango": son estados
+    # distintos y confundirlos haria leer un formulario recien abierto (cascada
+    # vacia) como un material rechazado por temperatura. "ELIJA MATERIAL" invita
+    # a completar la seccion 7; "FUERA DE RANGO" solo aparece cuando ya hay
+    # material y la T supera lo que el codigo tabula.
+    ws["F90"] = ('=IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
+                 '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
+                 'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
+                 'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
+                 '"APTO","REVISAR")))')
+    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. ELIJA MATERIAL (Seccion 7) "
+                    "si el metal base o el collar aun no estan seleccionados en la "
+                    "cascada; REVISAR — MATERIAL FUERA DE RANGO si ya hay material "
+                    "pero quedo fuera de rango de temperatura; APTO solo si ademas "
+                    "las 4 verificaciones de la seccion 5 (filete, excentricidad, "
+                    "conformado en frio, espesor de pared) dan CUMPLE; REVISAR en "
+                    "cualquier otro caso.")
+
+    # --- Caso precargado (seed por la celda Variante, con guardia Regla n.1)--
+    db = wb["DB_B31_3"]
+    ids = {db.cell(r, 1).value for r in range(R_DATA, db.max_row + 1)}
+    for etiqueta, mid in (("base", SEED_ART212_BASE), ("collar", SEED_ART212_COLLAR)):
+        if mid not in ids:
+            raise SystemExit(
+                f"Art.212: el material_id sembrado ({etiqueta}) no existe en "
+                f"DB_B31_3: {mid!r} (Regla n.1).")
+    ws["D114"] = SEED_ART212_BASE
+    ws["E114"] = SEED_ART212_COLLAR
+    _nota(ws["D114"], "Entrada (Variante): sembrada con el material_id del metal base "
+                     "del caso precargado (A106 Gr.B). Es la via de escape de la "
+                     "cascada; cambiela por el material de su caso o vacie y use la "
+                     "cascada (pasos 0-4).")
+    _nota(ws["E114"], "Entrada (Variante): sembrada con el material_id del collar/"
+                     "parche del caso precargado (A516 Gr.70). Cambiela por el "
+                     "material de su caso o vacie y use la cascada (pasos 0-4).")
+
+    # --- Secciones 1-6: las anaden las Tareas 3-8 ---------------------------
+
+    ws.protection.password = "0000"
+    ws.protection.sheet = True
+
+
 def comentar_art212_base(ws):
     """Comentarios para las secciones 1-6 de Parche_PCC2_Art212 (geometria,
     presion de diseno, verificaciones): vienen ya escritas en el maestro

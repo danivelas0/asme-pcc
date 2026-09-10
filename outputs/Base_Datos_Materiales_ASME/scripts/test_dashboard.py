@@ -640,3 +640,129 @@ class TestLintVba:
             cuerpo += [f'    Debug.Print "a{i}", _', f'          "b{i}"']
         cuerpo.append("End Sub")
         assert S.lint_vba("\n".join(cuerpo), "bueno.vba") == []
+
+
+# ---------------------------------------------------------------------------
+# Tarea 2 del plan de desanclado total: esqueleto de build_parche_art212()
+# ---------------------------------------------------------------------------
+# A diferencia de TestParidadHojaParche (que compara el .xlsm REAL, ya
+# construido por el pipeline viejo integrate_motor, contra el oracle), esta
+# clase construye Parche_PCC2_Art212 con la funcion NUEVA build_parche_art212
+# sobre un libro de usar y tirar, sin resources/ ni el maestro real: no hay
+# Excel en este entorno y el build completo tarda ~45 s, asi que un stub
+# minimo es la unica forma de probar la funcion de forma rapida y aislada.
+# build_parche_art212 todavia no esta cableada a main() (eso es la Tarea 9),
+# asi que este es el UNICO sitio del paquete de pruebas que la ejerce hasta
+# entonces.
+#
+# Los *_stub() reproducen solo lo que construir_seccion7_material consume de
+# verdad de cada dict (ver build_b313/build_iid/build_map_factores/
+# build_listas, las funciones reales que main() usa para armarlos). La
+# mayoria de los campos son bookkeeping de tamano de tabla (last_row,
+# pack_t0/pack_v0/npts_col, CK/CV/FK/FV/SK/SV/GK/GV/FAM/K4/maxV...): no son
+# valores normativos (no son un S admisible, un factor, una formula del
+# codigo — Regla n.1 no aplica) y solo alimentan celdas D109-D113/D116-D124,
+# fuera de ANCLAS_T2, asi que cualquier entero o rango con forma valida sirve.
+#
+# La UNICA excepcion es rangos["B313"]["ID"] / rangos["IID1A"]["ID"]: esos dos
+# rangos SI quedan incrustados, letra a letra, dentro de las formulas D115 y
+# E115 (material_id resuelto: INDEX(rb["ID"], ...) / INDEX(ri["ID"], ...)),
+# que si estan en ANCLAS_T2. Para que la formula reproducida case con la del
+# *oracle*, se fijan a los mismos dos rangos que el *oracle* ya capturo del
+# .xlsm real (parche_art212_ref.json): "DB_B31_3!$A$4:$A$1291" (D115) y
+# "DB_BPVC_IID!$A$4:$A$1802" (E115, via IID1A) — no son valores inventados,
+# son los que la Tarea 1 ya verifico contra el libro real; aqui solo se
+# reutilizan para que el stub no rompa el unico dato que el test compara.
+def b313_stub():
+    """Dict minimo de la base B31.3 (build_b313 real: sheet/last_row/pack_t0/
+    pack_v0/npts_col). El nombre de hoja SI importa (tiene que casar con la
+    hoja sembrada en TestBuildParcheContraOracle._construir()); last_row
+    coincide con el que capturo el *oracle* (ver nota de modulo) y los demas
+    son bookkeeping arbitrario, fuera del alcance de ANCLAS_T2."""
+    return {"sheet": "DB_B31_3", "last_row": 1291,
+            "pack_t0": 40, "pack_v0": 60, "npts_col": 31}
+
+
+def iid1a_stub():
+    """Idem para la Tabla 1A de II-D (build_iid real, edicion SI, tabla '1A')."""
+    return {"sheet": "DB_BPVC_IID", "last_row": 1802,
+            "pack_t0": 40, "pack_v0": 60, "npts_col": 31}
+
+
+def iidb_stub():
+    """Idem para las Tablas 1B/3 de II-D (build_iid real, tabla 'B'). last_row
+    es arbitrario: iidb no alimenta ninguna celda de ANCLAS_T2."""
+    return {"sheet": "DB_BPVC_IID_B", "last_row": 700,
+            "pack_t0": 40, "pack_v0": 60, "npts_col": 31}
+
+
+def fac_stub():
+    """Idem para MAP_Factores (build_map_factores real). D128 (en ANCLAS_T2)
+    es el VALOR de entrada por defecto del lookup de Ej ('A106 | Seamless
+    pipe'), fijo en construir_seccion7_material y no derivado de este stub;
+    sheet/last_row solo alimentan la formula de E128 y la validacion de
+    datos, fuera del alcance de esta tarea."""
+    return {"sheet": "MAP_Factores", "last_row": 50}
+
+
+def rangos_stub():
+    """Dict minimo de build_listas real, solo para B313 e IID1A (los dos
+    unicos que construir_seccion7_material lee de `rangos`; iidb no entra por
+    esta via). Ver la nota de modulo: "ID" es el unico campo que tiene que
+    casar con el *oracle* letra a letra."""
+    def bloque(id_range):
+        return {
+            "FAM": f"DB_Listas!$A${B.R_DATA}:$A${B.R_DATA + 9}",
+            "CK": f"DB_Listas!$B${B.R_DATA}:$B${B.R_DATA + 9}",
+            "CV": f"DB_Listas!$C${B.R_DATA}:$C${B.R_DATA + 9}",
+            "maxC": 1,
+            "FK": f"DB_Listas!$D${B.R_DATA}:$D${B.R_DATA + 9}",
+            "FV": f"DB_Listas!$E${B.R_DATA}:$E${B.R_DATA + 9}",
+            "maxF": 1,
+            "SK": f"DB_Listas!$F${B.R_DATA}:$F${B.R_DATA + 9}",
+            "SV": f"DB_Listas!$G${B.R_DATA}:$G${B.R_DATA + 9}",
+            "maxS": 1,
+            "GK": f"DB_Listas!$H${B.R_DATA}:$H${B.R_DATA + 9}",
+            "GV": f"DB_Listas!$I${B.R_DATA}:$I${B.R_DATA + 9}",
+            "maxG": 1,
+            "ID": id_range,
+            "K4": f"DB_Listas!$J${B.R_DATA}:$J${B.R_DATA + 9}",
+            "maxV": 1,
+        }
+    return {
+        "B313": bloque("DB_B31_3!$A$4:$A$1291"),
+        "IID1A": bloque("DB_BPVC_IID!$A$4:$A$1802"),
+    }
+
+
+class TestBuildParcheContraOracle:
+    """Construye Parche_PCC2_Art212 en un wb de usar y tirar y lo compara contra
+    el *oracle*, sin regenerar el entregable. Conforme se anaden secciones
+    (Tareas 3-8), mas celdas del oracle quedan cubiertas; COBERTURA_PARCIAL
+    enumera las que cada tarea ya debe reproducir."""
+
+    def _construir(self):
+        import build_db_materiales as B
+        wb = openpyxl.Workbook()
+        # Bases minimas que la Seccion 7 referencia por nombre (Excel resuelve al
+        # abrir; aqui solo deben existir para que el seed de la Fase 1 valide).
+        for n in ("DB_B31_3", "Datos_Ref", "MAP_Factores", "DB_BPVC_IID",
+                  "DB_BPVC_IID_B"):
+            wb.create_sheet(n)
+        # Sembrar en DB_B31_3 los dos material_id del caso precargado para que
+        # el guardia de corregir_art212_fase1 (ahora en build_parche_art212) pase.
+        db = wb["DB_B31_3"]
+        db.cell(B.R_DATA, 1, B.SEED_ART212_BASE)
+        db.cell(B.R_DATA + 1, 1, B.SEED_ART212_COLLAR)
+        B.build_parche_art212(wb, b313_stub(), iid1a_stub(), iidb_stub(),
+                              fac_stub(), rangos_stub())
+        return wb["Parche_PCC2_Art212"]
+
+    ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D115", "E115", "D126", "E126",
+                 "D39", "D40", "D44", "F90", "D114", "E114", "D128")
+
+    def test_anclas_de_la_tarea_2(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_T2:
+            assert ws[celda].value == oracle["formulas"][celda], celda
