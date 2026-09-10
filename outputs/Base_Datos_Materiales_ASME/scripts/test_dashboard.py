@@ -784,3 +784,40 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_3:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 4 — Seccion 1, datos de entrada (filas 16-35). Incluye la banda
+    # A16 (texto NUEVO que reemplaza TEXTOS_HEREDADOS, pero identico al que
+    # el *oracle* ya capturo — ver build_parche_art212) y el encabezado de
+    # fila 17 (Parametro/Simbolo/Unidad/Valor/Referencia). Cubre TODAS las
+    # celdas que el oracle declara en el rango 16-35: A/B/C/D/G de las 18
+    # filas de datos (B18-B35 y C18-C35 incluidas), aunque el brief solo
+    # pedia D18-D35 + A16 + G22/G23 como minimo — mismo criterio que la
+    # Tarea 3 aplico en ANCLAS_SECCION_3.
+    ANCLAS_SECCION_4 = (
+        "A16",
+        "A17", "B17", "C17", "D17", "G17",
+        "A18", "B18", "C18", "D18", "G18",
+        "A19", "B19", "C19", "D19", "G19",
+        "A20", "B20", "C20", "D20", "G20",
+        "A21", "B21", "C21", "D21", "G21",
+        "A22", "B22", "C22", "D22", "G22",
+        "A23", "B23", "C23", "D23", "G23",
+        "A24", "B24", "C24", "D24",
+        "A25", "B25", "C25", "D25", "G25",
+        "A26", "B26", "C26", "D26", "G26",
+        "A27", "B27", "C27", "D27", "G27",
+        "A28", "B28", "C28", "D28", "G28",
+        "A29", "B29", "C29", "D29", "G29",
+        "A30", "B30", "C30", "D30", "G30",
+        "A31", "B31", "C31", "D31", "G31",
+        "A32", "B32", "C32", "D32", "G32",
+        "A33", "B33", "C33", "D33", "G33",
+        "A34", "B34", "C34", "D34", "G34",
+        "A35", "B35", "C35", "D35", "G35",
+    )
+
+    def test_seccion_4(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_SECCION_4:
+            assert ws[celda].value == oracle["formulas"][celda], celda

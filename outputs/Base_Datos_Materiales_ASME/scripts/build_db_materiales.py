@@ -6487,7 +6487,185 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(14, 2, "kf").font = Font(name=MONO, size=10, color=TINTA)
     calc("D14", '=IF($D$11=3,0.25,0.5)', com14)
 
-    # --- Secciones 1,2,4,5,6: las anaden las Tareas 4-8 ---------------------
+    # --- 1. Datos de entrada (filas 16-35) — Tarea 4 -------------------------
+    # A16: texto NUEVO que reemplaza el heredado ("celdas azules sobre fondo
+    # amarillo = editables", ver TEXTOS_HEREDADOS) por el que describe ESTE
+    # sistema visual (CAJA_CAMPO = linea inferior, no relleno de color). El
+    # *oracle* ya lo trae asi -se capturo con retonar_heredadas() aplicado
+    # sobre el pipeline viejo- y se transcribe aqui letra a letra, incluidos
+    # los espacios dobles. band() no sirve: aplica rotulo() (mayusculas,
+    # colapsa espacios, envuelve en "[ ... ]") y el oracle trae texto mixto
+    # con esos espacios deliberados -mismo problema que A1/A2 resolvio la
+    # Tarea 2-, asi que se escribe con el mismo estilo (fuente/relleno/franja)
+    # que usa band() pero con el VALOR literal, fusionando A16:G16 como
+    # declara el *oracle* (fusionados).
+    ws.merge_cells("A16:G16")
+    ws.cell(16, 1, "1.  DATOS DE ENTRADA  (campo con linea inferior = editable)")
+    ws.cell(16, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(16, j).fill = BAND_FILL
+    franja(ws, 16, 1, 7)
+
+    # Encabezado de fila 17: mismo problema que header() tendria en la fila 9
+    # (ver Ruling del controlador, Tarea 8) — el *oracle* trae mayusculas y
+    # minusculas mixtas ("Parámetro", "Símbolo"...) y header() fuerza
+    # .upper(), asi que se escribe directo con el mismo estilo de columna
+    # (HDR_F/HDR_FILL/BOX_FRANJA) que usaria header().
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Valor"), (7, "Referencia / Notas")):
+        c17 = ws.cell(17, col_idx, texto)
+        c17.font, c17.fill, c17.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    com18 = ("Entrada: diametro nominal (NPS) en pulgadas, de la lista de "
+             "B36.10M en Datos_Ref. Alimenta el lookup de OD y espesor de "
+             "pared.")
+    lab(18, "Diámetro nominal", unidad="in", ref="Lista · B36.10M", com=com18)
+    ws.cell(18, 2, "NPS").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D18", 12, com18)
+    dv_list(ws, "D18",
+            '"0.5,0.75,1,1.25,1.5,2,2.5,3,3.5,4,5,6,8,10,12,14,16,18,20,22,24,'
+            '26,28,30,32,34,36,38,40,42,44,46,48"', com18)
+
+    com19 = ("Entrada: cedula (Schedule) segun B36.10M, en Datos_Ref, para el "
+             "NPS elegido arriba.")
+    lab(19, "Cédula (Schedule)", unidad="—", ref="Lista · B36.10M", com=com19)
+    ws.cell(19, 2, "SCH").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D19", "20", com19)
+    dv_list(ws, "D19", '"5,10,20,30,40,60,80,100,120,140,160,STD,XS,XXS"', com19)
+
+    com20 = ("Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
+             "tabla B36.10M de Datos_Ref.")
+    lab(20, "Diámetro exterior", unidad="mm", ref="B36.10M-2022 (auto)", com=com20)
+    ws.cell(20, 2, "OD").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D20", '=INDEX(Datos_Ref!$B$5:$B$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0))',
+         com20)
+
+    # D21 lleva el ""& robusto contra la cedula (transcrito literal del
+    # *oracle*, no se simplifica): sin el, una cedula numerica del
+    # desplegable (guardada como int en D19 para las cedulas puramente
+    # numericas o como texto para STD/XS/XXS) fallaba el MATCH contra la fila
+    # de encabezados de Datos_Ref, que guarda todo como texto.
+    com21 = ("Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
+             "(D19) en la tabla B36.10M de Datos_Ref. El \"\"&$D$19 fuerza la "
+             "cedula a texto para casar con la fila de encabezados (guardada "
+             "como texto por incluir STD/XS/XXS); sin esto, una cedula "
+             "numerica del desplegable daba #N/D y arrastraba toda la "
+             "geometria.")
+    lab(21, "Espesor de pared", unidad="mm", ref="B36.10M-2022 (auto)", com=com21)
+    ws.cell(21, 2, "t").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D21",
+         '=INDEX(Datos_Ref!$C$5:$P$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
+         'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))', com21)
+
+    com22 = ("Entrada: material del componente reparado (metal base), de la "
+             "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
+             "cascada de la seccion 7.")
+    com23 = ("Entrada: material del parche o collar de refuerzo, de la lista "
+             "corta de Datos_Ref. Para el S(T) por temperatura use la "
+             "cascada de la seccion 7.")
+    ref_mat = "Descriptivo · el S(T) rige en la Seccion 7"
+    lab(22, "Material de tubería / envolvente", unidad="—", ref=ref_mat, com=com22)
+    ws.cell(22, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D22", "A106 Gr.B", com22)
+    lab(23, "Material del collar / parche", unidad="—", ref=ref_mat, com=com23)
+    ws.cell(23, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D23", "A516 Gr.70", com23)
+    # dv_list() solo admite una celda por llamada (su firma toma "cell" en
+    # singular: ws[cell] + dv.add(...)); el *oracle* declara una UNICA
+    # validacion compartida sobre el rango D22:D23 (mismo formula1 para las
+    # dos celdas). ws[cell] con un rango devuelve tuplas anidadas que
+    # dv.add() rechaza, asi que se construye aqui directo -mismos parametros
+    # que dv_list()- fijando el sqref combinado, igual criterio que
+    # band()/header() cuando el helper no reproduce el *oracle* literal.
+    dv_mat = DataValidation(
+        type="list",
+        formula1='"A106 Gr.B,A516 Gr.70,A105,A285 Gr.C,A333 Gr.6,A53 Gr.B"',
+        allow_blank=True, showErrorMessage=False)
+    ws.add_data_validation(dv_mat)
+    dv_mat.sqref = "D22:D23"
+
+    com24 = ("Entrada informativa: fluido de servicio. No alimenta ningun "
+             "calculo de esta hoja.")
+    lab(24, "Fluido", unidad="—", com=com24)
+    ws.cell(24, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D24", "Agua de enfriamiento", com24)
+
+    com25 = ("Entrada: temperatura de operacion, en °C. Alimenta la "
+             "Temperatura de evaluacion de la seccion 7 (D108) y por tanto "
+             "todo el S(T) resuelto.")
+    lab(25, "Temperatura de operación", unidad="°C", ref="Hoja de proceso", com=com25)
+    ws.cell(25, 2, "T").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D25", 25, com25)
+
+    com26 = ("Entrada: presion de operacion, en kg/cm². Es el caso "
+             "'Operacion' evaluado en la seccion 3.")
+    lab(26, "Presión de operación", unidad="kg/cm²", ref="Hoja de proceso", com=com26)
+    ws.cell(26, 2, "P_op").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D26", 5, com26)
+
+    com27 = ("Entrada: presion de diseno tipica, en kg/cm². Es el caso "
+             "'Diseno tipico' de la seccion 3; se compara contra la presion "
+             "maxima admisible del parche en la verificacion de la seccion 5 "
+             "(fila 89).")
+    lab(27, "Presión de diseño (típica)", unidad="kg/cm²", ref="Por confirmar", com=com27)
+    ws.cell(27, 2, "P_dis").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D27", 10, com27)
+
+    com28 = ("Entrada: presion envolvente (cota superior / rating), en "
+             "kg/cm². Es el caso mas exigente, evaluado en la seccion 3.")
+    lab(28, "Presión envolvente (cota superior)", unidad="kg/cm²",
+        ref="Rating / envolvente", com=com28)
+    ws.cell(28, 2, "P_env").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D28", 20, com28)
+
+    com29 = ("Entrada: espesor adoptado del parche o collar, en mm (debe ser "
+             ">= espesor de pared). Alimenta la fuerza de membrana, el "
+             "esfuerzo de soldadura y el peso estimado.")
+    lab(29, "Espesor del parche/collar", unidad="mm", ref="Adoptado (≥ pared)", com=com29)
+    ws.cell(29, 2, "T_c").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D29", 8, com29)
+
+    com30 = ("Entrada: altura o dimension del parche, en mm, tomada del "
+             "plano. Alimenta el peso estimado (seccion 4).")
+    lab(30, "Altura / dimensión del parche", unidad="mm", ref="Del plano", com=com30)
+    ws.cell(30, 2, "H").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D30", 166, com30)
+
+    com31 = ("Entrada: luz radial entre el parche y el componente, en mm "
+             "(<=2 mm tipico). Alimenta el radio de conformado (Rf) y el "
+             "desarrollo de la media carcasa.")
+    lab(31, "Luz radial parche–componente", unidad="mm", ref="≤ 2 mm", com=com31)
+    ws.cell(31, 2, "luz").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D31", 1.5, com31)
+
+    com32 = ("Entrada: cateto adoptado del filete perimetral, en mm. Se "
+             "compara contra el filete minimo requerido en la verificacion "
+             "de la seccion 5 (fila 84).")
+    lab(32, "Cateto del filete perimetral", unidad="mm", ref="Adoptado", com=com32)
+    ws.cell(32, 2, "w").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D32", 6, com32)
+
+    com33 = ("Entrada: solape minimo del parche sobre metal sano, en mm, "
+             "exigido por el Art. 212. Solo informativo en esta hoja.")
+    lab(33, "Solape mínimo sobre metal sano", unidad="mm", ref="Art. 212", com=com33)
+    ws.cell(33, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D33", 25, com33)
+
+    com34 = ("Entrada: diametro del defecto, caracterizado por UT/PT, en mm. "
+             "Solo informativo en esta hoja.")
+    lab(34, "Diámetro del defecto", unidad="mm", ref="Caracterizar UT/PT", com=com34)
+    ws.cell(34, 2, "d_def").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D34", 3, com34)
+
+    com35 = ("Entrada: distancia del defecto a la discontinuidad mas cercana "
+             "(cordon o boquilla), en mm. Se compara contra L_min en la "
+             "verificacion de la seccion 5 (fila 88) para decidir entre "
+             "refuerzo 360° y parche local.")
+    lab(35, "Distancia defecto–discontinuidad", unidad="mm", ref="A cordón/boquilla", com=com35)
+    ws.cell(35, 2, "L_def").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D35", 40, com35)
+
+    # --- Seccion 2 y siguientes: las anaden las Tareas 5-8 -------------------
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
