@@ -6169,12 +6169,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     Reutiliza construir_seccion7_material (Seccion 7, compartida con el 206) y el
     lookup de Datos_Ref robustecido con ""& contra la cedula. Las formulas de las
     secciones 1-6 se transcriben del oracle parche_art212_ref.json (Regla n.1:
-    no se reescriben de memoria); TestParidadHojaParche las fija al caracter.
-
-    Tarea 2 (esqueleto): solo escribe la identificacion (filas 5-6), la Seccion
-    7 y el cableado D39/D40/D44/F90. Las secciones 1-6 completas las anaden las
-    Tareas 3-8; hasta entonces esta hoja no reproduce el oracle entero (solo las
-    celdas que fija TestBuildParcheContraOracle.ANCLAS_T2)."""
+    no se reescriben de memoria); TestParidadHojaParche las fija al caracter."""
     if MOTOR in wb.sheetnames:        # el maestro aun trae la hoja heredada
         del wb[MOTOR]
     ws = new_sheet(
@@ -6228,16 +6223,25 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
             _nota(c, com)
         return c
 
-    def band(r, texto):
-        ws.cell(r, 1, rotulo(texto))
+    # Esta hoja no usa un band()/header() que apliquen rotulo()/.upper(): el
+    # *oracle* (capturado del maestro Rev0) trae el texto de banda y de
+    # encabezado literal, con mayus/minus mixtas y sin los corchetes que
+    # rotulo() añadiria — band()/header() "genericos" (mayusculas forzadas,
+    # texto envuelto en "[ ... ]") no reproducirian esa celda letra a letra.
+    # banda_literal()/encabezado() escriben el VALOR tal cual, con el mismo
+    # estilo (fuente/relleno/franja o font/fill/border) que usarian los
+    # genericos.
+    def banda_literal(r, texto):
+        ws.merge_cells(f"A{r}:G{r}")
+        ws.cell(r, 1, texto)
         ws.cell(r, 1).font = Font(name=MACRO, size=11, color=PAPEL)
         for j in range(1, 8):
             ws.cell(r, j).fill = BAND_FILL
         franja(ws, r, 1, 7)
 
-    def header(r, cols):
-        for j, h in enumerate(cols, start=1):
-            c = ws.cell(r, j, h.upper())
+    def encabezado(r, pares):
+        for j, h in pares:
+            c = ws.cell(r, j, h)
             c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
 
     # --- Seccion 7: cascada de material base + collar/parche ----------------
@@ -6253,17 +6257,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     # A4 es la banda de seccion, fusionada A4:G4, texto literal del *oracle*
     # ("IDENTIFICACIÓN", sin numeral) transcrito sin pasar por rotulo() —
     # rotulo() lo envolveria en "[ ... ]" y forzaria mayusculas, y el *oracle*
-    # no trae corchetes — mismo criterio que A1/A2 (Tarea 2). Gap acumulado
-    # que detecto la Tarea 2 (task-2-report.md, Desviaciones 2 y 3) y que el
-    # Ruling del controlador (task-8-brief.md) asigna a esta tarea, junto con
-    # los merges D5:F5/D6:F6 y los valores G5/G6 (revision/unidad del
-    # documento) que tampoco escribio ninguna tarea anterior.
-    ws.merge_cells("A4:G4")
-    ws.cell(4, 1, "IDENTIFICACIÓN")
-    ws.cell(4, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(4, j).fill = BAND_FILL
-    franja(ws, 4, 1, 7)
+    # no trae corchetes — mismo criterio que A1/A2. Van tambien aqui los
+    # merges D5:F5/D6:F6 y los valores G5/G6 (revision/unidad del documento).
+    banda_literal(4, "IDENTIFICACIÓN")
 
     lab(5, "Documento", ref="Rev.: 0",
        com="Entrada: identificador del documento de este calculo (numero de MC).")
@@ -6284,19 +6280,22 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
         ws[celda].border = CAJA_CAMPO
 
     # --- Cableado Seccion 7 -> Secciones 1/3 (D39/D40/D44/F90) --------------
-    # Transcrito literal del oracle (coincide con integrate_motor 6171-6205):
+    # Transcrito literal del oracle:
     ws["D39"] = '=IF($E$125="OK",$E$126,NA())'
     ws["G39"] = "S(T) del collar — base de datos ASME (seccion 7)"
+    ws["G39"].font = Font(name=MONO, size=9, color=GRIS)
     _nota(ws["D39"], "Calculo: trae el S(T) del collar/parche resuelto en la seccion "
                     "7 (E126) si su Dictamen de rango es OK; NA() si no. Alimenta "
                     "'Esf. admisible del collar' de la seccion 1 (D39 original del "
                     "maestro queda sustituido por este valor).")
     ws["D40"] = '=IF($D$125="OK",$D$126,NA())'
     ws["G40"] = "S(T) del metal base — base de datos ASME (seccion 7)"
+    ws["G40"].font = Font(name=MONO, size=9, color=GRIS)
     _nota(ws["D40"], "Calculo: trae el S(T) del metal base resuelto en la seccion 7 "
                     "(D126) si su Dictamen de rango es OK; NA() si no.")
     ws["D44"] = "=$E$128"
     ws["G44"] = "Ej por lookup (B31.3 Tabla A-3) — seccion 7"
+    ws["G44"].font = Font(name=MONO, size=9, color=GRIS)
     ws["D44"].font = Font(name=MONO, size=10, color=TINTA)
     ws["D44"].fill = PAPEL_FILL
     ws["D44"].protection = Protection(locked=True)
@@ -6339,29 +6338,19 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
                      "parche del caso precargado (A516 Gr.70). Cambiela por el "
                      "material de su caso o vacie y use la cascada (pasos 0-4).")
 
-    # --- Banda APLICACION Y CODIGO (fila 8) + encabezado (fila 9), gap ------
-    # La Tarea 3 detecto que el *oracle* trae, antes de su rango 10-14, esta
-    # banda (A8, fusionada A8:G8, texto literal sin rotulo()) y esta fila de
-    # encabezado (A9:G9, mayus/minus mixtas, incompatible con header() porque
-    # ese helper fuerza .upper()) sin que ningun brief (3-7) las reclamara
-    # (ver task-3-report.md). El Ruling del controlador (tasks-3-8-common.md
-    # y task-8-brief.md) las asigna a esta tarea junto con A4/G5/G6 de mas
-    # arriba. Mismo criterio que A1/A2: se escribe el VALOR literal con el
-    # estilo de banda/encabezado, sin pasar por band()/header().
-    ws.merge_cells("A8:G8")
-    ws.cell(8, 1, "APLICACIÓN Y CÓDIGO DE CONSTRUCCIÓN  (selector que conmuta "
-                  "S, t_req y la fuerza de membrana)")
-    ws.cell(8, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(8, j).fill = BAND_FILL
-    franja(ws, 8, 1, 7)
+    # --- Banda APLICACION Y CODIGO (fila 8) + encabezado (fila 9) -----------
+    # El *oracle* trae, antes de su rango 10-14, esta banda (A8, fusionada
+    # A8:G8, texto literal sin rotulo()) y esta fila de encabezado (A9:G9,
+    # mayus/minus mixtas, incompatible con un header en mayusculas). Mismo
+    # criterio que A1/A2: se escribe el VALOR literal con el estilo de
+    # banda/encabezado, sin forzar mayusculas.
+    banda_literal(8, "APLICACIÓN Y CÓDIGO DE CONSTRUCCIÓN  (selector que conmuta "
+                     "S, t_req y la fuerza de membrana)")
 
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Valor"), (7, "Referencia / Notas")):
-        c9 = ws.cell(9, col_idx, texto)
-        c9.font, c9.fill, c9.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(9, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                   (4, "Valor"), (7, "Referencia / Notas")))
 
-    # --- Aplicacion y codigo de construccion (filas 10-14) — Tarea 3 --------
+    # --- Aplicacion y codigo de construccion (filas 10-14) ------------------
     # Columna B (Simbolo) de estas cinco filas no la escribe ninguno de los
     # cinco helpers (lab/inp/calc/band/header): lab() solo cubre A+C+G. El
     # oracle trae ahi "MODO"/"kf" en D11/D14 y "—" de relleno en las demas,
@@ -6404,7 +6393,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(14, 2, "kf").font = Font(name=MONO, size=10, color=TINTA)
     calc("D14", '=IF($D$11=3,0.25,0.5)', com14)
 
-    # --- 1. Datos de entrada (filas 16-35) — Tarea 4 -------------------------
+    # --- 1. Datos de entrada (filas 16-35) -----------------------------------
     # A16: texto NUEVO que reemplaza el heredado ("celdas azules sobre fondo
     # amarillo = editables", ver TEXTOS_HEREDADOS) por el que describe ESTE
     # sistema visual (CAJA_CAMPO = linea inferior, no relleno de color). El
@@ -6412,26 +6401,18 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     # sobre el pipeline viejo- y se transcribe aqui letra a letra, incluidos
     # los espacios dobles. band() no sirve: aplica rotulo() (mayusculas,
     # colapsa espacios, envuelve en "[ ... ]") y el oracle trae texto mixto
-    # con esos espacios deliberados -mismo problema que A1/A2 resolvio la
-    # Tarea 2-, asi que se escribe con el mismo estilo (fuente/relleno/franja)
-    # que usa band() pero con el VALOR literal, fusionando A16:G16 como
-    # declara el *oracle* (fusionados).
-    ws.merge_cells("A16:G16")
-    ws.cell(16, 1, "1.  DATOS DE ENTRADA  (campo con linea inferior = editable)")
-    ws.cell(16, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(16, j).fill = BAND_FILL
-    franja(ws, 16, 1, 7)
+    # con esos espacios deliberados -mismo problema que A1/A2-, asi que se
+    # escribe con el mismo estilo (fuente/relleno/franja) que usa band() pero
+    # con el VALOR literal, fusionando A16:G16 como declara el *oracle*
+    # (fusionados).
+    banda_literal(16, "1.  DATOS DE ENTRADA  (campo con linea inferior = editable)")
 
-    # Encabezado de fila 17: mismo problema que header() tendria en la fila 9
-    # (ver Ruling del controlador, Tarea 8) — el *oracle* trae mayusculas y
-    # minusculas mixtas ("Parámetro", "Símbolo"...) y header() fuerza
-    # .upper(), asi que se escribe directo con el mismo estilo de columna
-    # (HDR_F/HDR_FILL/BOX_FRANJA) que usaria header().
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Valor"), (7, "Referencia / Notas")):
-        c17 = ws.cell(17, col_idx, texto)
-        c17.font, c17.fill, c17.border = HDR_F, HDR_FILL, BOX_FRANJA
+    # Encabezado de fila 17: mismo problema que un header en mayusculas
+    # tendria en la fila 9 — el *oracle* trae mayusculas y minusculas mixtas
+    # ("Parámetro", "Símbolo"...), asi que se escribe directo con el mismo
+    # estilo de columna (HDR_F/HDR_FILL/BOX_FRANJA) sin forzar .upper().
+    encabezado(17, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                    (4, "Valor"), (7, "Referencia / Notas")))
 
     com18 = ("Entrada: diametro nominal (NPS) en pulgadas, de la lista de "
              "B36.10M en Datos_Ref. Alimenta el lookup de OD y espesor de "
@@ -6582,30 +6563,23 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(35, 2, "L_def").font = Font(name=MONO, size=10, color=TINTA)
     inp("D35", 40, com35)
 
-    # --- 2. Parametros de calculo (filas 37-48) — Tarea 5 --------------------
+    # --- 2. Parametros de calculo (filas 37-48) ------------------------------
     # A37: banda de seccion, fusionada A37:G37 (confirmado en "fusionados" del
     # oracle), texto literal transcrito tal cual -sin pasar por rotulo(): no
     # lleva numeral "2." ni mayusculas forzadas, mismo criterio que A1/A2 y
-    # A16 arriba (Ruling del controlador, tasks-3-8-common.md: la banda/
-    # encabezado que precede inmediatamente el rango de esta tarea y titula
-    # esta seccion es parte de su alcance). Encabezado de fila 38: mismo
-    # patron que la fila 17 (Parametro/Simbolo/Unidad/Valor/Referencia con
-    # mayus/minus mixtas), tampoco compatible con header() (fuerza .upper()).
-    ws.merge_cells("A37:G37")
-    ws.cell(37, 1, "PARÁMETROS DE CÁLCULO (constantes — editables)")
-    ws.cell(37, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(37, j).fill = BAND_FILL
-    franja(ws, 37, 1, 7)
+    # A16 arriba (la banda/encabezado que precede inmediatamente un rango y
+    # titula su seccion se escribe con el mismo criterio en toda la hoja).
+    # Encabezado de fila 38: mismo patron que la fila 17 (Parametro/Simbolo/
+    # Unidad/Valor/Referencia con mayus/minus mixtas), tampoco compatible con
+    # un header en mayusculas.
+    banda_literal(37, "PARÁMETROS DE CÁLCULO (constantes — editables)")
 
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Valor"), (7, "Referencia / Notas")):
-        c38 = ws.cell(38, col_idx, texto)
-        c38.font, c38.fill, c38.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(38, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                    (4, "Valor"), (7, "Referencia / Notas")))
 
     # D39/D40 (y G39/G40) ya los escribio el cableado Seccion 7 -> Seccion
-    # 1/3 de la Tarea 2 (mas arriba, junto con D44/G44/F90) — no se tocan;
-    # aqui solo A/B/C de estas dos filas.
+    # 1/3 mas arriba (junto con D44/G44/F90) — no se tocan; aqui solo A/B/C
+    # de estas dos filas.
     lab(39, "Esf. admisible del collar", unidad="MPa")
     ws.cell(39, 2, "Sa_c").font = Font(name=MONO, size=10, color=TINTA)
     lab(40, "Esf. admisible del metal base", unidad="MPa")
@@ -6630,8 +6604,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(43, 2, "Y").font = Font(name=MONO, size=10, color=TINTA)
     inp("D43", 0.4, com43)
 
-    # D44/G44 ya los escribio la Tarea 2 (cableado Seccion 7) — no se tocan;
-    # aqui solo A/B/C de esta fila.
+    # D44/G44 ya los escribio el cableado de la Seccion 7 mas arriba — no se
+    # tocan; aqui solo A/B/C de esta fila.
     lab(44, "Eficiencia de junta long. (E)", unidad="—")
     ws.cell(44, 2, "E_j").font = Font(name=MONO, size=10, color=TINTA)
 
@@ -6662,39 +6636,32 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(48, 2, "1,5·Sa").font = Font(name=MONO, size=10, color=TINTA)
     calc("D48", "=1.5*$D$41", com48)
 
-    # --- 2. Geometria y propiedades derivadas (filas 52-57) — Tarea 6 -------
+    # --- 2. Geometria y propiedades derivadas (filas 52-57) ------------------
     # A50: banda de seccion, fusionada A50:G50 (confirmado en "fusionados" del
     # oracle), texto literal transcrito tal cual -sin pasar por rotulo(), con
     # el numeral "2." tal como lo imprime el oracle (aunque la banda de la
-    # Tarea 5 en la fila 37, "PARAMETROS DE CALCULO...", no lleve numeral: es
-    # lo que el maestro trae impreso, Regla n.1) y el doble espacio entre
-    # "2." y "GEOMETRIA" preservado letra a letra, mismo criterio que A1/A2,
-    # A16 y A37 (Ruling del controlador, tasks-3-8-common.md: la banda y el
-    # encabezado que preceden inmediatamente el rango de esta tarea y titulan
-    # esta seccion son parte de su alcance). Encabezado de fila 51: mismo
-    # patron que las filas 17/38 (mayus/minus mixtas, no compatible con
-    # header() porque fuerza .upper()), pero con G51 = "Formula / Referencia"
-    # en vez de "Referencia / Notas" -asi lo trae el oracle para esta fila
-    # especifica, no se asume igual al resto-.
-    ws.merge_cells("A50:G50")
-    ws.cell(50, 1, "2.  GEOMETRÍA Y PROPIEDADES DERIVADAS")
-    ws.cell(50, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(50, j).fill = BAND_FILL
-    franja(ws, 50, 1, 7)
+    # fila 37, "PARAMETROS DE CALCULO...", no lleve numeral: es lo que el
+    # maestro trae impreso, Regla n.1) y el doble espacio entre "2." y
+    # "GEOMETRIA" preservado letra a letra, mismo criterio que A1/A2, A16 y
+    # A37 (la banda y el encabezado que preceden inmediatamente un rango y
+    # titulan su seccion se escriben con el mismo criterio en toda la hoja).
+    # Encabezado de fila 51: mismo patron que las filas 17/38 (mayus/minus
+    # mixtas, no compatible con un header en mayusculas), pero con G51 =
+    # "Formula / Referencia" en vez de "Referencia / Notas" -asi lo trae el
+    # oracle para esta fila especifica, no se asume igual al resto-.
+    banda_literal(50, "2.  GEOMETRÍA Y PROPIEDADES DERIVADAS")
 
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Valor"), (7, "Fórmula / Referencia")):
-        c51 = ws.cell(51, col_idx, texto)
-        c51.font, c51.fill, c51.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(51, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                    (4, "Valor"), (7, "Fórmula / Referencia")))
 
     # Los comentarios (com) de D52-D57 repiten el texto que ya trae el dict
     # "simples" de comentar_art212_base para estas mismas filas (52-57): no
     # se inventa contenido nuevo, se reusa el que documenta la formula tal
-    # como esta en el maestro. comentar_art212_base() solo la llama la Tarea
-    # 8 al final; escribirlo aqui tambien dobla el criterio de las Tareas 3-5
-    # (com18, com22... alli) y deja la seccion legible por si sola mientras
-    # tanto — la Tarea 8 lo sobreescribira con el mismo texto (idempotente).
+    # como esta en el maestro. comentar_art212_base() se llama una sola vez,
+    # al final de la funcion, y sobreescribe estas mismas notas con el mismo
+    # texto (idempotente); escribirlas aqui tambien deja la seccion legible
+    # por si sola en el codigo, con el mismo criterio que las secciones
+    # anteriores (com18, com22...).
     com52 = "Calculo: diametro a media pared, Dm = OD − t."
     lab(52, "Diámetro a media pared", unidad="mm", ref="Dm = OD − t", com=com52)
     ws.cell(52, 2, "Dm").font = Font(name=MONO, size=10, color=TINTA)
@@ -6730,43 +6697,34 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(57, 2, "C_sw").font = Font(name=MONO, size=10, color=TINTA)
     calc("D57", "=$D$14*$D$52/$D$29*(1+6*$D$55/$D$29)", com57)
 
-    # --- 3. Calculo de cargas y soldadura (filas 59-69) — Tarea 7 -----------
+    # --- 3. Calculo de cargas y soldadura (filas 59-69) ----------------------
     # A59: banda de seccion, fusionada A59:G59 (confirmado en "fusionados" del
     # *oracle*), texto literal transcrito tal cual -sin pasar por rotulo(),
     # con el numeral "3." y el doble espacio antes de "CALCULO"- mismo
-    # criterio que las bandas A16/A37/A50 anteriores (Ruling del controlador,
-    # tasks-3-8-common.md: la banda y el encabezado que preceden
-    # inmediatamente el rango de esta tarea y titulan esta seccion son parte
-    # de su alcance). Encabezado de fila 60: TRES columnas de valor propias
-    # (D/E/F = Operacion/Diseno tipico/Envolvente, no una sola "Valor" como
-    # en las filas 17/38/51), tampoco compatible con header() -fuerza
-    # .upper() y ademas su firma no admite tres nombres de columna distintos
-    # de "Valor"- asi que se escribe directo con el mismo estilo
+    # criterio que las bandas A16/A37/A50 anteriores (la banda y el
+    # encabezado que preceden inmediatamente un rango y titulan su seccion
+    # se escriben con el mismo criterio en toda la hoja). Encabezado de fila
+    # 60: TRES columnas de valor propias (D/E/F = Operacion/Diseno tipico/
+    # Envolvente, no una sola "Valor" como en las filas 17/38/51), tampoco
+    # compatible con un header generico -en mayusculas y con una sola
+    # columna de valor- asi que se escribe directo con el mismo estilo
     # (HDR_F/HDR_FILL/BOX_FRANJA).
     #
     # La fila 58 queda vacia (no aparece en el *oracle*: ni formula, ni
-    # fusionado, ni validacion — confirmado aqui, no solo heredado de la nota
-    # de la Tarea 6): separa la Seccion 2 (termina en fila 57) de la banda de
-    # esta seccion.
-    ws.merge_cells("A59:G59")
-    ws.cell(59, 1, "3.  CÁLCULO DE CARGAS Y SOLDADURA  (ASME PCC-2, Art. 212)")
-    ws.cell(59, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(59, j).fill = BAND_FILL
-    franja(ws, 59, 1, 7)
+    # fusionado, ni validacion): separa la Seccion 2 (termina en fila 57) de
+    # la banda de esta seccion.
+    banda_literal(59, "3.  CÁLCULO DE CARGAS Y SOLDADURA  (ASME PCC-2, Art. 212)")
 
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Operación"), (5, "Diseño típico"),
-                            (6, "Envolvente"), (7, "Referencia")):
-        c60 = ws.cell(60, col_idx, texto)
-        c60.font, c60.fill, c60.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(60, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                    (4, "Operación"), (5, "Diseño típico"),
+                    (6, "Envolvente"), (7, "Referencia")))
 
     # Filas 61-69: los tres casos de presion (Operacion/Diseno tipico/
     # Envolvente) en columnas D/E/F. Cada fila repite el mismo comentario en
     # las tres columnas de calculo y en el rotulo de columna A (texto tomado
     # de comentar_art212_base, sin inventar contenido nuevo — mismo criterio
-    # que la Tarea 6 aplico en com52-57; la Tarea 8 sobreescribira estas
-    # mismas notas de forma idempotente al llamar comentar_art212_base).
+    # que en com52-57; comentar_art212_base() sobreescribe estas mismas notas
+    # de forma idempotente al llamarse al final de la funcion).
     com61 = ("Calculo: repite, para este caso (Operacion / Diseno tipico / "
              "Envolvente), la presion correspondiente de la seccion 1, en "
              "kg/cm².")
@@ -6858,30 +6816,23 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     calc("E69", '=IF(E68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
     calc("F69", '=IF(F68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
 
-    # --- 4. Resultados del diseno (filas 71-80) — Tarea 7 --------------------
+    # --- 4. Resultados del diseno (filas 71-80) ------------------------------
     # A71: banda de seccion, fusionada A71:G71 (confirmado en "fusionados"
     # del *oracle*), texto literal transcrito tal cual -sin pasar por
     # rotulo(), sin numeral extra ni doble espacio esta vez: es lo que el
     # *oracle* imprime- mismo criterio que las bandas anteriores. Encabezado
     # de fila 72: cinco columnas (Parametro/Simbolo/Unidad/Valor/"Fórmula /
     # Referencia" en G72, mismo patron que la fila 51 — no "Referencia /
-    # Notas" de las filas 17/38), tampoco compatible con header() porque
-    # fuerza .upper().
+    # Notas" de las filas 17/38), tampoco compatible con un header en
+    # mayusculas.
     #
     # La fila 70 queda vacia (no aparece en el *oracle*): separa la Seccion 3
     # (termina en fila 69) de la banda de esta seccion, mismo patron
     # espaciador que la fila 58 delante de la Seccion 3.
-    ws.merge_cells("A71:G71")
-    ws.cell(71, 1, "4.  RESULTADOS DEL DISEÑO")
-    ws.cell(71, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(71, j).fill = BAND_FILL
-    franja(ws, 71, 1, 7)
+    banda_literal(71, "4.  RESULTADOS DEL DISEÑO")
 
-    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                            (4, "Valor"), (7, "Fórmula / Referencia")):
-        c72 = ws.cell(72, col_idx, texto)
-        c72.font, c72.fill, c72.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(72, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                    (4, "Valor"), (7, "Fórmula / Referencia")))
 
     com73 = ("Calculo: distancia minima a una discontinuidad, L_min = "
              "2·RAIZ(Rm·t) (ec. 3). Por debajo de esta distancia el defecto "
@@ -6943,27 +6894,19 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     lab(80, "Peso del parche/collar", unidad="kg", ref="2·L·H·T·ρ", com=com80)
     calc("D80", "=2*$D$79*$D$30*$D$29*$D$45/1000000000", com80)
 
-    # --- 5. Verificaciones (filas 82-90) — Tarea 8 --------------------------
+    # --- 5. Verificaciones (filas 82-90) --------------------------------
     # A82: banda de seccion, fusionada A82:G82 (confirmado en "fusionados"
     # del *oracle*), texto literal transcrito tal cual -sin pasar por
     # rotulo(), con el numeral "5." y el doble espacio antes del parentesis-
-    # mismo criterio que las bandas anteriores (Ruling del controlador,
-    # tasks-3-8-common.md). Encabezado de fila 83: CINCO columnas propias
-    # (Verificacion/Requerido/Adoptado/Resultado/Criterio en A/D/E/F/G, sin
-    # Simbolo ni Unidad en B/C — esta tabla no las tiene), tampoco compatible
-    # con header() -fuerza .upper() y su firma escribe columnas consecutivas
-    # desde la 1, no puede saltar B/C-.
-    ws.merge_cells("A82:G82")
-    ws.cell(82, 1, "5.  VERIFICACIONES  (criterios de aceptación)")
-    ws.cell(82, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(82, j).fill = BAND_FILL
-    franja(ws, 82, 1, 7)
+    # mismo criterio que las bandas anteriores. Encabezado de fila 83: CINCO
+    # columnas propias (Verificacion/Requerido/Adoptado/Resultado/Criterio
+    # en A/D/E/F/G, sin Simbolo ni Unidad en B/C — esta tabla no las tiene),
+    # tampoco compatible con un header generico -en mayusculas y que escribe
+    # columnas consecutivas desde la 1, sin poder saltar B/C-.
+    banda_literal(82, "5.  VERIFICACIONES  (criterios de aceptación)")
 
-    for col_idx, texto in ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
-                            (6, "Resultado"), (7, "Criterio")):
-        c83 = ws.cell(83, col_idx, texto)
-        c83.font, c83.fill, c83.border = HDR_F, HDR_FILL, BOX_FRANJA
+    encabezado(83, ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
+                    (6, "Resultado"), (7, "Criterio")))
 
     # Filas 84-89: el rotulo de cada verificacion ocupa A:C fusionado (el
     # *oracle* no reparte Simbolo/Unidad en esta tabla); D/E/F llevan las
@@ -7011,29 +6954,24 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     calc("E89", "=$D$27")
     calc("F89", '=IF(E89<=D89,"OK — parche","Migrar (Art.206)")')
 
-    # Fila 90: DICTAMEN GLOBAL, fusionado A90:E90. F90 ya lo escribio la
-    # Tarea 2 (cableado Seccion 7, mas arriba en esta funcion) — no se
-    # reescribe aqui. Mismo estilo que el dictamen global del Art. 206
-    # (build_collar_art206: lab() + override a Font MACRO/TINTA — emblematico
-    # pero sobre papel, no sobre banda).
+    # Fila 90: DICTAMEN GLOBAL, fusionado A90:E90. F90 ya lo escribio el
+    # cableado Seccion 7 mas arriba en esta funcion — no se reescribe aqui.
+    # Mismo estilo que el dictamen global del Art. 206 (build_collar_art206:
+    # lab() + override a Font MACRO/TINTA — emblematico pero sobre papel, no
+    # sobre banda).
     lab(90, "DICTAMEN GLOBAL DEL DISEÑO")
     ws.cell(90, 1).font = Font(name=MACRO, size=11, color=TINTA)
     ws.merge_cells("A90:E90")
 
-    # --- 6. Especificaciones tecnicas (filas 93-99) — Tarea 8 ---------------
+    # --- 6. Especificaciones tecnicas (filas 93-99) --------------------------
     # A92: banda de seccion, fusionada A92:G92, texto literal con el numeral
     # "6." y el doble espacio antes del parentesis, mismo criterio que las
     # bandas anteriores. Esta seccion no lleva fila de encabezado propia (el
     # *oracle* no la declara): pasa directo de la banda al contenido, porque
     # la tabla no es Parametro/Simbolo/Valor sino Metodo/Especificacion (A +
     # B, con B fusionado B:G).
-    ws.merge_cells("A92:G92")
-    ws.cell(92, 1, "6.  ESPECIFICACIONES TÉCNICAS  (generadas automáticamente "
-                   "a partir de las entradas)")
-    ws.cell(92, 1).font = Font(name=MACRO, size=11, color=PAPEL)
-    for j in range(1, 8):
-        ws.cell(92, j).fill = BAND_FILL
-    franja(ws, 92, 1, 7)
+    banda_literal(92, "6.  ESPECIFICACIONES TÉCNICAS  (generadas automáticamente "
+                      "a partir de las entradas)")
 
     # Filas 93-99: rotulo en A (estilo lab(), sin ref/unidad porque estas
     # filas no tienen columna G propia — el *oracle* no la declara) y el
@@ -7084,12 +7022,11 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
         "Herramienta de ingeniería de referencia. Verificar entradas y resultados; complementar con WPS/PQR, ATS/JSA y registros del propietario. Cálculos según ASME PCC-2-2022 (Art. 212/206), ASME B31.3 y ASME BPVC VIII-1.")
     aviso101.font = SRC_F
 
-    # --- Comentarios de las Secciones 1-6 (Tarea 8, ultima de las seis) -----
-    # Ahora que TODAS las celdas de las secciones 1-6 ya existen en ws (esta
-    # es la ultima de las Tareas 3-8), comentar_art212_base() puede aplicar
-    # sus notas de verdad: su guardia interna (`if c.value is not None`) ya
-    # no salta en silencio ninguna celda por pertenecer a una seccion
-    # todavia no escrita.
+    # --- Comentarios de las Secciones 1-6 -----------------------------------
+    # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
+    # existen en ws, para que comentar_art212_base() aplique sus notas de
+    # verdad: su guardia interna (`if c.value is not None`) no salta en
+    # silencio ninguna celda por pertenecer a una seccion todavia no escrita.
     comentar_art212_base(ws)
 
     ws.protection.password = "0000"
@@ -7329,8 +7266,8 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     """Motor Art. 206 (collar de encierro total, Type A y Type B), 100% en
     codigo — a diferencia de Parche_PCC2_Art212, no hereda nada del maestro
     Rev0. Reutiliza la cascada de material de construir_seccion7_material
-    (compartida con integrate_motor) y el lookup de Datos_Ref ya robustecido
-    por corregir_art212_fase1 (el mismo ""& contra la cedula).
+    (compartida con build_parche_art212) y el lookup de Datos_Ref ya
+    robustecido en build_parche_art212 (el mismo ""& contra la cedula).
 
     El Art. 206 no tiene ecuaciones propias de membrana/filete/conformado en
     frio (esas son del Art. 212): remite al codigo de construccion para el
@@ -8746,12 +8683,11 @@ def link_volver(wb):
 # ---------------------------------------------------------------------------
 # Retonado de lo que trae el maestro
 # ---------------------------------------------------------------------------
-# Tres hojas no las construye este script: las trae maestro_con_macros.xlsm
-# (Instrucciones, Datos_Ref y el motor Parche_PCC2_Art212, cuyas secciones 1 a 6
-# vienen sembradas). Su estilo es el de la Rev. 0 —azules corporativos, Arial,
-# amarillo de entrada— y sin retonarlas el libro tendria dos sistemas visuales a
-# la vez. La plantilla NO se edita a mano (la genera make_vba_seed.py), asi que
-# el mapeo se aplica al construir.
+# Dos hojas no las construye este script: las trae maestro_con_macros.xlsm
+# (Instrucciones y Datos_Ref). Su estilo es el de la Rev. 0 —azules corporativos,
+# Arial, amarillo de entrada— y sin retonarlas el libro tendria dos sistemas
+# visuales a la vez. La plantilla NO se edita a mano (la genera
+# make_vba_seed.py), asi que el mapeo se aplica al construir.
 #
 # Es una tabla de EQUIVALENCIA EXACTA, no una aproximacion por cercania de
 # color: solo se traduce lo que estaba en el inventario de la plantilla. Asi es

@@ -643,17 +643,14 @@ class TestLintVba:
 
 
 # ---------------------------------------------------------------------------
-# Tarea 2 del plan de desanclado total: esqueleto de build_parche_art212()
+# build_parche_art212(): prueba aislada, con stubs, sin Excel
 # ---------------------------------------------------------------------------
 # A diferencia de TestParidadHojaParche (que compara el .xlsm REAL, ya
-# construido por el pipeline viejo integrate_motor, contra el oracle), esta
-# clase construye Parche_PCC2_Art212 con la funcion NUEVA build_parche_art212
-# sobre un libro de usar y tirar, sin resources/ ni el maestro real: no hay
-# Excel en este entorno y el build completo tarda ~45 s, asi que un stub
-# minimo es la unica forma de probar la funcion de forma rapida y aislada.
-# build_parche_art212 todavia no esta cableada a main() (eso es la Tarea 9),
-# asi que este es el UNICO sitio del paquete de pruebas que la ejerce hasta
-# entonces.
+# construido por build_parche_art212 desde main(), contra el oracle), esta
+# clase llama a build_parche_art212() directamente sobre un libro de usar y
+# tirar, sin resources/ ni el maestro real: no hay Excel en este entorno y el
+# build completo tarda ~45 s, asi que un stub minimo es la forma rapida y
+# aislada de probar la funcion sin pagar ese costo en cada corrida.
 #
 # Los *_stub() reproducen solo lo que construir_seccion7_material consume de
 # verdad de cada dict (ver build_b313/build_iid/build_map_factores/
@@ -671,8 +668,8 @@ class TestLintVba:
 # *oracle*, se fijan a los mismos dos rangos que el *oracle* ya capturo del
 # .xlsm real (parche_art212_ref.json): "DB_B31_3!$A$4:$A$1291" (D115) y
 # "DB_BPVC_IID!$A$4:$A$1802" (E115, via IID1A) — no son valores inventados,
-# son los que la Tarea 1 ya verifico contra el libro real; aqui solo se
-# reutilizan para que el stub no rompa el unico dato que el test compara.
+# son los que ya se verificaron contra el libro real; aqui solo se reutilizan
+# para que el stub no rompa el unico dato que el test compara.
 def b313_stub():
     """Dict minimo de la base B31.3 (build_b313 real: sheet/last_row/pack_t0/
     pack_v0/npts_col). El nombre de hoja SI importa (tiene que casar con la
@@ -737,9 +734,9 @@ def rangos_stub():
 
 class TestBuildParcheContraOracle:
     """Construye Parche_PCC2_Art212 en un wb de usar y tirar y lo compara contra
-    el *oracle*, sin regenerar el entregable. Conforme se anaden secciones
-    (Tareas 3-8), mas celdas del oracle quedan cubiertas; COBERTURA_PARCIAL
-    enumera las que cada tarea ya debe reproducir."""
+    el *oracle*, sin regenerar el entregable. Cada bloque ANCLAS_SECCION_*
+    (y ANCLAS_T2) enumera las celdas de esa seccion que la funcion ya debe
+    reproducir letra a letra."""
 
     def _construir(self):
         import build_db_materiales as B
@@ -767,10 +764,9 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_T2:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 3 — Aplicacion y codigo de construccion (filas 10-14). Cubre
-    # TODAS las celdas que el oracle declara en ese rango: A/B/C/D/G de las
-    # cinco filas (B10-B14 y C10-C14 incluidas, aunque el brief solo pedia
-    # D10-D14 + rotulos A10-A14 como minimo — ver task-3-report.md).
+    # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
+    # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
+    # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).
     ANCLAS_SECCION_3 = (
         "A10", "B10", "C10", "D10", "G10",
         "A11", "B11", "C11", "D11", "G11",
@@ -785,14 +781,13 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_SECCION_3:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 4 — Seccion 1, datos de entrada (filas 16-35). Incluye la banda
-    # A16 (texto NUEVO que reemplaza TEXTOS_HEREDADOS, pero identico al que
-    # el *oracle* ya capturo — ver build_parche_art212) y el encabezado de
-    # fila 17 (Parametro/Simbolo/Unidad/Valor/Referencia). Cubre TODAS las
-    # celdas que el oracle declara en el rango 16-35: A/B/C/D/G de las 18
-    # filas de datos (B18-B35 y C18-C35 incluidas), aunque el brief solo
-    # pedia D18-D35 + A16 + G22/G23 como minimo — mismo criterio que la
-    # Tarea 3 aplico en ANCLAS_SECCION_3.
+    # Seccion 1, datos de entrada (filas 16-35). Incluye la banda A16 (texto
+    # NUEVO que reemplaza TEXTOS_HEREDADOS, pero identico al que el *oracle*
+    # ya capturo — ver build_parche_art212) y el encabezado de fila 17
+    # (Parametro/Simbolo/Unidad/Valor/Referencia). Cubre TODAS las celdas que
+    # el oracle declara en el rango 16-35: A/B/C/D/G de las 18 filas de datos
+    # (B18-B35 y C18-C35 incluidas, no solo D18-D35 + A16 + G22/G23) — mismo
+    # criterio de exhaustividad que ANCLAS_SECCION_3.
     ANCLAS_SECCION_4 = (
         "A16",
         "A17", "B17", "C17", "D17", "G17",
@@ -822,18 +817,17 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_SECCION_4:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 5 — Seccion 2, esfuerzos admisibles y factores (filas 39-48).
-    # Incluye la banda A37 (fusionada A37:G37, "PARAMETROS DE CALCULO
-    # (constantes - editables)") y el encabezado de fila 38
-    # (Parametro/Simbolo/Unidad/Valor/Referencia): preceden inmediatamente el
-    # rango 39-48 y titulan esta seccion, no una anterior (Ruling del
-    # controlador, tasks-3-8-common.md). Cubre TODAS las celdas que el
-    # *oracle* declara en el rango 37-48 — A/B/C/D/G de las diez filas de
-    # datos (B39-B48 y C39-C48 incluidas, sin G45 porque el *oracle* no lo
+    # Seccion 2, esfuerzos admisibles y factores (filas 39-48). Incluye la
+    # banda A37 (fusionada A37:G37, "PARAMETROS DE CALCULO (constantes -
+    # editables)") y el encabezado de fila 38 (Parametro/Simbolo/Unidad/
+    # Valor/Referencia): preceden inmediatamente el rango 39-48 y titulan
+    # esta seccion, no una anterior. Cubre TODAS las celdas que el *oracle*
+    # declara en el rango 37-48 — A/B/C/D/G de las diez filas de datos
+    # (B39-B48 y C39-C48 incluidas, sin G45 porque el *oracle* no lo
     # declara), mismo criterio de exhaustividad que ANCLAS_SECCION_3 y
-    # ANCLAS_SECCION_4. D39/D40/D44 ya los cubre ANCLAS_T2 (Tarea 2); se
-    # repiten aqui para que esta seccion quede completa por si sola —
-    # redundante pero correcto (ver task-5-brief.md).
+    # ANCLAS_SECCION_4. D39/D40/D44 ya los cubre ANCLAS_T2; se repiten aqui
+    # para que esta seccion quede completa por si sola — redundante pero
+    # correcto.
     ANCLAS_SECCION_5 = (
         "A37",
         "A38", "B38", "C38", "D38", "G38",
@@ -855,17 +849,16 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_SECCION_5:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 6 — Geometria y propiedades derivadas (filas 52-57). Incluye la
-    # banda A50 (fusionada A50:G50, "2.  GEOMETRIA Y PROPIEDADES DERIVADAS",
-    # con el numeral y el doble espacio tal como los imprime el *oracle*) y
-    # el encabezado de fila 51 (Parametro/Simbolo/Unidad/Valor/"Formula /
+    # Geometria y propiedades derivadas (filas 52-57). Incluye la banda A50
+    # (fusionada A50:G50, "2.  GEOMETRIA Y PROPIEDADES DERIVADAS", con el
+    # numeral y el doble espacio tal como los imprime el *oracle*) y el
+    # encabezado de fila 51 (Parametro/Simbolo/Unidad/Valor/"Formula /
     # Referencia" — distinto de "Referencia / Notas" de las filas 17/38):
     # preceden inmediatamente el rango 52-57 y titulan esta seccion, no una
-    # anterior (Ruling del controlador, tasks-3-8-common.md). Cubre TODAS las
-    # celdas que el *oracle* declara en el rango 50-57 — A/B/C/D/G de las
-    # seis filas de datos, mismo criterio de exhaustividad que
-    # ANCLAS_SECCION_3/4/5. El *oracle* no declara ninguna validacion de
-    # datos en este rango (verificado en task-6-report.md).
+    # anterior. Cubre TODAS las celdas que el *oracle* declara en el rango
+    # 50-57 — A/B/C/D/G de las seis filas de datos, mismo criterio de
+    # exhaustividad que ANCLAS_SECCION_3/4/5. El *oracle* no declara ninguna
+    # validacion de datos en este rango.
     ANCLAS_SECCION_6 = (
         "A50",
         "A51", "B51", "C51", "D51", "G51",
@@ -883,19 +876,18 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_SECCION_6:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 7 — Seccion 3, calculo de cargas y soldadura (filas 61-69), mas
-    # Seccion 4, resultados del diseno (filas 73-80). Nombrada distinto de
+    # Seccion 3, calculo de cargas y soldadura (filas 61-69), mas Seccion 4,
+    # resultados del diseno (filas 73-80). Nombrado distinto de
     # "test_seccion_7" a proposito: ese nombre ya lo usaria la "Seccion 7" de
-    # cascada de material que escribio la Tarea 2 (construir_seccion7_material,
-    # filas 105+) y es un numero de seccion del motor distinto del numero de
-    # tarea del plan — este metodo cubre el rango de FILAS 61-80, no una
-    # "seccion 7". Incluye la banda A59 y el encabezado de fila 60 (con TRES
-    # columnas de valor propias: Operacion/Diseno tipico/Envolvente en D/E/F,
-    # no una sola "Valor") y la banda A71 y el encabezado de fila 72 (con
-    # G72="Formula / Referencia"): preceden inmediatamente cada uno de los dos
-    # rangos de esta tarea y titulan sus propias secciones, no una anterior
-    # (Ruling del controlador, tasks-3-8-common.md). Cubre TODAS las celdas
-    # que el *oracle* declara en 59-69 y 71-80 — comprobado fila por fila, sin
+    # cascada de material (construir_seccion7_material, filas 105+), que es
+    # un numero de seccion del motor sin relacion con el rango de filas que
+    # cubre este metodo (FILAS 61-80, no una "seccion 7"). Incluye la banda
+    # A59 y el encabezado de fila 60 (con TRES columnas de valor propias:
+    # Operacion/Diseno tipico/Envolvente en D/E/F, no una sola "Valor") y la
+    # banda A71 y el encabezado de fila 72 (con G72="Formula / Referencia"):
+    # preceden inmediatamente cada uno de los dos rangos y titulan sus
+    # propias secciones, no una anterior. Cubre TODAS las celdas que el
+    # *oracle* declara en 59-69 y 71-80 — comprobado fila por fila, sin
     # asumir que las tres columnas D/E/F existen en 61-69 (fila 69 no trae
     # B69) ni que A/B/C/D/G existen todas en 73-80 (75 no trae G, 76/77/79/80
     # no traen B). La fila 58 y la fila 70 no aparecen en el *oracle* (ni
@@ -930,15 +922,11 @@ class TestBuildParcheContraOracle:
         for celda in self.ANCLAS_FILAS_61_80:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
-    # Tarea 8 — ultima de las seis tareas de seccion. Cubre la Seccion 5
-    # (verificaciones, filas 82-90), la Seccion 6 (especificaciones tecnicas,
-    # filas 93-99), el aviso fijo (fila 101) y DOS gaps acumulados de tareas
-    # anteriores que ningun brief 2-7 reclamaba (Ruling del controlador,
-    # tasks-3-8-common.md y task-8-brief.md):
-    #   (a) la banda IDENTIFICACION (A4) + G5/G6, que la Tarea 2 dejo sin
-    #       asignar (task-2-report.md, Desviaciones 2 y 3);
-    #   (b) la banda APLICACION Y CODIGO (A8) + el encabezado de fila 9, que
-    #       la Tarea 3 detecto sin asignar (task-3-report.md).
+    # Cubre la Seccion 5 (verificaciones, filas 82-90), la Seccion 6
+    # (especificaciones tecnicas, filas 93-99), el aviso fijo (fila 101) y
+    # DOS gaps que quedaron sin asignar en secciones anteriores:
+    #   (a) la banda IDENTIFICACION (A4) + G5/G6;
+    #   (b) la banda APLICACION Y CODIGO (A8) + el encabezado de fila 9.
     # Incluye tambien la banda A82 y el encabezado de fila 83 (preceden el
     # rango 84-90 y titulan esta seccion, no una anterior) y la banda A92
     # (precede el rango 93-99; esta seccion no tiene fila de encabezado

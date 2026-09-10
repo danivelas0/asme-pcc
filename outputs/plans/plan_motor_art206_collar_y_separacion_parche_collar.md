@@ -188,7 +188,9 @@ recomendación de (b) de arriba. **EJECUTADA** por el plan propio
 Approved), commits `40fc235..3653ccb`, commit final `3653ccb`.
 `Parche_PCC2_Art212` nace ahora 100 % en código con `build_parche_art212()`;
 `HOJAS_HEREDADAS` quedó en `("Instrucciones", "Datos_Ref")`. Ver el «Estado
-final» de ese plan para el detalle de tests y `verificar.py`.
+final» de ese plan para el detalle de tests y `verificar.py` — pendiente de la
+validacion en Excel real del ingeniero (Step 3 del plan de desanclado); no se
+da por cerrada.
 
 ---
 
