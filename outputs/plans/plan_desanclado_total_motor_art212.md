@@ -619,3 +619,77 @@ git commit -m "Documenta el desanclado total del Art. 212 (Fase 4 ejecutada)"
 - **Consistencia de tipos/nombres:** `build_parche_art212(wb, b313, iid1a, iidb, fac_info,
   rangos)` usa la misma firma que `build_collar_art206`; la llamada en `main` pasa
   `(wb, b313, iid, iidb, fac, rangos)`, los mismos argumentos que recibía `integrate_motor`.
+
+---
+
+## Estado final
+
+**Ejecutado. Las 9 tareas del plan quedaron completadas y revisadas**, sin ningún
+hallazgo Critical o Important sin resolver (ledger completo:
+`.superpowers/sdd/plan_desanclado_total_motor_art212/progress.md`):
+
+| Tarea | Commits | Review |
+|---|---|---|
+| 1 — Oracle y test de hoja entera | `40fc235..60f6acb` | Approved, 0 hallazgos |
+| 2 — Esqueleto de `build_parche_art212()` | `60f6acb..8b09efb` | Approved, 3 Minor (deferred) |
+| 3 — Aplicación y código (filas 10-14) | `8b09efb..cef6bdf` | Approved, 0 hallazgos |
+| 4 — Sección 1, datos de entrada (16-35) | `cef6bdf..f75317c` | Approved, 1 Minor (deferred) |
+| 5 — Sección 2, esfuerzos y factores (39-48) | `f75317c..34b89ca` | Approved, 2 Minor (deferred) |
+| 6 — Geometría (52-57) | `34b89ca..33a58c9` | Approved, 1 Minor (deferred) |
+| 7 — Sección 3 + resultados (61-80) | `33a58c9..e1f576c` | Approved, 0 hallazgos |
+| 8 — Secciones 5-6, aviso, gaps, `comentar_art212_base` | `e1f576c..8432dcf` | Approved, 2 Minor (deferred) |
+| 9 — Desanclar en `main()` y limpiar la herencia | `8432dcf..3653ccb` | Approved, 0 hallazgos |
+
+Rango completo: `40fc235..3653ccb`. Commit final:
+`3653ccb Desancla Parche_PCC2_Art212 del Rev0: nace 100% en codigo (Fase 4)` — único
+archivo de código tocado (`scripts/build_db_materiales.py`, 9 inserciones / 127
+eliminaciones), que incluye tanto las cuatro operaciones de desanclado de la Tarea 9
+(`HOJAS_HEREDADAS`, `TEXTOS_HEREDADOS`, la llamada en `main()`, la eliminación de
+`integrate_motor`/`corregir_art212_fase1`) como el fix de dos líneas de
+`ws.merge_cells("A1:G1"/"A2:G2")` autorizado por el controlador dentro de esa misma
+tarea (ver `task-9-report.md`).
+
+**Resultado de los gates, corridos en este entorno.** Contrario a lo que este plan
+asumía en «Global Constraints» y en «Verificación — qué se puede aquí y qué no» («No
+hay Excel en este entorno»), la sesión que ejecutó la Tarea 9 sí tenía Excel y
+`win32com` disponibles:
+
+- `pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q` → **217 passed
+  en 95.65s**, 0 fallos. (Primera corrida, antes del fix de fusionado A1:G1/A2:G2:
+  216 passed, 1 failed en `TestParidadHojaParche::test_rangos_fusionados` — el fallo
+  real que motivó el fix.)
+- `verificar.py`, las **10 secciones completas**, **0 fallos totales**, incluido el
+  recálculo real en Excel (§6/6b/6c/6d) y el caso semilla (§7):
+
+  | Sección | Fallos |
+  |---|---|
+  | 1. Conteo de filas (JSON → hoja) | 0 |
+  | 2. Unicidad de material_id | 0 |
+  | 3. Auditoría fila a fila (271 536 valores) | 0 |
+  | 3b. Bases por familia, auxiliares y no metálicos | 0 |
+  | 4. Contigüidad de la cascada | 0 |
+  | 5. Sin funciones de matriz dinámica / validaciones portables | 0 |
+  | 6. Interpolación recalculada en Excel (22 casos) | 0 |
+  | 6b. Apéndice C (10 casos) | 0 |
+  | 6c. Factores de calidad Ec/Ej (11 casos) | 0 |
+  | 6d. Tabla B-1 (11 casos) | 0 |
+  | 7. Regresión del caso semilla (12"-CWS-46-032-B1) | 0 — dictamen APTO |
+  | 8. Capa de navegación (Dashboard + VBA) | 0 |
+  | 9. Mapeo de grupos (MAP_Grupo/MAP_GrupoC) | 0 |
+  | 10. Sección II A/B/C (54 198 filas, comprobación sin pérdida) | 0 |
+
+  Reporte completo, regenerado por el propio script:
+  `outputs/Base_Datos_Materiales_ASME/Reporte_Verificacion_DB_Materiales.md`.
+
+**Hallazgo real durante la ejecución, ya cerrado dentro de la Tarea 9.** El `.xlsm`
+reconstruido no fusionaba `A1:G1`/`A2:G2` en `Parche_PCC2_Art212` frente al *oracle*
+— gap de la Tarea 2 (`new_sheet()` no fusiona A1/A2; la sobreescritura literal de A1/A2
+nunca añadió el `merge_cells`), invisible mientras `TestParidadHojaParche` corría contra
+la hoja aún heredada. El controlador diagnosticó la causa y autorizó el fix como parte
+de la Tarea 9 en vez de abrir una tarea aparte; verificado antes/después contra el
+*oracle*: `missing: []`, `extra: []`, 29/29 fusionados.
+
+**Pendiente, fuera del alcance de este plan.** La entrega del `.xlsm` regenerado al
+ingeniero para la validación en Excel real descrita en el Step 3 de la Tarea 10 la
+hace el controlador después del commit de esta documentación. La Fase 4 del plan del
+Art. 206 no se da por cerrada hasta esa confirmación del ingeniero.

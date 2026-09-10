@@ -8,9 +8,8 @@ fallos, recálculo real incluido) y a mano en Excel para un caso Type A y uno
 Type B. Fase 3 (nodo del árbol + `mod_nav.vba`) quedó resuelta como parte de
 la Fase 2, ya que sin la sincronía de navegación la hoja nueva no pasaba
 `test_dashboard.py::TestSincroniaPythonVba`. **Fase 4 (desanclar el 212 del
-Rev0) sin ejecutar** — el ingeniero decidió alcance "Total", pendiente de un
-plan propio dado el riesgo de reescribir ~130 filas de fórmulas ya validadas
-sin poder volver a validarlas en este entorno salvo con Excel real.
+Rev0) EJECUTADA (2026-09-10)** — alcance "Total" (opción a), por el plan
+`outputs/plans/plan_desanclado_total_motor_art212.md` (commits `40fc235..3653ccb`).
 
 Libro que cita este plan: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`,
 **71 hojas**, dos motores de cálculo (`Parche_PCC2_Art212`,
@@ -163,7 +162,7 @@ Hoy la banda 1 (`MOTORES DE CALCULO`) llega a **una** tarjeta:
 
 ---
 
-## Fase 4 — Desanclar el motor 212 del Rev0 · DECISIÓN DE ALCANCE
+## Fase 4 — Desanclar el motor 212 del Rev0 · DECISIÓN DE ALCANCE · EJECUTADA (2026-09-10)
 
 Hoy la hoja `Parche_PCC2_Art212` (y `Datos_Ref`, `Instrucciones`) es **heredada**
 del maestro (`HOJAS_HEREDADAS`), que sale del respaldo Rev0. La Fase 1 solo
@@ -182,6 +181,14 @@ Dos caminos, a elegir:
 
 **Recomendación:** (b). El desanclado total del 212 no da beneficio funcional
 inmediato y su riesgo es alto sin banco de Excel.
+
+**Decisión del ingeniero:** (a) desanclado total ("Project scope"), contra la
+recomendación de (b) de arriba. **EJECUTADA** por el plan propio
+`outputs/plans/plan_desanclado_total_motor_art212.md` (9 tareas, revisadas
+Approved), commits `40fc235..3653ccb`, commit final `3653ccb`.
+`Parche_PCC2_Art212` nace ahora 100 % en código con `build_parche_art212()`;
+`HOJAS_HEREDADAS` quedó en `("Instrucciones", "Datos_Ref")`. Ver el «Estado
+final» de ese plan para el detalle de tests y `verificar.py`.
 
 ---
 

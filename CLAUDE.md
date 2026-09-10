@@ -667,6 +667,15 @@ de la Rev. 0. `TEXTOS_HEREDADOS` cubre el caso aparte: un rótulo del maestro qu
 caduca con él, y retonar la celda sin reescribir el texto dejaría al libro
 explicando una convención que ya no existe.
 
+**`Parche_PCC2_Art212` dejó de ser una hoja heredada (2026-09-10).** `HOJAS_HEREDADAS`
+pasó de tres hojas (`Instrucciones`, `Datos_Ref`, `Parche_PCC2_Art212`) a solo dos
+(`Instrucciones`, `Datos_Ref`); `TEXTOS_HEREDADOS` quedó vacío en consecuencia. La hoja
+del Art. 212 nace ahora 100 % en código con `build_parche_art212()`, hermana de
+`build_collar_art206()` (mismo patrón: `new_sheet()`, helpers `lab`/`inp`/`calc`/`band`/
+`header`, sin herencia del maestro) — retiró la última hoja de cálculo que todavía
+dependía de `retonar_heredadas()` para su sistema visual. Plan y commits:
+`outputs/plans/plan_desanclado_total_motor_art212.md`, rango `40fc235..3653ccb`.
+
 ### Estilo de diseño de los buscadores — no romper
 
 Vive en `build_buscador` / `finish_buscador` (los 5 buscadores de cascada: B31_3,
