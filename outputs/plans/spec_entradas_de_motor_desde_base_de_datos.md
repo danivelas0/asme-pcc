@@ -82,6 +82,36 @@ fija entrega la cédula como número mientras la fila de encabezados la guarda c
 texto. Es divergencia lista-vs-tabla en estado puro; desaparece sola cuando el
 desplegable lee de la propia fila de encabezados.
 
+### 2.6 Esquema real de los JSON de B36.10M y B36.19M (entregados 2026-09-10)
+
+El ingeniero entregó las dos extracciones. **A diferencia de la Sección II, aquí los
+bloques `Table` sí traen `<table>` HTML real**: no hay que recomponer columnas desde
+`Line` y `bbox`.
+
+| Norma | Tablas de dimensiones | Filas | Columnas |
+|---|---|---:|---|
+| B36.10M | 19 (págs. 13-31) | ~800 | `NPS (DN)`, `Identification [Note (1)]`, `Schedule No.`, `Outside Diameter, in. (mm)`, `Wall Thickness, in. (mm)`, `Plain End Weight (Mass), lb/ft (kg/m)` |
+| B36.19M | 3 (págs. 11-13) | ~117 | igual, **sin** `Identification` (el inoxidable designa por 5S/10S/40S/80S en `Schedule No.`) |
+
+Filas reales de muestra (pág. 13):
+
+```
+['1/8 (6)', '...', '10',  '0.405 (10.29)', '0.049 (1.24)', '0.19 (0.28)']
+['1/8 (6)', 'STD', '40',  '0.405 (10.29)', '0.068 (1.73)', '0.24 (0.37)']
+['1/8 (6)', 'XXS', '...', '0.405 (10.29)', '0.190 (4.83)', '0.44 (0.65)']
+```
+
+Cuatro consecuencias de diseño, todas para el plan:
+
+1. **Una fila por (NPS, cédula)**, no la matriz 33×14 de `Datos_Ref`. Es la forma que quiere una cascada y la que usan las demás `DB_*`.
+2. **`'...'` es el marcador de «no aplica» impreso por el código.** XXS no tiene número de cédula; la Sch 10 no tiene identificación. Se conserva tal cual (regla 9); convertirlo a vacío en silencio sería inventar.
+3. **Los dos sistemas de unidades vienen en la MISMA celda** (`0.405 (10.29)`). Por la regla 10, el conmutador cambia de **columna**, no de hoja: no hay edición US aparte que cargar. Hay que partir cada celda en sus dos magnitudes al construir la base.
+4. **Doble designación.** Una misma tubería se alcanza por `Schedule No.` o por `Identification`, a veces por las dos y a veces por una sola. La cascada tiene que dejar elegir por cualquiera de las dos sin duplicar filas ni obligar al ingeniero a saber de antemano cuál publica su tubería.
+
+Además, el `NPS (DN)` llega como `1/8 (6)` —fraccionario más DN— mientras `Datos_Ref`
+usa decimal (`0.5`, `12`, `48`). El caso semilla del Art. 212 es NPS 12: la conversión
+de representación tiene que dejarlo resolviendo igual.
+
 ### 2.5 Dónde están las normas dimensionales
 
 Accesibles desde esta máquina en el perfil `User` (el `CLAUDE.md` documenta la ruta
@@ -111,10 +141,20 @@ no puede quedar a interpretación. Son las **doce**: `Parche_PCC2_Art212`,
 `Instrucciones` y `Datos_Ref` **no** son hojas de motor: no llevan entradas del
 ingeniero y el guardia no las mira.
 
-**Un plan por tanda, no un plan para las cuatro fases.** El plan de implementación que
-sigue a esta spec cubre **solo las Fases 1 y 2**, que no dependen de nada externo. Las
-Fases 3 y 4 tendrán su propio plan cada una, cuando llegue el JSON de su norma: escribir
-hoy tareas detalladas contra un archivo que no existe sería inventar su forma.
+**Un plan, tres fases.** Con los JSON ya entregados (§2.6) nada queda bloqueado, así
+que el plan de implementación cubre las tres fases seguidas. Cada fase cierra con sus
+gates en verde (las tres suites y `verificar.py`), de modo que sigue siendo posible
+detenerse entre fases con el libro en un estado entregable.
+
+**Dónde están los JSON entregados** (rutas de la sesión del 2026-09-10; la primera
+tarea del plan es depositarlos en `resources/ASME B36/`, porque el directorio de
+subidas es de sesión y no es un sitio del que dependa el proyecto):
+
+```
+C:\Users\User\.claude\uploads\b554f20f-43a0-4c53-b8e7-767a3321bf31\
+  974d90fb-datalaboutputASME_B36.10M__Welded_and_Seamless_Wroth_Steel_Pipe_2022.pdf.json
+  ecc8b41b-datalaboutputASME_B36.19M__Stainless_Steel_Pipe_2022.pdf.json
+```
 
 **No entra:** las listas legítimas de 2.1 (modos y booleanos); las entradas que ninguna
 base publica y que por tanto se siguen tecleando (temperatura y presión de operación,
@@ -126,8 +166,15 @@ histórico de memorias ya emitidas.
 
 ## 4. Diseño
 
-Cuatro fases. Las dos primeras no dependen de nada externo; la tercera y la cuarta
-esperan a que el ingeniero entregue los JSON de las normas dimensionales.
+> **Revisión del 2026-09-10, tras recibir los JSON.** El diseño original tenía cuatro
+> fases, con la 3 y la 4 esperando norma. Con las dos extracciones ya entregadas
+> (§2.6) y la decisión del ingeniero de **retirar `Datos_Ref`**, las fases 2 y 3
+> originales se colapsan: no tiene sentido apuntar D18/D19 a `Datos_Ref` para
+> repuntarlas a `DB_B36_10` inmediatamente después. Quedan **tres fases**, ninguna
+> bloqueada, y B36.19M entra junto con B36.10M en la misma fase de extracción en vez
+> de en una fase propia — son la misma clase de trabajo sobre el mismo esquema.
+
+Tres fases. Ninguna depende ya de una entrega externa.
 
 ### Fase 1 — Cierre del hueco actual y el guardia
 
@@ -155,43 +202,55 @@ lo que construimos y dejaría de ser un control independiente. En su lugar,
 propósito, cada una con su motivo, que el test consulta antes de fallar. Es el patrón
 que el libro ya usa en `DIVERGENCIAS_NOMBRE_C` (1317) para el Apéndice C.
 
-### Fase 2 — NPS y cédula dejan de ser literales
+### Fase 2 — Extracción de B36.10M y B36.19M, y sus dos bases
 
-D18/D19 de los dos motores pasan a leer de la hoja dimensional con el mecanismo ya
-probado en `construir_seccion7_material`: la columna de la base se **materializa en una
-columna oculta** del propio motor y la validación apunta a ese rango literal. Lo exige
-la regla 2 (una fórmula no puede ser origen de validación) y es exactamente lo que la
-Sección 7 hace hoy con la familia de material (`FAM_COL = 11`, 5962-5971).
+Las dos normas entran juntas: mismo esquema, misma clase de trabajo (§2.6).
 
-Al leer la cédula de la propia fila de encabezados desaparece la causa del `""&`
-(2.4). **La fórmula no se toca en esta fase** — quitar el `""&` es un cambio de
-comportamiento que se evalúa aparte, con el test de paridad delante.
+1. **Depositar las extracciones en `resources/ASME B36/`**, con la misma disciplina de
+   procedencia que el resto del árbol (`meta.json` con origen y fecha).
+2. **Verificarlas contra los PDF** de §2.5, con el protocolo del proyecto: el PDF
+   **solo corrige y audita el JSON, nunca alimenta un motor directamente**. La
+   verificación tiene que apoyarse en algo que aparezca **una sola vez** —una fila
+   concreta de una tabla—, nunca en el rótulo de la tabla, que se repite en cada
+   página de continuación y casa con cualquier convención de folio (la trampa ya
+   pagada, documentada en `CLAUDE.md`).
+3. **Construir `DB_B36_10` y `DB_B36_19`** desde esos JSON, una fila por
+   (NPS, cédula), partiendo cada celda de doble unidad en sus dos magnitudes y
+   conservando `'...'` tal como lo imprime el código.
 
-### Fase 3 — `Datos_Ref` se convierte en `DB_B36_10` (espera JSON de B36.10M)
+Nada de esta fase toca todavía a los motores: al terminar, las bases existen y están
+auditadas, y los motores siguen leyendo de `Datos_Ref`.
 
-El ingeniero entrega el JSON de B36.10M; se verifica contra el PDF de 2.5 siguiendo el
-protocolo del proyecto (**el PDF solo corrige y audita el JSON, nunca alimenta un motor
-directamente**), se deposita en `resources/ASME B36/`, y el builder construye la hoja
-desde ahí. La hoja se renombra a `DB_B36_10` y **sale de `HOJAS_HEREDADAS`**, que queda
-solo con `Instrucciones`: ninguna hoja con datos de ingeniería vendrá ya del maestro
-Rev0.
+### Fase 3 — Los motores leen de las bases nuevas y `Datos_Ref` se retira
 
-Toca todas las referencias `Datos_Ref!` de los dos motores (fórmulas de OD y espesor,
-más los rangos de la Fase 2) y el árbol de navegación. El bloque obsoleto de las filas
-40-47 no migra: se queda donde está, en la hoja heredada, o se retira — decisión a
-tomar en el plan, no aquí.
+1. **D18/D19 de los dos motores pasan a leer de las bases**, con el mecanismo ya
+   probado en `construir_seccion7_material`: la columna de la base se **materializa en
+   una columna oculta** del propio motor y la validación apunta a ese rango literal
+   (la regla 2 prohíbe una fórmula como origen; es lo que la Sección 7 hace hoy con la
+   familia de material, `FAM_COL = 11`, 5962-5971).
+2. **La cédula pasa a ser lista dependiente**, no plana: depende de la norma
+   dimensional y del NPS elegido — `cascade_formula` (373-377), el mismo mecanismo de
+   los pasos 1-4 de la Sección 7.
+3. **Las fórmulas de OD y espesor** dejan de hacer `INDEX/MATCH` contra la matriz
+   33×14 y pasan a resolver contra la fila de la base. Aquí desaparece la causa del
+   `""&` (§2.4): es un cambio de comportamiento y se hace con el test de paridad
+   delante, no de paso.
+4. **`Datos_Ref` se retira del libro** y `HOJAS_HEREDADAS` queda en
+   `("Instrucciones",)`. Ninguna hoja con datos de ingeniería vendrá ya del maestro
+   Rev0. Decisión del ingeniero (2026-09-10): retirarla, no renombrarla.
 
-### Fase 4 — B36.19M, acero inoxidable (espera JSON de B36.19M)
+**Tres decisiones que esta fase tiene que tomar explícitamente:**
 
-Segunda tabla dimensional (`DB_B36_19`). Aquí la cédula **deja de ser una lista plana**:
-el inoxidable trae su propia serie (5S/10S/40S/80S), así que la lista de cédula pasa a
-depender de qué norma dimensional aplica, y esa a su vez de la familia del material.
-Es una cascada dependiente, con el mismo mecanismo que los pasos 1-4 de la Sección 7
-(`cascade_formula`, 373-377). El plan de esta fase tendrá que decidir **cómo se elige
-la norma dimensional**: explícita (el ingeniero la selecciona) o derivada de la familia
-de material ya resuelta en la Sección 7 — con el matiz de que derivarla acopla la
-Sección 1 a la Sección 7 dentro del mismo motor, lo que la regla 13 no prohíbe (habla
-de motores entre sí) pero merece decidirse a la vista.
+- **Cómo se elige la norma dimensional.** Explícita (el ingeniero selecciona B36.10M o B36.19M) o derivada de la familia de material ya resuelta en la Sección 7. Derivarla acopla la Sección 1 con la Sección 7 dentro del mismo motor — la regla 13 no lo prohíbe (habla de motores entre sí), pero es acoplamiento y merece decidirse a la vista.
+- **Cómo se designa la cédula con doble designación** (§2.6.4): una tubería se alcanza por `Schedule No.`, por `Identification`, por ambas o por una sola. Hay que dejar elegir por cualquiera de las dos sin duplicar filas ni exigir que el ingeniero sepa de antemano cuál publica su tubería.
+- **Qué representación toma el NPS.** La base trae `1/8 (6)`; `Datos_Ref` usa decimal. El caso semilla es NPS 12 y tiene que seguir resolviendo con el mismo dictamen.
+
+**El bloque obsoleto de `Datos_Ref` filas 40-47** —esfuerzos admisibles de seis
+materiales, rotulado por la propia hoja `[OBSOLETO — ver DB_B31_3 / DB_BPVC_IID] … se
+conserva como respaldo historico de las memorias ya emitidas`— **se retira con la
+hoja**: el dato vivo está en las bases auditadas y el libro anterior queda en el
+historial de git. Si el ingeniero prefiere conservarlo, se mueve a una hoja de
+respaldo antes de borrar, no se deja en medio.
 
 ---
 
@@ -214,8 +273,6 @@ de motores entre sí) pero merece decidirse a la vista.
 
 ## 7. Dependencias externas
 
-| Fase | Depende de | Estado |
-|---|---|---|
-| 1, 2 | nada | listas para planificar |
-| 3 | JSON de B36.10M (lo entrega el ingeniero; PDF ya localizado para verificar) | pendiente |
-| 4 | JSON de B36.19M (idem) | pendiente |
+Ninguna pendiente. El ingeniero entregó los dos JSON el 2026-09-10 (§2.6) y los PDF
+para verificarlos están localizados (§2.5). Las tres fases se pueden planificar y
+ejecutar seguidas.
