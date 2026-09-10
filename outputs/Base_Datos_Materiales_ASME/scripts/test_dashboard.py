@@ -929,3 +929,48 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_FILAS_61_80:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 8 — ultima de las seis tareas de seccion. Cubre la Seccion 5
+    # (verificaciones, filas 82-90), la Seccion 6 (especificaciones tecnicas,
+    # filas 93-99), el aviso fijo (fila 101) y DOS gaps acumulados de tareas
+    # anteriores que ningun brief 2-7 reclamaba (Ruling del controlador,
+    # tasks-3-8-common.md y task-8-brief.md):
+    #   (a) la banda IDENTIFICACION (A4) + G5/G6, que la Tarea 2 dejo sin
+    #       asignar (task-2-report.md, Desviaciones 2 y 3);
+    #   (b) la banda APLICACION Y CODIGO (A8) + el encabezado de fila 9, que
+    #       la Tarea 3 detecto sin asignar (task-3-report.md).
+    # Incluye tambien la banda A82 y el encabezado de fila 83 (preceden el
+    # rango 84-90 y titulan esta seccion, no una anterior) y la banda A92
+    # (precede el rango 93-99; esta seccion no tiene fila de encabezado
+    # propia — el *oracle* no la declara). F90 ya lo cubre
+    # test_anclas_de_la_tarea_2; se repite aqui para que la seccion quede
+    # completa por si sola.
+    ANCLAS_SECCION_8 = (
+        "A4", "A5", "D5", "G5", "A6", "D6", "G6",
+        "A8",
+        "A9", "B9", "C9", "D9", "G9",
+        "A82",
+        "A83", "D83", "E83", "F83", "G83",
+        "A84", "D84", "E84", "F84", "G84",
+        "A85", "D85", "E85", "F85", "G85",
+        "A86", "D86", "E86", "F86", "G86",
+        "A87", "D87", "E87", "F87", "G87",
+        "A88", "D88", "E88", "F88", "G88",
+        "A89", "D89", "E89", "F89", "G89",
+        "A90", "F90",
+        "A92",
+        "A93", "B93",
+        "A94", "B94",
+        "A95", "B95",
+        "A96", "B96",
+        "A97", "B97",
+        "A98", "B98",
+        "A99", "B99",
+        "A101",
+    )
+
+    def test_seccion_8(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_SECCION_8:
+            assert ws[celda].value == oracle["formulas"][celda], celda

@@ -6364,19 +6364,39 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
         nota_extra_cascada="La lista corta de Datos_Ref queda como respaldo "
         "historico y ya no alimenta el calculo.")
 
-    # --- Identificacion (filas 5-6) ------------------------------------------
-    # Solo estas dos filas: la banda "IDENTIFICACION" (fila 4) y las bandas
-    # siguientes (fila 8 en adelante) son parte de las Secciones 1-6 que anaden
-    # las Tareas 3-8, con su texto transcrito literal del oracle (acentuado,
-    # sin rotulo()) igual que A1/A2 arriba.
-    lab(5, "Documento",
+    # --- Banda IDENTIFICACION (fila 4) + identificacion (filas 5-6) ---------
+    # A4 es la banda de seccion, fusionada A4:G4, texto literal del *oracle*
+    # ("IDENTIFICACIÓN", sin numeral) transcrito sin pasar por rotulo() —
+    # rotulo() lo envolveria en "[ ... ]" y forzaria mayusculas, y el *oracle*
+    # no trae corchetes — mismo criterio que A1/A2 (Tarea 2). Gap acumulado
+    # que detecto la Tarea 2 (task-2-report.md, Desviaciones 2 y 3) y que el
+    # Ruling del controlador (task-8-brief.md) asigna a esta tarea, junto con
+    # los merges D5:F5/D6:F6 y los valores G5/G6 (revision/unidad del
+    # documento) que tampoco escribio ninguna tarea anterior.
+    ws.merge_cells("A4:G4")
+    ws.cell(4, 1, "IDENTIFICACIÓN")
+    ws.cell(4, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(4, j).fill = BAND_FILL
+    franja(ws, 4, 1, 7)
+
+    lab(5, "Documento", ref="Rev.: 0",
        com="Entrada: identificador del documento de este calculo (numero de MC).")
     inp("D5", "MC-REP-U46-CWS-032",
         com="Entrada: identificador del documento de este calculo (numero de MC).")
-    lab(6, "Componente / servicio",
+    lab(6, "Componente / servicio", ref="Unidad: U46",
        com="Entrada: descripcion del componente y el servicio reparado.")
     inp("D6", 'Cuello de brida WN 12" Cl.150 · Agua de enfriamiento',
         com="Entrada: descripcion del componente y el servicio reparado.")
+    # D5:F5/D6:F6 fusionados (el *oracle* los trae asi: D6 lleva un texto
+    # largo que necesita el ancho de las tres columnas). El RELLENO de inp()
+    # se hereda de la celda ancla al fusionar, pero el BORDE no (la misma
+    # trampa que ya documenta franja() en este archivo) — se replica el
+    # mismo CAJA_CAMPO en E/F para que la linea inferior cruce todo el campo.
+    ws.merge_cells("D5:F5")
+    ws.merge_cells("D6:F6")
+    for celda in ("E5", "F5", "E6", "F6"):
+        ws[celda].border = CAJA_CAMPO
 
     # --- Cableado Seccion 7 -> Secciones 1/3 (D39/D40/D44/F90) --------------
     # Transcrito literal del oracle (coincide con integrate_motor 6171-6205):
@@ -6434,17 +6454,29 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
                      "parche del caso precargado (A516 Gr.70). Cambiela por el "
                      "material de su caso o vacie y use la cascada (pasos 0-4).")
 
+    # --- Banda APLICACION Y CODIGO (fila 8) + encabezado (fila 9), gap ------
+    # La Tarea 3 detecto que el *oracle* trae, antes de su rango 10-14, esta
+    # banda (A8, fusionada A8:G8, texto literal sin rotulo()) y esta fila de
+    # encabezado (A9:G9, mayus/minus mixtas, incompatible con header() porque
+    # ese helper fuerza .upper()) sin que ningun brief (3-7) las reclamara
+    # (ver task-3-report.md). El Ruling del controlador (tasks-3-8-common.md
+    # y task-8-brief.md) las asigna a esta tarea junto con A4/G5/G6 de mas
+    # arriba. Mismo criterio que A1/A2: se escribe el VALOR literal con el
+    # estilo de banda/encabezado, sin pasar por band()/header().
+    ws.merge_cells("A8:G8")
+    ws.cell(8, 1, "APLICACIÓN Y CÓDIGO DE CONSTRUCCIÓN  (selector que conmuta "
+                  "S, t_req y la fuerza de membrana)")
+    ws.cell(8, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(8, j).fill = BAND_FILL
+    franja(ws, 8, 1, 7)
+
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Valor"), (7, "Referencia / Notas")):
+        c9 = ws.cell(9, col_idx, texto)
+        c9.font, c9.fill, c9.border = HDR_F, HDR_FILL, BOX_FRANJA
+
     # --- Aplicacion y codigo de construccion (filas 10-14) — Tarea 3 --------
-    # La banda de seccion (fila 8, "APLICACION Y CODIGO DE CONSTRUCCION...",
-    # A8:G8 fusionada, texto literal del oracle sin pasar por rotulo() —
-    # confirmado con el mismo criterio que aplico la Tarea 2 en A1/A2) y la
-    # fila de encabezado (fila 9: A9=Parametro, B9=Simbolo, C9=Unidad,
-    # D9=Valor, G9=Referencia / Notas) quedan FUERA del alcance literal de
-    # esta tarea: el brief de la Tarea 3 acota "filas 10-14" y sus Anclas no
-    # las incluye. Mismo patron que la Tarea 2 dejo pendientes A4/G5/G6
-    # (ver task-2-report.md, Desviaciones 2 y 3) — documentado en
-    # task-3-report.md para quien las asigne despues.
-    #
     # Columna B (Simbolo) de estas cinco filas no la escribe ninguno de los
     # cinco helpers (lab/inp/calc/band/header): lab() solo cubre A+C+G. El
     # oracle trae ahi "MODO"/"kf" en D11/D14 y "—" de relleno en las demas,
@@ -7026,10 +7058,154 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     lab(80, "Peso del parche/collar", unidad="kg", ref="2·L·H·T·ρ", com=com80)
     calc("D80", "=2*$D$79*$D$30*$D$29*$D$45/1000000000", com80)
 
-    # --- Seccion 5 (verificaciones, fila 82+) y siguientes: las anade la
-    # Tarea 8, junto con A4/G5/G6 y la banda/encabezado A8:G8/A9:G9 (ver
-    # Ruling del controlador, tasks-3-8-common.md) y la llamada final a
-    # comentar_art212_base(). -------------------------------------------------
+    # --- 5. Verificaciones (filas 82-90) — Tarea 8 --------------------------
+    # A82: banda de seccion, fusionada A82:G82 (confirmado en "fusionados"
+    # del *oracle*), texto literal transcrito tal cual -sin pasar por
+    # rotulo(), con el numeral "5." y el doble espacio antes del parentesis-
+    # mismo criterio que las bandas anteriores (Ruling del controlador,
+    # tasks-3-8-common.md). Encabezado de fila 83: CINCO columnas propias
+    # (Verificacion/Requerido/Adoptado/Resultado/Criterio en A/D/E/F/G, sin
+    # Simbolo ni Unidad en B/C — esta tabla no las tiene), tampoco compatible
+    # con header() -fuerza .upper() y su firma escribe columnas consecutivas
+    # desde la 1, no puede saltar B/C-.
+    ws.merge_cells("A82:G82")
+    ws.cell(82, 1, "5.  VERIFICACIONES  (criterios de aceptación)")
+    ws.cell(82, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(82, j).fill = BAND_FILL
+    franja(ws, 82, 1, 7)
+
+    for col_idx, texto in ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
+                            (6, "Resultado"), (7, "Criterio")):
+        c83 = ws.cell(83, col_idx, texto)
+        c83.font, c83.fill, c83.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    # Filas 84-89: el rotulo de cada verificacion ocupa A:C fusionado (el
+    # *oracle* no reparte Simbolo/Unidad en esta tabla); D/E/F llevan las
+    # tres columnas Requerido/Adoptado/Resultado y G el criterio de
+    # aceptacion impreso (se transcribe con lab(..., ref=...) para reusar el
+    # mismo estilo GRIS9 que el resto de la hoja usa en columna G). Los
+    # comentarios de D/E/F de estas seis filas los aplica
+    # comentar_art212_base() al final: trae TRES textos distintos por fila
+    # (Requerido/Adoptado/Resultado), no uno solo compartido como en las
+    # secciones anteriores, asi que no hay un "com" unico que pasarle aqui a
+    # lab()/calc() sin inventar contenido nuevo.
+    lab(84, "Filete perimetral (cateto)", ref="w ≥ w_mín (envolvente)")
+    ws.merge_cells("A84:C84")
+    calc("D84", "=MAX(D64:F64)")
+    calc("E84", "=$D$32")
+    calc("F84", '=IF(E84>=D84,"CUMPLE","NO CUMPLE")')
+
+    lab(85, "Excentricidad de la soldadura (diseño)", ref="S_w(diseño) ≤ 1,5·Sa")
+    ws.merge_cells("A85:C85")
+    calc("D85", "=$D$48")
+    calc("E85", "=E68")
+    calc("F85", '=IF(E85<=D85,"CUMPLE","NO CUMPLE")')
+
+    lab(86, "Conformado en frío", ref="≤ 5 % (ec. 7)")
+    ws.merge_cells("A86:C86")
+    calc("D86", 5)
+    calc("E86", "=$D$77")
+    calc("F86", '=IF(E86<=D86,"CUMPLE","NO CUMPLE")')
+
+    lab(87, "Espesor de pared (envolvente)", ref="t ≥ t_req")
+    ws.merge_cells("A87:C87")
+    calc("D87", "=F65")
+    calc("E87", "=$D$21")
+    calc("F87", '=IF(E87>=D87,"CUMPLE","NO CUMPLE")')
+
+    lab(88, "Ubicación del defecto", ref="L_def vs L_mín")
+    ws.merge_cells("A88:C88")
+    calc("D88", "=$D$73")
+    calc("E88", "=$D$35")
+    calc("F88", '=IF(E88<D88,"Refuerzo 360°","Parche local")')
+
+    lab(89, "Presión de diseño vs. parche", ref="P_dis ≤ P_máx del parche")
+    ws.merge_cells("A89:C89")
+    calc("D89", "=$D$75")
+    calc("E89", "=$D$27")
+    calc("F89", '=IF(E89<=D89,"OK — parche","Migrar (Art.206)")')
+
+    # Fila 90: DICTAMEN GLOBAL, fusionado A90:E90. F90 ya lo escribio la
+    # Tarea 2 (cableado Seccion 7, mas arriba en esta funcion) — no se
+    # reescribe aqui. Mismo estilo que el dictamen global del Art. 206
+    # (build_collar_art206: lab() + override a Font MACRO/TINTA — emblematico
+    # pero sobre papel, no sobre banda).
+    lab(90, "DICTAMEN GLOBAL DEL DISEÑO")
+    ws.cell(90, 1).font = Font(name=MACRO, size=11, color=TINTA)
+    ws.merge_cells("A90:E90")
+
+    # --- 6. Especificaciones tecnicas (filas 93-99) — Tarea 8 ---------------
+    # A92: banda de seccion, fusionada A92:G92, texto literal con el numeral
+    # "6." y el doble espacio antes del parentesis, mismo criterio que las
+    # bandas anteriores. Esta seccion no lleva fila de encabezado propia (el
+    # *oracle* no la declara): pasa directo de la banda al contenido, porque
+    # la tabla no es Parametro/Simbolo/Valor sino Metodo/Especificacion (A +
+    # B, con B fusionado B:G).
+    ws.merge_cells("A92:G92")
+    ws.cell(92, 1, "6.  ESPECIFICACIONES TÉCNICAS  (generadas automáticamente "
+                   "a partir de las entradas)")
+    ws.cell(92, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(92, j).fill = BAND_FILL
+    franja(ws, 92, 1, 7)
+
+    # Filas 93-99: rotulo en A (estilo lab(), sin ref/unidad porque estas
+    # filas no tienen columna G propia — el *oracle* no la declara) y el
+    # contenido en B, fusionado B:G. Tres filas son formula que redacta el
+    # texto a partir de las entradas (93/95/99: calc()) y cuatro son texto
+    # estandar editable (94/96/97/98: WPS, END en servicio, recubrimiento de
+    # ejemplo — inp(), mismo criterio "Editable" que documenta
+    # comentar_art212_base). El comentario de cada B93-B99 lo aplica
+    # comentar_art212_base() al final (dict "textos"); no se duplica aqui
+    # para no repetir literalmente los mismos parrafos largos dos veces en
+    # el codigo fuente.
+    lab(93, "Método")
+    calc("B93", '="Reparación por parche/collar de refuerzo soldado (ASME PCC-2-2022, Art. 212/206). Aplicación: "&$D$10&". Código: "&$D$12&". Plancha "&$D$23&" de "&TEXT($D$29,"0")&" mm; peso aprox. "&TEXT($D$80,"0.0")&" kg."')
+    ws.merge_cells("B93:G93")
+
+    lab(94, "Juntas de cierre")
+    inp("B94", "Juntas a tope en V, penetración completa (C.J.P), raíz abierta sin respaldo. Raíz GTAW ER70S-6; relleno/peine SMAW E7018 bajo hidrógeno. Ángulo incluido 60°–75°, talón 1,5 mm, luz de raíz 2–3 mm.")
+    ws.merge_cells("B94:G94")
+
+    lab(95, "Filetes perimetrales")
+    calc("B95", '="Filetes de cateto "&TEXT($D$32,"0")&" mm sobre metal sano; solape ≥ "&TEXT($D$33,"0")&" mm por extremo, verificado por UT. Sin soldaduras de tapón en collar de encierro total."')
+    ws.merge_cells("B95:G95")
+
+    lab(96, "Soldadura en servicio (Art. 210)")
+    inp("B96", "Electrodo bajo hidrógeno E7018 (Ø 2,4–3,2 mm); precalentamiento ≥ 100 °C; control de aporte térmico frente a perforación e hidrógeno. WPS calificado con el Apéndice Obligatorio 210-I; END diferido 24–72 h. Tramo drenado/despresurizado antes del cordón de cierre.")
+    ws.merge_cells("B96:G96")
+
+    lab(97, "Ensayos no destructivos")
+    inp("B97", "100 % VT + 100 % PT/MT de juntas y filetes (criterio del código de construcción); UT de espesores bajo filetes y del área reparada; END diferido 24–72 h si es en servicio (Art. 210, 210-5.2).")
+    ws.merge_cells("B97:G97")
+
+    lab(98, "Recubrimiento (ejemplo Repsol)")
+    inp("B98", "ED-B-06.00 / PE-B-0600.01 Esquema N° 1: Sa 2½ (ISO 8501-1); imprimación epoxi-Al 70 µm + intermedia epoxi MIO 110 µm + PU alifático 2×40 µm = 260 µm. Aplicación EC-B-53.00. Ajustar a la especificación del propietario.")
+    ws.merge_cells("B98:G98")
+
+    lab(99, "Prueba de hermeticidad")
+    calc("B99", '="Prueba de fuga en servicio (VT+PT/MT) o hidrostática a "&TEXT($D$46*$D$27,"0.0")&" kg/cm² ("&TEXT($D$46,"0.0")&"×P_diseño). Tubería: PCC-2 Art. 212-6 / Art. 501. Recipiente: ASME VIII-1 UG-99."')
+    ws.merge_cells("B99:G99")
+
+    # --- Aviso fijo (fila 101) -----------------------------------------------
+    # Mismo estilo que los avisos fijos del Art. 206 (nota206/nota206b, mas
+    # arriba en este archivo): fuente SRC_F (la misma del subtitulo A2), sin
+    # banda ni fondo especial. Fusionado A101:G101 (confirmado en
+    # "fusionados" del *oracle*).
+    ws.merge_cells("A101:G101")
+    aviso101 = ws.cell(
+        101, 1,
+        "Herramienta de ingeniería de referencia. Verificar entradas y resultados; complementar con WPS/PQR, ATS/JSA y registros del propietario. Cálculos según ASME PCC-2-2022 (Art. 212/206), ASME B31.3 y ASME BPVC VIII-1.")
+    aviso101.font = SRC_F
+
+    # --- Comentarios de las Secciones 1-6 (Tarea 8, ultima de las seis) -----
+    # Ahora que TODAS las celdas de las secciones 1-6 ya existen en ws (esta
+    # es la ultima de las Tareas 3-8), comentar_art212_base() puede aplicar
+    # sus notas de verdad: su guardia interna (`if c.value is not None`) ya
+    # no salta en silencio ninguna celda por pertenecer a una seccion
+    # todavia no escrita.
+    comentar_art212_base(ws)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
