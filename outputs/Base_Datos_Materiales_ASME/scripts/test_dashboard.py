@@ -10,6 +10,7 @@ paquete de pruebas siga corriendo en una copia limpia del repo.
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -510,58 +511,40 @@ class TestVba:
 
 
 # ---------------------------------------------------------------------------
-# La extraccion de construir_seccion7_material() no puede cambiar el Art. 212
+# El desanclado total no puede cambiar el Art. 212
 # ---------------------------------------------------------------------------
-# Pin de las formulas de la Seccion 7 de Parche_PCC2_Art212 (105-129) y de su
-# cableado hacia otras secciones de la misma hoja (D39/D40/D44/F90), fijadas
-# leyendo el .xlsm real ANTES de extraer construir_seccion7_material() de
-# integrate_motor. Si la extraccion cambia un solo caracter de estas formulas,
-# esta prueba lo delata: no existia ningun test de este tipo hasta ahora.
-class TestParidadSeccion7Art212:
+# parche_art212_ref.json es el *oracle*: la hoja 212 tal como la entregaba el
+# maestro Rev0, congelada desde el ultimo build valido. Reconstruirla en codigo
+# (build_parche_art212) debe reproducir cada formula, literal y validacion al
+# caracter. Sin Excel aqui, esta es la unica red: si una transcripcion difiere,
+# falla ahora y no en la mesa del ingeniero.
+def cargar_oracle_parche():
+    p = Path(__file__).resolve().parent / "parche_art212_ref.json"
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+class TestParidadHojaParche:
     HOJA = "Parche_PCC2_Art212"
 
-    # Generadas leyendo directamente el .xlsm real (celda por celda, con
-    # openpyxl) para eliminar cualquier error de transcripcion manual: son
-    # las formulas EXACTAS de hoy, no una reescritura a mano.
-    FORMULAS_ESPERADAS = {
-        'D107': 'Interpolado',
-        'D108': '=$D$25',
-        'D115': '=IF($D$114<>"",$D$114,IF($W$110=0,"",IF($D$11=1,INDEX(DB_B31_3!$A$4:$A$1291,$W$110),INDEX(DB_BPVC_IID!$A$4:$A$1802,$W$110))))',
-        'E115': '=IF($E$114<>"",$E$114,IF($X$110=0,"",IF($D$11=1,INDEX(DB_B31_3!$A$4:$A$1291,$X$110),INDEX(DB_BPVC_IID!$A$4:$A$1802,$X$110))))',
-        'D117': '=IF($D$11=1,1,IF(LEFT(D115,2)="1A",2,3))',
-        'E117': '=IF($D$11=1,1,IF(LEFT(E115,2)="1A",2,3))',
-        'D118': '=IFERROR(MATCH(D115,CHOOSE(D117,DB_B31_3!$A$4:$A$1291,DB_BPVC_IID!$A$4:$A$1802,DB_BPVC_IID_B!$A$4:$A$1658),0),"")',
-        'E118': '=IFERROR(MATCH(E115,CHOOSE(E117,DB_B31_3!$A$4:$A$1291,DB_BPVC_IID!$A$4:$A$1802,DB_BPVC_IID_B!$A$4:$A$1658),0),"")',
-        'D119': '=IF(D118="","",IFERROR(INDEX(CHOOSE(D117,DB_B31_3!$AF$4:$AF$1291,DB_BPVC_IID!$AF$4:$AF$1802,DB_BPVC_IID_B!$AF$4:$AF$1658),D118),0))',
-        'E119': '=IF(E118="","",IFERROR(INDEX(CHOOSE(E117,DB_B31_3!$AF$4:$AF$1291,DB_BPVC_IID!$AF$4:$AF$1802,DB_BPVC_IID_B!$AF$4:$AF$1658),E118),0))',
-        'D120': '=IF(D118="","",IFERROR(INDEX(OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),1),1)),""))',
-        'E120': '=IF(E118="","",IFERROR(INDEX(OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),1),1)),""))',
-        'D121': '=IF(D118="","",IFERROR(INDEX(OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),1),1)+1),""))',
-        'E121': '=IF(E118="","",IFERROR(INDEX(OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),1),1)+1),""))',
-        'D122': '=IF(D118="","",IFERROR(INDEX(OFFSET(CHOOSE(D117,DB_B31_3!$CY$4,DB_BPVC_IID!$CS$4,DB_BPVC_IID_B!$CY$4),D118-1,0,1,MAX(1,D119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),1),1)),""))',
-        'E122': '=IF(E118="","",IFERROR(INDEX(OFFSET(CHOOSE(E117,DB_B31_3!$CY$4,DB_BPVC_IID!$CS$4,DB_BPVC_IID_B!$CY$4),E118-1,0,1,MAX(1,E119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),1),1)),""))',
-        'D123': '=IF(D118="","",IFERROR(INDEX(OFFSET(CHOOSE(D117,DB_B31_3!$CY$4,DB_BPVC_IID!$CS$4,DB_BPVC_IID_B!$CY$4),D118-1,0,1,MAX(1,D119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(D117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),D118-1,0,1,MAX(1,D119)),1),1)+1),""))',
-        'E123': '=IF(E118="","",IFERROR(INDEX(OFFSET(CHOOSE(E117,DB_B31_3!$CY$4,DB_BPVC_IID!$CS$4,DB_BPVC_IID_B!$CY$4),E118-1,0,1,MAX(1,E119)),IFERROR(MATCH($D$108,OFFSET(CHOOSE(E117,DB_B31_3!$BP$4,DB_BPVC_IID!$BM$4,DB_BPVC_IID_B!$BP$4),E118-1,0,1,MAX(1,E119)),1),1)+1),""))',
-        'D124': '=IFERROR(INDEX(CHOOSE(D117,DB_B31_3!$V$4:$V$1291,DB_BPVC_IID!$V$4:$V$1802,DB_BPVC_IID_B!$V$4:$V$1658),D118),"")',
-        'E124': '=IFERROR(INDEX(CHOOSE(E117,DB_B31_3!$V$4:$V$1291,DB_BPVC_IID!$V$4:$V$1802,DB_BPVC_IID_B!$V$4:$V$1658),E118),"")',
-        'D125': '=IF(D115="","SIN MATERIAL SELECCIONADO",IF(D118="","MATERIAL NO ENCONTRADO",IF(D122="","FUERA DE RANGO (sin valor tabulado a esa T)",IF(AND(ISNUMBER(D124),$D$108>D124),"FUERA DE RANGO (T > Temp. max.)","OK"))))',
-        'E125': '=IF(E115="","SIN MATERIAL SELECCIONADO",IF(E118="","MATERIAL NO ENCONTRADO",IF(E122="","FUERA DE RANGO (sin valor tabulado a esa T)",IF(AND(ISNUMBER(E124),$D$108>E124),"FUERA DE RANGO (T > Temp. max.)","OK"))))',
-        'D126': '=IF(D125<>"OK",NA(),IF($D$108<=D120,D122,IF(OR(D121="",D123=""),D122,IF($D$107="Tabulado-conservador",D123,D122+(D123-D122)*($D$108-D120)/(D121-D120)))))',
-        'E126': '=IF(E125<>"OK",NA(),IF($D$108<=E120,E122,IF(OR(E121="",E123=""),E122,IF($D$107="Tabulado-conservador",E123,E122+(E123-E122)*($D$108-E120)/(E121-E120)))))',
-        'D128': 'A106 | Seamless pipe',
-        'E128': '=IFERROR(INDEX(MAP_Factores!$G$4:$G$154,MATCH($D$128,MAP_Factores!$A$4:$A$154,0)),1)',
-        'D129': None,
-        'E129': '=IFERROR(INDEX(MAP_Factores!$G$4:$G$154,MATCH($D$129,MAP_Factores!$A$4:$A$154,0)),"")',
-        'D39': '=IF($E$125="OK",$E$126,NA())',
-        'D40': '=IF($D$125="OK",$D$126,NA())',
-        'D44': '=$E$128',
-        'F90': '=IF(OR($D$125="SIN MATERIAL SELECCIONADO",$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),"APTO","REVISAR")))',
-    }
-
-    def test_formulas_no_cambian(self, wb):
+    def test_todas_las_formulas_y_literales(self, wb):
+        oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
-        for celda, esperado in self.FORMULAS_ESPERADAS.items():
+        for celda, esperado in oracle["formulas"].items():
             assert ws[celda].value == esperado, celda
+
+    def test_validaciones_de_datos(self, wb):
+        oracle = cargar_oracle_parche()
+        ws = wb[self.HOJA]
+        reales = sorted(
+            ({"sqref": str(dv.sqref), "formula1": dv.formula1}
+             for dv in ws.data_validations.dataValidation),
+            key=lambda d: d["sqref"])
+        assert reales == oracle["validaciones"]
+
+    def test_rangos_fusionados(self, wb):
+        oracle = cargar_oracle_parche()
+        ws = wb[self.HOJA]
+        assert sorted(str(r) for r in ws.merged_cells.ranges) == oracle["fusionados"]
 
 
 # ---------------------------------------------------------------------------
