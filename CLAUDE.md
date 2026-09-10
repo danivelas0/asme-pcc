@@ -600,6 +600,49 @@ Tres trampas ya pagadas, documentadas en el código:
     `declarar_tablas_canonicas.py` (clase `RECONSTRUIDA_DEL_FOLIO_IMPRESO`): su
     canónico ya no es comparable columna a columna con el gemelo a propósito.
 
+12. **Todo material se selecciona de una base de datos, nunca de una lista fija.**
+    Cualquier campo de un motor de cálculo que pida un material se resuelve con una
+    cascada de listas desplegables materializada contra la base de datos que
+    corresponda según el código ASME PCC aplicable —`DB_B31_3`, `DB_BPVC_IID`/
+    `DB_BPVC_IID_B`, u otra hoja de datos del libro—, igual que ya hacen los motores
+    de búsqueda y la Sección 7 de resolución de material de los motores de cálculo
+    (Art. 212 y Art. 206). **Nunca** una lista de texto tecleada directo en el
+    `formula1` de una `DataValidation` ni en un valor por defecto: una lista así no
+    se audita, no se actualiza si la base cambia, y puede ofrecer un material que la
+    base ni siquiera admite. Es corolario de la regla 2 (mecanismo de validación)
+    aplicado a la fuente: la validación puede ser "lista de ítems", pero esos ítems
+    tienen que venir de una base de datos real, no de un literal.
+
+    **Violación detectada y pendiente de corrección (2026-09-10):** en
+    `Parche_PCC2_Art212`, D22/D23 ("Material de tubería / envolvente" y "Material
+    del collar / parche") usan hoy una lista fija de 6 materiales tecleada en
+    `build_db_materiales.py` (función `build_parche_art212`, bloque de
+    `DataValidation` con `formula1='"A106 Gr.B,A516 Gr.70,A105,A285 Gr.C,A333
+    Gr.6,A53 Gr.B"'`), declarada puramente descriptiva —el material que sí
+    alimenta el cálculo lo resuelve la cascada de la Sección 7—. Ese campo
+    descriptivo debe pasar también a leer de la base de datos correspondiente, no
+    quedarse como excepción.
+
+13. **Los motores de búsqueda y los motores de cálculo no se conectan entre sí.**
+    Ningún motor de cálculo lee una celda de un motor de búsqueda, ni un motor de
+    búsqueda lee una celda de un motor de cálculo. Los dos leen **exclusivamente**
+    de las bases de datos (`DB_*`) del libro. Esto evita acoplar el resultado de un
+    motor a que otro exista, esté abierto, o esté en el estado correcto, y mantiene
+    cada motor auditable de forma independiente contra su propia fuente.
+
+14. **Toda variable de entrada que exista en una base de datos se elige de una lista
+    desplegable; nunca se teclea.** Diámetro nominal, cédula, espesor, material — si
+    el valor está tabulado en una base del libro, el motor lo ofrece en un
+    desplegable alimentado por esa base (regla 12) y el ingeniero no lo escribe a
+    mano. El objetivo es eliminar el error de tecleo como clase de fallo, no solo
+    documentar de dónde sale el dato.
+
+    Lo que **sí** se teclea es lo que ninguna base publica: datos de proceso y de
+    campo —temperatura y presión de operación, dimensiones del defecto, sobreespesor
+    de corrosión, medidas de la reparación—. La línea es: **¿el libro tiene una tabla
+    con este valor? → desplegable. ¿Es un dato del servicio o de la inspección? →
+    entrada manual.**
+
 ### Sistema visual — Swiss Industrial Print (Rev. 4e)
 
 **Las 70 hojas van en un solo sistema, y esa es toda la regla.** Antes había dos:
