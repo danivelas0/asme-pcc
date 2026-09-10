@@ -882,3 +882,50 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_6:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # Tarea 7 — Seccion 3, calculo de cargas y soldadura (filas 61-69), mas
+    # Seccion 4, resultados del diseno (filas 73-80). Nombrada distinto de
+    # "test_seccion_7" a proposito: ese nombre ya lo usaria la "Seccion 7" de
+    # cascada de material que escribio la Tarea 2 (construir_seccion7_material,
+    # filas 105+) y es un numero de seccion del motor distinto del numero de
+    # tarea del plan — este metodo cubre el rango de FILAS 61-80, no una
+    # "seccion 7". Incluye la banda A59 y el encabezado de fila 60 (con TRES
+    # columnas de valor propias: Operacion/Diseno tipico/Envolvente en D/E/F,
+    # no una sola "Valor") y la banda A71 y el encabezado de fila 72 (con
+    # G72="Formula / Referencia"): preceden inmediatamente cada uno de los dos
+    # rangos de esta tarea y titulan sus propias secciones, no una anterior
+    # (Ruling del controlador, tasks-3-8-common.md). Cubre TODAS las celdas
+    # que el *oracle* declara en 59-69 y 71-80 — comprobado fila por fila, sin
+    # asumir que las tres columnas D/E/F existen en 61-69 (fila 69 no trae
+    # B69) ni que A/B/C/D/G existen todas en 73-80 (75 no trae G, 76/77/79/80
+    # no traen B). La fila 58 y la fila 70 no aparecen en el *oracle* (ni
+    # formula, ni fusionado, ni validacion): quedan vacias, sin ancla.
+    ANCLAS_FILAS_61_80 = (
+        "A59",
+        "A60", "B60", "C60", "D60", "E60", "F60", "G60",
+        "A61", "B61", "C61", "D61", "E61", "F61", "G61",
+        "A62", "B62", "C62", "D62", "E62", "F62", "G62",
+        "A63", "B63", "C63", "D63", "E63", "F63", "G63",
+        "A64", "B64", "C64", "D64", "E64", "F64", "G64",
+        "A65", "B65", "C65", "D65", "E65", "F65", "G65",
+        "A66", "B66", "C66", "D66", "E66", "F66", "G66",
+        "A67", "B67", "C67", "D67", "E67", "F67", "G67",
+        "A68", "B68", "C68", "D68", "E68", "F68", "G68",
+        "A69", "C69", "D69", "E69", "F69", "G69",
+        "A71",
+        "A72", "B72", "C72", "D72", "G72",
+        "A73", "B73", "C73", "D73", "G73",
+        "A74", "B74", "C74", "D74", "G74",
+        "A75", "B75", "C75", "D75",
+        "A76", "C76", "D76", "G76",
+        "A77", "C77", "D77", "G77",
+        "A78", "B78", "C78", "D78", "G78",
+        "A79", "C79", "D79", "G79",
+        "A80", "C80", "D80", "G80",
+    )
+
+    def test_filas_61_80(self):
+        oracle = cargar_oracle_parche()
+        ws = self._construir()
+        for celda in self.ANCLAS_FILAS_61_80:
+            assert ws[celda].value == oracle["formulas"][celda], celda

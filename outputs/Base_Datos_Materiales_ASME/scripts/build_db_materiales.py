@@ -6813,7 +6813,223 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.cell(57, 2, "C_sw").font = Font(name=MONO, size=10, color=TINTA)
     calc("D57", "=$D$14*$D$52/$D$29*(1+6*$D$55/$D$29)", com57)
 
-    # --- Seccion 4 y siguientes: las anaden las Tareas 7-8 -------------------
+    # --- 3. Calculo de cargas y soldadura (filas 59-69) — Tarea 7 -----------
+    # A59: banda de seccion, fusionada A59:G59 (confirmado en "fusionados" del
+    # *oracle*), texto literal transcrito tal cual -sin pasar por rotulo(),
+    # con el numeral "3." y el doble espacio antes de "CALCULO"- mismo
+    # criterio que las bandas A16/A37/A50 anteriores (Ruling del controlador,
+    # tasks-3-8-common.md: la banda y el encabezado que preceden
+    # inmediatamente el rango de esta tarea y titulan esta seccion son parte
+    # de su alcance). Encabezado de fila 60: TRES columnas de valor propias
+    # (D/E/F = Operacion/Diseno tipico/Envolvente, no una sola "Valor" como
+    # en las filas 17/38/51), tampoco compatible con header() -fuerza
+    # .upper() y ademas su firma no admite tres nombres de columna distintos
+    # de "Valor"- asi que se escribe directo con el mismo estilo
+    # (HDR_F/HDR_FILL/BOX_FRANJA).
+    #
+    # La fila 58 queda vacia (no aparece en el *oracle*: ni formula, ni
+    # fusionado, ni validacion — confirmado aqui, no solo heredado de la nota
+    # de la Tarea 6): separa la Seccion 2 (termina en fila 57) de la banda de
+    # esta seccion.
+    ws.merge_cells("A59:G59")
+    ws.cell(59, 1, "3.  CÁLCULO DE CARGAS Y SOLDADURA  (ASME PCC-2, Art. 212)")
+    ws.cell(59, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(59, j).fill = BAND_FILL
+    franja(ws, 59, 1, 7)
+
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Operación"), (5, "Diseño típico"),
+                            (6, "Envolvente"), (7, "Referencia")):
+        c60 = ws.cell(60, col_idx, texto)
+        c60.font, c60.fill, c60.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    # Filas 61-69: los tres casos de presion (Operacion/Diseno tipico/
+    # Envolvente) en columnas D/E/F. Cada fila repite el mismo comentario en
+    # las tres columnas de calculo y en el rotulo de columna A (texto tomado
+    # de comentar_art212_base, sin inventar contenido nuevo — mismo criterio
+    # que la Tarea 6 aplico en com52-57; la Tarea 8 sobreescribira estas
+    # mismas notas de forma idempotente al llamar comentar_art212_base).
+    com61 = ("Calculo: repite, para este caso (Operacion / Diseno tipico / "
+             "Envolvente), la presion correspondiente de la seccion 1, en "
+             "kg/cm².")
+    lab(61, "Presión evaluada", unidad="kg/cm²", ref="Entradas §1", com=com61)
+    ws.cell(61, 2, "P").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D61", "=$D$26", com61)
+    calc("E61", "=$D$27", com61)
+    calc("F61", "=$D$28", com61)
+
+    com62 = ("Calculo: conversion a MPa de la presion de este caso, "
+             "multiplicando por el factor de conversion D47.")
+    lab(62, "Presión evaluada", unidad="MPa", ref="P·0,0980665", com=com62)
+    ws.cell(62, 2, "P").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D62", "=D61*$D$47", com62)
+    calc("E62", "=E61*$D$47", com62)
+    calc("F62", "=F61*$D$47", com62)
+
+    com63 = ("Calculo: fuerza de membrana de este caso (ec. 1 del Art. 212): "
+             "kf · P(MPa) · Dm.")
+    lab(63, "Fuerza de membrana gobernante", unidad="N/mm",
+        ref="ec.1: kf·P·Dm", com=com63)
+    ws.cell(63, 2, "F_m").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D63", "=$D$14*D62*$D$52", com63)
+    calc("E63", "=$D$14*E62*$D$52", com63)
+    calc("F63", "=$D$14*F62*$D$52", com63)
+
+    com64 = ("Calculo: cateto de filete minimo requerido para este caso "
+             "(ec. 4): F_m / (E · Sa).")
+    lab(64, "Filete requerido", unidad="mm", ref="ec.4: F/(E·Sa)", com=com64)
+    ws.cell(64, 2, "w_mín").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D64", "=D63/($D$42*$D$41)", com64)
+    calc("E64", "=E63/($D$42*$D$41)", com64)
+    calc("F64", "=F63/($D$42*$D$41)", com64)
+
+    com65 = ("Calculo: espesor de pared requerido para este caso, por B31.3 "
+             "(modo tuberia) o por VIII-1 UG-27 (modo esfera/cilindro), "
+             "segun la presion evaluada de este caso.")
+    lab(65, "Espesor de pared requerido", unidad="mm",
+        ref="B31.3 / VIII-1 UG-27", com=com65)
+    ws.cell(65, 2, "t_req").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D65",
+         '=IF($D$11=1,D62*$D$20/(2*($D$40*$D$44+D62*$D$43)),'
+         'IF($D$11=3,D62*$D$54/(2*$D$40*$D$44-0.2*D62),'
+         'D62*$D$54/($D$40*$D$44-0.6*D62)))', com65)
+    calc("E65",
+         '=IF($D$11=1,E62*$D$20/(2*($D$40*$D$44+E62*$D$43)),'
+         'IF($D$11=3,E62*$D$54/(2*$D$40*$D$44-0.2*E62),'
+         'E62*$D$54/($D$40*$D$44-0.6*E62)))', com65)
+    calc("F65",
+         '=IF($D$11=1,F62*$D$20/(2*($D$40*$D$44+F62*$D$43)),'
+         'IF($D$11=3,F62*$D$54/(2*$D$40*$D$44-0.2*F62),'
+         'F62*$D$54/($D$40*$D$44-0.6*F62)))', com65)
+
+    com66 = ("Calculo: componente de membrana del esfuerzo de soldadura "
+             "para este caso (ec. 5): F_m / T_parche.")
+    lab(66, "Esfuerzo soldadura — membrana", unidad="MPa",
+        ref="ec.5 (memb.)=F/T", com=com66)
+    ws.cell(66, 2, "S_w,m").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D66", "=D63/$D$29", com66)
+    calc("E66", "=E63/$D$29", com66)
+    calc("F66", "=F63/$D$29", com66)
+
+    com67 = ("Calculo: componente de flexion del esfuerzo de soldadura "
+             "para este caso (ec. 5): 6·F_m·e / T_parche².")
+    lab(67, "Esfuerzo soldadura — flexión", unidad="MPa",
+        ref="ec.5 (flex.)=6F·e/T²", com=com67)
+    ws.cell(67, 2, "S_w,f").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D67", "=6*D63*$D$55/$D$29^2", com67)
+    calc("E67", "=6*E63*$D$55/$D$29^2", com67)
+    calc("F67", "=6*F63*$D$55/$D$29^2", com67)
+
+    com68 = ("Calculo: esfuerzo de soldadura total de este caso (membrana + "
+             "flexion); se compara contra el limite 1,5·Sa en la fila 69.")
+    lab(68, "Esfuerzo soldadura — total", unidad="MPa", ref="ec.5: ≤ 1,5·Sa",
+        com=com68)
+    ws.cell(68, 2, "S_w").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D68", "=D66+D67", com68)
+    calc("E68", "=E66+E67", com68)
+    calc("F68", "=F66+F67", com68)
+
+    # Fila 69 no lleva simbolo propio: el *oracle* no declara B69 (a
+    # diferencia de las filas 61-68, que si lo tienen) — se deja vacio.
+    com69 = ("Calculo: CUMPLE si el esfuerzo de soldadura total de este "
+             "caso (fila 68) no supera 1,5 veces el esfuerzo admisible "
+             "gobernante (D48).")
+    lab(69, "¿S_w ≤ 1,5·Sa?", unidad="—", ref="Verificación por presión",
+        com=com69)
+    calc("D69", '=IF(D68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
+    calc("E69", '=IF(E68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
+    calc("F69", '=IF(F68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
+
+    # --- 4. Resultados del diseno (filas 71-80) — Tarea 7 --------------------
+    # A71: banda de seccion, fusionada A71:G71 (confirmado en "fusionados"
+    # del *oracle*), texto literal transcrito tal cual -sin pasar por
+    # rotulo(), sin numeral extra ni doble espacio esta vez: es lo que el
+    # *oracle* imprime- mismo criterio que las bandas anteriores. Encabezado
+    # de fila 72: cinco columnas (Parametro/Simbolo/Unidad/Valor/"Fórmula /
+    # Referencia" en G72, mismo patron que la fila 51 — no "Referencia /
+    # Notas" de las filas 17/38), tampoco compatible con header() porque
+    # fuerza .upper().
+    #
+    # La fila 70 queda vacia (no aparece en el *oracle*): separa la Seccion 3
+    # (termina en fila 69) de la banda de esta seccion, mismo patron
+    # espaciador que la fila 58 delante de la Seccion 3.
+    ws.merge_cells("A71:G71")
+    ws.cell(71, 1, "4.  RESULTADOS DEL DISEÑO")
+    ws.cell(71, 1).font = Font(name=MACRO, size=11, color=PAPEL)
+    for j in range(1, 8):
+        ws.cell(71, j).fill = BAND_FILL
+    franja(ws, 71, 1, 7)
+
+    for col_idx, texto in ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                            (4, "Valor"), (7, "Fórmula / Referencia")):
+        c72 = ws.cell(72, col_idx, texto)
+        c72.font, c72.fill, c72.border = HDR_F, HDR_FILL, BOX_FRANJA
+
+    com73 = ("Calculo: distancia minima a una discontinuidad, L_min = "
+             "2·RAIZ(Rm·t) (ec. 3). Por debajo de esta distancia el defecto "
+             "exige refuerzo de 360° en vez de parche local (verificacion "
+             "de la seccion 5, fila 88).")
+    lab(73, "Distancia a la discontinuidad", unidad="mm",
+        ref="ec.3: 2·√(Rm·t)", com=com73)
+    ws.cell(73, 2, "L_mín").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D73", "=2*SQRT($D$53*$D$21)", com73)
+
+    com74 = ("Calculo: presion maxima admisible del parche, en MPa: "
+             "1,5·Sa / C_sw.")
+    lab(74, "Presión máx. admisible del parche", unidad="MPa",
+        ref="1,5·Sa / C_sw", com=com74)
+    ws.cell(74, 2, "P_máx").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D74", "=$D$48/$D$57", com74)
+
+    # G75 no lo declara el *oracle*: no se repite la referencia de D74 ahi
+    # (Regla dura, tasks-3-8-common.md — se deja vacio, no se rellena).
+    com75 = "Calculo: igual que D74, convertido a kg/cm² con el factor D47."
+    lab(75, "Presión máx. admisible del parche", unidad="kg/cm²", com=com75)
+    ws.cell(75, 2, "P_máx").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D75", "=$D$74/$D$47", com75)
+
+    # B76 no lo declara el *oracle*: esta fila no tiene simbolo propio.
+    com76 = ("Calculo: relacion entre la presion maxima admisible del "
+             "parche y la presion de operacion (D26); entre mas alto, "
+             "mayor margen.")
+    lab(76, "Margen sobre la operación", unidad="×", ref="P_máx / P_op",
+        com=com76)
+    calc("D76", "=$D$75/$D$26", com76)
+
+    # B77 no lo declara el *oracle*.
+    com77 = ("Calculo: deformacion por conformado en frio, 50·T_parche/Rf "
+             "(ec. 7), en %; debe ser <=5% (verificacion de la seccion 5, "
+             "fila 86) para no requerir tratamiento termico de conformado.")
+    lab(77, "Deformación por conformado", unidad="%",
+        ref="ec.7: 50·T/Rf ≤ 5%", com=com77)
+    calc("D77", "=50*$D$29/$D$56", com77)
+
+    com78 = ("Calculo: desarrollo de la media carcasa del collar, "
+             "(π/2)·(OD + 2·luz + T_parche).")
+    lab(78, "Desarrollo por media carcasa", unidad="mm",
+        ref="(π/2)·(OD+2·luz+e)", com=com78)
+    ws.cell(78, 2, "L").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D78", "=PI()/2*($D$20+2*$D$31+$D$29)", com78)
+
+    # B79 no lo declara el *oracle*.
+    com79 = ("Calculo: longitud real de corte de la plancha, igual al "
+             "desarrollo menos 3 mm de luz de raiz.")
+    lab(79, "Longitud de corte (media carcasa)", unidad="mm",
+        ref="menos luz de raíz", com=com79)
+    calc("D79", "=$D$78-3", com79)
+
+    # B80 no lo declara el *oracle*.
+    com80 = ("Calculo: peso estimado del parche/collar (dos mitades), a "
+             "partir de la longitud de corte, la altura, el espesor y la "
+             "densidad del acero.")
+    lab(80, "Peso del parche/collar", unidad="kg", ref="2·L·H·T·ρ", com=com80)
+    calc("D80", "=2*$D$79*$D$30*$D$29*$D$45/1000000000", com80)
+
+    # --- Seccion 5 (verificaciones, fila 82+) y siguientes: las anade la
+    # Tarea 8, junto con A4/G5/G6 y la banda/encabezado A8:G8/A9:G9 (ver
+    # Ruling del controlador, tasks-3-8-common.md) y la llamada final a
+    # comentar_art212_base(). -------------------------------------------------
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
