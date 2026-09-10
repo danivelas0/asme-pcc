@@ -1,6 +1,6 @@
 # Revision de MAP_Grupo — grupos de propiedades sin resolver por el codigo
 
-Generado por `build_db_materiales.py` el 2026-09-09.
+Generado por `build_db_materiales.py` el 2026-09-10.
 Fuente: Notas de las Tablas TM-1 y TE-1 de ASME BPVC II-D (Metrica) 2025,
 extraidas a `resources/` por `extraer_notas_ii_d.py`.
 
