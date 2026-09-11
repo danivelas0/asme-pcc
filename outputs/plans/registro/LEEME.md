@@ -23,6 +23,7 @@ la fuente es `CLAUDE.md` en la raíz y, para el detalle por revisión,
 | `plan_motor_art206_collar_y_separacion_parche_collar.md` | 2026-09-10 | `Collar_PCC2_Art206` (Type A/B), la Sección 7 de material compartida con el 212, y la decisión de desanclado total del 212 (delegada al plan siguiente) | 71 hojas |
 | `plan_desanclado_total_motor_art212.md` | 2026-09-10 | `Parche_PCC2_Art212` nace 100 % en código; `HOJAS_HEREDADAS` queda en `("Instrucciones", "Datos_Ref")` | 71 hojas |
 | `plan_entradas_de_motor_desde_base_de_datos.md` | 2026-09-11 | Toda entrada tabulada sale de una base por desplegable bloqueante (reglas 12/14); `DB_B36_10`/`DB_B36_19` para dimensiones; se retira `Datos_Ref` y `HOJAS_HEREDADAS` queda en `("Instrucciones",)`. Su `spec_*` acompaña. | 72 hojas |
+| `plan_flujo_github_ramas.md` | 2026-09-11 | GitHub Flow: `CONTRIBUTING.md`, plantilla de PR, CI parcial sin Excel (Actions, verde al primer run), tag `rev4e`, y el primer PR real (#1, merge `--no-ff`). **Fase 3 (ruleset) bloqueada:** los rulesets exigen GitHub Pro en repo privado. | No toca el libro; marca `rev4e` sobre el estado vigente |
 
 Referencias que ya no valen, y que se dejan tal como se escribieron:
 

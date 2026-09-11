@@ -194,3 +194,42 @@ Primer uso real del flujo nuevo, que además retoma el trabajo pendiente:
 - **Falso sentido de cobertura:** el CI en la nube NO valida el `.xlsm` recalculado.
   El YAML y el `CONTRIBUTING.md` lo dicen explícitamente para que nadie confunda
   "CI verde" con "entregable verificado".
+
+---
+
+## Resultado de ejecución (2026-09-11)
+
+- **Fase 0 — HECHA.** `git push origin main` subió los 8 commits
+  (`d59b102..baf5d14`). `main...origin/main` limpio.
+- **Fase 1 — HECHA.** `CONTRIBUTING.md` en la raíz (commit `0f43c19`).
+- **Fase 2 — HECHA.** `.github/PULL_REQUEST_TEMPLATE.md` (commit `2afac69`).
+- **Fase 3 — BLOQUEADA por el plan de GitHub, no por el trabajo.** La premisa
+  «rulesets gratis en repos privados» es **falsa**: `POST .../rulesets` y
+  `GET .../rulesets` devuelven `403 "Upgrade to GitHub Pro or make this
+  repository public to enable this feature."`. La protección de rama clásica
+  exige el mismo plan de pago. **No se creó ninguna protección.** Con el repo
+  privado en plan gratuito **no hay** protección server-side contra force-push
+  ni borrado de `main`. Decisión del ingeniero: (a) pasar a GitHub Pro, (b) hacer
+  el repo público —ojo con datos derivados de ASME, aunque los `content.json`
+  pesados están gitignored—, o (c) asumir el riesgo (repo de un autor). No se
+  ejecutó la prueba de force-push rechazado (Verificación §2) porque no hay regla
+  que la rechace.
+- **Fase 4 — HECHA y verde al primer run.** `.github/workflows/pruebas.yml`
+  (commit `d1f82f4`). Run `34600066520` en verde: `231 passed, 4 deselected` en
+  1m17s sobre `ubuntu-latest`, Python 3.14. No hubo que iterar: el análisis
+  estático fijó el subconjunto exacto. **Único ajuste sobre lo previsto:** se
+  excluye `test_dashboard.py::TestLintVba` (no por Excel, sino porque vive en
+  `make_vba_seed.py`, que importa `winreg` —solo Windows— a nivel de módulo). No
+  se debilitó ninguna prueba; esa clase corre en el gate local. Anotación benigna
+  de GitHub: Node 20 deprecado en `checkout@v4`/`setup-python@v5` (cosmética).
+- **Fase 5 — HECHA.** Tag anotado `rev4e` sobre `main` pre-entradas (`d1f82f4`),
+  empujado. Sufijo confirmado por el ingeniero (sistema visual vigente Rev. 4e).
+- **Fase 6 — HECHA.** La rama `plan/entradas-motor-desde-bd` (ya cerrada) aterrizó
+  en `main` vía **PR #1**, merge `--no-ff` (`c9b12b7`, dos padres), rama borrada.
+  Primer uso real del flujo. **El `.xlsm` cambió con el merge**
+  (11 620 250 → 11 617 780 B): si el ingeniero considera que esto es una revisión
+  nueva del libro, procede un tag `rev4f` sobre `c9b12b7` — **no se creó**, porque
+  ninguna Rev nueva está declarada y la Regla nº 1 prohíbe inventarla.
+
+**Abierto para el ingeniero:** (1) protección de `main` (Fase 3, ver arriba);
+(2) ¿el estado post-entradas es `rev4f`? Nada de esto lo puede cerrar el agente.

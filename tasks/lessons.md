@@ -88,3 +88,24 @@ lee ese PNG con Read y de ahí se recupera la fórmula. Solo si no está ni como
 como imagen en los dos espejos es un **vacío real**, que se declara y se repara
 re-extrayendo, nunca se toma de memoria ni de `knowledge/claude.md` (derivado). Registrado
 en `CLAUDE.md` bajo la Regla nº 1.
+
+## 2026-09-11 · Los rulesets de GitHub NO son gratis en repo privado
+
+**Contexto:** ejecutando `plan_flujo_github_ramas.md`. Su Fase 3 daba por hecho que
+un *repository ruleset* era «gratis en repos privados; la protección clásica exige
+plan de pago». Al crearlo, `POST`/`GET .../rulesets` devolvieron
+`403 "Upgrade to GitHub Pro or make this repository public to enable this feature."`.
+
+**Causa:** en un repo **privado** en plan gratuito, **tanto** los rulesets **como** la
+protección de rama clásica exigen GitHub Pro. Solo son gratis en repos **públicos**.
+
+**Reglas para mí:**
+
+1. **Un plan puede traer una premisa de plataforma equivocada.** Antes de dar una fase
+   por imposible o por hecha, verificar contra la API/CLI real, no contra lo que el
+   plan afirma. Aquí la comprobación fue el propio `403`.
+2. **Ante un bloqueo de plataforma (tier/permiso), no inventar un rodeo.** Se reportó el
+   `403` tal cual, se dejó `main` sin protección server-side y se elevó la decisión
+   (Pro / público / asumir riesgo) al ingeniero. No se hizo la prueba de force-push
+   rechazado porque no había regla que lo rechazara: verificar lo que existe, no
+   teatralizar una verificación vacía.
