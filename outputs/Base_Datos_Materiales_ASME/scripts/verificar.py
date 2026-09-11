@@ -1161,6 +1161,11 @@ def auditar():
     motor["D186"] = 0.101   # Pa, MPa abs
     motor["D187"] = 1.4     # k
     motor["D188"] = 20      # Rscaled, m/kg^1/3
+    # Art. 206 (§6f): se fuerza Type B en el libro qa para ejercer el cateto del
+    # filete w = Ts + G / 1.4 Tp + G (Paso 4). No afecta a los checks del 212.
+    if "Collar_PCC2_Art206" in wb.sheetnames:
+        col_ws = wb["Collar_PCC2_Art206"]
+        col_ws["D22"] = "Type B (contiene presion)"
 
     qa_in = OUTDIR / "qa.xlsx"
     qa_out = OUTDIR / "qa_recalculado.xlsx"
@@ -1516,6 +1521,41 @@ def auditar():
                 ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-6)
                 flujo_bad += 0 if ok else 1
                 log(f"| {nombre} (neumatica) | — | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
+    log("")
+
+    # ---- 6f. pasos del flujo 206 recalculados en Excel -------------------
+    # Recalcula en Excel el cateto del filete w (Paso 4, 206-3.5) del Collar
+    # (forzado a Type B en el libro qa) y la luz radial (206-4.1), y comprueba la
+    # recomendacion de tipo (Paso 1). Las formulas simples/IF (t_req+C.A., avisos)
+    # las fijan las anclas de cadena de TestBuildCollarArt206; aqui se ejerce en
+    # Excel la unica formula numerica nueva no trivial (el cateto).
+    log("## 6f. Pasos del flujo 206 recalculados en Excel (Type B forzado)")
+    log("")
+    flujo206_bad = 0
+    if "Collar_PCC2_Art206" in recalc.sheetnames:
+        rc = recalc["Collar_PCC2_Art206"]
+        Ts, Tp, G = rc["D29"].value, rc["D21"].value, rc["D31"].value
+        log("| Magnitud | Referencia Python | Hoja | Estado |")
+        log("|---|---|---|---|")
+        if all(isinstance(x, (int, float)) for x in (Ts, Tp, G)):
+            w_ref = Ts + G if Ts <= 1.4 * Tp else 1.4 * Tp + G
+            got_w = rc["D121"].value
+            ok_w = isinstance(got_w, (int, float)) and abs(got_w - w_ref) <= max(TOL, abs(w_ref) * 1e-9)
+            flujo206_bad += 0 if ok_w else 1
+            log(f"| cateto w (Type B) | {w_ref} | {got_w} | {'OK' if ok_w else 'FALLO'} |")
+        else:
+            log(f"| cateto w | Ts={Ts} Tp={Tp} G={G} | — | (entradas no numericas) |")
+        # Luz radial: G=1.5 <= 2.5 -> CUMPLE.
+        got_luz = rc["F123"].value
+        ok_luz = got_luz == "CUMPLE"
+        flujo206_bad += 0 if ok_luz else 1
+        log(f"| luz G<=2.5 | CUMPLE | {got_luz} | {'OK' if ok_luz else 'FALLO'} |")
+        # Tipo recomendado (ambos criterios 'No' por defecto -> Type A).
+        got_rec = rc["D105"].value
+        ok_rec = isinstance(got_rec, str) and got_rec.startswith("Type A")
+        flujo206_bad += 0 if ok_rec else 1
+        log(f"| tipo recomendado | Type A (fuga/axial=No) | {got_rec} | "
+            f"{'OK' if ok_rec else 'FALLO'} |")
     log("")
 
     # ---- 8. capa de navegacion -------------------------------------------
@@ -1917,7 +1957,7 @@ def auditar():
     # ---- cierre -----------------------------------------------------------
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + flujo_bad
-             + nav_bad + map_bad + sec_bad + b36_bad)
+             + flujo206_bad + nav_bad + map_bad + sec_bad + b36_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -1930,6 +1970,7 @@ def auditar():
                         ("6. Interpolacion recalculada", nbad),
                         ("7. Caso semilla", semilla_bad),
                         ("6e. Pasos del flujo 212 (recalculo Excel)", flujo_bad),
+                        ("6f. Pasos del flujo 206 (recalculo Excel)", flujo206_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),

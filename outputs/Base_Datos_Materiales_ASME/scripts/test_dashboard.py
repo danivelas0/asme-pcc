@@ -1312,6 +1312,123 @@ class TestBuildParcheContraOracle:
             assert ws[celda].value == oracle["formulas"][celda], celda
 
 
+class TestBuildCollarArt206:
+    """Construye Collar_PCC2_Art206 en un wb de usar y tirar y fija por cadena
+    las formulas nuevas de los pasos del flujo (el 206 no tiene oracle: se
+    verifica por verificar.py §1-5 book-wide + §6f). Cada test_paso* traza a
+    resources/ (Regla n.1) y al flujo aprobado del ingeniero."""
+
+    def _construir(self):
+        import build_db_materiales as B
+        wb = openpyxl.Workbook()
+        for n in ("DB_B31_3", "Datos_Ref", "MAP_Factores", "DB_BPVC_IID",
+                  "DB_BPVC_IID_B", "DB_B36_10", "DB_B36_19"):
+            wb.create_sheet(n)
+        b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
+                             "n_nps": 5, "max_ced": 5}
+        B.build_collar_art206(wb, b313_stub(), iid1a_stub(), iidb_stub(),
+                              fac_stub(), rangos_stub(),
+                              b36("DB_B36_10"), b36("DB_B36_19"))
+        return wb["Collar_PCC2_Art206"]
+
+    # --- Fase 1: seleccion guiada de tipo (Paso 1, 206-1 / 206-2) ------------
+    def test_paso1_seleccion_tipo(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert str(ws["A101"].value).find("PASO 1") >= 0, ws["A101"].value
+        assert ws["D103"].value == "No"  # fuga
+        assert ws["D104"].value == "No"  # axial / tasa no clara
+        assert ws["D105"].value == (
+            f'=IF(OR($D$103="Si",$D$104="Si"),"{B.TIPO_B}","{B.TIPO_A}")'), "D105"
+        assert ws["D106"].value == (
+            '=IF($D$22<>$D$105,"AVISO: el tipo elegido (D22) difiere del '
+            'recomendado por 206-1.1 (fuga/axial) — confirmar","")'), "D106"
+        # Avisos de 206-2.
+        assert ws["D107"].value == (
+            f'=IF($D$22="{B.TIPO_A}","206-2.6: evaluar corrosion bajo manga; '
+            'sellante/recubrimiento si aplica","")'), "D107"
+        assert ws["D109"].value == (
+            f'=IF(AND($D$22="{B.TIPO_B}",$D$103="Si"),"206-2.3: aislar la fuga '
+            'antes de soldar (ver 206-4.3 purga N2)","")'), "D109"
+
+    # --- Fase 2: t_req con sobreespesor de corrosion (Paso 2, 206-3.3) -------
+    def test_paso2_treq_con_ca(self):
+        ws = self._construir()
+        assert "PASO 2" in str(ws["A111"].value), ws["A111"].value
+        assert ws["D113"].value == 0, "C.A. default 0"
+        # t_req Type B suma C.A. (D113) en las tres columnas.
+        for celda in ("D53", "E53", "F53"):
+            assert str(ws[celda].value).endswith("+$D$113"), f"{celda}: {ws[celda].value}"
+        # Type A (2/3 Tp) NO lleva C.A.
+        assert "$D$113" not in str(ws["D54"].value), "D54 no debe llevar C.A."
+
+    # --- Fase 3: dimensiones del sleeve (Paso 3, 206-3.4) -------------------
+    def test_paso3_dimensiones(self):
+        ws = self._construir()
+        assert "PASO 3" in str(ws["A116"].value), ws["A116"].value
+        # F61 (longitud) ya existe y es correcto; el Paso 3 lo traza + nota 50 mm.
+        assert ws["D61"].value == "=MAX(100,$D$30+2*50)", "D61 L_s,min"
+        assert "50" in str(ws["D117"].value), ws["D117"].value
+
+    # --- Fase 4: cateto del filete y luz radial (Paso 4, 206-3.5 / 206-4.1) --
+    def test_paso4_filete_cateto(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert "PASO 4" in str(ws["A119"].value), ws["A119"].value
+        assert ws["D121"].value == (
+            f'=IF($D$22="{B.TIPO_B}",IF($D$29<=1.4*$D$21,$D$29+$D$31,'
+            f'1.4*$D$21+$D$31),"No aplica - Type A (206-1.1.1)")'), "D121 cateto"
+        # Verificacion de luz G <= 2.5 mm y su cableado a F69.
+        assert ws["D123"].value == 2.5, "D123 req"
+        assert ws["E123"].value == "=$D$31", "E123 adoptado"
+        assert ws["F123"].value == (
+            '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede 2,5 mm (206-4.1)")'), "F123"
+        assert "F123" in str(ws["F69"].value), "F69 debe incluir F123"
+
+    # --- Fase 5: presion externa, cavidades y bulging (206-3.6/7/9/10) ------
+    def test_paso5_cavidades(self):
+        ws = self._construir()
+        assert "PASO 5" in str(ws["A125"].value), ws["A125"].value
+        assert ws["D127"].value == "No"  # defecto externo
+        assert ws["D128"].value == (
+            '=IF($D$127="Si","206-3.7/3.9: rellenar cavidades con material '
+            'endurecible (epoxi) de resistencia a compresion adecuada","")'), "D128"
+
+    # --- Fase 6: fatiga por operacion ciclica (206-2.4/3.8/3.11) ------------
+    def test_paso6_fatiga(self):
+        ws = self._construir()
+        assert "PASO 6" in str(ws["A132"].value), ws["A132"].value
+        assert ws["D134"].value == "No"  # servicio ciclico
+        assert ws["D135"].value == (
+            '=IF($D$134="Si","206-2.4/3.8: requiere evaluacion de fatiga '
+            '(VIII-2 / API 579-1/ASME FFS-1)","")'), "D135"
+
+    # --- Fase 7: fabricacion y soldadura en servicio (206-4) ----------------
+    def test_paso7_fabricacion(self):
+        ws = self._construir()
+        assert "PASO 7" in str(ws["A138"].value), ws["A138"].value
+        assert ws["D140"].value == "=0.5*$D$26", "P_instal min 50%"
+        assert ws["D141"].value == "=0.8*$D$26", "P_instal max 80%"
+        assert ws["D142"].value == (
+            '=IF($D$103="Si","206-4.3: purgar el anular con N2/gas inerte en '
+            'fluidos inflamables","")'), "D142 purga N2"
+
+    # --- Fase 8: NDE y prueba de hermeticidad (206-5 / 206-6) ---------------
+    def test_paso8_nde_prueba(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert "PASO 8" in str(ws["A145"].value), ws["A145"].value
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        assert "Prueba del anular" in origen.get("D147", ""), origen.get("D147")
+        assert ws["D149"].value == (
+            f'=IF($D$22="{B.TIPO_B}","206-5.3: UT del portador; primer/ultimo '
+            'pase MT/PT; NDE de circunferenciales >=24 h (>=48 h si servicio '
+            'con H2)","206-5.2: Type A - VT de raiz + PT/MT/UT de longitudinales")'), "D149"
+
+
 class TestValidacionesBloqueantes:
     """Un desplegable que no rechaza lo que no esta en su lista es una sugerencia,
     no una restriccion — y el error de tecleo sigue siendo posible. Con

@@ -254,6 +254,14 @@ Dictamen global del modulo: **APTO** (OK).
 | TNT (neumatica) | — | 196.87640104077514 | 196.87640104077514 | OK |
 | R (neumatica) | — | 146.5900686172443 | 146.59006861724427 | OK |
 
+## 6f. Pasos del flujo 206 recalculados en Excel (Type B forzado)
+
+| Magnitud | Referencia Python | Hoja | Estado |
+|---|---|---|---|
+| cateto w (Type B) | 9.5 | 9.5 | OK |
+| luz G<=2.5 | CUMPLE | CUMPLE | OK |
+| tipo recomendado | Type A (fuga/axial=No) | Type A (no contiene presion) | OK |
+
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 
 | Comprobacion | Detalle | Estado |
@@ -327,6 +335,7 @@ Discrepancias: **0**
 | 6. Interpolacion recalculada | 0 |
 | 7. Caso semilla | 0 |
 | 6e. Pasos del flujo 212 (recalculo Excel) | 0 |
+| 6f. Pasos del flujo 206 (recalculo Excel) | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |

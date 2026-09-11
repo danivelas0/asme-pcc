@@ -8117,15 +8117,19 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                "tubo portador. Solo aplica a Type B: Type A no contiene "
                "presion (206-3.1).")
     lab(53, "t_req del codigo (Type B)", "mm", com=com_treq)
-    calc("D53", '=IF($D$11=1,D52*$D$45/(2*($D$37*$D$38+D52*$D$39)),'
+    # Fase 2: el t_req Type B suma el sobreespesor de corrosion C.A. (D113,
+    # 206-3.3: "corrosion allowances ... in accordance with the engineering
+    # design"). El Type A (D54) NO lo lleva: 206-3.1 no es componente a presion.
+    # Con C.A.=0 (default) el valor no cambia respecto de antes.
+    calc("D53", '=(IF($D$11=1,D52*$D$45/(2*($D$37*$D$38+D52*$D$39)),'
                 'IF($D$11=3,D52*$D$46/(2*$D$37*$D$38-0.2*D52),'
-                'D52*$D$46/($D$37*$D$38-0.6*D52)))', com_treq)
-    calc("E53", '=IF($D$11=1,E52*$D$45/(2*($D$37*$D$38+E52*$D$39)),'
+                'D52*$D$46/($D$37*$D$38-0.6*D52))))+$D$113', com_treq)
+    calc("E53", '=(IF($D$11=1,E52*$D$45/(2*($D$37*$D$38+E52*$D$39)),'
                 'IF($D$11=3,E52*$D$46/(2*$D$37*$D$38-0.2*E52),'
-                'E52*$D$46/($D$37*$D$38-0.6*E52)))', com_treq)
-    calc("F53", '=IF($D$11=1,F52*$D$45/(2*($D$37*$D$38+F52*$D$39)),'
+                'E52*$D$46/($D$37*$D$38-0.6*E52))))+$D$113', com_treq)
+    calc("F53", '=(IF($D$11=1,F52*$D$45/(2*($D$37*$D$38+F52*$D$39)),'
                 'IF($D$11=3,F52*$D$46/(2*$D$37*$D$38-0.2*F52),'
-                'F52*$D$46/($D$37*$D$38-0.6*F52)))', com_treq)
+                'F52*$D$46/($D$37*$D$38-0.6*F52))))+$D$113', com_treq)
     lab(54, "T_s,min Type A", "mm", "Referencia / Notas: 206-3.1",
        "Calculo: 206-3.1 — dos tercios del espesor del tubo portador. No "
        "depende de la presion: Type A no es componente a presion.")
@@ -8186,11 +8190,293 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                "pero quedo fuera de rango de temperatura; APTO solo si ademas "
                "las verificaciones de espesor y longitud dan CUMPLE; REVISAR "
                "en cualquier otro caso.")
+    # F60 (espesor), F61 (longitud) y F123 (luz radial <= 2,5 mm del Paso 4,
+    # 206-4.1): las tres deben dar CUMPLE para APTO.
     calc("F69", (f'=IF({dictamen_sleeve}="SIN MATERIAL SELECCIONADO",'
                  '"ELIJA MATERIAL (Seccion de resolucion de material)",'
                  f'IF({dictamen_sleeve}<>"OK","REVISAR — MATERIAL FUERA DE RANGO",'
-                 'IF(AND(F60="CUMPLE",F61="CUMPLE"),"APTO","REVISAR")))'),
+                 'IF(AND(F60="CUMPLE",F61="CUMPLE",F123="CUMPLE"),"APTO","REVISAR")))'),
         com_dict)
+
+    # === ANEXO — PASOS DEL FLUJO 206 (bloques nuevos, direcciones estables) ==
+    # El 206 no tiene oracle, pero sus formulas internas usan referencias
+    # absolutas (D45->D20, D53->D45/D46/D37/D38, F60->D55...). Para no
+    # desplazarlas, los pasos del flujo que no cabian en las secciones de arriba
+    # se anaden aqui, a partir de la fila 101 (la Seccion 7 termina en la 98).
+    # Trazado a resources/ (art_206.json) y al flujo aprobado del ingeniero.
+
+    # --- PASO 1 — Clasificacion y seleccion guiada de tipo (206-1 / 206-2) ---
+    # El tipo (D22) sigue siendo decision del ingeniero; el motor RECOMIENDA y
+    # AVISA si D22 contradice la recomendacion (advisory, NO bloquea F69: el
+    # tipo es una decision de diseno, no una compuerta de elegibilidad). Fuente:
+    # 206-1.1.1/1.1.2 [5],[6]; 206-2.3 [13]; 206-2.5 [17]; 206-2.6 [19];
+    # 206-2.7 [21].
+    band(101, "PASO 1 · CLASIFICACION Y SELECCION GUIADA DE TIPO (206-1 / 206-2)")
+    header(102, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+
+    com103 = ("Entrada: ¿el defecto fuga o puede llegar a fugar? Si es asi, el "
+              "206-1.1.2 pide Type B (extremos soldados, contiene presion). El "
+              "206-2.3 exige aislar una fuga activa antes de soldar.")
+    lab(103, "¿Fuga o puede fugar?", None, "206-1.1.2 / 206-2.3", com=com103)
+    inp("D103", "No", com103)
+    dv_list(ws, "D103", '"Si,No"', com103)
+
+    com104 = ("Entrada: ¿la reparacion debe reforzar la resistencia AXIAL del tubo "
+              "(p.ej. junta girth defectuosa) o la tasa de dano NO esta clara? Si "
+              "es asi, 206-1.1.1/206-2.5 empujan a Type B (el Type A no resiste "
+              "cargas axiales ni danos evolutivos).")
+    lab(104, "¿Refuerzo axial o tasa de dano no clara?", None,
+        "206-1.1.1 / 206-2.5", com=com104)
+    inp("D104", "No", com104)
+    dv_list(ws, "D104", '"Si,No"', com104)
+
+    com105 = ("Calculo: tipo recomendado por 206-1.1: Type B si hay fuga (D103) o "
+              "refuerzo axial / tasa no clara (D104); Type A en otro caso. Es una "
+              "recomendacion; el ingeniero decide en D22.")
+    lab(105, "Tipo recomendado", None, "206-1.1.1 / 206-1.1.2", com=com105)
+    calc("D105", f'=IF(OR($D$103="Si",$D$104="Si"),"{TIPO_B}","{TIPO_A}")', com105)
+
+    com106 = ("Calculo: aviso si el tipo elegido (D22) difiere del recomendado. "
+              "No bloquea: el tipo es decision de diseno del ingeniero.")
+    lab(106, "Aviso de contradiccion de tipo", None, "206-1.1", com=com106)
+    calc("D106",
+         '=IF($D$22<>$D$105,"AVISO: el tipo elegido (D22) difiere del recomendado '
+         'por 206-1.1 (fuga/axial) — confirmar","")', com106)
+
+    com107 = ("Calculo: 206-2.6 — en Type A, evaluar la corrosion bajo manga por "
+              "ingreso de humedad por los extremos no soldados; aplicar sellante/"
+              "recubrimiento si aplica.")
+    lab(107, "Corrosion bajo manga (Type A)", None, "206-2.6", com=com107)
+    calc("D107",
+         f'=IF($D$22="{TIPO_A}","206-2.6: evaluar corrosion bajo manga; '
+         'sellante/recubrimiento si aplica","")', com107)
+
+    com108 = ("Aviso fijo 206-2.7: una costura previa (girth/longitudinal) "
+              "prominente puede impedir el fit-up; esmerilar + RT/UT, o fabricar "
+              "la manga con bulge (Fig. 206-2.7-1).")
+    lab(108, "Interferencia con costura previa", None, "206-2.7", com=com108)
+    d108 = calc("D108",
+                "206-2.7: costura previa prominente puede impedir el fit-up -> "
+                "esmerilar + RT/UT o manga con bulge (Fig. 206-2.7-1).", com108)
+    d108.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D108:G108")
+
+    com109 = ("Calculo: 206-2.3 — si hay fuga activa en un Type B, aislar la fuga "
+              "antes de soldar (ligado a 206-4.3, purga de N2 en fluidos "
+              "inflamables).")
+    lab(109, "Fuga activa (Type B)", None, "206-2.3", com=com109)
+    calc("D109",
+         f'=IF(AND($D$22="{TIPO_B}",$D$103="Si"),"206-2.3: aislar la fuga antes '
+         'de soldar (ver 206-4.3 purga N2)","")', com109)
+
+    # --- PASO 2 — Espesor requerido con sobreespesor de corrosion (206-3.3) --
+    # El t_req Type B (D53/E53/F53) ya suma C.A. (arriba). Aqui va la ENTRADA
+    # C.A. (206-3.3 [38]: "corrosion allowances ... in accordance with the
+    # engineering design"). Default 0 (valor valido tecleado). No aplica al
+    # Type A (206-3.1, no es componente a presion).
+    band(111, "PASO 2 · ESPESOR REQUERIDO CON SOBREESPESOR DE CORROSION (206-3.3)")
+    header(112, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com113 = ("Entrada: sobreespesor de corrosion C.A., mm, por el diseno de "
+              "ingenieria (206-3.3). Se suma al t_req Type B (D53/E53/F53) en las "
+              "tres columnas de presion; NO se aplica al Type A (206-3.1). Default "
+              "0 es un valor valido tecleado.")
+    lab(113, "Sobreespesor de corrosion C.A.", "mm", "206-3.3 [38]", com=com113)
+    inp("D113", 0, com113)
+    com114 = ("Nota: el Type B es componente a presion (206-3.2), por eso su t_req "
+              "incluye C.A.; el Type A (206-3.1, 2/3 del espesor del portador) es "
+              "refuerzo, no contiene presion, y no lo lleva.")
+    lab(114, "Aplicabilidad del C.A.", None, "206-3.1 / 3.2", com=com114)
+    d114 = calc("D114",
+                "C.A. se suma al t_req del Type B (a presion); el Type A (2/3 Tp) "
+                "no lo lleva.", com114)
+    d114.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D114:G114")
+
+    # --- PASO 3 — Dimensiones del sleeve (206-3.4) --------------------------
+    # La verificacion de longitud (F61: L_s >= max(100, defecto + 2x50)) ya vive
+    # en la seccion de verificaciones y es correcta. Aqui se traza explicitamente
+    # y se anota el sobrepaso de 50 mm a cada lado (206-3.4 [40]).
+    band(116, "PASO 3 · DIMENSIONES DEL SLEEVE (206-3.4)")
+    com117 = ("Nota 206-3.4: el sleeve mide >= 100 mm (4 in.) y sobrepasa el "
+              "defecto >= 50 mm (2 in.) a CADA lado. La verificacion de longitud "
+              "(F61) usa L_s,min = max(100, longitud del defecto + 2x50).")
+    lab(117, "Longitud y sobrepaso", None, "206-3.4 [40]", com=com117)
+    d117 = calc("D117",
+                "206-3.4: L_s >= 100 mm y >= defecto + 50 mm a cada lado. "
+                "Verificado en F61.", com117)
+    d117.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D117:G117")
+
+    # --- PASO 4 — Cateto del filete de extremo y luz radial (206-3.5/206-4.1) -
+    # El motor deja de solo elegir la RAMA (texto en F64) y calcula el CATETO w:
+    # w = Ts + G (Ts <= 1.4 Tp) o 1.4 Tp + G (Ts > 1.4 Tp), Figs. 206-3.5-1/2
+    # (fijadas en la Fase 0). Solo Type B (el Type A no lleva soldadura
+    # circunferencial de extremo, 206-1.1.1). Ademas la luz radial G <= 2.5 mm
+    # (206-4.1 [63]), que entra al AND de F69. Ts=D29, Tp=D21 (nominal), G=D31.
+    band(119, "PASO 4 · CATETO DEL FILETE Y LUZ RADIAL (206-3.5 / 206-4.1)")
+    header(120, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com121 = ("Calculo: cateto del filete de extremo w (Figs. 206-3.5-1/2, Fase 0). "
+              "Type B: w = Ts + G si Ts <= 1.4 Tp, si no 1.4 Tp + G (chaflan "
+              "opcional). Type A: no aplica (206-1.1.1, sin soldadura "
+              "circunferencial). Ts = espesor del sleeve (D29), Tp = espesor del "
+              "portador (D21), G = luz radial (D31).")
+    lab(121, "Cateto del filete de extremo  w", "mm", "206-3.5 Figs. 1/2",
+        com=com121)
+    calc("D121",
+         f'=IF($D$22="{TIPO_B}",IF($D$29<=1.4*$D$21,$D$29+$D$31,'
+         f'1.4*$D$21+$D$31),"No aplica - Type A (206-1.1.1)")', com121)
+    com122 = ("Nota (riesgo declarado): la leyenda de las Figs. 206-3.5 rotula "
+              "Tp = 'carrier pipe required minimum wall thickness', mientras que "
+              "el texto 206-3.5(a) compara Ts con 1.4x el espesor NOMINAL. Este "
+              "motor usa el NOMINAL (D21, coherente con el texto de la rama). Si "
+              "el diseno exige el minimo requerido, ajustar D21 o el cateto. "
+              "Confirmar con el ingeniero.")
+    lab(122, "Tp nominal vs mínimo requerido", None, "206-3.5 leyenda", com=com122)
+    d122 = calc("D122",
+                "Tp = NOMINAL (D21) para el cateto y la rama 1.4x, coherente con "
+                "el texto 206-3.5(a). La leyenda de las figuras dice 'required "
+                "minimum': confirmar con el ingeniero si aplica.", com122)
+    d122.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D122:G122")
+    com123 = ("Calculo: 206-4.1 — se admite 'no gap', y una luz radial de hasta "
+              "2.5 mm (3/32 in.) maximo. G adoptado (D31) contra ese tope; entra "
+              "al dictamen global (F69).")
+    lab(123, "Luz radial G <= 2,5 mm", None, "206-4.1 [63]", com=com123)
+    ws.merge_cells("A123:C123")
+    calc("D123", 2.5)
+    calc("E123", "=$D$31")
+    calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede 2,5 mm (206-4.1)")')
+
+    # --- PASO 5 — Presion externa, cavidades y bulging (206-3.6/3.7/3.9/3.10) -
+    band(125, "PASO 5 · PRESION EXTERNA, CAVIDADES Y BULGING (206-3.6/3.7/3.9/3.10)")
+    header(126, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com127 = ("Entrada: ¿el defecto es externo / hay perdida de pared externa? Si "
+              "es asi, 206-3.7/3.9 piden rellenar las cavidades con material "
+              "endurecible (epoxi) de resistencia a compresion adecuada para "
+              "transferir la carga al sleeve.")
+    lab(127, "¿Defecto externo?", None, "206-3.7 / 3.9", com=com127)
+    inp("D127", "No", com127)
+    dv_list(ws, "D127", '"Si,No"', com127)
+    com128 = "Calculo: aviso de relleno endurecible si el defecto es externo."
+    lab(128, "Relleno de cavidades", None, "206-3.7 / 3.9", com=com128)
+    calc("D128",
+         '=IF($D$127="Si","206-3.7/3.9: rellenar cavidades con material '
+         'endurecible (epoxi) de resistencia a compresion adecuada","")', com128)
+    com129 = ("Aviso fijo 206-3.6: considerar la presion externa sobre el tubo "
+              "dentro del Type B; ajuste ceñido para transferir carga o rellenar "
+              "el anular; si queda sin rellenar, verificar que el fluido estancado "
+              "no cause corrosion.")
+    lab(129, "Presion externa (Type B)", None, "206-3.6", com=com129)
+    d129 = calc("D129",
+                "206-3.6: presion externa sobre el tubo en Type B — ajuste ceñido "
+                "o rellenar anular; verificar fluido estancado.", com129)
+    d129.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D129:G129")
+    com130 = ("Aviso fijo 206-3.9(b): reducir la presion de linea al instalar (se "
+              "cruza con el rango 50-80% del Paso 7).")
+    lab(130, "Reducir presion al instalar", None, "206-3.9(b)", com=com130)
+    d130 = calc("D130",
+                "206-3.9(b): reducir la presion de linea al instalar (ver rango "
+                "50-80% del Paso 7).", com130)
+    d130.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D130:G130")
+
+    # --- PASO 6 — Fatiga y dilatacion diferencial (206-2.4/3.8/3.11) --------
+    band(132, "PASO 6 · FATIGA Y DILATACION DIFERENCIAL (206-2.4/3.8/3.11)")
+    header(133, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com134 = ("Entrada: ¿servicio con ciclos frecuentes de presion o gradientes "
+              "termicos through-wall? Todo Type B se evalua a fatiga (206-3.8); "
+              "los ciclos frecuentes la exigen (206-2.4).")
+    lab(134, "¿Servicio ciclico?", None, "206-2.4 / 3.8", com=com134)
+    inp("D134", "No", com134)
+    dv_list(ws, "D134", '"Si,No"', com134)
+    com135 = "Calculo: aviso de evaluacion de fatiga si el servicio es ciclico."
+    lab(135, "Evaluacion de fatiga", None, "206-2.4 / 3.8", com=com135)
+    calc("D135",
+         '=IF($D$134="Si","206-2.4/3.8: requiere evaluacion de fatiga '
+         '(VIII-2 / API 579-1/ASME FFS-1)","")', com135)
+    com136 = ("Aviso fijo 206-3.11: considerar la dilatacion termica diferencial "
+              "entre el tubo portador y el sleeve (ambos tipos). Refuerza nota206b.")
+    lab(136, "Dilatacion diferencial", None, "206-3.11", com=com136)
+    d136 = calc("D136",
+                "206-3.11: considerar la dilatacion termica diferencial "
+                "portador/sleeve (ambos tipos).", com136)
+    d136.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D136:G136")
+
+    # --- PASO 7 — Fabricacion y soldadura en servicio (206-4) ---------------
+    band(138, "PASO 7 · FABRICACION Y SOLDADURA EN SERVICIO (206-4)")
+    header(139, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com140 = ("Calculo: presion recomendada durante la instalacion del sleeve, "
+              "entre 50% y 80% de la presion de operacion (206-4.5; API RP 2201). "
+              "Minimo (50%).")
+    lab(140, "Presion de instalacion (min 50%)", "kg/cm2", "206-4.5", com=com140)
+    calc("D140", "=0.5*$D$26", com140)
+    com141 = "Calculo: maximo del rango de presion de instalacion (80%), 206-4.5."
+    lab(141, "Presion de instalacion (max 80%)", "kg/cm2", "206-4.5", com=com141)
+    calc("D141", "=0.8*$D$26", com141)
+    com142 = ("Calculo: si hay fuga (D103), purgar el anular con N2/gas inerte en "
+              "fluidos inflamables antes de soldar (206-4.3).")
+    lab(142, "Purga de N2 (fuga)", None, "206-4.3", com=com142)
+    calc("D142",
+         '=IF($D$103="Si","206-4.3: purgar el anular con N2/gas inerte en fluidos '
+         'inflamables","")', com142)
+    com143 = ("Aviso fijo de fabricacion: limpiar a metal blanco toda la "
+              "circunferencia (206-4.1); el relleno no debe extruir a la soldadura "
+              "(206-4.2); soldadura en servicio por Art. 210 (H2 en ZAC, ZAC dura, "
+              "burn-through) (206-4.6); costuras longitudinales a tope penetracion "
+              "completa + venteo si hay filetes de cierre (206-4.4).")
+    lab(143, "Fabricacion y Art. 210", None, "206-4.1/4.2/4.4/4.6", com=com143)
+    d143 = calc("D143",
+                "206-4: metal blanco (4.1); relleno sin extruir (4.2); Art. 210 "
+                "H2/ZAC/burn-through (4.6); longitudinales a tope + venteo (4.4).",
+                com143)
+    d143.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D143:G143")
+
+    # --- PASO 8 — Examen (NDE) y prueba de hermeticidad (206-5 / 206-6) ------
+    # Decision 3 del ingeniero: minima y fiel al 206 — selector + notas, SIN
+    # ecuaciones de energia almacenada (el texto del 206 no las publica; no se
+    # importa el motor neumatico del App. 501 del 212). El selector no gobierna
+    # ningun calculo: solo materializa el requisito y la advertencia de presion.
+    band(145, "PASO 8 · EXAMEN (NDE) Y PRUEBA DE HERMETICIDAD (206-5 / 206-6)")
+    header(146, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
+    com147 = ("Entrada: tipo de prueba de hermeticidad del Type B (206-6, si el "
+              "propietario la requiere): prueba del anular presurizado, prueba "
+              "sensible de fugas (B31.3 345.8) o no requerida. Art. 501 da guia "
+              "adicional. SIN ecuaciones de energia (el 206 no las publica).")
+    lab(147, "Tipo de prueba de hermeticidad", None, "206-6", com=com147)
+    inp("D147", "Prueba del anular", com147)
+    dv_list(ws, "D147",
+            '"Prueba del anular,Prueba sensible de fugas,No requerida"', com147)
+    com148 = ("Calculo: aviso segun el tipo de prueba. En la del anular, la "
+              "presion se elige tal que el tubo interno NO colapse (206-6a); "
+              "remite al Art. 501.")
+    lab(148, "Aviso de prueba", None, "206-6", com=com148)
+    calc("D148",
+         '=IF($D$147="Prueba del anular","206-6(a): presion de prueba tal que el '
+         'tubo interno NO colapse; Art. 501 guia adicional",IF($D$147="Prueba '
+         'sensible de fugas","206-6(b): prueba sensible de fugas (B31.3 345.8)",'
+         '""))', com148)
+    ws.merge_cells("D148:G148")
+    com149 = ("Calculo: NDE por tipo. Type B (206-5.3): UT del portador; primer/"
+              "ultimo pase MT/PT; NDE de las circunferenciales >= 24 h (>= 48 h si "
+              "servicio con alta probabilidad de H2). Type A (206-5.2): VT de raiz "
+              "+ PT/MT/UT de las longitudinales.")
+    lab(149, "NDE por tipo", None, "206-5.2 / 5.3", com=com149)
+    calc("D149",
+         f'=IF($D$22="{TIPO_B}","206-5.3: UT del portador; primer/ultimo pase '
+         'MT/PT; NDE de circunferenciales >=24 h (>=48 h si servicio con H2)",'
+         '"206-5.2: Type A - VT de raiz + PT/MT/UT de longitudinales")', com149)
+    ws.merge_cells("D149:G149")
+    com150 = ("Aviso fijo 206-5.1: inspeccionar todos los fit-ups antes de soldar "
+              "y examinar visualmente todas las soldaduras.")
+    lab(150, "Examen visual (VT)", None, "206-5.1", com=com150)
+    d150 = calc("D150",
+                "206-5.1: inspeccionar todos los fit-ups antes de soldar; VT de "
+                "todas las soldaduras.", com150)
+    d150.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D150:G150")
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
@@ -9386,6 +9672,10 @@ LITERALES_PERMITIDOS = {
         "leer_energia_501 (Fase 0.2). Lista de items con sus valores (el plan "
         "lo permite); si el codigo cambiara la tabla, esta lista y este literal "
         "cambian a la vez."),
+    '"Prueba del anular,Prueba sensible de fugas,No requerida"': (
+        "Tipo de prueba de hermeticidad del Paso 8 del Art. 206 (D147): las dos "
+        "vias del 206-6 (a)/(b) mas 'No requerida'. Categoria de la prueba, no "
+        "un material ni un dato tabulado."),
 }
 
 # Deuda SALDADA (Tarea 10). Las Tareas 7-9 repuntaron NPS y cedula de los dos
