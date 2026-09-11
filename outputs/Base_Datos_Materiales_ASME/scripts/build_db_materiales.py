@@ -6455,32 +6455,11 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
          '=INDEX(Datos_Ref!$C$5:$P$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
          'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))', com21)
 
-    com22 = ("Entrada: material del componente reparado (metal base), de la "
-             "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
-             "cascada de la seccion 7.")
-    com23 = ("Entrada: material del parche o collar de refuerzo, de la lista "
-             "corta de Datos_Ref. Para el S(T) por temperatura use la "
-             "cascada de la seccion 7.")
-    ref_mat = "Descriptivo · el S(T) rige en la Seccion 7"
-    lab(22, "Material de tubería / envolvente", unidad="—", ref=ref_mat, com=com22)
-    ws.cell(22, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D22", "A106 Gr.B", com22)
-    lab(23, "Material del collar / parche", unidad="—", ref=ref_mat, com=com23)
-    ws.cell(23, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D23", "A516 Gr.70", com23)
-    # dv_list() solo admite una celda por llamada (su firma toma "cell" en
-    # singular: ws[cell] + dv.add(...)); el *oracle* declara una UNICA
-    # validacion compartida sobre el rango D22:D23 (mismo formula1 para las
-    # dos celdas). ws[cell] con un rango devuelve tuplas anidadas que
-    # dv.add() rechaza, asi que se construye aqui directo -mismos parametros
-    # que dv_list()- fijando el sqref combinado, igual criterio que
-    # band()/header() cuando el helper no reproduce el *oracle* literal.
-    dv_mat = DataValidation(
-        type="list",
-        formula1='"A106 Gr.B,A516 Gr.70,A105,A285 Gr.C,A333 Gr.6,A53 Gr.B"',
-        allow_blank=True, showErrorMessage=False)
-    ws.add_data_validation(dv_mat)
-    dv_mat.sqref = "D22:D23"
+    # Filas 22-23 (material descriptivo de tuberia y de parche) retiradas: salian de
+    # una lista fija, que la regla 12 prohibe. El material que rige el calculo lo
+    # resuelve la cascada de la Seccion 7 contra DB_B31_3 / DB_BPVC_IID. Las filas se
+    # dejan VACIAS a proposito, declaradas en DIVERGENCIAS_DECLARADAS; no se reutilizan
+    # para otra cosa, o el *oracle* dejaria de cuadrar sin que nadie se entere.
 
     com24 = ("Entrada informativa: fluido de servicio. No alimenta ningun "
              "calculo de esta hoja.")
@@ -8695,6 +8674,29 @@ def link_volver(wb):
 # sistema nuevo —ningun color de la paleta nueva es clave de esta tabla—, y lo
 # que quede sin traducir lo delata la auditoria (celdas_fuera_del_sistema).
 HOJAS_HEREDADAS = ("Instrucciones", "Datos_Ref")
+
+# Celdas que el *oracle* del Art. 212 declara pero que el build ya NO reproduce a
+# proposito. El oracle sigue siendo la hoja heredada tal como se capturo; esta lista
+# es la unica forma declarada de apartarse de ella, y cada entrada lleva su motivo.
+# Sin esto, la alternativa era regenerar el oracle desde el build nuevo — con lo que
+# dejaria de ser un control independiente y pasaria a ser un volcado de si mismo.
+DIVERGENCIAS_DECLARADAS = {
+    ("Parche_PCC2_Art212", "A22"): (
+        "Fila retirada: el campo descriptivo de material salia de una lista fija de "
+        "seis items, prohibida por la regla 12. La Seccion 7 ya resuelve ese mismo "
+        "material con la cascada auditada."),
+    ("Parche_PCC2_Art212", "B22"): "Idem A22: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "C22"): "Idem A22: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "D22"): "Idem A22: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "G22"): "Idem A22: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "A23"): (
+        "Fila retirada por el mismo motivo que A22: el material del parche lo "
+        "resuelve la cascada de la Seccion 7, no una lista fija."),
+    ("Parche_PCC2_Art212", "B23"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "C23"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "D23"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "G23"): "Idem A23: la fila entera se retira.",
+}
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl
 # devuelve "FF1A1A1A" en lo que leyo del maestro y "00050505" en lo que acaba de

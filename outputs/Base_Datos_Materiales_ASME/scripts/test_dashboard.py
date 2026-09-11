@@ -530,16 +530,41 @@ class TestParidadHojaParche:
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
         for celda, esperado in oracle["formulas"].items():
+            motivo = B.DIVERGENCIAS_DECLARADAS.get((self.HOJA, celda))
+            if motivo:
+                # Celda que el build ya no reproduce a proposito. Se exige que
+                # este VACIA: una divergencia declarada que resulta traer otro
+                # valor es un error, no una divergencia.
+                assert ws[celda].value is None, f"{celda}: {motivo}"
+                continue
             assert ws[celda].value == esperado, celda
 
+    def test_toda_divergencia_declara_motivo(self):
+        for (hoja, celda), motivo in B.DIVERGENCIAS_DECLARADAS.items():
+            assert isinstance(motivo, str) and len(motivo) > 20, (hoja, celda)
+
     def test_validaciones_de_datos(self, wb):
+        # Igual que las formulas: una validacion cuyo sqref cae ENTERO dentro
+        # de celdas declaradas en DIVERGENCIAS_DECLARADAS ya no la reproduce
+        # el build (la fila entera se retiro) y se excluye del oracle. Una
+        # validacion parcialmente divergente seguiria exigiendose completa:
+        # aqui no se da el caso, pero el guardia es honesto sobre ello.
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
         reales = sorted(
             ({"sqref": str(dv.sqref), "formula1": dv.formula1}
              for dv in ws.data_validations.dataValidation),
             key=lambda d: d["sqref"])
-        assert reales == oracle["validaciones"]
+        esperadas = []
+        for v in oracle["validaciones"]:
+            rng = openpyxl.worksheet.cell_range.CellRange(v["sqref"])
+            coords = [f"{openpyxl.utils.get_column_letter(c)}{r}"
+                      for r in range(rng.min_row, rng.max_row + 1)
+                      for c in range(rng.min_col, rng.max_col + 1)]
+            if all((self.HOJA, c) in B.DIVERGENCIAS_DECLARADAS for c in coords):
+                continue
+            esperadas.append(v)
+        assert reales == sorted(esperadas, key=lambda d: d["sqref"])
 
     def test_rangos_fusionados(self, wb):
         oracle = cargar_oracle_parche()
@@ -815,6 +840,10 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_4:
+            motivo = B.DIVERGENCIAS_DECLARADAS.get(("Parche_PCC2_Art212", celda))
+            if motivo:
+                assert ws[celda].value is None, f"{celda}: {motivo}"
+                continue
             assert ws[celda].value == oracle["formulas"][celda], celda
 
     # Seccion 2, esfuerzos admisibles y factores (filas 39-48). Incluye la
