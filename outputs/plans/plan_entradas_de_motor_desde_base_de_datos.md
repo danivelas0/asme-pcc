@@ -1268,6 +1268,22 @@ git commit -m "Art. 212: OD y espesor salen de la base dimensional"
 
 ## Tarea 9: La misma cascada en el Art. 206
 
+> **EJECUTADA (2026-09-11), mirando la implementación REAL del Art. 212 (Tareas
+> 7-8), no el borrador D17 de abajo —que el 212 abandonó—. Dos desvíos
+> deliberados:**
+> 1. **Norma en la fila 33, no 17.** `D17` es el encabezado de la sección 1, y
+>    las filas 18-32 están todas ocupadas (Tipo de sleeve@22, UT@23, defecto
+>    circ.@24, presiones, geometría…); correrlas reapuntaría D45/D46 (usan OD@20)
+>    y D54/D64 (usan t@21). La norma ocupa la fila 33, libre al final de la
+>    sección 1 — mismo criterio que la fila 22 del Art. 212.
+> 2. **OD/espesor con `_choose_b36(idx,…)` + `MATCH(clave)`**, tal como quedó el
+>    212 (no el `rango(...)` literal del borrador). El Art. 206 no tiene oracle
+>    Rev0, así que no necesitó `DIVERGENCIAS_*`: su paridad la fija
+>    `TestCascadaDimensionalArt206` contra DB_B36. `DEUDA_LISTA_FIJA` quedó vacía.
+> Verificado: `test_build_db + test_dashboard + test_secii_tablas` → 232 pasan;
+> `verificar.py` → 0 fallos (§5b guardia=0, §7 caso semilla=0, §11 B36=0).
+> Commit `7d78af9`.
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_collar_art206`, filas 18-21)
 - Modify: `scripts/test_dashboard.py`
@@ -1276,7 +1292,7 @@ git commit -m "Art. 212: OD y espesor salen de la base dimensional"
 - Consume: `_materializar_cascada_b36`, `_rango_b36`, `COL_B36` (Tareas 6-8).
 - Produce: en `Collar_PCC2_Art206`, la misma estructura `D17`/`D18`/`D19` + `D20`/`D21`.
 
-- [ ] **Step 1: Escribir la prueba**
+- [x] **Step 1: Escribir la prueba**
 
 ```python
 class TestCascadaDimensionalArt206:
@@ -1299,7 +1315,7 @@ class TestCascadaDimensionalArt206:
             assert "Datos_Ref" not in f and "DB_B36" in f, f"{celda}: {f}"
 ```
 
-- [ ] **Step 2: Correr para verla fallar**
+- [x] **Step 2: Correr para verla fallar**
 
 Run:
 ```powershell
@@ -1307,7 +1323,7 @@ python -m pytest test_dashboard.py::TestCascadaDimensionalArt206 -q
 ```
 Espera: FAIL.
 
-- [ ] **Step 3: Aplicar el mismo tratamiento**
+- [x] **Step 3: Aplicar el mismo tratamiento**
 
 En `build_collar_art206`, el Art. 206 numera sus filas igual que el 212 en esta zona
 (18 = NPS, 19 = cédula, 20 = OD, 21 = t), pero **hay que confirmarlo leyendo la función**
@@ -1323,7 +1339,7 @@ Eliminar los dos `dv_list` literales de NPS y cédula, y la firma de
 `build_collar_art206` pasa a recibir `b3610, b3619` igual que el 212 — actualizar su
 llamada en `main()`.
 
-- [ ] **Step 4: Reconstruir, pruebas y verificar**
+- [x] **Step 4: Reconstruir, pruebas y verificar**
 
 Run:
 ```powershell
@@ -1333,7 +1349,7 @@ python verificar.py --resources ..\..\..\resources --wb ..\..\Motor_de_Calculo_A
 ```
 Espera: verde y 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scripts/build_db_materiales.py scripts/test_dashboard.py outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm
