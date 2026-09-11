@@ -48,9 +48,25 @@ la «Rev» que ya usa el libro. Un merge que no toca el libro no lleva tag.
 
 ## Protección de `main`
 
-Hay un *ruleset* anti-accidente sobre `main`: **no** se puede borrar ni hacer
-force-push. Sí se permite el push directo (no se exige PR obligatorio). El PR es
-la superficie de revisión y changelog por convención, no por obligación técnica.
+**Server-side (GitHub):** no hay. Los *rulesets* y la protección de rama clásica
+exigen **GitHub Pro** en un repo privado (`403 "Upgrade to GitHub Pro…"`). Si
+algún día se pasa a Pro o el repo se hace público, se añade el ruleset con las
+reglas `non_fast_forward` y `deletion` (ver `outputs/plans/registro/plan_flujo_github_ramas.md`).
+
+**Local (esta máquina):** un hook `pre-push` versionado en `.githooks/pre-push`
+rechaza, antes de que el push salga: **borrar `main`** y cualquier **push
+non-fast-forward (force) a `main`**. El push normal (fast-forward) a `main` y
+todo push a otras ramas quedan intactos. No se exige PR obligatorio: el PR es la
+superficie de revisión y changelog por convención, no por obligación técnica.
+
+El hook solo protege desde el clon que lo tenga activado. **En un clon nuevo,
+activarlo una vez:**
+
+```sh
+git config core.hooksPath .githooks
+```
+
+Para saltarlo deliberadamente (bajo tu responsabilidad): `git push --no-verify`.
 
 ## El gate de calidad es local — el CI de la nube NO lo sustituye
 

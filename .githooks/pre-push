@@ -1,0 +1,51 @@
+#!/bin/sh
+# Red de seguridad LOCAL anti-accidente sobre `main`.
+#
+# Sustituye a la proteccion server-side (ruleset de GitHub), que en un repo
+# privado exige GitHub Pro. Un hook solo protege desde ESTA maquina, no es tan
+# robusto como el servidor, pero cubre el caso de accidente de un solo autor.
+#
+# Rechaza, ANTES de que el push salga:
+#   - el borrado de `main`
+#   - cualquier push non-fast-forward a `main` (lo que hace `git push --force`)
+# Deja pasar: push normal (fast-forward) a `main`, y todo push a otras ramas.
+#
+# git pasa por stdin una linea por ref empujada:
+#   <local_ref> <local_sha> <remote_ref> <remote_sha>
+# En un borrado, local_sha es todo ceros; si main aun no existe en el remoto,
+# remote_sha es todo ceros.
+#
+# Instalado con:  git config core.hooksPath .githooks   (ver CONTRIBUTING.md)
+
+remote="$1"
+rc=0
+
+while read local_ref local_sha remote_ref remote_sha; do
+    # Solo interesa la rama main del remoto.
+    [ "$remote_ref" = "refs/heads/main" ] || continue
+
+    # Borrado: el sha local es todo ceros.
+    case "$local_sha" in
+        *[!0]*) ;;   # tiene algun caracter != 0 -> es un sha real, no borrado
+        *)
+            echo "pre-push: BLOQUEADO -- borrar 'main' en '$remote' no esta permitido." >&2
+            rc=1
+            continue
+            ;;
+    esac
+
+    # Non-fast-forward (lo que hace --force): main ya existe en el remoto y su
+    # commit no es ancestro del que empujas -> reescribirias historia.
+    case "$remote_sha" in
+        *[!0]*)
+            if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+                echo "pre-push: BLOQUEADO -- push non-fast-forward (force) a 'main' en '$remote'." >&2
+                echo "          Reescribir la historia de 'main' esta prohibido por seguridad." >&2
+                rc=1
+            fi
+            ;;
+    esac
+done
+
+[ "$rc" -eq 0 ] || echo "pre-push: para forzarlo de verdad, anade --no-verify (bajo tu responsabilidad)." >&2
+exit $rc
