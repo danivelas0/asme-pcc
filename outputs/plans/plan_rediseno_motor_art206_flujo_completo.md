@@ -157,18 +157,14 @@ imágenes, imprimen literalmente `T_s + G` y `1,4·T_p + G` respectivamente. El 
 confirmado desde `resources/`; esta tarea solo lo fija en la capa de texto para que sea
 citable/trazable sin reabrir la imagen.
 
-- [ ] **Step 1: confirmar el ancla.** `python -c` que imprime los bloques de figura de ambos
-  espejos → `type=figure`, `image=…fig_206_3_5_1.png` / `…_2.png`, `text` vacío. (Verificado
-  en el diseño; re-confirmar por si `resources/` cambió.)
-- [ ] **Step 2: escribir `completar_art_206_filete.py`** — idempotente, `--resources`; **lee
-  los PNG referenciados por los propios bloques**, escribe `text` (p. ej.
-  `"w = Ts + G (cateto de filete completo, Ts <= 1.4 Tp) — Fig. 206-3.5-1"` y
-  `"w_max = 1.4 Tp + G (cateto maximo, Ts > 1.4 Tp; chaflan opcional) — Fig. 206-3.5-2"`) con
-  su `extraction_amendments` (bloque, ruta del PNG, nota de procedencia), sin tocar ningún
-  otro valor. Aborta si el bloque ya no apunta a ese PNG.
-- [ ] **Step 3: correr una vez por espejo** y comprobar con `git diff` que sólo cambian esos
-  dos bloques y su metadato.
-- [ ] **Step 4: commit** — `Art. 206: fija las ec. de cateto w=Ts+G y w_max=1.4Tp+G desde las figuras de resources/ (Regla n.1)`.
+- [x] **Step 1: confirmar el ancla.** Bloques 72 (`fig_206_3_5_1.png`) y 77 (`fig_206_3_5_2.png`),
+  `type=figure`, `text` vacío, en los dos espejos. Confirmado.
+- [x] **Step 2: escribir `completar_art_206_filete.py`** — idempotente, defensivo; **leídos
+  ambos PNG**: Fig. 206-3.5-1 imprime `T_s + G` (Ts≤1.4Tp), Fig. 206-3.5-2 imprime `1.4·T_p + G`
+  (Ts>1.4Tp, chaflán opcional). Fija esos textos + `extraction_amendments` (bloque, ruta, SHA-256).
+- [x] **Step 3: correr una vez por espejo** y `git diff`: 52 ins / 6 del, solo los bloques 72/77
+  y el amendment por espejo.
+- [x] **Step 4: commit** — `Art. 206: fija las ec. de cateto w=Ts+G y w_max=1.4Tp+G desde las figuras de resources/ (Regla n.1)`.
 
 ---
 
