@@ -985,6 +985,26 @@ git commit -m "DB_B36_10 y DB_B36_19: las dos bases dimensionales, auditadas"
 
 ## Tarea 7: Cascada dimensional en el Art. 212
 
+> **EJECUTADA junto con la Tarea 8 (2026-09-11), con tres desvíos del diseño de
+> abajo, todos deliberados:**
+> 1. **Norma en la fila 22, sin correr el bloque.** El diseño ponía la norma en
+>    `D17`, pero `D17` es el encabezado, y correr NPS/cédula/OD/espesor habría
+>    reapuntado ~12 fórmulas de cálculo aguas abajo (D52, D54, D55, D56, D65,
+>    D73, D78, E65, F65, E87) que referencian OD(D20)/espesor(D21). En su lugar
+>    NPS@18, cédula@19, OD@20, espesor@21 se quedan; la norma ocupa la fila 22
+>    (antes material descriptivo, ya retirado). Ninguna fórmula de cálculo cambia.
+> 2. **Se fundió con la Tarea 8** (OD/espesor contra `DB_B36`): como el NPS pasa
+>    a guardarse con formato `nps_impreso` (`'12 (300)'`), dejar OD/espesor en
+>    `Datos_Ref` daba #N/D. Separarlas dejaba la hoja rota en el interin.
+> 3. **Paridad contra el oracle Rev0:** se añadió `DIVERGENCIAS_REEMPLAZADAS`
+>    (celda con contenido nuevo a propósito, exigida no-vacía, verificada por
+>    `TestCascadaDimensionalArt212`), distinta de `DIVERGENCIAS_DECLARADAS`
+>    (celda retirada, exigida vacía). También se añadió la columna auxiliar
+>    `clave_ced` a `DB_B36` para listar cédulas sin blancos, y `n_nps`/`max_ced`
+>    salen de `build_db_b36` (no números mágicos: NPS reales=45, cédulas máx=33).
+> Verificado: `test_build_db + test_dashboard + test_secii_tablas` → 229 pasan.
+> `verificar.py` (recálculo en Excel) queda para la corrida local del ingeniero.
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_parche_art212`, filas 18-19 y columnas ocultas)
 - Modify: `scripts/test_dashboard.py`
@@ -1149,6 +1169,10 @@ git commit -m "Art. 212: NPS y cedula salen de DB_B36_10 / DB_B36_19"
 ---
 
 ## Tarea 8: OD y espesor del Art. 212 contra la base
+
+> **EJECUTADA junto con la Tarea 7 (2026-09-11)** — ver la nota al inicio de la
+> Tarea 7. OD(`D20`)/espesor(`D21`) leen de `DB_B36_10`/`DB_B36_19` por la clave
+> `NPS|cédula` (`clave`), con el conmutador de edición vía `CHOOSE($AB$2, …)`.
 
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_parche_art212`, D20 y D21)

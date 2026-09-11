@@ -1766,6 +1766,9 @@ def auditar():
             b36_bad += 1
             continue
         vistos, orden, ordenes_esperados = set(), 0, []
+        # clave_ced esperada: indice del designador NO vacio dentro del bloque de
+        # NPS, reconstruido igual que en build_db_b36 (None en las filas '...').
+        claves_ced_esperadas, nps_actual, ced_idx = [], None, 0
         for esp in esperadas:
             if esp["nps_impreso"] not in vistos:
                 vistos.add(esp["nps_impreso"])
@@ -1773,6 +1776,13 @@ def auditar():
                 ordenes_esperados.append(orden)
             else:
                 ordenes_esperados.append(None)
+            if esp["nps_impreso"] != nps_actual:
+                nps_actual, ced_idx = esp["nps_impreso"], 0
+            if esp["designador"]:
+                ced_idx += 1
+                claves_ced_esperadas.append(f"{esp['nps_impreso']}|{ced_idx}")
+            else:
+                claves_ced_esperadas.append("")
         for i, esp in enumerate(esperadas):
             r = B.R_DATA + i
             for clave, j in B.COL_B36.items():
@@ -1780,6 +1790,8 @@ def auditar():
                     esperado_celda = ordenes_esperados[i]
                 elif clave == "clave":
                     esperado_celda = f"{esp['nps_impreso']}|{esp['designador']}"
+                elif clave == "clave_ced":
+                    esperado_celda = claves_ced_esperadas[i]
                 else:
                     esperado_celda = esp[clave]
                 leida = ws.cell(r, j).value
