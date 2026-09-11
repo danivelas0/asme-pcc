@@ -1431,12 +1431,23 @@ def auditar():
     flo = rec["D145"].value or 0
     e_fil = rec["D42"].value
     sa_gob = rec["D41"].value
+    Tpar = rec["D29"].value
+    tpar = rec["D21"].value
+    g_edge = rec["D167"].value or 0
     log("| Magnitud | Caso | Referencia Python | Hoja | Estado |")
     log("|---|---|---|---|---|")
-    for etiq, pc, cpc, lpc, cc, lc, mc, wc in (
-            ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150", "D64"),
-            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64"),
-            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150", "F64")):
+    # Paso 5: excentricidad e = (T + t + g)/2, con g solo si g >= 1.5 (212-4c).
+    e_ref = None
+    if all(isinstance(v, (int, float)) for v in (Tpar, tpar)):
+        e_ref = (Tpar + tpar + (g_edge if g_edge >= 1.5 else 0)) / 2
+        got_e = rec["D55"].value
+        ok_e = isinstance(got_e, (int, float)) and abs(got_e - e_ref) <= max(TOL, abs(e_ref) * 1e-9)
+        flujo_bad += 0 if ok_e else 1
+        log(f"| e (excentricidad) | — | {e_ref} | {got_e} | {'OK' if ok_e else 'FALLO'} |")
+    for etiq, pc, cpc, lpc, cc, lc, mc, wc, sw in (
+            ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150", "D64", "D68"),
+            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64", "E68"),
+            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150", "F64", "F68")):
         P = rec[pc].value
         if not isinstance(P, (int, float)) or not isinstance(dm, (int, float)):
             flujo_bad += 1
@@ -1450,6 +1461,10 @@ def auditar():
                           ("F_max", mc, exp_max)]
         if isinstance(e_fil, (int, float)) and isinstance(sa_gob, (int, float)) and e_fil * sa_gob:
             comprobaciones.append(("w_min", wc, exp_max / (e_fil * sa_gob)))
+        # Paso 5: S_w literal de la ec.(5): P*Dm/(2T) + 3*P*Dm*e/T^2.
+        if e_ref is not None and isinstance(Tpar, (int, float)) and Tpar:
+            comprobaciones.append(
+                ("S_w", sw, P * dm / (2 * Tpar) + 3 * P * dm * e_ref / Tpar ** 2))
         for nombre, celda, ref in comprobaciones:
             got = rec[celda].value
             ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-9)

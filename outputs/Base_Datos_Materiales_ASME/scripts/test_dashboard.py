@@ -1009,6 +1009,27 @@ class TestBuildParcheContraOracle:
             '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")'), "F162"
         assert ws["D162"].value == 40, "D162"
 
+    # --- Fase 5: excentricidad literal con separacion g (Paso 5, 212-3.4c) ---
+    # e = (T+t+g)/2 con g anadida si g>=1.5 (212-4c [82], g = fit-up del faying
+    # edge, entrada nueva D167, distinta de la luz radial D31). S_w literal de
+    # la ec.(5) [65,67]: P*Dm/(2T) + 3*P*Dm*e/T^2, NA en esfera (D11=3). Para
+    # cilindro sin g el valor no cambia (el S_w anterior con kf=0.5 ya era la
+    # ec.5); el cambio real es esfera->NA y el mecanismo de g.
+    def test_paso5_excentricidad(self):
+        ws = self._construir()
+        assert str(ws["A165"].value).startswith("PASO 5"), ws["A165"].value
+        assert ws["D167"].value == 0, "g default 0 (fit-up ajustado)"
+        assert ws["D55"].value == (
+            "=($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2"), "D55 e con g"
+        assert ws["D57"].value == (
+            "=IF($D$11=3,NA(),$D$52/(2*$D$29)*(1+6*$D$55/$D$29))"), "D57 C_sw"
+        assert ws["D66"].value == (
+            "=IF($D$11=3,NA(),D62*$D$52/(2*$D$29))"), "D66 membrana"
+        assert ws["D67"].value == (
+            "=IF($D$11=3,NA(),3*D62*$D$52*$D$55/$D$29^2)"), "D67 flexion"
+        assert ws["F67"].value == (
+            "=IF($D$11=3,NA(),3*F62*$D$52*$D$55/$D$29^2)"), "F67 flexion Env"
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).
@@ -1120,9 +1141,12 @@ class TestBuildParcheContraOracle:
         "A52", "B52", "C52", "D52", "G52",
         "A53", "B53", "C53", "D53", "G53",
         "A54", "B54", "C54", "D54", "G54",
-        "A55", "B55", "C55", "D55", "G55",
+        # D55 (e) y D57 (C_sw) salen del oracle: la Fase 5 les anade la
+        # separacion g y las pasa a la forma literal de cilindro con NA en
+        # esfera. Su forma nueva la fija test_paso5_excentricidad.
+        "A55", "B55", "C55", "G55",
         "A56", "B56", "C56", "D56", "G56",
-        "A57", "B57", "C57", "D57", "G57",
+        "A57", "B57", "C57", "G57",
     )
 
     def test_seccion_6(self):
@@ -1159,8 +1183,11 @@ class TestBuildParcheContraOracle:
         # (rotulo, simbolo, unidad, referencia) siguen anclados al oracle.
         "A64", "B64", "C64", "G64",
         "A65", "B65", "C65", "D65", "E65", "F65", "G65",
-        "A66", "B66", "C66", "D66", "E66", "F66", "G66",
-        "A67", "B67", "C67", "D67", "E67", "F67", "G67",
+        # D66/D67 (componentes membrana y flexion de S_w) salen del oracle: la
+        # Fase 5 los pasa a la forma literal de la ec.(5) (P*Dm directa, no via
+        # F_m) con NA en esfera. D68 = D66+D67 no cambia de formula (propaga NA).
+        "A66", "B66", "C66", "G66",
+        "A67", "B67", "C67", "G67",
         "A68", "B68", "C68", "D68", "E68", "F68", "G68",
         "A69", "C69", "D69", "E69", "F69", "G69",
         "A71",

@@ -227,24 +227,28 @@ Dictamen global del modulo: **APTO** (OK).
 
 | Magnitud | Caso | Referencia Python | Hoja | Estado |
 |---|---|---|---|---|
+| e (excentricidad) | — | 7.175 | 7.175 | OK |
 | F_CP | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | F_LP | Operacion | 38.91401303125 | 38.91401303125 | OK |
 | F_C | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | F_L | Operacion | 38.91401303125 | 38.91401303125 | OK |
 | F_max | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | w_min | Operacion | 1.0254021879117259 | 1.0254021879117259 | OK |
+| S_w | Operacion | 62.08001141391601 | 62.08001141391601 | OK |
 | F_CP | Diseno | 155.656052125 | 155.656052125 | OK |
 | F_LP | Diseno | 77.8280260625 | 77.8280260625 | OK |
 | F_C | Diseno | 155.656052125 | 155.656052125 | OK |
 | F_L | Diseno | 77.8280260625 | 77.8280260625 | OK |
 | F_max | Diseno | 155.656052125 | 155.656052125 | OK |
 | w_min | Diseno | 2.0508043758234518 | 2.0508043758234518 | OK |
+| S_w | Diseno | 124.16002282783202 | 124.16002282783202 | OK |
 | F_CP | Envolvente | 311.31210425 | 311.31210425 | OK |
 | F_LP | Envolvente | 155.656052125 | 155.656052125 | OK |
 | F_C | Envolvente | 311.31210425 | 311.31210425 | OK |
 | F_L | Envolvente | 155.656052125 | 155.656052125 | OK |
 | F_max | Envolvente | 311.31210425 | 311.31210425 | OK |
 | w_min | Envolvente | 4.1016087516469035 | 4.1016087516469035 | OK |
+| S_w | Envolvente | 248.32004565566405 | 248.32004565566405 | OK |
 
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 

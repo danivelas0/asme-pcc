@@ -6696,10 +6696,17 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     ws.cell(54, 2, "R_i").font = Font(name=MONO, size=10, color=TINTA)
     calc("D54", "=$D$20/2-$D$21", com54)
 
-    com55 = "Calculo: excentricidad de la carga, e = (T_parche + t_pared)/2."
+    # Fase 5: e incluye la separacion g del faying edge cuando g >= 1.5 mm
+    # (212-4c, bloque [82]). g es una entrada nueva del Paso 5 (D167), distinta
+    # de la luz radial de conformado D31. Con g < 1.5 (o g = 0, fit-up ajustado
+    # del caso semilla) e = (T+t)/2 como antes. El rotulo/simbolo/unidad/ref
+    # siguen anclados al oracle; solo cambia la formula.
+    com55 = ("Calculo: excentricidad de la carga, e = (T_parche + t_pared + g)/2, "
+             "donde g es la separacion en el borde (faying edge, D167) y solo se "
+             "suma si g >= 1.5 mm (212-4c). Con fit-up ajustado (g=0) e = (T+t)/2.")
     lab(55, "Excentricidad de la carga", unidad="mm", ref="e = (T + t)/2", com=com55)
     ws.cell(55, 2, "e").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D55", "=($D$29+$D$21)/2", com55)
+    calc("D55", "=($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2", com55)
 
     com56 = ("Calculo: radio de conformado de la fibra media, Rf = OD/2 + luz "
              "+ T_parche/2; se usa en la deformacion por conformado (ec. 7).")
@@ -6708,13 +6715,16 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     ws.cell(56, 2, "Rf").font = Font(name=MONO, size=10, color=TINTA)
     calc("D56", "=$D$20/2+$D$31+$D$29/2", com56)
 
-    com57 = ("Calculo: coeficiente C_sw tal que S_w = P·C_sw; relaciona la "
-             "presion evaluada con el esfuerzo de soldadura (ec. 1 y 5 "
-             "combinadas).")
+    # Fase 5: C_sw en forma literal de cilindro (ec. 5), sin el factor kf. Para
+    # cilindro coincide con el valor anterior (kf=0.5); para esfera/cabezal
+    # (D11=3) la ec.(5) no aplica -> NA (decision 3). Alimenta P_max (D74).
+    com57 = ("Calculo: coeficiente C_sw tal que S_w = P·C_sw, en la forma literal "
+             "de la ec. (5) para cilindro: C_sw = Dm/(2T)·(1+6e/T). En esfera/"
+             "cabezal (D11=3) la ec. (5) no aplica y C_sw = NA (hand-off 212-3.4).")
     lab(57, "Coef. de esfuerzo por presión", unidad="MPa/MPa",
         ref="S_w = P·C_sw", com=com57)
     ws.cell(57, 2, "C_sw").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D57", "=$D$14*$D$52/$D$29*(1+6*$D$55/$D$29)", com57)
+    calc("D57", "=IF($D$11=3,NA(),$D$52/(2*$D$29)*(1+6*$D$55/$D$29))", com57)
 
     # --- 3. Calculo de cargas y soldadura (filas 59-69) ----------------------
     # A59: banda de seccion, fusionada A59:G59 (confirmado en "fusionados" del
@@ -6805,23 +6815,29 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
          'IF($D$11=3,F62*$D$54/(2*$D$40*$D$44-0.2*F62),'
          'F62*$D$54/($D$40*$D$44-0.6*F62)))', com65)
 
-    com66 = ("Calculo: componente de membrana del esfuerzo de soldadura "
-             "para este caso (ec. 5): F_m / T_parche.")
+    # Fase 5: S_w se escribe LITERAL de la ec. (5) del 212-3.4c, con P*Dm
+    # directamente en vez de via F_m/kf (decision 3). Para cilindro el valor no
+    # cambia (F_m con kf=0.5 ya daba P*Dm/2 y 3*P*Dm*e/T^2); para esfera/cabezal
+    # (D11=3) la ec.(5) no aplica -> NA, lo que bloquea S_w y su verificacion.
+    # Los rotulos/simbolos/unidades/refs de las filas 66/67 siguen anclados al
+    # oracle; solo cambian las formulas. D68 = D66+D67 no cambia (propaga NA).
+    com66 = ("Calculo: componente de membrana de la ec. (5) del 212-3.4c: "
+             "P(MPa)·Dm/(2T). En esfera/cabezal (D11=3) la ec. no aplica -> NA.")
     lab(66, "Esfuerzo soldadura — membrana", unidad="MPa",
         ref="ec.5 (memb.)=F/T", com=com66)
     ws.cell(66, 2, "S_w,m").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D66", "=D63/$D$29", com66)
-    calc("E66", "=E63/$D$29", com66)
-    calc("F66", "=F63/$D$29", com66)
+    calc("D66", "=IF($D$11=3,NA(),D62*$D$52/(2*$D$29))", com66)
+    calc("E66", "=IF($D$11=3,NA(),E62*$D$52/(2*$D$29))", com66)
+    calc("F66", "=IF($D$11=3,NA(),F62*$D$52/(2*$D$29))", com66)
 
-    com67 = ("Calculo: componente de flexion del esfuerzo de soldadura "
-             "para este caso (ec. 5): 6·F_m·e / T_parche².")
+    com67 = ("Calculo: componente de flexion de la ec. (5) del 212-3.4c: "
+             "3·P(MPa)·Dm·e/T². En esfera/cabezal (D11=3) -> NA.")
     lab(67, "Esfuerzo soldadura — flexión", unidad="MPa",
         ref="ec.5 (flex.)=6F·e/T²", com=com67)
     ws.cell(67, 2, "S_w,f").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D67", "=6*D63*$D$55/$D$29^2", com67)
-    calc("E67", "=6*E63*$D$55/$D$29^2", com67)
-    calc("F67", "=6*F63*$D$55/$D$29^2", com67)
+    calc("D67", "=IF($D$11=3,NA(),3*D62*$D$52*$D$55/$D$29^2)", com67)
+    calc("E67", "=IF($D$11=3,NA(),3*E62*$D$52*$D$55/$D$29^2)", com67)
+    calc("F67", "=IF($D$11=3,NA(),3*F62*$D$52*$D$55/$D$29^2)", com67)
 
     com68 = ("Calculo: esfuerzo de soldadura total de este caso (membrana + "
              "flexion); se compara contra el limite 1,5·Sa en la fila 69.")
@@ -7299,6 +7315,40 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                 "del parche o del componente. No excederlo.", com163)
     d163.font = Font(name=MONO, size=9, color=GRIS)
     ws.merge_cells("D163:G163")
+
+    # --- PASO 5 — Excentricidad y separacion en el borde (212-3.4c / 212-4c) -
+    # La excentricidad e (D55) y el esfuerzo de soldadura S_w (D66-D68) ya se
+    # reescribieron arriba en forma literal de la ec.(5). Aqui va la ENTRADA de
+    # la separacion g del faying edge (212-4c, bloque [82]): distinta de la luz
+    # radial de conformado (D31), es el gap de fit-up de la soldadura. Si
+    # g >= 1.5 mm, e la incluye (D55). El codigo exige ademas g <= 5 mm (fit-up),
+    # que se verifica en el Paso 7. Y la declaracion del hand-off no-cilindro.
+    banda_literal(165, "PASO 5 · EXCENTRICIDAD Y SEPARACIÓN EN EL BORDE  "
+                       "(ASME PCC-2 Art. 212-3.4c / 212-4c)")
+    encabezado(166, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Valor"), (7, "Referencia / Notas")))
+
+    com167 = ("Entrada: separacion en el borde de la placa (faying edge), mm, "
+              "medida en el fit-up de la soldadura. Es un dato de campo (se "
+              "teclea). Distinta de la luz radial de conformado (D31). Si "
+              "g >= 1.5 mm, se suma a la excentricidad e (212-4c); el codigo "
+              "exige ademas g <= 5 mm (se verifica en el Paso 7). Fit-up "
+              "ajustado del caso semilla: g = 0.")
+    lab(167, "Separación en el borde (fit-up)", unidad="mm", ref="212-4(c) [82]",
+        com=com167)
+    ws.cell(167, 2, "g").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D167", 0, com167)
+
+    com168 = ("La ec. (5) del 212-3.4c (S_w = P·Dm/2T + 3·P·Dm·e/T², e = (T+t+g)/2) "
+              "aplica solo a CILINDRO (tuberia o virola). En esfera/cabezal "
+              "(D11=3) S_w, sus componentes y C_sw son NA: usar analisis "
+              "(hand-off 212-3.4). Decision 3 del ingeniero: literal, solo cilindro.")
+    lab(168, "Aplicabilidad de la ec. (5)", ref="212-3.4c", com=com168)
+    calc("D168",
+         '=IF($D$11=3,"HAND-OFF: ec.(5) solo cilindro — esfera/cabezal por '
+         'analisis; S_w = NA","cilindro: aplica ec.(5) con e = (T+t+g)/2")',
+         com168)
+    ws.merge_cells("D168:G168")
 
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
@@ -9123,6 +9173,23 @@ DIVERGENCIAS_REEMPLAZADAS = {
         "w_min (Diseno tipico): recableado a F_max (E150) en la Fase 4. Ver D64."),
     ("Parche_PCC2_Art212", "F64"): (
         "w_min (Envolvente): recableado a F_max (F150) en la Fase 4. Ver D64."),
+    ("Parche_PCC2_Art212", "D55"): (
+        "Excentricidad e: la Fase 5 le suma la separacion g del faying edge "
+        "(D167) cuando g>=1.5 mm (212-4c). Con g=0 el valor no cambia. La fija "
+        "test_paso5_excentricidad."),
+    ("Parche_PCC2_Art212", "D57"): (
+        "C_sw: la Fase 5 lo pasa a la forma literal de cilindro (sin kf) con NA "
+        "en esfera (D11=3), ec.(5) 212-3.4c. Para cilindro no cambia de valor."),
+    ("Parche_PCC2_Art212", "D66"): (
+        "S_w membrana (Op): forma literal de la ec.(5), P*Dm/(2T), NA en esfera "
+        "(Fase 5). Cilindro sin cambio de valor. Ver test_paso5_excentricidad."),
+    ("Parche_PCC2_Art212", "E66"): "S_w membrana (Diseno): idem D66 (Fase 5).",
+    ("Parche_PCC2_Art212", "F66"): "S_w membrana (Envolvente): idem D66 (Fase 5).",
+    ("Parche_PCC2_Art212", "D67"): (
+        "S_w flexion (Op): forma literal de la ec.(5), 3*P*Dm*e/T^2, NA en "
+        "esfera (Fase 5). Cilindro sin cambio de valor."),
+    ("Parche_PCC2_Art212", "E67"): "S_w flexion (Diseno): idem D67 (Fase 5).",
+    ("Parche_PCC2_Art212", "F67"): "S_w flexion (Envolvente): idem D67 (Fase 5).",
 }
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

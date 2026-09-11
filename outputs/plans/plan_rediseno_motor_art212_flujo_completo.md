@@ -304,22 +304,25 @@ detectado). `S_w` se escribe **literal de la ec. (5)** (cilindro), sin el factor
 no cilíndrico, `S_w` = NA() y la verificación declara «ec. (5) aplica sólo a cilindro (212-3.4);
 esfera/cabezal → análisis» (decisión 3).
 
-- [ ] **Step 1: test (falla).** `test_paso5_excentricidad`: `e = (T+t+g)/2` cuando g≥1.5, `=(T+t)/2`
-  cuando g<1.5; `S_w = P·Dm/(2T)+3·P·Dm·e/T²` (forma literal, sin kf); NA() en no cilíndrico. → FAIL.
-- [ ] **Step 2: `e` con umbral de g.** La entrada `luz` (D31) se reinterpreta/renombra como
-  **separación en el borde `g`** (o se añade una celda explícita si `luz` significa otra cosa
-  geométrica — comprobar el uso actual de D31 en Rf/desarrollo antes de reutilizarla; si Rf usa
-  `luz` como luz radial física distinta de la separación de faying edge, **separar en dos
-  entradas**). `e = ($T + $t + IF($g≥1.5, $g, 0))/2`. Citar bloque [82].
-- [ ] **Step 3: `S_w` literal de cilindro.** `S_w = P·Dm/(2·T) + 3·P·Dm·e/T²` directamente de
-  la ec. (5), sin descomponer por `kf`. Verificación `S_w ≤ 1.5·Sa` (ya existe D48).
-- [ ] **Step 4: hand-off no cilíndrico.** Si `$D$11≠1`, `S_w`=NA() y F85 declara el hand-off.
-- [ ] **Step 5: `verificar.py §6e`** recalcula `e` (con y sin g) y `S_w` en Excel. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso5_excentricidad`: e con g, S_w literal, NA en esfera. PASS.
+- [x] **Step 2: `e` con umbral de g.** **Resuelto el riesgo del plan: D31 (luz radial de
+  conformado, alimenta Rf/desarrollo) NO es el gap de faying edge.** El flujo (línea 74)
+  confirma que `g` es la separación de fit-up. Se añade una **entrada nueva `g` (D167)**,
+  distinta de D31, default 0. `D55 = ($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2`. Bloque [82].
+- [x] **Step 3: `S_w` literal de cilindro.** D66=`P·Dm/(2T)`, D67=`3·P·Dm·e/T²` directas (sin kf);
+  D68=D66+D67 sin cambio de fórmula. C_sw (D57) también literal. Para cilindro coinciden con el
+  valor anterior (kf=0.5 ya daba la ec.5); NA en esfera.
+- [x] **Step 4: hand-off no cilíndrico.** D66/D67/D57 = `IF($D$11=3,NA(),...)` (esfera; virola
+  D11=2 SÍ es cilindro). D168 declara el hand-off. Decisión 3.
+- [x] **Step 5: `verificar.py §6e`** recalcula e (7.175) y S_w (62.08/124.16/248.32) en Excel,
+  exactos. pytest 241 · verificar.py **0 fallos** · seed → APTO.
 
-> **Nota de coherencia con Fase 2.** Al pasar a la forma literal, `C_sw` (D57, el coeficiente
-> `S_w = P·C_sw` que hoy usa `kf`) y `P_máx = 1.5·Sa/C_sw` (D74) se recomputan con la forma
-> literal de cilindro; comprobar que `P_máx` sigue siendo coherente. Esto cambia el valor del
-> caso semilla → obliga a re-validar `verificar.py §7` (Fase 10).
+> **CORRECCIÓN de la nota del plan: el caso semilla NO cambia de valor.** El plan preveía un
+> cambio por (a) ec.5 literal sin kf y (b) g. Pero (a) para cilindro la ec.5 literal es
+> **idéntica** al S_w anterior (F_m con kf=0.5 = P·Dm/2 y 6·F_m·e/T² = 3·P·Dm·e/T²), y (b) `g`
+> es entrada nueva con default 0 (no se reutiliza el 1.5 de D31). Resultado: `verificar.py §7`
+> sigue en APTO con los mismos valores, **sin re-baseline del oracle**. El cambio de valor real
+> es solo en esfera (kf=0.25 → ahora NA/hand-off, que es lo correcto por decisión 3).
 
 ---
 
