@@ -763,6 +763,29 @@ def auditar():
         f"**{len(malas)}**" + ("" if not malas else "  → " + ", ".join(malas[:10])))
     log("")
 
+    log("Regla 12/14: en una hoja de motor, una validacion de lista debe (a) bloquear "
+        "y (b) tener origen de RANGO, no una lista literal — salvo los modos y "
+        "booleanos declarados en LITERALES_PERMITIDOS.")
+    log("")
+    infractoras = []
+    for w in wb.worksheets:
+        if w.title not in B.HOJAS_DE_MOTOR:
+            continue
+        for dv in w.data_validations.dataValidation:
+            if dv.type != "list":
+                continue
+            donde = f"{w.title}!{sorted(str(x) for x in dv.sqref.ranges)[0]}"
+            f1 = str(dv.formula1 or "")
+            celda = sorted(str(x) for x in dv.sqref.ranges)[0].split(":")[0]
+            if not dv.showErrorMessage or dv.errorStyle != "stop":
+                infractoras.append(f"{donde} (no bloquea)")
+            if f1.startswith('"') and f1 not in B.LITERALES_PERMITIDOS \
+                    and (w.title, celda) not in B.DEUDA_LISTA_FIJA:
+                infractoras.append(f"{donde} (lista fija: {f1[:60]})")
+    log(f"Validaciones infractoras en hojas de motor: **{len(infractoras)}**"
+        + ("" if not infractoras else "  → " + ", ".join(infractoras[:10])))
+    log("")
+
     # ---- 6. banco de pruebas del motor -----------------------------------
     log("## 6. Interpolacion con huecos, modo tabulado y bordes (recalculo en hoja)")
     log("")
@@ -1727,7 +1750,7 @@ def auditar():
     log("")
 
     # ---- cierre -----------------------------------------------------------
-    total = (nbad + bad_tot + extra_bad + len(hits) + len(malas)
+    total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
              + map_bad + sec_bad)
     log("## Resultado")
@@ -1738,6 +1761,7 @@ def auditar():
                         ("3. Auditoria fila a fila", bad_tot + extra_bad),
                         ("4. Contiguidad de la cascada", 0 if cont_ok else 1),
                         ("5. Portabilidad de formulas", len(hits) + len(malas)),
+                        ("5b. Guardia listas fijas en motor (regla 12/14)", len(infractoras)),
                         ("6. Interpolacion recalculada", nbad),
                         ("7. Caso semilla", semilla_bad),
                         ("8. Capa de navegacion", nav_bad),

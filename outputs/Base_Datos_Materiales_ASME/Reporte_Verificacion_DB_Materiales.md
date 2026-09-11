@@ -114,6 +114,10 @@ Validacion de datos: Google Sheets solo admite un RANGO literal o una lista de i
 
 Validaciones de lista revisadas en todo el libro; con origen NO portable: **0**
 
+Regla 12/14: en una hoja de motor, una validacion de lista debe (a) bloquear y (b) tener origen de RANGO, no una lista literal — salvo los modos y booleanos declarados en LITERALES_PERMITIDOS.
+
+Validaciones infractoras en hojas de motor: **0**
+
 ## 6. Interpolacion con huecos, modo tabulado y bordes (recalculo en hoja)
 
 | Base | material_id | T | Modo | T1 | T2 | S(T) hoja | S(T) referencia | Estado |
@@ -282,6 +286,7 @@ Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en columnas
 | 3. Auditoria fila a fila | 0 |
 | 4. Contiguidad de la cascada | 0 |
 | 5. Portabilidad de formulas | 0 |
+| 5b. Guardia listas fijas en motor (regla 12/14) | 0 |
 | 6. Interpolacion recalculada | 0 |
 | 7. Caso semilla | 0 |
 | 8. Capa de navegacion | 0 |

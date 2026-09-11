@@ -8682,6 +8682,51 @@ def link_volver(wb):
 # que quede sin traducir lo delata la auditoria (celdas_fuera_del_sistema).
 HOJAS_HEREDADAS = ("Instrucciones", "Datos_Ref")
 
+# Las doce hojas donde el ingeniero introduce datos. El guardia de verificar.py §5
+# solo mira estas: una DB_*, MAP_* o NAV_* no lleva entradas y no le aplica.
+HOJAS_DE_MOTOR = (MOTOR, COLLAR_MOTOR,
+                  "Buscar_B31_3", "Buscar_BPVC_IID", "Buscar_BPVC_IID_B",
+                  "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
+                  "Buscar_Prop_B31_3", "Buscar_B31_B1",
+                  "Buscar_Ec_A2", "Buscar_Ej_A3")
+
+# Listas literales que SI pueden quedarse: son modos y booleanos del propio motor,
+# no datos tabulados por un codigo. Todo lo demas que sea literal en una hoja de
+# motor es una lista fija espejando una tabla — exactamente lo que la regla 12
+# prohibe— y el guardia lo rechaza.
+LITERALES_PERMITIDOS = {
+    '"SI,US"': "Conmutador de unidades (regla 10). No es un dato tabulado.",
+    '"Interpolado,Tabulado-conservador"': (
+        "Modo de lectura de S(T): la interpolacion lineal la autoriza el propio "
+        "codigo (p.ej. para. A302.3.1(b)); no es una tabla de valores."),
+    '"Si,No"': "Booleano de examen UT / defecto circunferencial del Art. 206.",
+    '"' + TIPO_A + ',' + TIPO_B + '"': (
+        "Los dos tipos de sleeve que define el propio Art. 206 (206-1.1.1 / "
+        "206-1.1.2)."),
+    # D10 de los dos motores: conmuta MODO=1/2/3 (tuberia/virola/cabezal-esfera)
+    # y por tanto el codigo de construccion y el kf de toda la hoja. Es un modo
+    # del propio motor, no un dato tabulado por ningun codigo — misma clase que
+    # el conmutador SI/US o Type A/Type B. Las dos hojas escriben el literal con
+    # acentuacion distinta (divergencia cosmetica preexistente, no normativa: no
+    # hay valor de codigo en juego), asi que entran las dos variantes.
+    '"Tubería (B31.3),Virola cilíndrica (VIII-1),Cabezal/esfera (VIII-1)"': (
+        "Selector de aplicacion/geometria del Art. 212 (D10): conmuta el modo "
+        "geometrico y el codigo de construccion, no es un dato tabulado."),
+    '"Tuberia (B31.3),Virola cilindrica (VIII-1),Cabezal/esfera (VIII-1)"': (
+        "Idem, variante sin acentos usada en Collar_PCC2_Art206 (D10)."),
+}
+
+# Deuda declarada, con fecha de vencimiento: las Tareas 7-9 de este plan repuntan
+# NPS y cedula de los dos motores contra DB_B36_10/DB_B36_19. Hasta entonces el
+# guardia las tolera nombrandolas una a una — nunca por patron, para que una lista
+# fija NUEVA en la misma celda no entre por el mismo hueco.
+DEUDA_LISTA_FIJA = {
+    (MOTOR, "D18"): "NPS: pendiente de DB_B36_10 (Tarea 7).",
+    (MOTOR, "D19"): "Cedula: pendiente de DB_B36_10 (Tarea 7).",
+    (COLLAR_MOTOR, "D18"): "NPS: pendiente de DB_B36_10 (Tarea 9).",
+    (COLLAR_MOTOR, "D19"): "Cedula: pendiente de DB_B36_10 (Tarea 9).",
+}
+
 # Celdas que el *oracle* del Art. 212 declara pero que el build ya NO reproduce a
 # proposito. El oracle sigue siendo la hoja heredada tal como se capturo; esta lista
 # es la unica forma declarada de apartarse de ella, y cada entrada lleva su motivo.
