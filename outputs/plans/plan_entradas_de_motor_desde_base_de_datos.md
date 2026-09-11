@@ -90,7 +90,7 @@ tareas, aunque no se repitan en cada una:
   con clave `(hoja, celda)` y valor el motivo escrito. Lo consume `TestParidadHojaParche`
   y lo consumirán las tareas posteriores que retiren más celdas heredadas.
 
-- [ ] **Step 1: Escribir la prueba que falla**
+- [x] **Step 1: Escribir la prueba que falla**
 
 En `scripts/test_dashboard.py`, dentro de `TestParidadHojaParche`, sustituir el método
 `test_todas_las_formulas_y_literales` por una versión que consulte las divergencias:
@@ -120,7 +120,7 @@ Y añadir la prueba de que la lista no crece sin motivo:
             assert isinstance(motivo, str) and len(motivo) > 20, (hoja, celda)
 ```
 
-- [ ] **Step 2: Correr las pruebas para verlas fallar**
+- [x] **Step 2: Correr las pruebas para verlas fallar**
 
 Run (desde `outputs/Base_Datos_Materiales_ASME/scripts`):
 ```powershell
@@ -128,7 +128,7 @@ python -m pytest test_dashboard.py::TestParidadHojaParche -q
 ```
 Espera: FAIL con `AttributeError: module 'build_db_materiales' has no attribute 'DIVERGENCIAS_DECLARADAS'`.
 
-- [ ] **Step 3: Declarar las divergencias en el builder**
+- [x] **Step 3: Declarar las divergencias en el builder**
 
 En `scripts/build_db_materiales.py`, junto a las demás constantes de módulo (misma zona
 que `HOJAS_HEREDADAS`/`TEXTOS_HEREDADOS`):
@@ -168,7 +168,7 @@ DIVERGENCIAS_DECLARADAS = {
 > casar exactamente con lo que el *oracle* declara, o `test_todas_las_formulas_y_literales`
 > seguirá comparando una celda que ya nadie escribe.
 
-- [ ] **Step 4: Borrar las dos filas del motor**
+- [x] **Step 4: Borrar las dos filas del motor**
 
 En `build_parche_art212`, eliminar el bloque completo que hoy escribe las filas 22 y 23:
 los dos `lab(...)`, los dos `ws.cell(.., 2, "—")`, los dos `inp(...)`, sus `com22`/`com23`,
@@ -187,7 +187,7 @@ reflejo:
     # para otra cosa, o el *oracle* dejaria de cuadrar sin que nadie se entere.
 ```
 
-- [ ] **Step 5: Correr las pruebas**
+- [x] **Step 5: Correr las pruebas**
 
 Run:
 ```powershell
@@ -196,7 +196,7 @@ python -m pytest test_dashboard.py::TestParidadHojaParche test_dashboard.py::Tes
 Espera: PASS. Si falla en una celda de la fila 22 o 23, la lista del Step 3 no casa con
 lo que el *oracle* declara — corregirla, no relajar la prueba.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/build_db_materiales.py scripts/test_dashboard.py
