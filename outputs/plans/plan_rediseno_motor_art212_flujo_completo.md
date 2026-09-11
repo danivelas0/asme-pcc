@@ -406,32 +406,32 @@ calcula E, TNT y la distancia segura R, y avisa; en hidrostática, mantiene el c
 
 ---
 
-## Fase 9 — Notación de símbolos con subíndice (decisión 5) — **DIFERIDA**
+## Fase 9 — Notación de símbolos con subíndice (decisión 5) — **HECHA (2026-09-11)**
 
-> **Estado (2026-09-11): DIFERIDA, para agrupar con el re-baseline del oracle (Fase 10) tras
-> el F9 del ingeniero.** Es la única de las decisiones que es **cosmética** (notación); los 6
-> huecos de ingeniería (Fases 1-8) están cerrados y validados en Excel. Razón del aplazamiento:
-> cambiar cada celda de símbolo de la columna B a `CellRichText` (a) rota decenas de celdas
-> ancladas al oracle → una divergencia por celda, (b) `CellRichText` no lo serializa
-> `_dump_parche_ref.py` sin trabajo extra, justo lo que la Fase 10 tiene que resolver al
-> re-baselinar, y (c) obliga a re-enseñar a `TestSistemaVisual` a leer los *runs*. Hacerlo
-> **junto** al re-baseline (post-F9) evita rehacer el oracle dos veces. No bloquea nada del
-> cálculo. Aplica igual a la Fase 9 del plan del 206.
+> **Ejecutada a petición del ingeniero, sin esperar al F9.** `sym()` +
+> `_aplicar_subindices()` convierten los símbolos de la **columna B** en `CellRichText` con
+> subíndice real (`InlineFont(vertAlign="subscript")`, fuente `MONO`). Alcance acotado a la
+> **columna B** (símbolos aislados): la columna A es prosa/rótulos y de la Sección 7 trae
+> guiones bajos que **no** son subíndices (rutas de `resources/`, tags `[MODO_S]`, nombres de
+> campo). El converter salta además fórmulas (`=…`) y textos largos (specs B93-B99). Los dos
+> símbolos del 206 que vivían en prosa (`T_s`, `L_s`) se movieron a la columna B. Verificado en
+> el `.xlsm`: `F_m`→F+ᵐ, `S_w,m`, `T_s`, `L_s` con subíndice real.
 
-**Files:** Modify `build_db_materiales.py` (helper `sym()`); aplicarlo en los rótulos de
-símbolo (columna B) de todas las secciones del 212. Modify `TestSistemaVisual` si hace falta.
+**Files:** Modify `build_db_materiales.py` (`sym()` + `_aplicar_subindices()`); Modify
+`test_dashboard.py` (`_plano()` compara por texto visible; `_asserta_sin_guion_bajo`); Modify
+`parche_art212_ref.json` (celdas de símbolo de la col. B a su forma visible, `F_m`→`Fm`).
 
 **Interfaces:** `sym(base, sub)` → `CellRichText` con el subíndice en `InlineFont(vertAlign=
 "subscript")`, fuente `MONO`. Reemplaza `"F_m"`, `"P_op"`, `"C_sw"`, `"w_mín"`, etc. por su
 forma con subíndice real. No cambia ninguna fórmula (los símbolos de columna B son rótulos,
 no referencias).
 
-- [ ] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo`: recorre la columna B del 212 y
+- [x] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo`: recorre la columna B del 212 y
   afirma que **ninguna** celda de símbolo contiene `"_"` en su texto plano y que las que llevan
   subíndice son `CellRichText`. → FAIL.
-- [ ] **Step 2: helper `sym()`** con `CellRichText`/`TextBlock`/`InlineFont(vertAlign="subscript")`.
-- [ ] **Step 3: aplicar** a los símbolos de todas las secciones (F_CP→F con subíndice CP, etc.).
-- [ ] **Step 4: comprobar `TestSistemaVisual`** (el rich text usa `MONO`; si la prueba no
+- [x] **Step 2: helper `sym()`** con `CellRichText`/`TextBlock`/`InlineFont(vertAlign="subscript")`.
+- [x] **Step 3: aplicar** a los símbolos de todas las secciones (F_CP→F con subíndice CP, etc.).
+- [x] **Step 4: comprobar `TestSistemaVisual`** (el rich text usa `MONO`; si la prueba no
   contempla `CellRichText`, ampliar su recorrido para leer los runs). PASS + commit.
 
 ---
@@ -447,10 +447,10 @@ Modify este plan (estado final).
   ContraOracle` (anclas por paso), `TestParidadHojaParche` (anexo excluido), `TestSistemaVisual`,
   `TestSincroniaPythonVba` verdes.
 - [x] **Step 3: entregar para F9 en Excel.** `.xlsm` entregado por `SendUserFile` (2026-09-11).
-- [~] **Step 4: re-armar el *oracle* y `verificar.py §7`.** **No hace falta re-baselinar por
-  valores: el caso semilla NO cambió** (cilindro literal ≡ forma anterior, g=0) — §7 sigue en
-  APTO con los mismos 161/138. El re-baseline del oracle se agrupa con la **Fase 9 (subíndices)**,
-  ambos **post-F9 del ingeniero** (`CellRichText` obliga a extender `_dump_parche_ref.py`).
+- [x] **Step 4: re-armar el *oracle*.** No hizo falta re-baselinar por VALORES (el caso semilla
+  no cambió). El oracle **sí se actualizó para las 20 celdas de símbolo de la columna B** al
+  hacer la Fase 9 (`F_m`→`Fm`, su forma visible), y `TestParidadHojaParche` compara por texto
+  visible (`_plano`=`str`). El resto del oracle Rev0 queda intacto. §7 sigue APTO (161/138).
 - [x] **Step 5: `verificar.py` completo en Windows** (§1-11, incl. §6e y §7) → **0 fallos** en
   Excel real. §6e recalcula F_CP/F_LP/F_C/F_L/F_max, w_min, e, S_w, %Elong y E/TNT/R.
 - [~] **Step 6: documentar.** `CLAUDE.md` del proyecto: nota del estado (8 pasos del flujo en

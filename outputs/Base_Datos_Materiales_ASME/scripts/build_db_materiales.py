@@ -50,6 +50,8 @@ from openpyxl.formatting.rule import FormulaRule
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.hyperlink import Hyperlink
 from openpyxl.comments import Comment
+from openpyxl.cell.rich_text import CellRichText, TextBlock
+from openpyxl.cell.text import InlineFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db_lib import (Resources, bilingual_key, build_material_id, clean, disambiguate,
@@ -6250,6 +6252,61 @@ def leer_energia_501(resources):
             "r_scaled_def": r_def, "r_scaled_ops": ops}
 
 
+# --- Notacion de simbolos con subindice real (Fase 9, decision 5) -----------
+# Los simbolos con guion bajo (F_m, S_w,m, T_s, w_min...) se muestran con el
+# subindice REAL en vez del feo "_". Como el guion bajo aparece SOLO en los
+# simbolos (los formulas y las bandas no lo usan), un unico paso barre las
+# columnas de rotulo/simbolo y convierte cada token "base_sub" en un
+# CellRichText con el subindice en vertAlign="subscript". El texto plano
+# reconstruible (base + "_" + sub) sigue casando con el oracle Rev0, y el
+# render visual (base+sub, sin "_") satisface el criterio de la decision 5.
+_RE_SIMBOLO_SUB = re.compile(
+    r'([A-Za-z][A-Za-z0-9]*)_([A-Za-z0-9,./áéíóúÁÉÍÓÚñ]+)')
+_FF_TINTA = "FF" + TINTA  # aRGB para el InlineFont (color del sistema)
+
+
+def sym(base, sub):
+    """Un simbolo con subindice real: `base` normal + `sub` en subscript, ambos
+    en la fuente MONO del sistema y color TINTA. Devuelve un CellRichText."""
+    normal = InlineFont(rFont=MONO, sz=10, color=_FF_TINTA)
+    baja = InlineFont(rFont=MONO, sz=8, color=_FF_TINTA, vertAlign="subscript")
+    return CellRichText(TextBlock(normal, base), TextBlock(baja, sub))
+
+
+def _aplicar_subindices(ws, cols=("B",)):
+    """Convierte los simbolos 'base_sub' de las columnas `cols` en CellRichText
+    con subindice real. Por defecto SOLO la columna B (la de simbolos aislados):
+    la columna A es prosa/rotulos y de la Seccion 7 llega con guiones bajos que
+    NO son subindices (rutas de resources/, tags como '[MODO_S]', nombres de
+    campo), asi que no se toca. Deja intactas las celdas sin '_'. No toca
+    formulas (viven en D-G) ni valores que no sean str."""
+    normal = InlineFont(rFont=MONO, sz=10, color=_FF_TINTA)
+    baja = InlineFont(rFont=MONO, sz=8, color=_FF_TINTA, vertAlign="subscript")
+    for col in cols:
+        for cell in ws[col]:
+            v = cell.value
+            if not isinstance(v, str) or "_" not in v:
+                continue
+            # Un simbolo es corto y no es formula ni prosa: la columna B tambien
+            # aloja formulas (specs, B93/B95/B99: empiezan por "=") y textos
+            # largos (B94/B96/B97/B98). Sus guiones bajos ("P_diseno" dentro de
+            # una frase) NO son subindices. Se descartan por longitud y por "=".
+            if v.startswith("=") or len(v) > 12:
+                continue
+            if not _RE_SIMBOLO_SUB.search(v):
+                continue
+            partes, ultimo = [], 0
+            for m in _RE_SIMBOLO_SUB.finditer(v):
+                if m.start() > ultimo:
+                    partes.append(TextBlock(normal, v[ultimo:m.start()]))
+                partes.append(TextBlock(normal, m.group(1)))
+                partes.append(TextBlock(baja, m.group(2)))
+                ultimo = m.end()
+            if ultimo < len(v):
+                partes.append(TextBlock(normal, v[ultimo:]))
+            cell.value = CellRichText(*partes)
+
+
 def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
                         energia_501=None):
     """Motor Art. 212 (parche soldado), 100% en codigo — desanclado del maestro
@@ -7639,6 +7696,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # silencio ninguna celda por pertenecer a una seccion todavia no escrita.
     comentar_art212_base(ws)
 
+    # Fase 9: subindices reales en los simbolos (columnas A/B). Ultimo paso, con
+    # todas las celdas ya escritas.
+    _aplicar_subindices(ws)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -8033,13 +8094,16 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
        "caso mas exigente y el que gobierna el t_req de Type B (seccion "
        "'Calculo de espesor requerido').")
     inp("D28", 20)
-    lab(29, "Espesor adoptado del sleeve  T_s", "mm")
+    lab(29, "Espesor adoptado del sleeve", "mm")
+    ws.cell(29, 2, "T_s").font = Font(name=MONO, size=10, color=TINTA)
     inp("D29", 8)
     lab(30, "Longitud del defecto", "mm", "Entrada: 206-3.4.")
     inp("D30", 100)
     lab(31, "Luz radial sleeve-portador", "mm")
+    ws.cell(31, 2, "G").font = Font(name=MONO, size=10, color=TINTA)
     inp("D31", 1.5)
-    lab(32, "Longitud adoptada del sleeve  L_s", "mm", "Entrada: 206-3.4.")
+    lab(32, "Longitud adoptada del sleeve", "mm", "Entrada: 206-3.4.")
+    ws.cell(32, 2, "L_s").font = Font(name=MONO, size=10, color=TINTA)
     inp("D32", 250)
 
     # Fila 33: selector de norma dimensional (nivel 0 de la cascada). Va al final
@@ -8477,6 +8541,11 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                 "todas las soldaduras.", com150)
     d150.font = Font(name=MONO, size=9, color=GRIS)
     ws.merge_cells("D150:G150")
+
+    # Fase 9: subindices reales en los simbolos. En el 206 los simbolos (T_s,
+    # L_s, T_p...) van embebidos en la prosa de la columna A, no en una columna
+    # B propia como en el 212; el mismo paso los convierte token a token.
+    _aplicar_subindices(ws)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

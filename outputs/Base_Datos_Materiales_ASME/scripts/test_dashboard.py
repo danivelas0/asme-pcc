@@ -523,6 +523,42 @@ def cargar_oracle_parche():
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def _plano(v):
+    """Texto VISIBLE de una celda para comparar contra el oracle. La Fase 9
+    convierte los simbolos 'base_sub' de la columna B en CellRichText con
+    subindice real; el texto visible es la concatenacion de los runs SIN el '_'
+    (p.ej. 'Fm'). Se compara asi (no reconstruyendo el '_') porque el round-trip
+    del .xlsm no conserva el vertAlign de los runs; el oracle guarda ya la forma
+    visible de esas celdas (ver actualizar_oracle_subindices en el commit). Una
+    celda normal (str/num) se devuelve tal cual."""
+    from openpyxl.cell.rich_text import CellRichText
+    return str(v) if isinstance(v, CellRichText) else v
+
+
+def _asserta_sin_guion_bajo(ws):
+    """Decision 5: ningun simbolo VISIBLE de la columna B (la de simbolos) lleva
+    un guion bajo — los subindices son reales (CellRichText). La columna A es
+    prosa/rotulos (y de la Seccion 7 trae guiones bajos que no son subindices:
+    rutas, tags '[MODO_S]'), asi que no se recorre. Un str con '_' en B es un
+    simbolo sin convertir (fallo); un CellRichText no debe renderizar '_'."""
+    from openpyxl.cell.rich_text import CellRichText
+    hubo_rich = False
+    for cell in ws["B"]:
+        v = cell.value
+        if isinstance(v, CellRichText):
+            visible = str(v)
+            assert "_" not in visible, f"{cell.coordinate}: {visible!r} lleva '_'"
+            if len(list(v)) > 1:
+                hubo_rich = True
+        elif isinstance(v, str):
+            # La columna B tambien aloja formulas (specs) y textos largos cuyo
+            # '_' no es un subindice; se excluyen igual que en el converter.
+            if v.startswith("=") or len(v) > 12:
+                continue
+            assert "_" not in v, f"{cell.coordinate}: simbolo sin convertir {v!r}"
+    assert hubo_rich, "no se encontro ningun simbolo con subindice real"
+
+
 class TestParidadHojaParche:
     HOJA = "Parche_PCC2_Art212"
 
@@ -550,7 +586,7 @@ class TestParidadHojaParche:
                 # exige NO vacia — si quedo vacia, es una retirada disfrazada.
                 assert ws[celda].value is not None, f"{celda}: {reempl}"
                 continue
-            assert ws[celda].value == esperado, celda
+            assert _plano(ws[celda].value) == esperado, celda
 
     def test_toda_divergencia_declara_motivo(self):
         for d in (B.DIVERGENCIAS_DECLARADAS, B.DIVERGENCIAS_REEMPLAZADAS):
@@ -916,7 +952,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_T2:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # --- Fase 1: compuerta de elegibilidad (Paso 1, 212-1/212-2) -------------
     # Bloque nuevo en el anexo de pasos del flujo (filas 134+), fuera del rango
@@ -1090,6 +1126,10 @@ class TestBuildParcheContraOracle:
         assert "Neumatica" in origen.get("D183", ""), origen.get("D183")
         assert origen.get("D188", "") == '"20,12,6,2"', origen.get("D188")
 
+    # --- Fase 9: simbolos con subindice real (decision 5) -------------------
+    def test_simbolos_sin_guion_bajo(self):
+        _asserta_sin_guion_bajo(self._construir())
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).
@@ -1105,7 +1145,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_3:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Seccion 1, datos de entrada (filas 16-35). Incluye la banda A16 (texto
     # NUEVO que reemplaza TEXTOS_HEREDADOS, pero identico al que el *oracle*
@@ -1151,7 +1191,7 @@ class TestBuildParcheContraOracle:
             if ("Parche_PCC2_Art212", celda) in B.DIVERGENCIAS_REEMPLAZADAS:
                 assert ws[celda].value is not None, celda
                 continue
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Seccion 2, esfuerzos admisibles y factores (filas 39-48). Incluye la
     # banda A37 (fusionada A37:G37, "PARAMETROS DE CALCULO (constantes -
@@ -1183,7 +1223,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_5:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Geometria y propiedades derivadas (filas 52-57). Incluye la banda A50
     # (fusionada A50:G50, "2.  GEOMETRIA Y PROPIEDADES DERIVADAS", con el
@@ -1213,7 +1253,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_6:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Seccion 3, calculo de cargas y soldadura (filas 61-69), mas Seccion 4,
     # resultados del diseno (filas 73-80). Nombrado distinto de
@@ -1268,7 +1308,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_FILAS_61_80:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Cubre la Seccion 5 (verificaciones, filas 82-90), la Seccion 6
     # (especificaciones tecnicas, filas 93-99), el aviso fijo (fila 101) y
@@ -1309,7 +1349,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_8:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
 
 class TestBuildCollarArt206:
@@ -1427,6 +1467,10 @@ class TestBuildCollarArt206:
             f'=IF($D$22="{B.TIPO_B}","206-5.3: UT del portador; primer/ultimo '
             'pase MT/PT; NDE de circunferenciales >=24 h (>=48 h si servicio '
             'con H2)","206-5.2: Type A - VT de raiz + PT/MT/UT de longitudinales")'), "D149"
+
+    # --- Fase 9: simbolos con subindice real (decision 5) -------------------
+    def test_simbolos_sin_guion_bajo_206(self):
+        _asserta_sin_guion_bajo(self._construir())
 
 
 class TestValidacionesBloqueantes:

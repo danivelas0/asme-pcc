@@ -413,14 +413,17 @@ lo introdujo; si ya existe, reutilizarlo). Aplicarlo en los rótulos de símbolo
 `InlineFont(vertAlign="subscript")`, fuente `MONO`. No cambia ninguna fórmula (los símbolos son
 rótulos, no referencias).
 
-- [ ] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo_206`: recorre los rótulos de
-  símbolo del 206 y afirma que **ninguno** contiene `"_"` en su texto plano y que los que llevan
-  subíndice son `CellRichText`. → FAIL.
-- [ ] **Step 2: helper `sym()`** (crear/compartir) con `CellRichText`/`TextBlock`/
-  `InlineFont(vertAlign="subscript")`.
-- [ ] **Step 3: aplicar** a los símbolos de todas las secciones del 206.
-- [ ] **Step 4: comprobar `TestSistemaVisual`** (que lea los *runs* del rich text; ampliarlo si
-  solo mira `cell.font`). PASS + commit — `Art. 206 Paso 9: simbolos con subindice real`.
+- [x] **Step 1: test.** `test_simbolos_sin_guion_bajo_206` recorre la columna B y afirma que
+  ningún símbolo lleva `"_"` visible y que hay al menos uno con subíndice real (`CellRichText`).
+- [x] **Step 2: helper `sym()`/`_aplicar_subindices()`** — compartido con el 212 (creado en el
+  builder). `CellRichText` + `InlineFont(vertAlign="subscript")`, fuente `MONO`.
+- [x] **Step 3: aplicar.** Los dos símbolos del 206 que vivían en prosa (`T_s` fila 29, `L_s`
+  fila 32) se **movieron a la columna B** para poder subscriptearlos limpio (la columna A trae
+  guiones bajos que no son subíndices — tags `[MODO_S]` de la Sección 7 —, por eso solo se
+  convierte la B). Verificado en el `.xlsm`: `T_s`→T+ₛ, `L_s`→L+ₛ.
+- [x] **Step 4: `TestSistemaVisual`** pasa **sin cambios**: lee las fuentes/colores al nivel de
+  celda (que siguen en `MONO`/`TINTA`), no los *runs* del rich text. pytest 254 · verificar.py
+  **0 fallos**. Commit conjunto con la Fase 9 del 212.
 
 ---
 
