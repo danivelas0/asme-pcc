@@ -20,6 +20,8 @@ la fuente es `CLAUDE.md` en la raíz y, para el detalle por revisión,
 | `plan_motores_busqueda_A2_A3_factores_calidad.md` | 2026-09-07 | `Buscar_Ec_A2` y `Buscar_Ej_A3`, los factores de calidad | 39 → 43 hojas |
 | `Plan_Bases_Datos_Seccion_II_ABC.md` | 2026-09-07 | Las nueve hojas de las Partes A, B y C desde los bloques `Line` | 39 → 48 hojas |
 | `Plan_Dashboard_Jerarquico.md` | 2026-09-08 | El árbol de navegación de cinco niveles y las quince hojas `NAV_*` | 69 hojas |
+| `plan_motor_art206_collar_y_separacion_parche_collar.md` | 2026-09-10 | `Collar_PCC2_Art206` (Type A/B), la Sección 7 de material compartida con el 212, y la decisión de desanclado total del 212 (delegada al plan siguiente) | 71 hojas |
+| `plan_desanclado_total_motor_art212.md` | 2026-09-10 | `Parche_PCC2_Art212` nace 100 % en código; `HOJAS_HEREDADAS` queda en `("Instrucciones", "Datos_Ref")` | 71 hojas |
 
 Referencias que ya no valen, y que se dejan tal como se escribieron:
 

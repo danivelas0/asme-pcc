@@ -59,6 +59,24 @@ tools/         b31_3_extractor: el extractor con el que se produjo el B31.3 de
                resources/. Solo se toca para reponer esa extracción.
 tasks/         lessons.md — errores ya pagados y la regla que dejó cada uno.
 Generales/     Material de referencia suelto (el PNG del layout del Dashboard).
+```
+
+### El ciclo `plans/` ↔ `registro/`
+
+`outputs/plans/` es **solo** lo que está en curso o pendiente de ejecutar; un plan
+terminado no se queda ahí. El ciclo es de ida y vuelta, no de un solo sentido:
+
+- **Al terminar de ejecutar un plan** (todas sus tareas hechas, o declarado cerrado
+  aunque quede un paso de validación exclusivo del ingeniero en Excel — lo que no
+  quede es algo que el agente pueda ejecutar), se mueve a `outputs/plans/registro/`
+  con `git mv` y se añade su fila a `registro/LEEME.md`.
+- **Al retomarlo o editarlo** — una revisión, una fase nueva, una corrección — se saca
+  de `registro/` de vuelta a `outputs/plans/` con `git mv`, y se borra su fila de
+  `LEEME.md` (vuelve a entrar cuando se re-cierre).
+- Un plan que trae la marca **«NO EJECUTAR sin orden explícita del ingeniero»** no se
+  corre solo porque esté en `outputs/plans/`: esa marca es una puerta deliberada y
+  pide confirmación aparte, aunque la instrucción general sea «ejecuta los planes
+  pendientes».
 .agents/skills/  Skills instalados + skills-lock.json. `.claude/skills/` son
                  junctions a estos y no se versionan.
 ```
