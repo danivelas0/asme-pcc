@@ -388,16 +388,21 @@ post-construcción (bloque [99]).
 calcula E, TNT y la distancia segura R, y avisa; en hidrostática, mantiene el cálculo actual
 (1.5×P_diseño). Todo dato de la ec. (II-1) sale del JSON de la Fase 0.2, nunca de memoria.
 
-- [ ] **Step 1: test (falla).** `test_paso8_prueba`: selector `dv_list '"Hidrostatica,Neumatica"'`;
-  en neumática, celdas `E`, `TNT=E/4266920`, `R=R_scaled·(2·TNT)^(1/3)`, con `R_scaled` leído
-  de la tabla; aviso de distancia segura. → FAIL.
-- [ ] **Step 2: entradas de prueba.** `V` [m³] (volumen bajo presión), `Pat` [MPa abs], `k`
-  (fluido), `R_scaled` (de Tabla 501-III-1-1 por criterio, `dv_list` de ítems con sus valores).
-- [ ] **Step 3: fórmulas.** `E` = ec. (II-1) en `k` (del JSON Fase 0.2, no aire-only);
-  `TNT = E/4 266 920`; `R = R_scaled·(2·TNT)^(1/3)`. Unidades visibles.
-- [ ] **Step 4: dictamen** «distancia mínima R m para el TNT calculado; ver Tabla 501-III-2-1
-  para fragmentos». En hidrostática, ocultar/NA() el bloque neumático y mantener el actual.
-- [ ] **Step 5: `verificar.py §6e`** recalcula `E`, `TNT`, `R` en Excel. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso8_prueba`: selector, E/TNT/R, R_scaled dv_list. PASS.
+- [x] **Step 2: entradas de prueba.** Anexo Paso 8 (filas 181-193): D183 selector, D184 V [m³],
+  D185 Pat [MPa abs], D186 Pa [MPa abs]=0.101, D187 k=1.4, D188 R_scaled (dv_list de la Tabla
+  501-III-1-1 leída de resources/, criterios en el comentario).
+- [x] **Step 3: fórmulas.** E (D189) = ec.(II-1) **general en k** (`[1/(k-1)]·Pat·V·[1-(Pa/Pat)^
+  ((k-1)/k)]`, Pat→Pa ×1e6); TNT (D190) = E/4 266 920; R (D191) = 30 m si E≤8 130 000 J, si no
+  `R_scaled·(2·TNT)^(1/3)`. **Regla n.1: todos los coeficientes los lee `leer_energia_501()` de
+  `resources/`** (App. 501, Fase 0.2); el build ABORTA si el apéndice no está reparado. Se
+  añadió `energia_501=` (keyword) a `build_parche_art212`; main() lo pasa, el test un stub.
+- [x] **Step 4: dictamen** D192 (neumática → distancia R + Tabla 501-III-2-1; hidrostática →
+  1.5×P). Bloque neumático = NA() en hidrostática (default). NDE D193 (212-5 [92],[94]).
+- [x] **Step 5: `verificar.py §6e`** recalcula E/TNT/R en Excel (qa forzado a neumática, V=100,
+  Pat=5 → rama eq(III-1)): E=840 MJ, TNT=196.9 kg, R=146.6 m, exactos. pytest 244 · verificar.py
+  **0 fallos**. **Requirió corregir la Fase 0.2**: (II-3)/(II-5) estaban reordenadas ('TNT =
+  (kg) E …'); se normalizaron a la forma canónica para que el motor lea el divisor.
 
 ---
 

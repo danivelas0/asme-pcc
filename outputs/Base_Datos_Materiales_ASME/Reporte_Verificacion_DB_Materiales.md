@@ -250,6 +250,9 @@ Dictamen global del modulo: **APTO** (OK).
 | F_max | Envolvente | 311.31210425 | 311.31210425 | OK |
 | w_min | Envolvente | 4.1016087516469035 | 4.1016087516469035 | OK |
 | S_w | Envolvente | 248.32004565566405 | 248.32004565566405 | OK |
+| E (neumatica) | — | 840055853.1289042 | 840055853.1289042 | OK |
+| TNT (neumatica) | — | 196.87640104077514 | 196.87640104077514 | OK |
+| R (neumatica) | — | 146.5900686172443 | 146.59006861724427 | OK |
 
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 

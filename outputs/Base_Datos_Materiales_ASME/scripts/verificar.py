@@ -1151,6 +1151,16 @@ def auditar():
     motor["D114"] = id_base
     motor["E114"] = id_collar
     T_semilla = motor["D25"].value
+    # Paso 8 (energia neumatica): el motor se entrega en hidrostatica (D183). Se
+    # fuerza un caso neumatico en el libro qa (throwaway) para ejercer E/TNT/R en
+    # Excel real; no afecta F90 ni las verificaciones de Sa (que no dependen de
+    # D183). V y Pat grandes para caer en la rama eq.(III-1) de la distancia.
+    motor["D183"] = "Neumatica"
+    motor["D184"] = 100     # V, m3
+    motor["D185"] = 5       # Pat, MPa abs
+    motor["D186"] = 0.101   # Pa, MPa abs
+    motor["D187"] = 1.4     # k
+    motor["D188"] = 20      # Rscaled, m/kg^1/3
 
     qa_in = OUTDIR / "qa.xlsx"
     qa_out = OUTDIR / "qa_recalculado.xlsx"
@@ -1484,6 +1494,28 @@ def auditar():
             ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-9)
             flujo_bad += 0 if ok else 1
             log(f"| {nombre} | {etiq} | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
+    # Paso 8: energia neumatica E (II-1), TNT (II-3) y distancia R (III-1). El qa
+    # se recalculo con D183=Neumatica y V/Pat/k conocidos. Las constantes (divisor
+    # TNT, umbral y distancia del blast wave) se leen de resources/ con la MISMA
+    # funcion que usa el motor (leer_energia_501), no se copian a mano.
+    try:
+        e501 = B.leer_energia_501(RES.root)
+    except SystemExit:
+        e501 = None
+    if e501 and rec["D183"].value == "Neumatica":
+        V, Pat, Pa = rec["D184"].value, rec["D185"].value, rec["D186"].value
+        k, rsc = rec["D187"].value, rec["D188"].value
+        if all(isinstance(x, (int, float)) for x in (V, Pat, Pa, k, rsc)) and k != 1 and Pat:
+            E_ref = (1 / (k - 1)) * (Pat * 1e6) * V * (1 - (Pa / Pat) ** ((k - 1) / k))
+            tnt_ref = E_ref / e501["tnt_div_kg"]
+            r_ref = (e501["blast_R_m"] if E_ref <= e501["blast_thr_J"]
+                     else rsc * (2 * tnt_ref) ** (1 / 3))
+            for nombre, celda, ref in (("E", "D189", E_ref), ("TNT", "D190", tnt_ref),
+                                       ("R", "D191", r_ref)):
+                got = rec[celda].value
+                ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-6)
+                flujo_bad += 0 if ok else 1
+                log(f"| {nombre} (neumatica) | — | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
     log("")
 
     # ---- 8. capa de navegacion -------------------------------------------

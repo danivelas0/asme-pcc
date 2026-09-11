@@ -890,9 +890,19 @@ class TestBuildParcheContraOracle:
         # nombre de hoja y los conteos que dimensionan las listas de la cascada.
         b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
                              "n_nps": 5, "max_ced": 5}
+        # Stub de los coeficientes del App. 501 (Paso 8) — en el motor real los
+        # lee leer_energia_501() de resources/ (Fase 0.2). Aqui son fixtures del
+        # test, como b313_stub, con los valores que imprime el codigo.
+        energia = {"tnt_div_kg": 4266920, "blast_thr_J": 8130000, "blast_R_m": 30.0,
+                   "r_scaled_def": 20.0,
+                   "r_scaled_ops": [("20 (Glass windows)", 20.0),
+                                    ("12 (Eardrum rupture / Concrete block panels)", 12.0),
+                                    ("6 (Lung damage / Brick walls)", 6.0),
+                                    ("2 (Fatal)", 2.0)]}
         B.build_parche_art212(wb, b313_stub(), iid1a_stub(), iidb_stub(),
                               fac_stub(), rangos_stub(),
-                              b36("DB_B36_10"), b36("DB_B36_19"))
+                              b36("DB_B36_10"), b36("DB_B36_19"),
+                              energia_501=energia)
         return wb["Parche_PCC2_Art212"]
 
     # F90 (DICTAMEN GLOBAL) sale de esta lista: la Fase 1 lo reescribe para
@@ -1055,6 +1065,30 @@ class TestBuildParcheContraOracle:
             '=IF($D$29>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
             '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")'), "D178"
         assert "40 mm" in str(ws["D179"].value), ws["D179"].value
+
+    # --- Fase 8: NDE y prueba de hermeticidad (Paso 8, 212-5/6 + App.501) ----
+    # Selector hidro/neumatica; en neumatica E (II-1 general en k), TNT (II-3),
+    # R (III-1). Constantes leidas de resources/ (Fase 0.2, aqui via stub).
+    def test_paso8_prueba(self):
+        ws = self._construir()
+        assert str(ws["A181"].value).startswith("PASO 8"), ws["A181"].value
+        assert ws["D183"].value == "Hidrostatica", "default hidrostatica"
+        assert ws["D188"].value == 20.0, "Rscaled default 20"
+        assert ws["D189"].value == (
+            '=IF($D$183="Neumatica",(1/($D$187-1))*($D$185*1000000)*$D$184*'
+            '(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())'), "D189 E"
+        assert ws["D190"].value == (
+            '=IF($D$183="Neumatica",$D$189/4266920,NA())'), "D190 TNT"
+        assert ws["D191"].value == (
+            '=IF($D$183="Neumatica",IF($D$189<=8130000,30,'
+            '$D$188*(2*$D$190)^(1/3)),NA())'), "D191 R"
+        # Selectores como lista.
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        assert "Neumatica" in origen.get("D183", ""), origen.get("D183")
+        assert origen.get("D188", "") == '"20,12,6,2"', origen.get("D188")
 
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas

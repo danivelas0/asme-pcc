@@ -6175,8 +6175,83 @@ def construir_seccion7_material(
 SEED_ART212_BASE = 'A-1 | A106 | B | Pipe & tube | K03006 | P-1'      # tuberia (D)
 SEED_ART212_COLLAR = 'A-1 | A516 | 70 | Plate, bar, shps., sheet | K02700 | P-1'  # (E)
 
+# Ruta de los dos apendices del App. 501 en resources/ (reparados en la Fase 0.2
+# del plan del Art. 212: la extraccion habia colapsado la capa de texto).
+_APP_501_II = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
+               "app_501_ii/app_501_ii.json")
+_APP_501_III = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
+                "app_501_iii/app_501_iii.json")
 
-def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
+
+def leer_energia_501(resources):
+    """Lee de resources/ (App. 501-II y 501-III) los coeficientes de la energia
+    almacenada y la distancia segura de una prueba neumatica (Paso 8 del Art.
+    212). NINGUN valor sale de memoria: todos se leen del JSON reparado en la
+    Fase 0.2 (Regla n.1). ABORTA si el apendice no esta reparado (texto
+    colapsado o amendment ausente): sin fuente no se construye el Paso 8.
+
+    Devuelve dict con:
+      tnt_div_kg   divisor de la ec. (II-3): TNT = E / 4 266 920 (kg)
+      blast_thr_J  umbral de la 501-III-1: R = 30 m si E <= 8 130 000 J
+      blast_R_m    esa distancia fija (30 m)
+      r_scaled_def Rscaled por defecto de la eq. (III-1) (20 m/kg^1/3)
+      r_scaled_ops [(etiqueta, valor_si)] de la Tabla 501-III-1-1 para el dv_list
+    """
+    import re as _re
+    from pathlib import Path as _Path
+    raiz = _Path(resources)
+    ii = json.loads((raiz / _APP_501_II).read_text(encoding="utf-8"))
+    iii = json.loads((raiz / _APP_501_III).read_text(encoding="utf-8"))
+
+    def _texto_ecuacion(doc, rotulo):
+        for b in doc.get("blocks", []):
+            if isinstance(b, dict) and b.get("type") == "equation" \
+                    and rotulo in (b.get("text") or ""):
+                return b["text"]
+        return None
+
+    # (II-3): TNT = E / 4 266 920 (kg). El divisor se lee del texto reparado.
+    t_ii3 = _texto_ecuacion(ii, "(II-3)")
+    if not t_ii3 or any(g in t_ii3 for g in "ÄÅÇÉÑÖ�"):
+        raise SystemExit(
+            "Art.212 Paso 8: la ec. (II-3) del App. 501-II no esta legible en "
+            "resources/ (corra la Fase 0.2: completar_app_501_energia.py).")
+    m = _re.search(r"E\s*/\s*([\d\s]+)", t_ii3)
+    if not m:
+        raise SystemExit(f"Art.212 Paso 8: no se pudo leer el divisor TNT de {t_ii3!r}")
+    tnt_div = int(m.group(1).replace(" ", ""))
+
+    # La Tabla 501-III-1-1 y sus reglas viven en el amendment de la Fase 0.2.
+    amd = iii.get("extraction_amendments") or {}
+    tabla = amd.get("tabla_501_iii_1_1")
+    if not tabla:
+        raise SystemExit(
+            "Art.212 Paso 8: falta la Tabla 501-III-1-1 en resources/ "
+            "(corra la Fase 0.2: completar_app_501_energia.py).")
+    # Umbral y distancia fija del blast wave (501-III-1): "R = 30 m ... para
+    # E <= 8 130 000 J". Se leen del texto de la regla, no de memoria.
+    ub = tabla["umbral_blast"]
+    m_thr = _re.search(r"E\s*<=\s*([\d\s]+)\s*J", ub)
+    m_r = _re.search(r"R\s*=\s*([\d.]+)\s*m", ub)
+    if not (m_thr and m_r):
+        raise SystemExit(f"Art.212 Paso 8: no se pudo leer el umbral/distancia de {ub!r}")
+    blast_thr = int(m_thr.group(1).replace(" ", ""))
+    blast_r = float(m_r.group(1))
+    # Rscaled por defecto (>= 20) de la regla.
+    m_def = _re.search(r"([\d.]+)\s*m/kg", tabla["regla_por_defecto"])
+    r_def = float(m_def.group(1)) if m_def else float(tabla["filas"][0][0])
+    # Opciones de Rscaled por criterio para el dv_list (valor SI = columna 0).
+    ops = []
+    for fila in tabla["filas"]:
+        val = float(fila[0])
+        crit = " / ".join(c for c in (fila[2], fila[3]) if c and c != "...")
+        ops.append((f"{val:g} ({crit})" if crit else f"{val:g}", val))
+    return {"tnt_div_kg": tnt_div, "blast_thr_J": blast_thr, "blast_R_m": blast_r,
+            "r_scaled_def": r_def, "r_scaled_ops": ops}
+
+
+def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
+                        energia_501=None):
     """Motor Art. 212 (parche soldado), 100% en codigo — desanclado del maestro
     Rev0 (Fase 4). Antes vivia heredado + corregido por integrate_motor/
     corregir_art212_fase1; ahora nace con new_sheet como Collar_PCC2_Art206.
@@ -7431,6 +7506,131 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                 "(212-4e). Venteo de gas en el cierre (212-4g).", com179)
     d179.font = Font(name=MONO, size=9, color=GRIS)
     ws.merge_cells("D179:G179")
+
+    # --- PASO 8 — NDE y prueba de hermeticidad (212-5/6 + App. 501) ----------
+    # Selector de prueba (hidrostatica / neumatica). En neumatica se calcula la
+    # energia almacenada E (ec. II-1 del App. 501-II, forma general en k), el
+    # equivalente en TNT (ec. II-3) y la distancia segura R (ec. III-1 del App.
+    # 501-III), y se avisa. TODOS los coeficientes (divisor TNT, umbral del
+    # blast wave, distancia fija, valores de Rscaled) se LEEN de resources/ via
+    # leer_energia_501() -Fase 0.2-, nunca de memoria (Regla n.1). En
+    # hidrostatica el bloque neumatico es NA y se mantiene el criterio 1.5xP.
+    if energia_501 is None:
+        raise SystemExit("Art.212 Paso 8: energia_501 es None (pase los "
+                         "coeficientes del App. 501 leidos de resources/).")
+    tnt_div = energia_501["tnt_div_kg"]
+    blast_thr = energia_501["blast_thr_J"]
+    blast_r = energia_501["blast_R_m"]
+    r_ops = energia_501["r_scaled_ops"]
+    r_def = energia_501["r_scaled_def"]
+    lista_rscaled = '"' + ",".join(f"{v:g}" for _, v in r_ops) + '"'
+
+    banda_literal(181, "PASO 8 · NDE Y PRUEBA DE HERMETICIDAD  "
+                       "(ASME PCC-2 Art. 212-5 / 212-6 + App. 501)")
+    encabezado(182, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Valor"), (7, "Referencia / Notas")))
+
+    com183 = ("Entrada: tipo de prueba de hermeticidad. Hidrostatica (1.5xP de "
+              "diseno, criterio del codigo de post-construccion) o Neumatica. La "
+              "prueba neumatica exige precauciones de seguridad (212-6b): se "
+              "calcula la energia almacenada y la distancia segura (App. 501).")
+    lab(183, "Tipo de prueba", unidad="—", ref="212-6 / App. 501", com=com183)
+    ws.cell(183, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D183", "Hidrostatica", com183)
+    dv_list(ws, "D183", '"Hidrostatica,Neumatica"', com183)
+
+    com184 = ("Entrada (solo neumatica): volumen total bajo presion de prueba, "
+              "m3. Para recipiente, el volumen total; para tuberia, hasta 8 "
+              "diametros por fallo (App. 501-II).")
+    lab(184, "Volumen bajo presión", unidad="m³", ref="App. 501-II", com=com184)
+    ws.cell(184, 2, "V").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D184", "", com184)
+
+    com185 = ("Entrada (solo neumatica): presion ABSOLUTA de prueba, MPa abs "
+              "(Pat de la ec. II-1). Es la presion manometrica de prueba mas la "
+              "atmosferica.")
+    lab(185, "Presión de prueba (abs)", unidad="MPa abs", ref="App. 501-II",
+        com=com185)
+    ws.cell(185, 2, "Pat").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D185", "", com185)
+
+    com186 = ("Entrada (solo neumatica): presion atmosferica ABSOLUTA, MPa abs "
+              "(Pa de la ec. II-1). El codigo usa 101 kPa = 0.101 MPa.")
+    lab(186, "Presión atmosférica (abs)", unidad="MPa abs", ref="App. 501-II",
+        com=com186)
+    ws.cell(186, 2, "Pa").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D186", 0.101, com186)
+
+    com187 = ("Entrada (solo neumatica): relacion de calores especificos k del "
+              "fluido de prueba (aire/N2 = 1.4). La ec. II-1 es general en k; NO "
+              "se usa la forma aire-only 2.5/0.286.")
+    lab(187, "Calor específico del fluido (k)", unidad="—", ref="App. 501-II",
+        com=com187)
+    ws.cell(187, 2, "k").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D187", 1.4, com187)
+
+    com188 = ("Entrada (solo neumatica): factor de consecuencia Rscaled de la "
+              "Tabla 501-III-1-1 (m/kg^1/3). El codigo exige >= " + f"{r_def:g}"
+              " (minimo recomendado). Valores por criterio: "
+              + " · ".join(f"{lbl}" for lbl, _ in r_ops) + ".")
+    lab(188, "Factor de consecuencia Rscaled", unidad="m/kg^⅓",
+        ref="Tabla 501-III-1-1", com=com188)
+    ws.cell(188, 2, "Rsc").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D188", r_def, com188)
+    dv_list(ws, "D188", lista_rscaled, com188)
+
+    com189 = ("Calculo (solo neumatica): energia almacenada E (J) por la ec. "
+              "(II-1) del App. 501-II, general en k: E = [1/(k-1)]·Pat·V·"
+              "[1-(Pa/Pat)^((k-1)/k)]. Pat se pasa a Pa (x1e6). NA en hidrostatica.")
+    lab(189, "Energía almacenada", unidad="J", ref="App. 501-II ec.(II-1)",
+        com=com189)
+    ws.cell(189, 2, "E").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D189",
+         '=IF($D$183="Neumatica",(1/($D$187-1))*($D$185*1000000)*$D$184*'
+         '(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())', com189)
+
+    com190 = ("Calculo (solo neumatica): equivalente en TNT (kg) por la ec. "
+              "(II-3): TNT = E / " + f"{tnt_div}" + " (leido de resources/, "
+              "App. 501-II). NA en hidrostatica.")
+    lab(190, "Equivalente TNT", unidad="kg", ref="App. 501-II ec.(II-3)",
+        com=com190)
+    ws.cell(190, 2, "TNT").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D190", f'=IF($D$183="Neumatica",$D$189/{tnt_div},NA())', com190)
+
+    com191 = ("Calculo (solo neumatica): distancia segura minima R (m) por la "
+              "501-III-1: R = 30 m si E <= " + f"{blast_thr}" + " J; en otro caso "
+              "R = Rscaled·(2·TNT)^(1/3), ec. (III-1). Umbral y distancia leidos "
+              "de resources/ (App. 501-III). NA en hidrostatica.")
+    lab(191, "Distancia segura mínima", unidad="m", ref="App. 501-III ec.(III-1)",
+        com=com191)
+    ws.cell(191, 2, "R").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D191",
+         f'=IF($D$183="Neumatica",IF($D$189<={blast_thr},{blast_r:g},'
+         f'$D$188*(2*$D$190)^(1/3)),NA())', com191)
+
+    com192 = ("Dictamen del Paso 8: en neumatica, la distancia minima entre el "
+              "personal y el equipo durante la prueba; ver Tabla 501-III-2-1 "
+              "para distancia por fragmentos. En hidrostatica, presion de prueba "
+              "= 1.5xP de diseno (D46xD27).")
+    lab(192, "Dictamen de prueba", ref="212-6 / App. 501", com=com192)
+    calc("D192",
+         '=IF($D$183="Neumatica","NEUMATICA — distancia minima R = "&'
+         'TEXT($D$191,"0.0")&" m; precaucion 212-6b; ver Tabla 501-III-2-1 '
+         '(fragmentos)","HIDROSTATICA — presion de prueba "&TEXT($D$46*$D$27,'
+         '"0.0")&" kg/cm2 (1.5xP de diseno); sin energia neumatica")', com192)
+    ws.merge_cells("D192:G192")
+
+    com193 = ("Nota NDE (212-5): examinar las soldaduras de union del parche al "
+              "100% por MT o PT (212-5a [92]); las costuras entre piezas del "
+              "parche por RT o UT en lo posible, o PT/MT multicapa (212-5c [94]); "
+              "si hay PWHT, el END va despues del PWHT (212-5d). Criterio de "
+              "aceptacion: el del codigo de construccion/post-construccion.")
+    lab(193, "Examen no destructivo (NDE)", ref="212-5 [92],[94]", com=com193)
+    d193 = calc("D193",
+                "NDE (212-5): 100% MT/PT de las uniones del parche; RT/UT de las "
+                "costuras entre piezas; END tras PWHT si aplica.", com193)
+    d193.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D193:G193")
 
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
@@ -9177,6 +9377,15 @@ LITERALES_PERMITIDOS = {
     '"No,Si — arrestada + FFS,Si — activa/no analizada"': (
         "Presencia de grietas del Paso 1 (Art. 212 D139): categoria de "
         "elegibilidad (212-2c [11]-[13]), no un dato tabulado."),
+    '"Hidrostatica,Neumatica"': (
+        "Tipo de prueba de hermeticidad del Paso 8 (Art. 212 D183): modo del "
+        "motor (212-6), no un material ni un dato tabulado."),
+    '"20,12,6,2"': (
+        "Factor de consecuencia Rscaled del Paso 8 (Art. 212 D188): los cuatro "
+        "valores de la Tabla 501-III-1-1, leidos de resources/ por "
+        "leer_energia_501 (Fase 0.2). Lista de items con sus valores (el plan "
+        "lo permite); si el codigo cambiara la tabla, esta lista y este literal "
+        "cambian a la vez."),
 }
 
 # Deuda SALDADA (Tarea 10). Las Tareas 7-9 repuntaron NPS y cedula de los dos
@@ -9841,7 +10050,12 @@ def main(argv=None):
     b3610 = build_db_b36(wb, "B36.10M")
     b3619 = build_db_b36(wb, "B36.19M")
 
-    build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
+    # Coeficientes del Paso 8 (energia neumatica) leidos de resources/ (App.
+    # 501, reparado en la Fase 0.2). Regla n.1: no salen de memoria. Aborta si
+    # el apendice no esta reparado.
+    energia_501 = leer_energia_501(a.resources)
+    build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619,
+                        energia_501=energia_501)
     build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
     retirar_datos_ref(wb)
 

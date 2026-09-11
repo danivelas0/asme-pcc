@@ -80,6 +80,11 @@ REPARACIONES_II = [
      "E = 2.5*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, SI) (II-2)"),
     ("(II-4)", "equation",
      "E = 360*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, U.S. Customary) (II-4)"),
+    # II-3 / II-5 llegaron legibles pero con el orden de tokens revuelto
+    # ('TNT = (kg) E 4 266 920'); se normalizan a la forma canonica que imprime
+    # el codigo para que el motor (leer_energia_501) lea el divisor sin ambiguedad.
+    ("(II-3)", "equation", "TNT = E / 4 266 920 (kg) (II-3)"),
+    ("(II-5)", "equation", "TNT = E / 1,488,617 (lb) (II-5)"),
 ]
 REPARACIONES_III = [
     ("(III-1)", "equation", "R = Rscaled*(2*TNT)^(1/3) (III-1)"),
