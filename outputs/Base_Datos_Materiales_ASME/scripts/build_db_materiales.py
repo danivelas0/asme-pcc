@@ -5842,6 +5842,12 @@ def build_buscador_factor(wb, name, titulo, subtitulo, rng, info, niveles,
 # Integracion en el motor Parche_PCC2_Art212
 # ---------------------------------------------------------------------------
 MOTOR = "Parche_PCC2_Art212"
+# Primera fila del ANEXO DE PASOS DEL FLUJO 212 (bloques nuevos anadidos sin
+# desplazar el oracle Rev0, que solo cubre 1-129; la Seccion 7 termina en 131).
+# Lo que vive de esta fila en adelante es nuevo por diseno y lo fijan las anclas
+# por-paso de TestBuildParcheContraOracle, no el oracle: los tests de paridad
+# (validaciones y fusionados) lo excluyen de la comparacion contra el oracle.
+FILA_ANEXO_FLUJO_212 = 132
 
 
 def construir_seccion7_material(
@@ -6319,18 +6325,28 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # vacia) como un material rechazado por temperatura. "ELIJA MATERIAL" invita
     # a completar la seccion 7; "FUERA DE RANGO" solo aparece cuando ya hay
     # material y la T supera lo que el codigo tabula.
-    ws["F90"] = ('=IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
+    # F90 antepone la compuerta de elegibilidad del Paso 1 (D140, bloque nuevo
+    # del anexo de flujo): si el Paso 1 arroja un estado BLOQUEANTE (PROHIBIDO
+    # por servicio letal, NO ELEGIBLE por dano/grieta, o FUERA DE ALCANCE por
+    # T > 345), el dictamen global es ese motivo, en rojo, sin evaluar los
+    # CUMPLE de la seccion 5. El aviso de entalla (REVISAR, T < 0) NO bloquea:
+    # es advertencia, deja seguir. Trazado: Art. 212-1/2 (bloques 6,11-13) y el
+    # flujo aprobado del ingeniero (servicio letal).
+    ws["F90"] = ('=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
+                 'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
+                 'IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
                  '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
                  'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
                  'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
-                 '"APTO","REVISAR")))')
-    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. ELIJA MATERIAL (Seccion 7) "
-                    "si el metal base o el collar aun no estan seleccionados en la "
-                    "cascada; REVISAR — MATERIAL FUERA DE RANGO si ya hay material "
-                    "pero quedo fuera de rango de temperatura; APTO solo si ademas "
-                    "las 4 verificaciones de la seccion 5 (filete, excentricidad, "
-                    "conformado en frio, espesor de pared) dan CUMPLE; REVISAR en "
-                    "cualquier otro caso.")
+                 '"APTO","REVISAR"))))')
+    _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. Primero la compuerta de "
+                    "elegibilidad (Paso 1, D140): si es PROHIBIDO / NO ELEGIBLE / "
+                    "FUERA DE ALCANCE, ese es el dictamen y no se evalua nada mas. "
+                    "Si es ELEGIBLE (o el aviso de entalla, que no bloquea): ELIJA "
+                    "MATERIAL (Seccion 7) si falta seleccionar; REVISAR — MATERIAL "
+                    "FUERA DE RANGO si hay material fuera de rango de T; APTO solo si "
+                    "ademas las 4 verificaciones de la seccion 5 dan CUMPLE; REVISAR "
+                    "en cualquier otro caso.")
 
     # --- Caso precargado (seed por la celda Variante, con guardia Regla n.1)--
     db = wb["DB_B31_3"]
@@ -7021,6 +7037,90 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
         101, 1,
         "Herramienta de ingeniería de referencia. Verificar entradas y resultados; complementar con WPS/PQR, ATS/JSA y registros del propietario. Cálculos según ASME PCC-2-2022 (Art. 212/206), ASME B31.3 y ASME BPVC VIII-1.")
     aviso101.font = SRC_F
+
+    # === ANEXO — PASOS DEL FLUJO 212 (bloques nuevos, direcciones estables) ==
+    # Los pasos del flujo aprobado que no cabian en las secciones 1-6 sin
+    # desplazar cientos de referencias absolutas del oracle Rev0 se anaden aqui,
+    # a partir de la fila 134 (la Seccion 7 termina en la 131). Cada bloque se
+    # cablea a las celdas existentes (F90, verificaciones) por referencia; su
+    # posicion fisica no importa para el calculo. Trazado a resources/ (Regla
+    # n.1) y al flujo del ingeniero, fijado por cadena en test_dashboard.py.
+
+    # --- PASO 1 — Elegibilidad y caracterizacion del dano (212-1 / 212-2) ----
+    # Fuente: Art. 212 bloque [6] (T hasta 345 C; < nil-ductility -> tenacidad;
+    # > 345 -> creep/fatiga), [11]-[13] (dano caracterizable; grietas solo si
+    # arrestada + analisis FFS). El servicio letal -> Art. 201 lo fija el flujo
+    # aprobado del ingeniero (212-2a remite a la Part 1 del estandar). El
+    # dictamen D140 alimenta F90: un estado bloqueante detiene el diseno.
+    banda_literal(134, "PASO 1 · ELEGIBILIDAD Y CARACTERIZACIÓN DEL DAÑO  "
+                       "(ASME PCC-2 Art. 212-1 / 212-2)")
+    encabezado(135, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Valor"), (7, "Referencia / Notas")))
+
+    com136 = ("Entrada: mecanismo de dano caracterizado. El Art. 212 se aplica "
+              "a adelgazamiento local (erosion, corrosion, perforacion "
+              "traspasante) y danos locales similares (212-1c); no se usa si el "
+              "dano no se puede caracterizar (212-2c).")
+    lab(136, "Mecanismo de daño", unidad="—", ref="212-1(c) / 212-2(c)", com=com136)
+    ws.cell(136, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D136", "Adelgazamiento local", com136)
+    dv_list(ws, "D136",
+            '"Adelgazamiento local,Erosion,Corrosion,Perforacion traspasante,'
+            'Otro/no caracterizado"', com136)
+
+    com137 = ("Entrada: ¿la tasa de dano (presente y futura) se conoce o se "
+              "predice? El Art. 212-2(c) prohibe el metodo si el mecanismo, la "
+              "extension o el dano futuro NO se pueden caracterizar.")
+    lab(137, "¿Daño caracterizable (tasa conocida)?", unidad="—",
+        ref="212-2(c) [11]", com=com137)
+    ws.cell(137, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D137", "Si", com137)
+    dv_list(ws, "D137", '"Si,No"', com137)
+
+    com138 = ("Entrada: tipo de servicio. El servicio letal o de extrema "
+              "peligrosidad esta PROHIBIDO para este metodo (flujo aprobado; "
+              "212-2a remite a la Part 1 del estandar): usar Art. 201 (inserto "
+              "a tope) o reemplazo de seccion.")
+    lab(138, "Tipo de servicio", unidad="—", ref="Flujo · Part 1 (212-2a)",
+        com=com138)
+    ws.cell(138, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D138", "General", com138)
+    dv_list(ws, "D138", '"General,Letal / extrema peligrosidad"', com138)
+
+    com139 = ("Entrada: presencia de grietas o defectos tipo grieta. El Art. "
+              "212-2(c) solo admite grietas si el crecimiento se ha detenido / "
+              "arrestado / es predecible Y el efecto se evalua por analisis "
+              "detallado (FFS, API 579); una grieta activa o no analizada lo "
+              "hace NO ELEGIBLE.")
+    lab(139, "Presencia de grietas", unidad="—", ref="212-2(c) [11]-[13]",
+        com=com139)
+    ws.cell(139, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D139", "No", com139)
+    dv_list(ws, "D139",
+            '"No,Si — arrestada + FFS,Si — activa/no analizada"', com139)
+
+    com140 = ("Calculo: DICTAMEN DE ELEGIBILIDAD del Paso 1, en este orden: "
+              "servicio letal -> PROHIBIDO (Art. 201); dano no caracterizable "
+              "-> NO ELEGIBLE (212-2c); grieta activa/no analizada -> NO "
+              "ELEGIBLE (212-2c); T de operacion > 345 -> FUERA DE ALCANCE "
+              "(evaluar creep/fatiga, 212-1e); T < 0 -> REVISAR tenacidad a la "
+              "entalla (cribado del nil-ductility, 212-1e; el limite real es la "
+              "temperatura de nil-ductility del material); en otro caso "
+              "ELEGIBLE. Los tres primeros y el de T>345 BLOQUEAN el dictamen "
+              "global (F90); el de entalla solo avisa.")
+    lab(140, "Dictamen de elegibilidad", unidad="—", ref="212-1/2 + flujo",
+        com=com140)
+    ws.cell(140, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D140",
+         '=IF($D$138="Letal / extrema peligrosidad",'
+         '"PROHIBIDO — servicio letal: usar Art. 201 o reemplazo de seccion '
+         '(flujo 212 · 212-2a remite a Part 1)",'
+         'IF($D$137="No","NO ELEGIBLE — dano no caracterizable (212-2c)",'
+         'IF($D$139="Si — activa/no analizada",'
+         '"NO ELEGIBLE — grieta activa o no analizada (212-2c)",'
+         'IF($D$25>345,"FUERA DE ALCANCE — T > 345 (evaluar creep/fatiga 212-1e)",'
+         'IF($D$25<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
+         '"ELEGIBLE")))))', com140)
 
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
@@ -8752,6 +8852,21 @@ LITERALES_PERMITIDOS = {
         "geometrico y el codigo de construccion, no es un dato tabulado."),
     '"Tuberia (B31.3),Virola cilindrica (VIII-1),Cabezal/esfera (VIII-1)"': (
         "Idem, variante sin acentos usada en Collar_PCC2_Art206 (D10)."),
+    # Entradas categoricas del Paso 1 del Art. 212 (compuerta de elegibilidad,
+    # 212-1/212-2). No son materiales ni valores tabulados por ningun codigo:
+    # son categorias del propio criterio de elegibilidad (mecanismo de dano,
+    # tipo de servicio, estado de grietas), asi que su origen legitimo es una
+    # lista de items, igual que el conmutador de modo o el booleano Si/No.
+    '"Adelgazamiento local,Erosion,Corrosion,Perforacion traspasante,'
+    'Otro/no caracterizado"': (
+        "Mecanismo de dano del Paso 1 (Art. 212 D136): categoria de "
+        "elegibilidad (212-1c/212-2c), no un material ni un dato tabulado."),
+    '"General,Letal / extrema peligrosidad"': (
+        "Tipo de servicio del Paso 1 (Art. 212 D138): categoria de elegibilidad "
+        "(flujo aprobado; 212-2a remite a Part 1), no un dato tabulado."),
+    '"No,Si — arrestada + FFS,Si — activa/no analizada"': (
+        "Presencia de grietas del Paso 1 (Art. 212 D139): categoria de "
+        "elegibilidad (212-2c [11]-[13]), no un dato tabulado."),
 }
 
 # Deuda SALDADA (Tarea 10). Las Tareas 7-9 repuntaron NPS y cedula de los dos
@@ -8817,6 +8932,12 @@ DIVERGENCIAS_REEMPLAZADAS = {
         "Valor del selector de norma dimensional (B36.10M por defecto); gobierna las "
         "listas de NPS/cedula y el lookup de OD/espesor. Antes era material descriptivo."),
     ("Parche_PCC2_Art212", "G22"): "Idem A22: referencia de la norma dimensional.",
+    ("Parche_PCC2_Art212", "F90"): (
+        "DICTAMEN GLOBAL: la Fase 1 antepone la compuerta de elegibilidad del "
+        "Paso 1 (D140). Si el Paso 1 arroja PROHIBIDO / NO ELEGIBLE / FUERA DE "
+        "ALCANCE, F90 es ese motivo; si no, cae a la logica anterior (material + "
+        "verificaciones). La forma nueva la fija test_paso1_elegibilidad; el "
+        "oracle Rev0 no la cubre."),
 }
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

@@ -577,10 +577,18 @@ class TestParidadHojaParche:
         def todas_divergentes(sqref, tablas):
             return all(any((self.HOJA, c) in t for t in tablas) for c in coords(sqref))
 
+        def en_anexo(sqref):
+            # Una validacion del ANEXO DE PASOS DEL FLUJO (filas >= FILA_ANEXO)
+            # es nueva por diseno: el oracle Rev0 solo cubre 1-129 y estas las
+            # fijan las anclas por-paso (test_paso*). Se excluyen de la paridad.
+            rng = openpyxl.worksheet.cell_range.CellRange(sqref)
+            return rng.min_row >= B.FILA_ANEXO_FLUJO_212
+
         reales = sorted(
             ({"sqref": str(dv.sqref), "formula1": dv.formula1}
              for dv in ws.data_validations.dataValidation
-             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,))),
+             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,))
+             and not en_anexo(str(dv.sqref))),
             key=lambda d: d["sqref"])
         esperadas = [
             v for v in oracle["validaciones"]
@@ -591,7 +599,14 @@ class TestParidadHojaParche:
     def test_rangos_fusionados(self, wb):
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
-        assert sorted(str(r) for r in ws.merged_cells.ranges) == oracle["fusionados"]
+        # Los merges del anexo de pasos del flujo (bandas de las filas >=
+        # FILA_ANEXO) son nuevos por diseno y salen de la paridad contra el
+        # oracle Rev0 (que solo cubre 1-129).
+        reales = sorted(
+            str(r) for r in ws.merged_cells.ranges
+            if openpyxl.worksheet.cell_range.CellRange(str(r)).min_row
+            < B.FILA_ANEXO_FLUJO_212)
+        assert reales == oracle["fusionados"]
 
 
 # ---------------------------------------------------------------------------
@@ -880,14 +895,63 @@ class TestBuildParcheContraOracle:
                               b36("DB_B36_10"), b36("DB_B36_19"))
         return wb["Parche_PCC2_Art212"]
 
+    # F90 (DICTAMEN GLOBAL) sale de esta lista: la Fase 1 lo reescribe para
+    # anteponer la compuerta de elegibilidad (Paso 1). Su forma nueva la fija
+    # test_paso1_elegibilidad y su divergencia frente al oracle Rev0 se declara
+    # en DIVERGENCIAS_REEMPLAZADAS.
     ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D115", "E115", "D126", "E126",
-                 "D39", "D40", "D44", "F90", "D114", "E114", "D128")
+                 "D39", "D40", "D44", "D114", "E114", "D128")
 
     def test_anclas_de_la_tarea_2(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_T2:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+    # --- Fase 1: compuerta de elegibilidad (Paso 1, 212-1/212-2) -------------
+    # Bloque nuevo en el anexo de pasos del flujo (filas 134+), fuera del rango
+    # 1-129 del oracle: se fija por cadena aqui (Regla n.1: trazado a Art. 212 y
+    # al flujo aprobado del ingeniero), no contra el oracle Rev0.
+    F90_CON_ELEGIBILIDAD = (
+        '=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
+        'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
+        'IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
+        '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
+        'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
+        'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
+        '"APTO","REVISAR"))))')
+    D140_DICTAMEN_ELEGIBILIDAD = (
+        '=IF($D$138="Letal / extrema peligrosidad",'
+        '"PROHIBIDO — servicio letal: usar Art. 201 o reemplazo de seccion '
+        '(flujo 212 · 212-2a remite a Part 1)",'
+        'IF($D$137="No","NO ELEGIBLE — dano no caracterizable (212-2c)",'
+        'IF($D$139="Si — activa/no analizada",'
+        '"NO ELEGIBLE — grieta activa o no analizada (212-2c)",'
+        'IF($D$25>345,"FUERA DE ALCANCE — T > 345 (evaluar creep/fatiga 212-1e)",'
+        'IF($D$25<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
+        '"ELEGIBLE")))))')
+
+    def test_paso1_elegibilidad(self):
+        ws = self._construir()
+        # Banda del bloque nuevo.
+        assert str(ws["A134"].value).startswith("PASO 1"), ws["A134"].value
+        # Cuatro entradas categoricas sembradas con el caso precargado.
+        assert ws["D136"].value == "Adelgazamiento local"
+        assert ws["D137"].value == "Si"
+        assert ws["D138"].value == "General"
+        assert ws["D139"].value == "No"
+        # Dictamen de elegibilidad y F90 con la compuerta antepuesta.
+        assert ws["D140"].value == self.D140_DICTAMEN_ELEGIBILIDAD, "D140"
+        assert ws["F90"].value == self.F90_CON_ELEGIBILIDAD, "F90"
+        # Las cuatro entradas llevan validacion de lista (no se teclean libres).
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        for celda, contiene in (("D136", "Adelgazamiento"), ("D137", "Si,No"),
+                                ("D138", "Letal"), ("D139", "arrestada")):
+            assert celda in origen, f"{celda} sin validacion"
+            assert contiene in origen[celda], f"{celda}: {origen[celda]!r}"
 
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
@@ -1065,9 +1129,9 @@ class TestBuildParcheContraOracle:
     # Incluye tambien la banda A82 y el encabezado de fila 83 (preceden el
     # rango 84-90 y titulan esta seccion, no una anterior) y la banda A92
     # (precede el rango 93-99; esta seccion no tiene fila de encabezado
-    # propia — el *oracle* no la declara). F90 ya lo cubre
-    # test_anclas_de_la_tarea_2; se repite aqui para que la seccion quede
-    # completa por si sola.
+    # propia — el *oracle* no la declara). F90 NO se ancla contra el oracle:
+    # la Fase 1 lo reescribio (compuerta de elegibilidad) y lo fija
+    # test_paso1_elegibilidad; aqui solo se comprueba su rotulo A90.
     ANCLAS_SECCION_8 = (
         "A4", "A5", "D5", "G5", "A6", "D6", "G6",
         "A8",
@@ -1080,7 +1144,7 @@ class TestBuildParcheContraOracle:
         "A87", "D87", "E87", "F87", "G87",
         "A88", "D88", "E88", "F88", "G88",
         "A89", "D89", "E89", "F89", "G89",
-        "A90", "F90",
+        "A90",
         "A92",
         "A93", "B93",
         "A94", "B94",

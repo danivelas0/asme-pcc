@@ -188,28 +188,24 @@ uso del Art. 201 (flujo, cruzado con Part 1 del estándar — bloque [10] remite
 elegibilidad** que el DICTAMEN GLOBAL (F90) consume: si no es elegible, el resultado global
 se bloquea con el motivo, en rojo, antes de cualquier cálculo.
 
-- [ ] **Step 1: test (falla).** En `TestBuildParcheContraOracle`, `test_paso1_elegibilidad`:
-  construye la hoja y afirma que existen las celdas de entrada nuevas (mecanismo de daño con
-  `dv_list` de ítems; tipo de servicio con `dv_list` incl. «letal»), y que el dictamen de
-  elegibilidad devuelve texto de bloqueo cuando T = 400 (>345) o servicio = letal, y «ELEGIBLE»
-  para el caso semilla (25 °C, agua). Correr → FAIL.
-- [ ] **Step 2: implementar las entradas del Paso 1.** Rótulos con `sym()`, unidades, celdas
-  `inp`/`dv_list`:
-  - Mecanismo de daño — `dv_list '"Adelgazamiento local,Erosion,Corrosion,Perforacion traspasante,Otro/no caracterizado"'`.
-  - ¿Daño caracterizable (tasa conocida)? — `dv_list '"Si,No"'`.
-  - Tipo de servicio — `dv_list '"General,Letal / extrema peligrosidad"'`.
-  - Presencia de grietas — `dv_list '"No,Si — arrestada + FFS,Si — activa/no analizada"'`.
-  - Solape mínimo sobre metal sano (ya existe, D33=25 mm) — mantener, citar bloque [19].
-- [ ] **Step 3: dictamen de elegibilidad** (fórmula anidada `IF`, sólo `IF/AND/OR`):
-  bloquea si servicio letal (→ «PROHIBIDO — usar Art. 201»), si daño no caracterizable
-  (→ «NO ELEGIBLE — daño no caracterizable, 212-2(c)»), si grietas activas/no analizadas
-  (→ «NO ELEGIBLE — grieta activa, 212-2»), si T > 345 (→ «FUERA DE ALCANCE — T > 345 °C,
-  evaluar creep/fatiga 212-1(e)»), si T < 0 (→ «REVISAR — T < 0 °C, evaluar tenacidad a la
-  entalla»); en otro caso «ELEGIBLE». Cada literal cita su cláusula.
-- [ ] **Step 4: cablear a F90.** El DICTAMEN GLOBAL antepone la elegibilidad: si no es
-  «ELEGIBLE» (ni el aviso de entalla, que es «REVISAR»), F90 = el motivo de bloqueo, en rojo,
-  sin evaluar los CUMPLE. Ampliar la fórmula F90 existente.
-- [ ] **Step 5: test PASS + commit** — `Art. 212 Paso 1: compuerta de elegibilidad (212-1/2)`.
+- [x] **Step 1: test (falla).** `test_paso1_elegibilidad` en `TestBuildParcheContraOracle`
+  (construye con stubs, sin Excel): afirma banda A134, D136-D139 sembradas, D140 y F90 nuevos
+  por cadena, y validación de lista en las cuatro entradas. Corrió → FAIL (A134 vacía). ✔
+- [x] **Step 2: implementar las entradas del Paso 1.** Bloque nuevo en el **anexo de pasos del
+  flujo (filas 134-140)**, direcciones estables (decisión del ingeniero 2026-09-11: bloques
+  nuevos, no reordenar). D136 mecanismo, D137 caracterizable, D138 servicio, D139 grietas, con
+  `dv_list`. Los 3 literales categóricos nuevos entran en `LITERALES_PERMITIDOS` (no son
+  materiales; regla 12/14 los permite como el selector D10). `sym()` es de la Fase 9 (aún no).
+- [x] **Step 3: dictamen de elegibilidad** en D140 (IF anidado, solo IF/OR): letal→PROHIBIDO
+  (Art. 201, flujo); no caracterizable→NO ELEGIBLE (212-2c); grieta activa→NO ELEGIBLE (212-2c);
+  T>345→FUERA DE ALCANCE (212-1e); T<0→REVISAR entalla (cribado nil-ductility, 212-1e); else
+  ELEGIBLE. **Trazado a `resources/`:** el 345 °C es del bloque [6]; el 0 °C es cribado del
+  nil-ductility (no umbral del código), anotado honestamente; el letal→Art. 201 es del flujo.
+- [x] **Step 4: cablear a F90.** F90 antepone `LEFT($D$140,·)` para PROHIBIDO/NO ELEGIBLE/
+  FUERA DE ALCANCE (bloquean); el aviso de entalla no bloquea. Declarada en
+  `DIVERGENCIAS_REEMPLAZADAS`. Verificado en Excel real: caso semilla (ELEGIBLE) → **APTO**.
+- [x] **Step 5: test PASS + commit.** pytest 237 passed; `verificar.py` **0 fallos** (§5b y §7
+  incluidos). Commit `Art. 212 Paso 1: compuerta de elegibilidad (212-1/2)`.
 
 ---
 
