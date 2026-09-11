@@ -125,15 +125,15 @@ citable/trazable sin volver a abrir la imagen.
 `extraction_amendments` con la procedencia (bloque 33, la ruta del PNG de `resources/`, nota
 «recuperada de la imagen del propio `resources/`, no de un folio externo»).
 
-- [ ] **Step 1: Confirmar el ancla.** `python -c` que imprime `blocks[33]` de ambos espejos →
-  `type=figure`, `image=…diagram_3_2.png`, `text` vacío. (Verificado en el diseño.)
-- [ ] **Step 2: Escribir `completar_art_212_eq2.py`** — idempotente, `--resources`; **lee el
+- [x] **Step 1: Confirmar el ancla.** `python -c` que imprime `blocks[33]` de ambos espejos →
+  `type=figure`, `image=…diagram_3_2.png`, `text` vacío. (Verificado en el diseño y en ejecución.)
+- [x] **Step 2: Escribir `completar_art_212_eq2.py`** — idempotente, `--resources`; **lee el
   PNG referenciado por el propio bloque** (no un PDF), escribe `text="F_LP = P·Dm/4 (2)"` con
   su `extraction_amendments`, no toca ningún otro valor. Aborta si el bloque 33 ya no apunta a
-  ese PNG (defensa ante reorganización de `resources/`).
-- [ ] **Step 3: Correr una vez por espejo** y comprobar con `git diff` que sólo cambia el
-  bloque de la ec. (2) y su metadato.
-- [ ] **Step 4: Commit** — `Art. 212: fija la ec. (2) F_LP=P·Dm/4 desde la imagen de resources/ (Regla n.1)`.
+  ese PNG (defensa ante reorganización de `resources/`). Imagen leída y confirmada: `F_LP = P·Dm/4 (2)`.
+- [x] **Step 3: Correr una vez por espejo** y comprobar con `git diff` que sólo cambia el
+  bloque de la ec. (2) y su metadato. Confirmado: 28 ins / 4 del, solo el bloque 33 y el amendment.
+- [x] **Step 4: Commit** — `Art. 212: fija la ec. (2) F_LP=P·Dm/4 desde la imagen de resources/ (Regla n.1)`.
 
 ### Tarea 0.2 — Reparar el **vacío real** de la energía almacenada (App. 501-II eq. II-1/II-2) en `resources/`
 

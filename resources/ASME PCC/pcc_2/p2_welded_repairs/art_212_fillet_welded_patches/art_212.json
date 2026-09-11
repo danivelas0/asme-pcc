@@ -213,7 +213,8 @@
     {
       "type": "figure",
       "page": 97,
-      "image": "fig/art_212_diagram_3_2.png"
+      "image": "fig/art_212_diagram_3_2.png",
+      "text": "F_LP = P·Dm/4 (2)"
     },
     {
       "type": "paragraph",
@@ -594,5 +595,16 @@
       "page": 100,
       "text": "(www.asme.org)"
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-11",
+    "script": "completar_art_212_eq2.py",
+    "que": "Se fija en la capa de texto la ec. (2) F_LP = P*Dm/4, hasta ahora presente solo como imagen (diagrama de la Fig. 212-3.2).",
+    "bloque": 33,
+    "imagen_fuente": "fig/art_212_diagram_3_2.png",
+    "imagen_sha256": "93e188cfb151dd7e297af4ae15133ce581091b5e41836dd350e00bb53aa851f1",
+    "texto_fijado": "F_LP = P·Dm/4 (2)",
+    "procedencia": "Recuperada leyendo el PNG del propio resources/ (Regla nº 1: un dato puede vivir en resources/ como imagen). NO se uso ningun folio/PDF externo ni memoria del modelo.",
+    "alcance": "Solo el bloque de la ec. (2) y este metadato. Ningun otro valor del JSON se altera (regla 9 del proyecto)."
+  }
 }
