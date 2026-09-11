@@ -1,0 +1,44 @@
+name: pruebas
+
+# CI PARCIAL. Los runners de GitHub son Linux: NO pueden sembrar el VBA
+# (make_vba_seed.py), construir el .xlsm (build_db_materiales.py sobre el maestro)
+# ni recalcular fórmulas (verificar.py) — todo eso depende de Excel + COM de
+# Windows. Aquí solo corren las pruebas de Python puro / openpyxl que leen
+# resources/ (JSON rastreado) y el .xlsm ya commiteado.
+#
+# "CI verde" NO es "entregable verificado": el gate completo (build + pytest +
+# verificar.py) sigue siendo manual y local. Ver CONTRIBUTING.md.
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-sin-excel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Dependencias
+        run: pip install openpyxl pytest
+
+      - name: Pruebas sin Excel
+        working-directory: outputs/Base_Datos_Materiales_ASME/scripts
+        # Se corre el subconjunto que no toca COM. Se EXCLUYE, sin debilitarla,
+        # TestLintVba: vive en make_vba_seed.py, que importa winreg (solo
+        # Windows) en el nivel de módulo. Esa prueba y el gate completo corren
+        # en local. No se relaja ninguna prueba; solo se aparta la que necesita
+        # el toolchain de Windows/Excel.
+        run: >
+          python -m pytest -q
+          test_b36_dimensiones.py
+          test_secii_tablas.py
+          test_build_db.py
+          test_dashboard.py
+          --deselect test_dashboard.py::TestLintVba
