@@ -140,29 +140,35 @@ citable/trazable sin volver a abrir la imagen.
 **Files:** Create `scripts/completar_app_501_energia.py`; Modify `app_501_ii.json` (y su
 espejo `part_5_...`); leer/validar Tabla 501-III-1-1 en `app_501_iii.json`.
 
-**Fuente (resources/):** verificado en el diseño — en los **dos** espejos, los bloques de las
-ec. (II-1)/(II-2) están **vacíos y sin `image`**; (II-3) `TNT=E/4 266 920` y (II-5) sí están
-en texto; la Tabla 501-III-1-1 (`R_scaled`) está como `table` y sólo se lee. La ec. (II-1) es
-por tanto un **vacío de extracción de `resources/`**, no algo que se pueda recuperar de una
-imagen existente.
+**Fuente (resources/) — PREMISA CORREGIDA EN EJECUCIÓN (2026-09-11).** El diseño del plan
+afirmaba que los bloques de la ec. (II-1)/(II-2) estaban **vacíos y sin `image`** (vacío real).
+Al ejecutar se comprobó que es **falso**: los bloques **sí traen texto**, pero la extracción
+está **colapsada** — el PDF de PCC-2 es born-digital y su fuente matemática privada mapeó los
+corchetes y operadores a letras Latin-1 (`Ä Å Ç É Ñ Ö ×`), no a `U+FFFD`. `figures = 0` (no
+hay imagen que leer) y el otro espejo (`part_5_…`) **no contiene** el App. 501-II. Las hermanas
+aire-only (II-2, II-4) tienen el mismo defecto; las de TNT (II-3, II-5) llegaron legibles.
 
-> **Decisión pendiente del ingeniero.** Como el dato **no está en `resources/`**, la Regla
-> nº 1 prohíbe tomarlo de `knowledge/claude.md` (derivado) o de memoria. Dos caminos, y esta
-> tarea no arranca hasta elegir uno:
-> (a) **Reparar `resources/`**: re-extraer el apéndice 501-II para capturar la imagen de la
->     ec. (II-1)/(II-2) al JSON (con `extraction_amendments`), y **entonces** la Fase 8 la
->     consume. Es la única vía que respeta «todo dato entra desde `resources/`».
-> (b) **Diferir la Fase 8**: la energía neumática queda fuera, la hidrostática es el caso
->     base, y se declara el límite. El resto del plan no depende de ello.
+> **Decisión del ingeniero (2026-09-11): «Léelo directamente de la carpeta de standards».**
+> El PDF de PCC-2 sí está en `…/0-CODES/PCC - POST CONSTRUCTION CODE/ASME PCC-2 REPAIR OF
+> PRESSURE EQUIPMENT AND PIPING.pdf` (la ruta del `CLAUDE.md` usa el usuario `dvelasquez`; en
+> esta máquina es `User`). Se leyó **solo para corregir/verificar** el JSON (uso permitido por
+> la Regla nº 1); nunca se añade al repo (copyright ASME) ni alimenta un motor directamente.
+> Las páginas 306-308 (folios 281-282) se renderizaron con PyMuPDF y se leyeron; de ahí salen
+> las formas limpias. Camino (a) cumplido **sin re-extraer con marker**: la corrección puntual
+> de la capa de texto es suficiente y más segura que re-correr el extractor.
 
-- [ ] **Step 1: Confirmar el vacío** en los dos espejos (`equation` con `text` vacío y sin
-  `image`). Ya verificado; re-confirmar en ejecución por si `resources/` cambió.
-- [ ] **Step 2 (camino a):** re-extraer el apéndice 501-II para poblar la imagen de la ec.
-  (II-1)/(II-2) en el JSON, con procedencia; escribir su `text` en función de `k`, `Pa`,
-  `Pat`, `V` **tal como el código lo imprime** (no la forma aire-only `2.5`/`0.286`).
-- [ ] **Step 3: Leer la Tabla 501-III-1-1** (`R_scaled`) y dejar constancia de sus valores por
-  criterio para que la Fase 8 los ofrezca por lista.
-- [ ] **Step 4: Commit** — `App. 501: repara el vacio de la energia almacenada (II-1/II-2) en resources/ (Regla n.1)`.
+- [x] **Step 1: Confirmar el estado real** en `resources/`. Hecho: no es vacío sino **texto
+  colapsado**; sin imagen; sin espejo `part_5`. Premisa del diseño corregida (arriba).
+- [x] **Step 2 (camino a):** `completar_app_501_energia.py` fija en la capa de texto las ec.
+  (II-1) `E = [1/(k-1)]*Pat*V*[1 - (Pa/Pat)^((k-1)/k)]`, (II-2) `2.5*…^0.286` y (II-4)
+  `360*…^0.286` **tal como las imprime el código** (la general en `k`, no la aire-only como
+  única forma), con procedencia (PDF, folios, SHA-256 `ab8e7b6…`) en `extraction_amendments`.
+  Idempotente y defensivo (localiza por rótulo y tipo). Ningún valor se altera.
+- [x] **Step 3: Leer la Tabla 501-III-1-1** (`R_scaled`) del PDF y dejar constancia estructurada
+  en `app_501_iii.json` (4 filas: 20/50 vidrio, 12/30 tímpano-bloques, 6/15 pulmón-ladrillo,
+  2/5 fatal) + reglas (`R_scaled ≥ 20 m/kg^⅓`; `R = 30 m` para `E ≤ 8 130 000 J`) y la ec.
+  (III-1) `R = Rscaled*(2*TNT)^(1/3)`, para que la Fase 8 los ofrezca por lista con trazabilidad.
+- [x] **Step 4: Commit** — `App. 501: repara la extraccion colapsada de la energia almacenada (II-1/II-2/II-4, III-1) desde el PDF (Regla n.1)`.
 
 ---
 
