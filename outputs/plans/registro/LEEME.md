@@ -22,10 +22,11 @@ la fuente es `CLAUDE.md` en la raíz y, para el detalle por revisión,
 | `Plan_Dashboard_Jerarquico.md` | 2026-09-08 | El árbol de navegación de cinco niveles y las quince hojas `NAV_*` | 69 hojas |
 | `plan_motor_art206_collar_y_separacion_parche_collar.md` | 2026-09-10 | `Collar_PCC2_Art206` (Type A/B), la Sección 7 de material compartida con el 212, y la decisión de desanclado total del 212 (delegada al plan siguiente) | 71 hojas |
 | `plan_desanclado_total_motor_art212.md` | 2026-09-10 | `Parche_PCC2_Art212` nace 100 % en código; `HOJAS_HEREDADAS` queda en `("Instrucciones", "Datos_Ref")` | 71 hojas |
+| `plan_entradas_de_motor_desde_base_de_datos.md` | 2026-09-11 | Toda entrada tabulada sale de una base por desplegable bloqueante (reglas 12/14); `DB_B36_10`/`DB_B36_19` para dimensiones; se retira `Datos_Ref` y `HOJAS_HEREDADAS` queda en `("Instrucciones",)`. Su `spec_*` acompaña. | 72 hojas |
 
 Referencias que ya no valen, y que se dejan tal como se escribieron:
 
-- Los conteos de hojas de todos ellos. El libro vigente tiene **70**.
+- Los conteos de hojas de todos ellos. El libro vigente tiene **72**.
 - `Buscar_NoMetalicos` y `DB_NoMetalicos`, retiradas en la Rev. 4d por alcance.
 - `Buscar_Propiedades`, renombrada `Buscar_Prop_IID`.
 - `CLAVE_VOLVER`, `AbrirHoja` y `VolverAlDashboard`, sustituidos por
