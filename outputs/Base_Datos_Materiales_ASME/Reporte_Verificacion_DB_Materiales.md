@@ -223,6 +223,26 @@ Temperatura de evaluacion: **25 °C** · metal base `A-1 | A106 | B | Pipe & tub
 
 Dictamen global del modulo: **APTO** (OK).
 
+## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)
+
+| Magnitud | Caso | Referencia Python (N/mm) | Hoja | Estado |
+|---|---|---|---|---|
+| F_CP | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| F_LP | Operacion | 38.91401303125 | 38.91401303125 | OK |
+| F_C | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| F_L | Operacion | 38.91401303125 | 38.91401303125 | OK |
+| F_max | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| F_CP | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_LP | Diseno | 77.8280260625 | 77.8280260625 | OK |
+| F_C | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_L | Diseno | 77.8280260625 | 77.8280260625 | OK |
+| F_max | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_CP | Envolvente | 311.31210425 | 311.31210425 | OK |
+| F_LP | Envolvente | 155.656052125 | 155.656052125 | OK |
+| F_C | Envolvente | 311.31210425 | 311.31210425 | OK |
+| F_L | Envolvente | 155.656052125 | 155.656052125 | OK |
+| F_max | Envolvente | 311.31210425 | 311.31210425 | OK |
+
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 
 | Comprobacion | Detalle | Estado |
@@ -295,6 +315,7 @@ Discrepancias: **0**
 | 5b. Guardia listas fijas en motor (regla 12/14) | 0 |
 | 6. Interpolacion recalculada | 0 |
 | 7. Caso semilla | 0 |
+| 6e. Pasos del flujo 212 (recalculo Excel) | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |

@@ -7122,6 +7122,95 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
          'IF($D$25<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
          '"ELEGIBLE")))))', com140)
 
+    # --- PASO 2 — Cargas de presion y externas combinadas (212-3.2) ----------
+    # Fuente: ec.(1) F_CP = P*Dm/2 [bloque 29]; ec.(2) F_LP = P*Dm/4 [bloque 33,
+    # fijada en la capa de texto en la Fase 0.1]; F_C = F_CP + F_CO [37];
+    # F_L = F_LP + F_LO [39]; el filete usa F_A > F_C y F_L [59]; 212-3.1(a) [16]
+    # obliga a evaluar flexion/torsion/viento/fatiga -> entran como F_CO/F_LO.
+    # Para esfera/cabezal (D11=3), 212-3.2(c) [44] pide un calculo alternativo:
+    # no se aplican (1)/(2), se declara el hand-off y F_max = NA() (decision 3
+    # del ingeniero: literal, solo cilindro). Bloque nuevo: no toca el oracle.
+    # F_max alimenta el filete en el Paso 4 (Fase 4 cablea w_min a F_max).
+    banda_literal(142, "PASO 2 · CARGAS DE PRESIÓN Y EXTERNAS COMBINADAS  "
+                       "(ASME PCC-2 Art. 212-3.2)")
+    encabezado(143, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Operación"), (5, "Diseño típico"),
+                     (6, "Envolvente"), (7, "Referencia")))
+
+    com144 = ("Entrada: fuerza unitaria circunferencial por OTRAS cargas "
+              "(flexion, torsion, viento, sismo), N/mm. 212-3.1(a) obliga a "
+              "evaluarlas; 0 es un valor valido tecleado. Se suma a F_CP en los "
+              "tres casos de presion.")
+    lab(144, "Carga externa circunferencial", unidad="N/mm",
+        ref="212-3.1(a) / 212-3.2(b)", com=com144)
+    ws.cell(144, 2, "F_CO").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D144", 0, com144)
+
+    com145 = ("Entrada: fuerza unitaria longitudinal por OTRAS cargas, N/mm "
+              "(212-3.1a). 0 es un valor valido. Se suma a F_LP en los tres casos.")
+    lab(145, "Carga externa longitudinal", unidad="N/mm",
+        ref="212-3.1(a) / 212-3.2(b)", com=com145)
+    ws.cell(145, 2, "F_LO").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D145", 0, com145)
+
+    com146 = ("Calculo: fuerza unitaria circunferencial por presion (ec. 1, "
+              "212-3.2a): F_CP = P(MPa)·Dm/2. Para cilindro; en esfera/cabezal "
+              "(D11=3) no aplica -> ver F_max.")
+    lab(146, "Fuerza circunf. por presión", unidad="N/mm", ref="ec.1: P·Dm/2",
+        com=com146)
+    ws.cell(146, 2, "F_CP").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D146", "=D62*$D$52/2", com146)
+    calc("E146", "=E62*$D$52/2", com146)
+    calc("F146", "=F62*$D$52/2", com146)
+
+    com147 = ("Calculo: fuerza unitaria longitudinal por presion (ec. 2, "
+              "212-3.2a): F_LP = P(MPa)·Dm/4.")
+    lab(147, "Fuerza longit. por presión", unidad="N/mm", ref="ec.2: P·Dm/4",
+        com=com147)
+    ws.cell(147, 2, "F_LP").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D147", "=D62*$D$52/4", com147)
+    calc("E147", "=E62*$D$52/4", com147)
+    calc("F147", "=F62*$D$52/4", com147)
+
+    com148 = ("Calculo: fuerza circunferencial total (ec. 212-3.2b): "
+              "F_C = F_CP + F_CO.")
+    lab(148, "Fuerza circunf. total", unidad="N/mm", ref="F_C = F_CP + F_CO",
+        com=com148)
+    ws.cell(148, 2, "F_C").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D148", "=D146+$D$144", com148)
+    calc("E148", "=E146+$D$144", com148)
+    calc("F148", "=F146+$D$144", com148)
+
+    com149 = ("Calculo: fuerza longitudinal total (ec. 212-3.2b): "
+              "F_L = F_LP + F_LO.")
+    lab(149, "Fuerza longit. total", unidad="N/mm", ref="F_L = F_LP + F_LO",
+        com=com149)
+    ws.cell(149, 2, "F_L").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D149", "=D147+$D$145", com149)
+    calc("E149", "=E147+$D$145", com149)
+    calc("F149", "=F147+$D$145", com149)
+
+    com150 = ("Calculo: fuerza gobernante del filete, F_max = MAX(F_C, F_L). El "
+              "filete se dimensiona para que F_A la supere (ec. 4, 212-3.4). En "
+              "esfera/cabezal (D11=3) las ec. (1)/(2) no aplican: F_max = NA() y "
+              "se declara el hand-off 212-3.2(c) (calculo alternativo / analisis).")
+    lab(150, "Fuerza gobernante del filete", unidad="N/mm",
+        ref="F_max = MAX(F_C, F_L)", com=com150)
+    ws.cell(150, 2, "F_max").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D150", "=IF($D$11=3,NA(),MAX(D148,D149))", com150)
+    calc("E150", "=IF($D$11=3,NA(),MAX(E148,E149))", com150)
+    calc("F150", "=IF($D$11=3,NA(),MAX(F148,F149))", com150)
+
+    com151 = ("212-3.2(c): para componentes esfericos, toriesfericos o "
+              "elipsoidales (D11=3) se usan calculos de fuerza alternativos; "
+              "este motor no los implementa y declara el hand-off a analisis. "
+              "Las ec. (1)/(2) de arriba valen solo para cilindro (tuberia/"
+              "virola).")
+    calc("D151", '=IF($D$11=3,"HAND-OFF 212-3.2(c): esfera/cabezal — usar calculo '
+                 'alternativo o analisis; F_max no aplica","cilindro: aplican ec. '
+                 '(1) y (2)")', com151)
+    ws.merge_cells("D151:G151")
+
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
     # existen en ws, para que comentar_art212_base() aplique sus notas de

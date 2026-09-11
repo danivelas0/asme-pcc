@@ -953,6 +953,27 @@ class TestBuildParcheContraOracle:
             assert celda in origen, f"{celda} sin validacion"
             assert contiene in origen[celda], f"{celda}: {origen[celda]!r}"
 
+    # --- Fase 2: cargas de presion y externas combinadas (Paso 2, 212-3.2) ---
+    # ec.(1) F_CP=P*Dm/2 [29], ec.(2) F_LP=P*Dm/4 [33/Fase 0.1], F_C=F_CP+F_CO
+    # [37], F_L=F_LP+F_LO [39], F_max=MAX(F_C,F_L); esfera/cabezal (D11=3) ->
+    # hand-off 212-3.2(c) [44], F_max=NA(). Bloque nuevo del anexo (filas 142+),
+    # pura adicion: no toca ninguna celda del oracle.
+    def test_paso2_cargas(self):
+        ws = self._construir()
+        assert str(ws["A142"].value).startswith("PASO 2"), ws["A142"].value
+        # Entradas de cargas externas (un valor cada una, aplican a los 3 casos).
+        assert ws["D144"].value == 0
+        assert ws["D145"].value == 0
+        # Fuerzas de presion por caso (Operacion D / Diseno E / Envolvente F).
+        assert ws["D146"].value == "=D62*$D$52/2", "F_CP Op"
+        assert ws["F146"].value == "=F62*$D$52/2", "F_CP Env"
+        assert ws["D147"].value == "=D62*$D$52/4", "F_LP Op"
+        # Totales y gobernante.
+        assert ws["D148"].value == "=D146+$D$144", "F_C Op"
+        assert ws["D149"].value == "=D147+$D$145", "F_L Op"
+        assert ws["D150"].value == "=IF($D$11=3,NA(),MAX(D148,D149))", "F_max Op"
+        assert ws["F150"].value == "=IF($D$11=3,NA(),MAX(F148,F149))", "F_max Env"
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).

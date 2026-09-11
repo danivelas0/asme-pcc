@@ -1413,6 +1413,43 @@ def auditar():
         f"({'OK' if ok_global else 'FALLO — se esperaba APTO'}).")
     log("")
 
+    # ---- 6e. pasos del flujo 212 recalculados en Excel -------------------
+    # Recalcula en Excel (el mismo libro semilla de la seccion 7) las magnitudes
+    # nuevas de los pasos del flujo del Art. 212 y las contrasta con su
+    # re-derivacion en Python desde las ENTRADAS que la propia hoja recalculo
+    # -no un valor escrito a mano-. Asi la prueba ejerce la cadena real de
+    # formulas en el motor de Excel, no una copia.
+    #   Paso 2 (212-3.2): F_CP=P*Dm/2, F_LP=P*Dm/4, F_C=F_CP+F_CO,
+    #                     F_L=F_LP+F_LO, F_max=MAX(F_C,F_L).
+    # El caso semilla es cilindro (D11=1), asi que F_max aplica (no NA).
+    log("## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)")
+    log("")
+    flujo_bad = 0
+    dm = rec["D52"].value
+    fco = rec["D144"].value or 0
+    flo = rec["D145"].value or 0
+    log("| Magnitud | Caso | Referencia Python (N/mm) | Hoja | Estado |")
+    log("|---|---|---|---|---|")
+    for etiq, pc, cpc, lpc, cc, lc, mc in (
+            ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150"),
+            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150"),
+            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150")):
+        P = rec[pc].value
+        if not isinstance(P, (int, float)) or not isinstance(dm, (int, float)):
+            flujo_bad += 1
+            log(f"| (entradas) | {etiq} | P={P} Dm={dm} | — | FALLO |")
+            continue
+        exp_cp, exp_lp = P * dm / 2, P * dm / 4
+        exp_c, exp_l = exp_cp + fco, exp_lp + flo
+        for nombre, celda, ref in (("F_CP", cpc, exp_cp), ("F_LP", lpc, exp_lp),
+                                   ("F_C", cc, exp_c), ("F_L", lc, exp_l),
+                                   ("F_max", mc, max(exp_c, exp_l))):
+            got = rec[celda].value
+            ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-9)
+            flujo_bad += 0 if ok else 1
+            log(f"| {nombre} | {etiq} | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
+    log("")
+
     # ---- 8. capa de navegacion -------------------------------------------
     log("## 8. Capa de navegacion (Dashboard y proyecto VBA)")
     log("")
@@ -1811,8 +1848,8 @@ def auditar():
 
     # ---- cierre -----------------------------------------------------------
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
-             + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
-             + map_bad + sec_bad + b36_bad)
+             + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + flujo_bad
+             + nav_bad + map_bad + sec_bad + b36_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -1824,6 +1861,7 @@ def auditar():
                         ("5b. Guardia listas fijas en motor (regla 12/14)", len(infractoras)),
                         ("6. Interpolacion recalculada", nbad),
                         ("7. Caso semilla", semilla_bad),
+                        ("6e. Pasos del flujo 212 (recalculo Excel)", flujo_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),

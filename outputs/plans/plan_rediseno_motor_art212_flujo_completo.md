@@ -225,20 +225,23 @@ el ingeniero las teclea; 0 es un valor válido tecleado, no un default oculto) �
 `F_max = MAX(F_C, F_L)`. `F_max` alimenta el filete (Paso 4). Para geometría no cilíndrica, el
 motor **declara** el hand-off del 212-3.2(c) en vez de aplicar (1)/(2).
 
-- [ ] **Step 1: test (falla).** `test_paso2_cargas`: afirma celdas `F_CP=P·Dm/2`,
-  `F_LP=P·Dm/4`, entradas `F_CO`/`F_LO`, `F_C`, `F_L`, `F_max=MAX(F_C,F_L)`; y que en modo no
-  cilíndrico las celdas (1)/(2) muestran el aviso de hand-off 212-3.2(c). Correr → FAIL.
-- [ ] **Step 2: entradas externas.** Añadir en la Sección 1 (datos): `F_CO` [N/mm] y `F_LO`
-  [N/mm] como `inp` tecleables, ref «cargas externas: flexión/torsión/viento/sismo — 212-3.1(a)».
-- [ ] **Step 3: fuerzas de presión (cilindro, por columna de presión Op/Diseño/Envolvente).**
-  `F_CP = P·Dm/2` y `F_LP = P·Dm/4`, cada una en su fila triple D/E/F. Citar bloques [29]/(2).
-- [ ] **Step 4: totales y gobernante.** `F_C = F_CP + F_CO`, `F_L = F_LP + F_LO`,
-  `F_max = MAX(F_C, F_L)` por columna.
-- [ ] **Step 5: hand-off no cilíndrico.** Si `$D$11≠1` (no tubería/cilindro), las filas (1)/(2)
-  muestran «212-3.2(c): usar cálculo de fuerzas alternativo (esfera/toriesférico/elipsoidal) —
-  fuera del alcance de este motor» y `F_max` = NA(), bloqueando Pasos 4-5. (Decisión 3: literal.)
-- [ ] **Step 6: `verificar.py §6e`** recalcula `F_CP`, `F_LP`, `F_max` en Excel para el caso
-  semilla desde la misma expresión que emite el motor. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso2_cargas` afirma A142, D144/D145 (F_CO/F_LO=0),
+  F_CP=`=D62*$D$52/2`, F_LP=`=D62*$D$52/4`, F_C=`=D146+$D$144`, F_L=`=D147+$D$145`,
+  F_max=`=IF($D$11=3,NA(),MAX(D148,D149))`. → FAIL, luego PASS.
+- [x] **Step 2: entradas externas.** F_CO (D144) y F_LO (D145) en el anexo (Paso 2), `inp`
+  tecleables default 0, ref 212-3.1(a)/212-3.2(b). Van en el anexo, no en la Sección 1, para no
+  desplazar el oracle (misma decisión de maquetación).
+- [x] **Step 3: fuerzas de presión (cilindro, por columna Op/Diseño/Env).** F_CP (146) = P·Dm/2
+  [29]; F_LP (147) = P·Dm/4 [33, Fase 0.1]. Filas triples D/E/F.
+- [x] **Step 4: totales y gobernante.** F_C (148), F_L (149), F_max (150) por columna.
+- [x] **Step 5: hand-off no cilíndrico.** F_max = `IF($D$11=3,NA(),MAX(...))`: solo esfera/
+  cabezal (D11=3) es no-cilindro (virola D11=2 SÍ es cilindro — corregido respecto al «≠1» del
+  plan). D151 declara el hand-off 212-3.2(c). Decisión 3: literal, solo cilindro.
+- [x] **Step 6: `verificar.py §6e`** (nueva sección) recalcula F_CP/F_LP/F_C/F_L/F_max en Excel
+  para el caso semilla desde su re-derivación en Python (P·Dm/2 etc.) sobre las entradas que la
+  hoja recalculó. 15 casos OK. pytest 238 · verificar.py **0 fallos**. Commit.
+  **Nota:** el cableado de w_min a F_max NO es de esta fase (es Fase 4 Step 2); Fase 2 solo
+  CREA F_max, por eso no toca ninguna celda del oracle.
 
 ---
 
