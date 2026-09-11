@@ -985,6 +985,26 @@ git commit -m "DB_B36_10 y DB_B36_19: las dos bases dimensionales, auditadas"
 
 ## Tarea 7: Cascada dimensional en el Art. 212
 
+> **EJECUTADA junto con la Tarea 8 (2026-09-11), con tres desvíos del diseño de
+> abajo, todos deliberados:**
+> 1. **Norma en la fila 22, sin correr el bloque.** El diseño ponía la norma en
+>    `D17`, pero `D17` es el encabezado, y correr NPS/cédula/OD/espesor habría
+>    reapuntado ~12 fórmulas de cálculo aguas abajo (D52, D54, D55, D56, D65,
+>    D73, D78, E65, F65, E87) que referencian OD(D20)/espesor(D21). En su lugar
+>    NPS@18, cédula@19, OD@20, espesor@21 se quedan; la norma ocupa la fila 22
+>    (antes material descriptivo, ya retirado). Ninguna fórmula de cálculo cambia.
+> 2. **Se fundió con la Tarea 8** (OD/espesor contra `DB_B36`): como el NPS pasa
+>    a guardarse con formato `nps_impreso` (`'12 (300)'`), dejar OD/espesor en
+>    `Datos_Ref` daba #N/D. Separarlas dejaba la hoja rota en el interin.
+> 3. **Paridad contra el oracle Rev0:** se añadió `DIVERGENCIAS_REEMPLAZADAS`
+>    (celda con contenido nuevo a propósito, exigida no-vacía, verificada por
+>    `TestCascadaDimensionalArt212`), distinta de `DIVERGENCIAS_DECLARADAS`
+>    (celda retirada, exigida vacía). También se añadió la columna auxiliar
+>    `clave_ced` a `DB_B36` para listar cédulas sin blancos, y `n_nps`/`max_ced`
+>    salen de `build_db_b36` (no números mágicos: NPS reales=45, cédulas máx=33).
+> Verificado: `test_build_db + test_dashboard + test_secii_tablas` → 229 pasan.
+> `verificar.py` (recálculo en Excel) queda para la corrida local del ingeniero.
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_parche_art212`, filas 18-19 y columnas ocultas)
 - Modify: `scripts/test_dashboard.py`
@@ -1150,6 +1170,10 @@ git commit -m "Art. 212: NPS y cedula salen de DB_B36_10 / DB_B36_19"
 
 ## Tarea 8: OD y espesor del Art. 212 contra la base
 
+> **EJECUTADA junto con la Tarea 7 (2026-09-11)** — ver la nota al inicio de la
+> Tarea 7. OD(`D20`)/espesor(`D21`) leen de `DB_B36_10`/`DB_B36_19` por la clave
+> `NPS|cédula` (`clave`), con el conmutador de edición vía `CHOOSE($AB$2, …)`.
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_parche_art212`, D20 y D21)
 - Modify: `scripts/test_dashboard.py`
@@ -1244,6 +1268,22 @@ git commit -m "Art. 212: OD y espesor salen de la base dimensional"
 
 ## Tarea 9: La misma cascada en el Art. 206
 
+> **EJECUTADA (2026-09-11), mirando la implementación REAL del Art. 212 (Tareas
+> 7-8), no el borrador D17 de abajo —que el 212 abandonó—. Dos desvíos
+> deliberados:**
+> 1. **Norma en la fila 33, no 17.** `D17` es el encabezado de la sección 1, y
+>    las filas 18-32 están todas ocupadas (Tipo de sleeve@22, UT@23, defecto
+>    circ.@24, presiones, geometría…); correrlas reapuntaría D45/D46 (usan OD@20)
+>    y D54/D64 (usan t@21). La norma ocupa la fila 33, libre al final de la
+>    sección 1 — mismo criterio que la fila 22 del Art. 212.
+> 2. **OD/espesor con `_choose_b36(idx,…)` + `MATCH(clave)`**, tal como quedó el
+>    212 (no el `rango(...)` literal del borrador). El Art. 206 no tiene oracle
+>    Rev0, así que no necesitó `DIVERGENCIAS_*`: su paridad la fija
+>    `TestCascadaDimensionalArt206` contra DB_B36. `DEUDA_LISTA_FIJA` quedó vacía.
+> Verificado: `test_build_db + test_dashboard + test_secii_tablas` → 232 pasan;
+> `verificar.py` → 0 fallos (§5b guardia=0, §7 caso semilla=0, §11 B36=0).
+> Commit `7d78af9`.
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`build_collar_art206`, filas 18-21)
 - Modify: `scripts/test_dashboard.py`
@@ -1252,7 +1292,7 @@ git commit -m "Art. 212: OD y espesor salen de la base dimensional"
 - Consume: `_materializar_cascada_b36`, `_rango_b36`, `COL_B36` (Tareas 6-8).
 - Produce: en `Collar_PCC2_Art206`, la misma estructura `D17`/`D18`/`D19` + `D20`/`D21`.
 
-- [ ] **Step 1: Escribir la prueba**
+- [x] **Step 1: Escribir la prueba**
 
 ```python
 class TestCascadaDimensionalArt206:
@@ -1275,7 +1315,7 @@ class TestCascadaDimensionalArt206:
             assert "Datos_Ref" not in f and "DB_B36" in f, f"{celda}: {f}"
 ```
 
-- [ ] **Step 2: Correr para verla fallar**
+- [x] **Step 2: Correr para verla fallar**
 
 Run:
 ```powershell
@@ -1283,7 +1323,7 @@ python -m pytest test_dashboard.py::TestCascadaDimensionalArt206 -q
 ```
 Espera: FAIL.
 
-- [ ] **Step 3: Aplicar el mismo tratamiento**
+- [x] **Step 3: Aplicar el mismo tratamiento**
 
 En `build_collar_art206`, el Art. 206 numera sus filas igual que el 212 en esta zona
 (18 = NPS, 19 = cédula, 20 = OD, 21 = t), pero **hay que confirmarlo leyendo la función**
@@ -1299,7 +1339,7 @@ Eliminar los dos `dv_list` literales de NPS y cédula, y la firma de
 `build_collar_art206` pasa a recibir `b3610, b3619` igual que el 212 — actualizar su
 llamada en `main()`.
 
-- [ ] **Step 4: Reconstruir, pruebas y verificar**
+- [x] **Step 4: Reconstruir, pruebas y verificar**
 
 Run:
 ```powershell
@@ -1309,7 +1349,7 @@ python verificar.py --resources ..\..\..\resources --wb ..\..\Motor_de_Calculo_A
 ```
 Espera: verde y 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add scripts/build_db_materiales.py scripts/test_dashboard.py outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm
@@ -1319,6 +1359,22 @@ git commit -m "Art. 206: NPS, cedula, OD y espesor salen de la base dimensional"
 ---
 
 ## Tarea 10: Retirar `Datos_Ref` y cerrar el guardia
+
+> **EJECUTADA (2026-09-11).** Gates finales: 236 pruebas verdes; `verificar.py`
+> en Excel real → total de fallos 0 (§5b guardia=0 sin deuda, §7 caso semilla
+> APTO, §11 bases B36=0). Libro resultante: 72 hojas. Dos desvíos, ambos
+> deliberados:
+> 1. **`deprecate_datos_ref` → `retirar_datos_ref`.** El diseño solo pedía borrar
+>    la hoja; la función previa la conservaba con un bloque «OBSOLETO». Se
+>    reemplazó por el borrado defensivo (`if "Datos_Ref" in wb.sheetnames: del`).
+> 2. **Dos referencias vivas extra a `Datos_Ref`**, no previstas por el Step 1,
+>    detectadas por `test_ninguna_formula_la_menciona` y por Grep: (a) el valor de
+>    celda `A131` del Art. 212 (venía de `nota_extra_cascada`) y (b) los
+>    comentarios de `comentar_art212_base` para las filas 18-22, que las Tareas 7-8
+>    dejaron citando `Datos_Ref` y describiendo mal D22 (hoy «Norma dimensional»).
+>    Se corrigieron para reflejar `DB_B36` / la cascada; la fila 23 salió del dict
+>    de comentarios (celda retirada). `DEUDA_LISTA_FIJA` ya estaba `{}` desde las
+>    Tareas 7-9; se conserva vacía (la consultan el guardia §5 y el test).
 
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`HOJAS_HEREDADAS`, `DEUDA_LISTA_FIJA`, `main`, árbol de navegación)
@@ -1330,7 +1386,7 @@ git commit -m "Art. 206: NPS, cedula, OD y espesor salen de la base dimensional"
 - Consume: todo lo anterior.
 - Produce: un libro sin `Datos_Ref`, con `HOJAS_HEREDADAS = ("Instrucciones",)`.
 
-- [ ] **Step 1: Comprobar que nadie más la referencia**
+- [x] **Step 1: Comprobar que nadie más la referencia**
 
 Run:
 ```powershell
@@ -1340,7 +1396,7 @@ Cada aparición restante hay que mirarla: las que queden deben ser **texto hist�
 comentarios**, nunca una fórmula ni una referencia de hoja. Buscar también con Grep en
 todo `scripts/` (incluidas las pruebas) y en `vba/`.
 
-- [ ] **Step 2: Escribir la prueba de cierre**
+- [x] **Step 2: Escribir la prueba de cierre**
 
 ```python
 class TestDatosRefRetirada:
@@ -1365,7 +1421,7 @@ class TestDatosRefRetirada:
         assert B.DEUDA_LISTA_FIJA == {}
 ```
 
-- [ ] **Step 3: Retirar la hoja**
+- [x] **Step 3: Retirar la hoja**
 
 - `HOJAS_HEREDADAS = ("Instrucciones",)`.
 - Vaciar `DEUDA_LISTA_FIJA = {}` (las cuatro celdas ya leen de rango desde las Tareas 7-9).
@@ -1382,7 +1438,7 @@ rotulado `[OBSOLETO — ver DB_B31_3 / DB_BPVC_IID]`) se va con la hoja: el dato
 en las bases auditadas y el libro anterior queda en el historial de git. Decisión del
 ingeniero del 2026-09-10.
 
-- [ ] **Step 4: Reconstruir y correr los tres gates**
+- [x] **Step 4: Reconstruir y correr los tres gates**
 
 Run:
 ```powershell
@@ -1394,14 +1450,14 @@ Espera: suites verdes; `verificar.py` en 0 con §5 mostrando
 `Validaciones infractoras en hojas de motor: **0**` **sin** deuda declarada, y §7
 manteniendo el dictamen APTO del caso semilla.
 
-- [ ] **Step 5: Documentar**
+- [x] **Step 5: Documentar**
 
 En `CLAUDE.md`: `HOJAS_HEREDADAS` queda en una sola hoja; aparecen `DB_B36_10` y
 `DB_B36_19` en la estructura de bases y en el árbol del Dashboard; las entradas
 dimensionales de los dos motores salen de esas bases. En el spec, sección «Estado
 final» con el resultado de los gates.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/build_db_materiales.py scripts/test_dashboard.py CLAUDE.md outputs/plans/spec_entradas_de_motor_desde_base_de_datos.md outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm

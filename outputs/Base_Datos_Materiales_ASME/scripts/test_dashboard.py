@@ -526,50 +526,145 @@ def cargar_oracle_parche():
 class TestParidadHojaParche:
     HOJA = "Parche_PCC2_Art212"
 
+    def test_las_dos_clases_de_divergencia_son_disjuntas(self):
+        # Una celda no puede estar RETIRADA (debe estar vacia) y REEMPLAZADA (debe
+        # tener contenido) a la vez: seria una contradiccion silenciosa.
+        comunes = set(B.DIVERGENCIAS_DECLARADAS) & set(B.DIVERGENCIAS_REEMPLAZADAS)
+        assert not comunes, comunes
+
     def test_todas_las_formulas_y_literales(self, wb):
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
         for celda, esperado in oracle["formulas"].items():
             motivo = B.DIVERGENCIAS_DECLARADAS.get((self.HOJA, celda))
             if motivo:
-                # Celda que el build ya no reproduce a proposito. Se exige que
-                # este VACIA: una divergencia declarada que resulta traer otro
-                # valor es un error, no una divergencia.
+                # Celda RETIRADA: se exige que este VACIA. Una divergencia
+                # declarada que resulta traer otro valor es un error, no una
+                # divergencia.
                 assert ws[celda].value is None, f"{celda}: {motivo}"
+                continue
+            reempl = B.DIVERGENCIAS_REEMPLAZADAS.get((self.HOJA, celda))
+            if reempl:
+                # Celda REEMPLAZADA: sale de la igualdad contra el oracle (su
+                # correccion la prueba TestCascadaDimensionalArt212), pero se
+                # exige NO vacia — si quedo vacia, es una retirada disfrazada.
+                assert ws[celda].value is not None, f"{celda}: {reempl}"
                 continue
             assert ws[celda].value == esperado, celda
 
     def test_toda_divergencia_declara_motivo(self):
-        for (hoja, celda), motivo in B.DIVERGENCIAS_DECLARADAS.items():
-            assert isinstance(motivo, str) and len(motivo) > 20, (hoja, celda)
+        for d in (B.DIVERGENCIAS_DECLARADAS, B.DIVERGENCIAS_REEMPLAZADAS):
+            for (hoja, celda), motivo in d.items():
+                assert isinstance(motivo, str) and len(motivo) > 20, (hoja, celda)
 
     def test_validaciones_de_datos(self, wb):
-        # Igual que las formulas: una validacion cuyo sqref cae ENTERO dentro
-        # de celdas declaradas en DIVERGENCIAS_DECLARADAS ya no la reproduce
-        # el build (la fila entera se retiro) y se excluye del oracle. Una
-        # validacion parcialmente divergente seguiria exigiendose completa:
-        # aqui no se da el caso, pero el guardia es honesto sobre ello.
+        # Una validacion del ORACLE cuyo sqref cae entero en celdas divergentes
+        # (retiradas o reemplazadas) ya no se exige tal cual. Y una validacion
+        # REAL cuyo sqref cae entero en celdas REEMPLAZADAS es nueva a proposito
+        # (el rango de la cascada) y su correccion la prueba
+        # TestCascadaDimensionalArt212, asi que se excluye de la comparacion. Una
+        # validacion parcialmente divergente seguiria exigiendose completa: aqui
+        # no se da el caso, pero el guardia es honesto sobre ello.
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
+
+        def coords(sqref):
+            rng = openpyxl.worksheet.cell_range.CellRange(sqref)
+            return [f"{openpyxl.utils.get_column_letter(c)}{r}"
+                    for r in range(rng.min_row, rng.max_row + 1)
+                    for c in range(rng.min_col, rng.max_col + 1)]
+
+        def todas_divergentes(sqref, tablas):
+            return all(any((self.HOJA, c) in t for t in tablas) for c in coords(sqref))
+
         reales = sorted(
             ({"sqref": str(dv.sqref), "formula1": dv.formula1}
-             for dv in ws.data_validations.dataValidation),
+             for dv in ws.data_validations.dataValidation
+             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,))),
             key=lambda d: d["sqref"])
-        esperadas = []
-        for v in oracle["validaciones"]:
-            rng = openpyxl.worksheet.cell_range.CellRange(v["sqref"])
-            coords = [f"{openpyxl.utils.get_column_letter(c)}{r}"
-                      for r in range(rng.min_row, rng.max_row + 1)
-                      for c in range(rng.min_col, rng.max_col + 1)]
-            if all((self.HOJA, c) in B.DIVERGENCIAS_DECLARADAS for c in coords):
-                continue
-            esperadas.append(v)
+        esperadas = [
+            v for v in oracle["validaciones"]
+            if not todas_divergentes(v["sqref"],
+                                     (B.DIVERGENCIAS_DECLARADAS, B.DIVERGENCIAS_REEMPLAZADAS))]
         assert reales == sorted(esperadas, key=lambda d: d["sqref"])
 
     def test_rangos_fusionados(self, wb):
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
         assert sorted(str(r) for r in ws.merged_cells.ranges) == oracle["fusionados"]
+
+
+# ---------------------------------------------------------------------------
+# Tareas 7-8: el bloque dimensional del Art. 212 sale de DB_B36 por cascada
+# ---------------------------------------------------------------------------
+# Prueba lo que el oracle Rev0 ya no cubre (las celdas REEMPLAZADAS): la cascada
+# norma -> NPS -> cedula y el lookup de OD/espesor contra DB_B36. Sin Excel no se
+# recalcula el valor resuelto -eso lo hace verificar.py con el motor real-; aqui
+# se fija la ESTRUCTURA: origen de rango (no lista fija), norma con sus dos
+# opciones, y OD/espesor leyendo de las dos ediciones y no de Datos_Ref.
+class TestCascadaDimensionalArt212:
+    HOJA = "Parche_PCC2_Art212"
+
+    def test_norma_nps_y_cedula_tienen_validacion_de_rango(self, wb):
+        ws = wb[self.HOJA]
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        # D22 = norma, D18 = NPS, D19 = cedula (la norma no corre las filas 18-21).
+        for celda in ("D18", "D19", "D22"):
+            f1 = origen.get(celda, "")
+            assert f1.startswith("="), f"{celda}: origen {f1!r}, se esperaba un rango"
+            assert not f1.startswith('"'), f"{celda}: sigue siendo una lista fija"
+
+    def test_la_norma_ofrece_las_dos_y_solo_las_dos(self, wb):
+        ws = wb[self.HOJA]
+        col = B.COL_NORMA_B36
+        vals = [ws.cell(r, col).value for r in range(B.R_DATA, B.R_DATA + 2)]
+        assert vals == ["B36.10M", "B36.19M"]
+
+    def test_od_y_espesor_leen_de_las_dos_ediciones(self, wb):
+        ws = wb[self.HOJA]
+        for celda in ("D20", "D21"):
+            f = str(ws[celda].value or "")
+            assert "DB_B36_10" in f and "DB_B36_19" in f, f"{celda}: {f!r}"
+            assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
+
+
+class TestCascadaDimensionalArt206:
+    """La misma cascada norma -> NPS -> cedula -> OD/espesor del Art. 212
+    (Tareas 7-8), aplicada al Art. 206 (Tarea 9). El Art. 206 no tiene oracle
+    Rev0 (nace 100% en codigo), asi que su correccion la fijan estos tests y no
+    DIVERGENCIAS_*: toda la paridad que aqui se exige es contra DB_B36."""
+    HOJA = "Collar_PCC2_Art206"
+
+    def test_norma_nps_y_cedula_tienen_validacion_de_rango(self, wb):
+        ws = wb[self.HOJA]
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        # D33 = norma, D18 = NPS, D19 = cedula. La norma va en la fila 33 (libre al
+        # final de la seccion 1) y no corre las filas 18-32: moverlas reapuntaria
+        # las formulas de calculo aguas abajo (D45/D46 usan D20, D54/D64 usan D21),
+        # mismo criterio que la fila 22 del Art. 212.
+        for celda in ("D18", "D19", "D33"):
+            f1 = origen.get(celda, "")
+            assert f1.startswith("="), f"{celda}: origen {f1!r}, se esperaba un rango"
+            assert not f1.startswith('"'), f"{celda}: sigue siendo una lista fija"
+
+    def test_la_norma_ofrece_las_dos_y_solo_las_dos(self, wb):
+        ws = wb[self.HOJA]
+        col = B.COL_NORMA_B36
+        vals = [ws.cell(r, col).value for r in range(B.R_DATA, B.R_DATA + 2)]
+        assert vals == ["B36.10M", "B36.19M"]
+
+    def test_od_y_espesor_leen_de_las_dos_ediciones(self, wb):
+        ws = wb[self.HOJA]
+        for celda in ("D20", "D21"):
+            f = str(ws[celda].value or "")
+            assert "DB_B36_10" in f and "DB_B36_19" in f, f"{celda}: {f!r}"
+            assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
 
 
 # ---------------------------------------------------------------------------
@@ -769,15 +864,20 @@ class TestBuildParcheContraOracle:
         # Bases minimas que la Seccion 7 referencia por nombre (Excel resuelve al
         # abrir; aqui solo deben existir para que el seed de la Fase 1 valide).
         for n in ("DB_B31_3", "Datos_Ref", "MAP_Factores", "DB_BPVC_IID",
-                  "DB_BPVC_IID_B"):
+                  "DB_BPVC_IID_B", "DB_B36_10", "DB_B36_19"):
             wb.create_sheet(n)
         # Sembrar en DB_B31_3 los dos material_id del caso precargado para que
         # el guardia de corregir_art212_fase1 (ahora en build_parche_art212) pase.
         db = wb["DB_B31_3"]
         db.cell(B.R_DATA, 1, B.SEED_ART212_BASE)
         db.cell(B.R_DATA + 1, 1, B.SEED_ART212_COLLAR)
+        # Stubs de las dos bases dimensionales (Tareas 7-8): solo hacen falta el
+        # nombre de hoja y los conteos que dimensionan las listas de la cascada.
+        b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
+                             "n_nps": 5, "max_ced": 5}
         B.build_parche_art212(wb, b313_stub(), iid1a_stub(), iidb_stub(),
-                              fac_stub(), rangos_stub())
+                              fac_stub(), rangos_stub(),
+                              b36("DB_B36_10"), b36("DB_B36_19"))
         return wb["Parche_PCC2_Art212"]
 
     ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D115", "E115", "D126", "E126",
@@ -843,6 +943,12 @@ class TestBuildParcheContraOracle:
             motivo = B.DIVERGENCIAS_DECLARADAS.get(("Parche_PCC2_Art212", celda))
             if motivo:
                 assert ws[celda].value is None, f"{celda}: {motivo}"
+                continue
+            # Celda REEMPLAZADA por el bloque dimensional (Tareas 7-8): sale de la
+            # igualdad contra el oracle y solo se exige no-vacia; su correccion la
+            # prueba TestCascadaDimensionalArt212.
+            if ("Parche_PCC2_Art212", celda) in B.DIVERGENCIAS_REEMPLAZADAS:
+                assert ws[celda].value is not None, celda
                 continue
             assert ws[celda].value == oracle["formulas"][celda], celda
 
@@ -1067,3 +1173,50 @@ class TestBasesDimensionalesB36:
         for r in (B.R_DATA, B.R_DATA + 1):
             esperada = f"{ws.cell(r, col_nps).value}|{ws.cell(r, col_des).value}"
             assert ws.cell(r, col_clave).value == esperada
+
+    def test_clave_ced_numera_designadores_no_vacios_por_nps(self, wb):
+        # clave_ced = nps_impreso|<indice 1,2,3... del designador NO vacio dentro
+        # del bloque de NPS>, y vacia (None al recargar) en las filas '...'. Es lo
+        # que deja listar las cedulas de un NPS sin ofrecer opciones en blanco.
+        for h in self.HOJAS:
+            ws = wb[h]
+            col_nps, col_des, col_cc = (B.COL_B36["nps_impreso"],
+                                        B.COL_B36["designador"], B.COL_B36["clave_ced"])
+            nps_actual, idx = None, 0
+            for r in range(B.R_DATA, ws.max_row + 1):
+                nps = ws.cell(r, col_nps).value
+                des = ws.cell(r, col_des).value
+                cc = ws.cell(r, col_cc).value
+                if nps != nps_actual:
+                    nps_actual, idx = nps, 0
+                if des:
+                    idx += 1
+                    assert cc == f"{nps}|{idx}", f"{h}!fila {r}: {cc!r}"
+                else:
+                    assert cc is None, f"{h}!fila {r}: designador vacio con clave_ced {cc!r}"
+
+
+class TestDatosRefRetirada:
+    """Cierre de la Tarea 10: la hoja heredada Datos_Ref sale del libro. Su dato
+    vivo (esfuerzos admisibles y dimensiones) esta en las bases auditadas
+    (DB_B31_3, DB_BPVC_IID, DB_B36_10/19); el libro anterior queda en git."""
+
+    def test_la_hoja_no_existe(self, wb):
+        assert "Datos_Ref" not in wb.sheetnames
+
+    def test_ninguna_formula_la_menciona(self, wb):
+        restos = []
+        for ws in wb.worksheets:
+            for fila in ws.iter_rows():
+                for c in fila:
+                    if isinstance(c.value, str) and "Datos_Ref" in c.value:
+                        restos.append(f"{ws.title}!{c.coordinate}")
+        assert restos == [], restos
+
+    def test_solo_queda_una_hoja_heredada(self):
+        import build_db_materiales as B
+        assert B.HOJAS_HEREDADAS == ("Instrucciones",)
+
+    def test_la_deuda_de_listas_fijas_esta_saldada(self):
+        import build_db_materiales as B
+        assert B.DEUDA_LISTA_FIJA == {}

@@ -6170,14 +6170,18 @@ SEED_ART212_BASE = 'A-1 | A106 | B | Pipe & tube | K03006 | P-1'      # tuberia 
 SEED_ART212_COLLAR = 'A-1 | A516 | 70 | Plate, bar, shps., sheet | K02700 | P-1'  # (E)
 
 
-def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
+def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     """Motor Art. 212 (parche soldado), 100% en codigo — desanclado del maestro
     Rev0 (Fase 4). Antes vivia heredado + corregido por integrate_motor/
     corregir_art212_fase1; ahora nace con new_sheet como Collar_PCC2_Art206.
-    Reutiliza construir_seccion7_material (Seccion 7, compartida con el 206) y el
-    lookup de Datos_Ref robustecido con ""& contra la cedula. Las formulas de las
-    secciones 1-6 se transcriben del oracle parche_art212_ref.json (Regla n.1:
-    no se reescriben de memoria); TestParidadHojaParche las fija al caracter."""
+    Reutiliza construir_seccion7_material (Seccion 7, compartida con el 206).
+    Las formulas de las secciones 1-6 se transcriben del oracle
+    parche_art212_ref.json (Regla n.1: no se reescriben de memoria) y
+    TestParidadHojaParche las fija al caracter, SALVO el bloque dimensional
+    (Tareas 7-8): NPS/cedula/OD/espesor y el selector de norma salen ahora de
+    DB_B36_10/DB_B36_19 por cascada de listas (reglas 12/14), y sus celdas se
+    declaran en DIVERGENCIAS_REEMPLAZADAS, verificadas por
+    TestCascadaDimensionalArt212 en vez de por el oracle Rev0."""
     if MOTOR in wb.sheetnames:        # el maestro aun trae la hoja heredada
         del wb[MOTOR]
     ws = new_sheet(
@@ -6258,8 +6262,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
         columnas=(("D", "Metal base"), ("E", "Collar / parche")),
         modo_cell="$D$11", temp_fuente_cell="$D$25", incluir_ej_ec=True,
         destino_st="D39/D40 de la seccion 3",
-        nota_extra_cascada="La lista corta de Datos_Ref queda como respaldo "
-        "historico y ya no alimenta el calculo.")
+        nota_extra_cascada="El material se resuelve por esta cascada contra las "
+        "bases auditadas (DB_B31_3 / DB_BPVC_IID); no hay lista corta de respaldo.")
 
     # --- Banda IDENTIFICACION (fila 4) + identificacion (filas 5-6) ---------
     # A4 es la banda de seccion, fusionada A4:G4, texto literal del *oracle*
@@ -6422,52 +6426,61 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos):
     encabezado(17, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                     (4, "Valor"), (7, "Referencia / Notas")))
 
-    com18 = ("Entrada: diametro nominal (NPS) en pulgadas, de la lista de "
-             "B36.10M en Datos_Ref. Alimenta el lookup de OD y espesor de "
-             "pared.")
-    lab(18, "Diámetro nominal", unidad="in", ref="Lista · B36.10M", com=com18)
+    # --- Bloque dimensional (Tareas 7-8): norma -> NPS -> cedula -> OD/espesor,
+    # todo contra DB_B36_10/DB_B36_19 por cascada de listas (reglas 12/14). NPS,
+    # cedula y OD/espesor conservan sus filas 18-21 del oracle Rev0 (no se corren,
+    # asi ninguna formula de calculo aguas abajo cambia su referencia); lo que
+    # cambia es su CONTENIDO, declarado en DIVERGENCIAS_REEMPLAZADAS. El selector
+    # de norma ocupa la fila 22, antes descriptiva de material (ya retirada).
+    com18 = ("Entrada: diametro nominal (NPS), del desplegable de DB_B36 segun la "
+             "norma elegida en D22. No se teclea (regla 14). Se guarda como el NPS "
+             "impreso del codigo, p.ej. '12 (300)'. Alimenta OD, espesor y la lista "
+             "de cedulas de abajo.")
+    lab(18, "Diámetro nominal", unidad="in", ref="Lista · DB_B36 (segun D22)", com=com18)
     ws.cell(18, 2, "NPS").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D18", 12, com18)
-    dv_list(ws, "D18",
-            '"0.5,0.75,1,1.25,1.5,2,2.5,3,3.5,4,5,6,8,10,12,14,16,18,20,22,24,'
-            '26,28,30,32,34,36,38,40,42,44,46,48"', com18)
+    inp("D18", "12 (300)", com18)
 
-    com19 = ("Entrada: cedula (Schedule) segun B36.10M, en Datos_Ref, para el "
-             "NPS elegido arriba.")
-    lab(19, "Cédula (Schedule)", unidad="—", ref="Lista · B36.10M", com=com19)
+    com19 = ("Entrada: cedula (designador de Schedule) del NPS elegido, en la norma "
+             "de D22, del desplegable de DB_B36. No se teclea (regla 14).")
+    lab(19, "Cédula (Schedule)", unidad="—", ref="Lista · DB_B36 (segun D22 y NPS)",
+        com=com19)
     ws.cell(19, 2, "SCH").font = Font(name=MONO, size=10, color=TINTA)
     inp("D19", "20", com19)
-    dv_list(ws, "D19", '"5,10,20,30,40,60,80,100,120,140,160,STD,XS,XXS"', com19)
 
-    com20 = ("Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
-             "tabla B36.10M de Datos_Ref.")
-    lab(20, "Diámetro exterior", unidad="mm", ref="B36.10M-2022 (auto)", com=com20)
+    com20 = ("Calculo: diametro exterior (OD, mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D22). Vacio si el par no "
+             "existe en la base.")
+    lab(20, "Diámetro exterior", unidad="mm", ref="DB_B36 (auto, segun D22)", com=com20)
     ws.cell(20, 2, "OD").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D20", '=INDEX(Datos_Ref!$B$5:$B$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0))',
-         com20)
 
-    # D21 lleva el ""& robusto contra la cedula (transcrito literal del
-    # *oracle*, no se simplifica): sin el, una cedula numerica del
-    # desplegable (guardada como int en D19 para las cedulas puramente
-    # numericas o como texto para STD/XS/XXS) fallaba el MATCH contra la fila
-    # de encabezados de Datos_Ref, que guarda todo como texto.
-    com21 = ("Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
-             "(D19) en la tabla B36.10M de Datos_Ref. El \"\"&$D$19 fuerza la "
-             "cedula a texto para casar con la fila de encabezados (guardada "
-             "como texto por incluir STD/XS/XXS); sin esto, una cedula "
-             "numerica del desplegable daba #N/D y arrastraba toda la "
-             "geometria.")
-    lab(21, "Espesor de pared", unidad="mm", ref="B36.10M-2022 (auto)", com=com21)
+    com21 = ("Calculo: espesor de pared (mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D22). Vacio si el par no "
+             "existe en la base.")
+    lab(21, "Espesor de pared", unidad="mm", ref="DB_B36 (auto, segun D22)", com=com21)
     ws.cell(21, 2, "t").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D21",
-         '=INDEX(Datos_Ref!$C$5:$P$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
-         'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))', com21)
 
-    # Filas 22-23 (material descriptivo de tuberia y de parche) retiradas: salian de
-    # una lista fija, que la regla 12 prohibe. El material que rige el calculo lo
-    # resuelve la cascada de la Seccion 7 contra DB_B31_3 / DB_BPVC_IID. Las filas se
-    # dejan VACIAS a proposito, declaradas en DIVERGENCIAS_DECLARADAS; no se reutilizan
-    # para otra cosa, o el *oracle* dejaria de cuadrar sin que nadie se entere.
+    # Fila 22: selector de norma dimensional (nivel 0 de la cascada). Antes era el
+    # material descriptivo de tuberia (lista fija prohibida por la regla 12), ya
+    # retirado; ahora la fila la ocupa la norma. La norma se ELIGE, no se deriva del
+    # material (ver _materializar_cascada_b36). La fila 23 (material del parche)
+    # sigue retirada y vacia, declarada en DIVERGENCIAS_DECLARADAS.
+    com22 = ("Entrada: norma dimensional de la tuberia. B36.10M (acero al carbono y "
+             "de baja aleacion) o B36.19M (inoxidable, cedulas de la serie S). "
+             "Gobierna las listas de NPS y cedula y el lookup de OD/espesor de arriba.")
+    lab(22, "Norma dimensional", unidad="—", ref="ASME B36.10M / B36.19M", com=com22)
+    ws.cell(22, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D22", "B36.10M", com22)
+
+    casc = _materializar_cascada_b36(ws, b3610, b3619,
+                                     fila_norma=22, fila_nps=18, fila_ced=19)
+    idx = casc["idx"]
+    clave_key = '$D$18&"|"&$D$19'
+    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com20)
+    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com21)
 
     com24 = ("Entrada informativa: fluido de servicio. No alimenta ningun "
              "calculo de esta hoja.")
@@ -7043,23 +7056,18 @@ def comentar_art212_base(ws):
             "en los demas casos.",
         14: "Calculo: factor de geometria de la ecuacion de membrana, kf = 0,25 "
             "para esfera (MODO=3) o 0,5 para cilindro (tuberia o virola).",
-        18: "Entrada: diametro nominal (NPS) en pulgadas, de la lista de B36.10M "
-            "en Datos_Ref. Alimenta el lookup de OD y espesor de pared.",
-        19: "Entrada: cedula (Schedule) segun B36.10M, en Datos_Ref, para el NPS "
-            "elegido arriba.",
-        20: "Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
-            "tabla B36.10M de Datos_Ref.",
-        21: "Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
-            "(D19) en la tabla B36.10M de Datos_Ref. El \"\"&$D$19 fuerza la "
-            "cedula a texto para casar con la fila de encabezados (guardada como "
-            "texto por incluir STD/XS/XXS); sin esto, una cedula numerica del "
-            "desplegable daba #N/D y arrastraba toda la geometria.",
-        22: "Entrada: material del componente reparado (metal base), de la "
-            "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
-            "cascada de la seccion 7.",
-        23: "Entrada: material del parche o collar de refuerzo, de la lista "
-            "corta de Datos_Ref. Para el S(T) por temperatura use la cascada de "
-            "la seccion 7.",
+        18: "Entrada: diametro nominal (NPS), del desplegable de DB_B36 segun la "
+            "norma dimensional elegida en D22. No se teclea (regla 14). Alimenta "
+            "el lookup de OD y espesor de pared.",
+        19: "Entrada: cedula (designador de Schedule) del NPS elegido, del "
+            "desplegable de DB_B36 segun la norma de D22. No se teclea (regla 14).",
+        20: "Calculo: diametro exterior (OD) por lookup del par (NPS|cedula) "
+            "contra DB_B36 de la norma elegida (D22).",
+        21: "Calculo: espesor de pared por lookup del par (NPS|cedula) contra "
+            "DB_B36 de la norma elegida (D22).",
+        22: "Entrada: norma dimensional de la tuberia (B36.10M acero al carbono / "
+            "B36.19M inoxidable), nivel 0 de la cascada dimensional. Gobierna de "
+            "que base (DB_B36_10 o DB_B36_19) leen NPS, cedula, OD y espesor.",
         24: "Entrada informativa: fluido de servicio. No alimenta ningun "
             "calculo de esta hoja.",
         25: "Entrada: temperatura de operacion, en °C. Alimenta la Temperatura "
@@ -7249,12 +7257,14 @@ TIPO_A = "Type A (no contiene presion)"
 TIPO_B = "Type B (contiene presion)"
 
 
-def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
+def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     """Motor Art. 206 (collar de encierro total, Type A y Type B), 100% en
     codigo — a diferencia de Parche_PCC2_Art212, no hereda nada del maestro
     Rev0. Reutiliza la cascada de material de construir_seccion7_material
-    (compartida con build_parche_art212) y el lookup de Datos_Ref ya
-    robustecido en build_parche_art212 (el mismo ""& contra la cedula).
+    (compartida con build_parche_art212) y, desde la Tarea 9, la misma cascada
+    dimensional norma -> NPS -> cedula -> OD/espesor del Art. 212: NPS/cedula/
+    OD/espesor salen de DB_B36_10/DB_B36_19 (reglas 12/14), no de la lista fija
+    ni del lookup corto de Datos_Ref.
 
     El Art. 206 no tiene ecuaciones propias de membrana/filete/conformado en
     frio (esas son del Art. 212): remite al codigo de construccion para el
@@ -7353,29 +7363,31 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     # --- 1. Datos de entrada ---------------------------------------------
     band(16, "1. DATOS DE ENTRADA (campo con linea inferior = editable)")
     header(17, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
-    lab(18, "NPS del tubo portador", "in", "Entrada: lista de Datos_Ref.")
-    inp("D18", 12, "Entrada: NPS del tubo portador, de la lista de Datos_Ref.")
-    dv_list(ws, "D18",
-            '"0.5,0.75,1,1.25,1.5,2,2.5,3,3.5,4,5,6,8,10,12,14,16,18,20,22,24,'
-            '26,28,30,32,34,36,38,40,42,44,46,48"',
-            "Entrada: NPS del tubo portador, de la lista de Datos_Ref.")
-    lab(19, "Cedula del tubo portador", None,
-       "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    inp("D19", 20, "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    dv_list(ws, "D19", '"5,10,20,30,40,60,80,100,120,140,160,STD,XS,XXS"',
-            "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    lab(20, "OD del tubo portador", "mm",
-       "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18).")
-    calc("D20", '=INDEX(Datos_Ref!$B$5:$B$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0))',
-        "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18).")
-    lab(21, "t del tubo portador", "mm",
-       "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18) y cedula (D19). El ""&"
-       " fuerza la cedula a texto —idem Fase 1 de Parche_PCC2_Art212— y "
-       "tolera numero o STD/XS/XXS.")
-    calc("D21", '=INDEX(Datos_Ref!$C$5:$P$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
-                'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))',
-        "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18) y cedula (D19). El ""&"
-        " fuerza la cedula a texto y tolera numero o STD/XS/XXS.")
+    # --- Bloque dimensional (Tarea 9): norma -> NPS -> cedula -> OD/espesor, todo
+    # contra DB_B36_10/DB_B36_19 por cascada de listas (reglas 12/14), igual que el
+    # Art. 212. NPS/cedula/OD/espesor conservan sus filas 18-21 (no se corren: D45/
+    # D46 referencian OD(D20) y D54/D64 referencian espesor(D21), y moverlas
+    # reapuntaria esas formulas). El selector de norma no cabe adjunto —las filas
+    # 18-32 estan todas ocupadas— asi que ocupa la fila 33, libre al final de la
+    # seccion 1; misma decision que la fila 22 del Art. 212.
+    com18 = ("Entrada: diametro nominal (NPS) del tubo portador, del desplegable de "
+             "DB_B36 segun la norma elegida en D33. No se teclea (regla 14). Se "
+             "guarda como el NPS impreso del codigo, p.ej. '12 (300)'. Alimenta OD, "
+             "espesor y la lista de cedulas.")
+    lab(18, "NPS del tubo portador", "in", "Lista · DB_B36 (segun D33)")
+    inp("D18", "12 (300)", com18)
+    com19 = ("Entrada: cedula (designador de Schedule) del NPS elegido, en la norma "
+             "de D33, del desplegable de DB_B36. No se teclea (regla 14).")
+    lab(19, "Cedula del tubo portador", None, "Lista · DB_B36 (segun D33 y NPS)")
+    inp("D19", "20", com19)
+    com20 = ("Calculo: diametro exterior (OD, mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D33). Vacio si el par no "
+             "existe en la base.")
+    lab(20, "OD del tubo portador", "mm", "DB_B36 (auto, segun D33)")
+    com21 = ("Calculo: espesor de pared (mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D33). Vacio si el par no "
+             "existe en la base.")
+    lab(21, "t del tubo portador", "mm", "DB_B36 (auto, segun D33)")
     com_tipo = ("Entrada: 206-1.1.1 Type A —extremos NO soldados "
                "circunferencialmente, no contiene presion, actua como "
                "refuerzo—; 206-1.1.2 Type B —extremos soldados "
@@ -7419,6 +7431,29 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     inp("D31", 1.5)
     lab(32, "Longitud adoptada del sleeve  L_s", "mm", "Entrada: 206-3.4.")
     inp("D32", 250)
+
+    # Fila 33: selector de norma dimensional (nivel 0 de la cascada). Va al final
+    # de la seccion 1 porque las filas 18-32 estan ocupadas y no pueden correrse
+    # sin reapuntar las formulas de calculo; la norma se ELIGE, no se deriva del
+    # material (ver _materializar_cascada_b36). Gobierna las listas de NPS/cedula
+    # (D18/D19) y el lookup de OD/espesor (D20/D21) de arriba.
+    com33 = ("Entrada: norma dimensional del tubo portador. B36.10M (acero al "
+             "carbono y de baja aleacion) o B36.19M (inoxidable, cedulas de la "
+             "serie S). Gobierna las listas de NPS y cedula y el lookup de OD/"
+             "espesor de la seccion 1.")
+    lab(33, "Norma dimensional", "—", "ASME B36.10M / B36.19M")
+    inp("D33", "B36.10M", com33)
+
+    casc = _materializar_cascada_b36(ws, b3610, b3619,
+                                     fila_norma=33, fila_nps=18, fila_ced=19)
+    idx = casc["idx"]
+    clave_key = '$D$18&"|"&$D$19'
+    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com20)
+    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com21)
 
     # --- Parametros de calculo -------------------------------------------
     band(35, "PARAMETROS DE CALCULO")
@@ -7551,15 +7586,16 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     ws.protection.sheet = True
 
 
-def deprecate_datos_ref(wb):
-    ws = wb["Datos_Ref"]
-    ws["A40"] = ("B. [OBSOLETO — ver DB_B31_3 / DB_BPVC_IID]  ESFUERZOS ADMISIBLES S (MPa) — "
-                 "acero al carbono, T <= 40 C. Se conserva como respaldo historico de las "
-                 "memorias ya emitidas; el motor ya NO lee de aqui.")
-    ws["A40"].font = Font(name=MONO, size=10, bold=True, color=ROJO)
-    for r in range(41, 48):
-        for c in range(1, 4):
-            ws.cell(r, c).font = Font(name=MONO, size=10, color=GRIS)
+def retirar_datos_ref(wb):
+    """Borra la hoja heredada Datos_Ref, que el maestro Rev0 aun trae.
+
+    Tarea 10: ninguna hoja de datos viene ya del maestro. El esfuerzo admisible
+    lo dan DB_B31_3 / DB_BPVC_IID y las dimensiones DB_B36_10/19, todas auditadas
+    contra resources/ (regla 1). El bloque obsoleto de esfuerzos que vivia en las
+    filas 40-47 se va con la hoja; el libro anterior queda en el historial de git.
+    Mismo patron defensivo que build_parche_art212 usa con su propia hoja."""
+    if "Datos_Ref" in wb.sheetnames:   # el maestro Rev0 todavia la trae
+        del wb["Datos_Ref"]
 
 
 # ---------------------------------------------------------------------------
@@ -8670,18 +8706,19 @@ def link_volver(wb):
 # ---------------------------------------------------------------------------
 # Retonado de lo que trae el maestro
 # ---------------------------------------------------------------------------
-# Dos hojas no las construye este script: las trae maestro_con_macros.xlsm
-# (Instrucciones y Datos_Ref). Su estilo es el de la Rev. 0 —azules corporativos,
-# Arial, amarillo de entrada— y sin retonarlas el libro tendria dos sistemas
-# visuales a la vez. La plantilla NO se edita a mano (la genera
-# make_vba_seed.py), asi que el mapeo se aplica al construir.
+# Una sola hoja no la construye este script: la trae maestro_con_macros.xlsm
+# (Instrucciones). Su estilo es el de la Rev. 0 —azules corporativos, Arial,
+# amarillo de entrada— y sin retonarla el libro tendria dos sistemas visuales a
+# la vez. La plantilla NO se edita a mano (la genera make_vba_seed.py), asi que
+# el mapeo se aplica al construir. (Datos_Ref tambien la traia el maestro, pero
+# la Tarea 10 la retira del libro: su dato vivo esta en las bases auditadas.)
 #
 # Es una tabla de EQUIVALENCIA EXACTA, no una aproximacion por cercania de
 # color: solo se traduce lo que estaba en el inventario de la plantilla. Asi es
 # idempotente y no puede tocar por accidente una celda que ya nacio en el
 # sistema nuevo —ningun color de la paleta nueva es clave de esta tabla—, y lo
 # que quede sin traducir lo delata la auditoria (celdas_fuera_del_sistema).
-HOJAS_HEREDADAS = ("Instrucciones", "Datos_Ref")
+HOJAS_HEREDADAS = ("Instrucciones",)
 
 # Las doce hojas donde el ingeniero introduce datos. El guardia de verificar.py §5
 # solo mira estas: una DB_*, MAP_* o NAV_* no lleva entradas y no le aplica.
@@ -8717,38 +8754,69 @@ LITERALES_PERMITIDOS = {
         "Idem, variante sin acentos usada en Collar_PCC2_Art206 (D10)."),
 }
 
-# Deuda declarada, con fecha de vencimiento: las Tareas 7-9 de este plan repuntan
-# NPS y cedula de los dos motores contra DB_B36_10/DB_B36_19. Hasta entonces el
-# guardia las tolera nombrandolas una a una — nunca por patron, para que una lista
-# fija NUEVA en la misma celda no entre por el mismo hueco.
-DEUDA_LISTA_FIJA = {
-    (MOTOR, "D18"): "NPS: pendiente de DB_B36_10 (Tarea 7).",
-    (MOTOR, "D19"): "Cedula: pendiente de DB_B36_10 (Tarea 7).",
-    (COLLAR_MOTOR, "D18"): "NPS: pendiente de DB_B36_10 (Tarea 9).",
-    (COLLAR_MOTOR, "D19"): "Cedula: pendiente de DB_B36_10 (Tarea 9).",
-}
+# Deuda SALDADA (Tarea 10). Las Tareas 7-9 repuntaron NPS y cedula de los dos
+# motores contra DB_B36_10/DB_B36_19 — Art. 212 (MOTOR) en las Tareas 7-8, Art.
+# 206 (COLLAR_MOTOR) en la Tarea 9 —: sus D18/D19 salen de DB_B36 por cascada y
+# ninguno es ya una lista fija. El dict se conserva VACIO (no se elimina) porque
+# el guardia de verificar.py §5 y test_dashboard lo consultan por nombre: vacio,
+# el guardia no tolera ninguna lista fija, que es el estado definitivo buscado.
+DEUDA_LISTA_FIJA = {}
 
 # Celdas que el *oracle* del Art. 212 declara pero que el build ya NO reproduce a
 # proposito. El oracle sigue siendo la hoja heredada tal como se capturo; esta lista
 # es la unica forma declarada de apartarse de ella, y cada entrada lleva su motivo.
 # Sin esto, la alternativa era regenerar el oracle desde el build nuevo — con lo que
 # dejaria de ser un control independiente y pasaria a ser un volcado de si mismo.
+# Dos clases de divergencia contra el oracle Rev0, con semantica distinta y
+# disjunta (TestParidadHojaParche exige que ninguna celda este en las dos):
+#   DIVERGENCIAS_DECLARADAS  -> la celda se RETIRA: el build la deja VACIA (None).
+#   DIVERGENCIAS_REEMPLAZADAS -> la celda se REEMPLAZA por contenido nuevo a
+#       proposito: sale de la igualdad contra el oracle, se EXIGE no-vacia, y su
+#       correccion la prueba otro test nombrado (no el oracle Rev0). Sin esta
+#       segunda clase, la unica forma de apartarse del oracle era vaciar la celda,
+#       y un rediseño sancionado (lista fija -> cascada de base) no la vacia.
 DIVERGENCIAS_DECLARADAS = {
-    ("Parche_PCC2_Art212", "A22"): (
-        "Fila retirada: el campo descriptivo de material salia de una lista fija de "
-        "seis items, prohibida por la regla 12. La Seccion 7 ya resuelve ese mismo "
-        "material con la cascada auditada."),
-    ("Parche_PCC2_Art212", "B22"): "Idem A22: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "C22"): "Idem A22: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "D22"): "Idem A22: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "G22"): "Idem A22: la fila entera se retira.",
     ("Parche_PCC2_Art212", "A23"): (
-        "Fila retirada por el mismo motivo que A22: el material del parche lo "
-        "resuelve la cascada de la Seccion 7, no una lista fija."),
+        "Fila retirada: el material del parche salia de una lista fija (regla 12); "
+        "lo resuelve la cascada de la Seccion 7, no una lista fija. La fila 23 "
+        "queda vacia (la 22 la ocupa ahora el selector de norma dimensional)."),
     ("Parche_PCC2_Art212", "B23"): "Idem A23: la fila entera se retira.",
     ("Parche_PCC2_Art212", "C23"): "Idem A23: la fila entera se retira.",
     ("Parche_PCC2_Art212", "D23"): "Idem A23: la fila entera se retira.",
     ("Parche_PCC2_Art212", "G23"): "Idem A23: la fila entera se retira.",
+}
+
+# Celdas del bloque dimensional (Tareas 7-8) que el build reemplaza a proposito:
+# NPS/cedula/OD/espesor pasan a salir de DB_B36 por cascada (reglas 12/14) y la
+# fila 22 pasa de material descriptivo (lista fija retirada) al selector de norma.
+# Su correccion la prueba TestCascadaDimensionalArt212, no el oracle Rev0. Las
+# celdas de rotulo/unidad/simbolo que NO cambian (A18-A21, B/C del bloque, B22,
+# C22) siguen bajo el oracle y no se listan aqui.
+DIVERGENCIAS_REEMPLAZADAS = {
+    ("Parche_PCC2_Art212", "D18"): (
+        "NPS: ya no es una lista fija con valor 12; sale del desplegable de DB_B36 "
+        "segun la norma (D22) y se guarda como el NPS impreso del codigo."),
+    ("Parche_PCC2_Art212", "G18"): "Idem D18: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D19"): (
+        "Cedula: la validacion pasa de lista fija a rango dependiente de la norma y "
+        "el NPS (el valor por defecto '20' coincide con el oracle, pero el origen "
+        "de la validacion cambia)."),
+    ("Parche_PCC2_Art212", "G19"): "Idem D19: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D20"): (
+        "OD: lookup contra DB_B36 (clave NPS|cedula, edicion segun D22) en vez de la "
+        "tabla corta de Datos_Ref, que se retira (regla 1: la fuente es resources/)."),
+    ("Parche_PCC2_Art212", "G20"): "Idem D20: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D21"): (
+        "Espesor: lookup contra DB_B36 (clave NPS|cedula, edicion segun D22) en vez "
+        "de Datos_Ref, que se retira."),
+    ("Parche_PCC2_Art212", "G21"): "Idem D21: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "A22"): (
+        "La fila 22 pasa de 'Material de tuberia' (retirado) al rotulo 'Norma "
+        "dimensional': es el nivel 0 de la cascada, se elige B36.10M o B36.19M."),
+    ("Parche_PCC2_Art212", "D22"): (
+        "Valor del selector de norma dimensional (B36.10M por defecto); gobierna las "
+        "listas de NPS/cedula y el lookup de OD/espesor. Antes era material descriptivo."),
+    ("Parche_PCC2_Art212", "G22"): "Idem A22: referencia de la norma dimensional.",
 }
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl
@@ -8916,20 +8984,32 @@ def aplicar_visibilidad(wb):
 # vez y lo consumen el builder, las pruebas y verificar.py: si alguien inserta una
 # columna, se entera todo el mundo a la vez.
 #
-# nps_orden y clave no son datos impresos por el codigo: nps_orden numera la
-# PRIMERA fila de cada bloque de NPS (1,2,3...) para poder listar los NPS sin
-# repetirlos (Tarea 7); clave es nps_impreso & "|" & designador, precalculada
-# aqui como TEXTO (una base no lleva formulas) para que el lookup de OD/espesor
-# de los dos motores (Tarea 8) resuelva con un unico MATCH.
+# nps_orden, clave y clave_ced no son datos impresos por el codigo: son
+# columnas auxiliares que alimentan la cascada dimensional de los motores
+# (Tareas 7-8), precalculadas aqui como TEXTO porque una base no lleva formulas.
+#   nps_orden  numera 1,2,3... la PRIMERA fila de cada bloque de NPS, para listar
+#              los NPS sin repetirlos (nivel 1 de la cascada).
+#   clave      = nps_impreso & "|" & designador, para el lookup de OD/espesor con
+#              un unico MATCH (nivel de resultado).
+#   clave_ced  = nps_impreso & "|" & <indice 1,2,3... del designador NO vacio
+#              dentro del bloque de NPS>, y VACIA en las filas cuyo designador no
+#              aplica (celda '...' del codigo). Deja listar las cedulas de un NPS
+#              sin ofrecer opciones en blanco (nivel 2 de la cascada).
 COL_B36 = {"nps_impreso": 1, "nps_in": 2, "dn_mm": 3, "designador": 4,
            "cedula": 5, "identificacion": 6, "od_in": 7, "od_mm": 8,
            "t_in": 9, "t_mm": 10, "peso_lb_ft": 11, "peso_kg_m": 12,
-           "nps_orden": 13, "clave": 14}
+           "nps_orden": 13, "clave": 14, "clave_ced": 15}
 
 CABECERA_B36 = ["NPS impreso", "NPS (in)", "DN (mm)", "Designador",
                 "Schedule No.", "Identification", "OD (in)", "OD (mm)",
                 "Espesor (in)", "Espesor (mm)", "Peso (lb/ft)", "Peso (kg/m)",
-                "nps_orden (auxiliar)", "clave (auxiliar)"]
+                "nps_orden (auxiliar)", "clave (auxiliar)", "clave_ced (auxiliar)"]
+
+# Primera columna oculta de la cascada dimensional en la hoja de un motor
+# (norma en COL_NORMA_B36, NPS en +1, cedula en +2, indice escalar de norma en
+# +3). Y(25) en adelante: libre de las columnas ocultas de la Seccion 7, que
+# llegan hasta la U(21) mas W/X de los indices auxiliares.
+COL_NORMA_B36 = 25
 
 
 def build_db_b36(wb, norma):
@@ -8961,21 +9041,38 @@ def build_db_b36(wb, norma):
         c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
     vistos = set()
     orden = 0
+    nps_actual = None            # bloque de NPS en curso (contiguo por regla 5)
+    ced_idx = 0                  # indice del designador NO vacio dentro del bloque
+    max_ced = 0
     for i, f in enumerate(filas):
         r = R_DATA + i
         for clave, j in COL_B36.items():
-            if clave in ("nps_orden", "clave"):
+            if clave in ("nps_orden", "clave", "clave_ced"):
                 continue
             ws.cell(r, j, f[clave]).font = DATA_F
         if f["nps_impreso"] not in vistos:
             vistos.add(f["nps_impreso"])
             orden += 1
             ws.cell(r, COL_B36["nps_orden"], orden).font = DATA_F
+        if f["nps_impreso"] != nps_actual:
+            nps_actual = f["nps_impreso"]
+            ced_idx = 0
+        # clave_ced solo en las filas con designador; las '...' del codigo quedan
+        # sin clave_ced (None) para no entrar como cedula en blanco al desplegable.
+        if f["designador"]:
+            ced_idx += 1
+            max_ced = max(max_ced, ced_idx)
+            ws.cell(r, COL_B36["clave_ced"],
+                    f"{f['nps_impreso']}|{ced_idx}").font = DATA_F
         ws.cell(r, COL_B36["clave"], f"{f['nps_impreso']}|{f['designador']}").font = DATA_F
     autosize(ws, {"A": 14, "B": 10, "C": 10, "D": 14, "E": 13, "F": 13,
                   "G": 11, "H": 11, "I": 13, "J": 13, "K": 13, "L": 13,
-                  "M": 14, "N": 20})
-    return {"sheet": nombre, "last_row": R_DATA + len(filas) - 1}
+                  "M": 14, "N": 20, "O": 20})
+    # n_nps y max_ced dimensionan las listas de la cascada del motor sin numeros
+    # magicos: se generan tantas filas de formula como NPS y como cedulas haya de
+    # verdad, asi ninguna lista sale truncada (Tarea 7).
+    return {"sheet": nombre, "last_row": R_DATA + len(filas) - 1,
+            "n_nps": orden, "max_ced": max_ced}
 
 
 def _rango_b36(info, clave):
@@ -8984,6 +9081,76 @@ def _rango_b36(info, clave):
     expresion entre _materializar_cascada_b36 y las formulas de OD/espesor."""
     L = get_column_letter(COL_B36[clave])
     return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
+
+
+def _choose_b36(idx, b3610, b3619, clave):
+    """Selecciona la columna `clave` de la edicion elegida con CHOOSE(indice,...).
+
+    CHOOSE con un indice ESCALAR (1 o 2) entrega una REFERENCIA de rango, que
+    INDEX/MATCH consumen sin formula matricial — igual que col3() de la Seccion 7.
+    Un IF(cond, rangoA, rangoB) como argumento de MATCH exigiria entrada matricial
+    (CSE), que la regla 1 de diseno del libro prohibe."""
+    return (f"CHOOSE({idx},{_rango_b36(b3610, clave)},"
+            f"{_rango_b36(b3619, clave)})")
+
+
+def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
+    """Cascada norma -> NPS -> cedula de un motor, en columnas ocultas.
+
+    La regla 2 prohibe una formula como origen de una validacion, asi que cada
+    lista se calcula en una columna oculta de la propia hoja y la validacion
+    apunta a ese rango literal — el mismo mecanismo que construir_seccion7_material.
+
+    La norma se ELIGE, no se deriva del material: una tuberia inoxidable puede
+    pedirse a cedulas B36.10M, asi que derivarla de la familia daria el espesor
+    equivocado, y ademas acoplaria dos secciones del motor (regla 13).
+
+    Devuelve {"idx": ref del indice escalar de norma, "ultima_col": ...} para que
+    el llamador arme el lookup de OD/espesor con el mismo CHOOSE.
+    """
+    hl = get_column_letter
+    n_nps = max(b3610["n_nps"], b3619["n_nps"])
+    n_ced = max(b3610["max_ced"], b3619["max_ced"])
+    col = COL_NORMA_B36
+    L_norma, L_nps, L_ced, L_idx = (hl(col), hl(col + 1), hl(col + 2), hl(col + 3))
+
+    # Nivel 0: las dos normas, literales en la hoja (no en el formula1 de la
+    # validacion: asi el origen sigue siendo un rango). Anadir una tercera norma
+    # manana es anadir una fila aqui, no tocar el motor.
+    ws.cell(R_HDR, col, "lista norma B36").font = SRC_F
+    for k, n in enumerate(("B36.10M", "B36.19M")):
+        ws.cell(R_DATA + k, col, n).font = SRC_F
+    ws.column_dimensions[L_norma].hidden = True
+    dv_list(ws, f"D{fila_norma}", f"=${L_norma}${R_DATA}:${L_norma}${R_DATA + 1}")
+
+    # Indice escalar 1/2 de la norma elegida, para el CHOOSE de todos los rangos.
+    idx = f"${L_idx}${R_SRC}"
+    ws.cell(R_SRC, col + 3, f'=IF($D${fila_norma}="B36.10M",1,2)').font = SRC_F
+    ws.column_dimensions[L_idx].hidden = True
+
+    # Nivel 1: NPS distintos de la norma elegida. El k-esimo es el de nps_orden=k
+    # (numerado 1,2,3... en la primera fila de cada bloque contiguo).
+    ws.cell(R_HDR, col + 1, "lista NPS B36").font = SRC_F
+    for k in range(1, n_nps + 1):
+        ws.cell(R_DATA + k - 1, col + 1,
+                f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "nps_impreso")},'
+                f'MATCH({k},{_choose_b36(idx, b3610, b3619, "nps_orden")},0)),"")'
+                ).font = SRC_F
+    ws.column_dimensions[L_nps].hidden = True
+    dv_list(ws, f"D{fila_nps}", f"=${L_nps}${R_DATA}:${L_nps}${R_DATA + n_nps - 1}")
+
+    # Nivel 2: cedulas (designador) del NPS elegido, en la norma elegida. El
+    # k-esimo designador NO vacio del bloque se localiza por clave_ced = NPS&"|"&k,
+    # asi que las celdas '...' del codigo no entran como opcion en blanco.
+    ws.cell(R_HDR, col + 2, "lista cedula B36").font = SRC_F
+    for k in range(1, n_ced + 1):
+        ws.cell(R_DATA + k - 1, col + 2,
+                f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "designador")},'
+                f'MATCH($D${fila_nps}&"|"&{k},'
+                f'{_choose_b36(idx, b3610, b3619, "clave_ced")},0)),"")').font = SRC_F
+    ws.column_dimensions[L_ced].hidden = True
+    dv_list(ws, f"D{fila_ced}", f"=${L_ced}${R_DATA}:${L_ced}${R_DATA + n_ced - 1}")
+    return {"idx": idx, "ultima_col": col + 3}
 
 
 def main(argv=None):
@@ -9214,9 +9381,9 @@ def main(argv=None):
     b3610 = build_db_b36(wb, "B36.10M")
     b3619 = build_db_b36(wb, "B36.19M")
 
-    build_parche_art212(wb, b313, iid, iidb, fac, rangos)
-    build_collar_art206(wb, b313, iid, iidb, fac, rangos)
-    deprecate_datos_ref(wb)
+    build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
+    build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
+    retirar_datos_ref(wb)
 
     counts = {
         "A-1 + A-4 -> DB_B31_3":
@@ -9280,7 +9447,7 @@ def main(argv=None):
              "Buscar_B31_3", "Buscar_BPVC_IID",
              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
              "Buscar_Prop_B31_3", "Buscar_B31_B1", "Buscar_Ec_A2", "Buscar_Ej_A3",
-             "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
+             "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
              "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_TE_G", "DB_TE_GC",
              "DB_PRD", "DB_PRDC",
