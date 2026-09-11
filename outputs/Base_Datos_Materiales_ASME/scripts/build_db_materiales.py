@@ -7262,12 +7262,14 @@ TIPO_A = "Type A (no contiene presion)"
 TIPO_B = "Type B (contiene presion)"
 
 
-def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
+def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     """Motor Art. 206 (collar de encierro total, Type A y Type B), 100% en
     codigo — a diferencia de Parche_PCC2_Art212, no hereda nada del maestro
     Rev0. Reutiliza la cascada de material de construir_seccion7_material
-    (compartida con build_parche_art212) y el lookup de Datos_Ref ya
-    robustecido en build_parche_art212 (el mismo ""& contra la cedula).
+    (compartida con build_parche_art212) y, desde la Tarea 9, la misma cascada
+    dimensional norma -> NPS -> cedula -> OD/espesor del Art. 212: NPS/cedula/
+    OD/espesor salen de DB_B36_10/DB_B36_19 (reglas 12/14), no de la lista fija
+    ni del lookup corto de Datos_Ref.
 
     El Art. 206 no tiene ecuaciones propias de membrana/filete/conformado en
     frio (esas son del Art. 212): remite al codigo de construccion para el
@@ -7366,29 +7368,31 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     # --- 1. Datos de entrada ---------------------------------------------
     band(16, "1. DATOS DE ENTRADA (campo con linea inferior = editable)")
     header(17, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
-    lab(18, "NPS del tubo portador", "in", "Entrada: lista de Datos_Ref.")
-    inp("D18", 12, "Entrada: NPS del tubo portador, de la lista de Datos_Ref.")
-    dv_list(ws, "D18",
-            '"0.5,0.75,1,1.25,1.5,2,2.5,3,3.5,4,5,6,8,10,12,14,16,18,20,22,24,'
-            '26,28,30,32,34,36,38,40,42,44,46,48"',
-            "Entrada: NPS del tubo portador, de la lista de Datos_Ref.")
-    lab(19, "Cedula del tubo portador", None,
-       "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    inp("D19", 20, "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    dv_list(ws, "D19", '"5,10,20,30,40,60,80,100,120,140,160,STD,XS,XXS"',
-            "Entrada: cedula impresa en Datos_Ref (incluye STD/XS/XXS).")
-    lab(20, "OD del tubo portador", "mm",
-       "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18).")
-    calc("D20", '=INDEX(Datos_Ref!$B$5:$B$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0))',
-        "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18).")
-    lab(21, "t del tubo portador", "mm",
-       "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18) y cedula (D19). El ""&"
-       " fuerza la cedula a texto —idem Fase 1 de Parche_PCC2_Art212— y "
-       "tolera numero o STD/XS/XXS.")
-    calc("D21", '=INDEX(Datos_Ref!$C$5:$P$37,MATCH($D$18,Datos_Ref!$A$5:$A$37,0),'
-                'MATCH(""&$D$19,Datos_Ref!$C$4:$P$4,0))',
-        "Calculo: INDEX/MATCH de Datos_Ref por NPS (D18) y cedula (D19). El ""&"
-        " fuerza la cedula a texto y tolera numero o STD/XS/XXS.")
+    # --- Bloque dimensional (Tarea 9): norma -> NPS -> cedula -> OD/espesor, todo
+    # contra DB_B36_10/DB_B36_19 por cascada de listas (reglas 12/14), igual que el
+    # Art. 212. NPS/cedula/OD/espesor conservan sus filas 18-21 (no se corren: D45/
+    # D46 referencian OD(D20) y D54/D64 referencian espesor(D21), y moverlas
+    # reapuntaria esas formulas). El selector de norma no cabe adjunto —las filas
+    # 18-32 estan todas ocupadas— asi que ocupa la fila 33, libre al final de la
+    # seccion 1; misma decision que la fila 22 del Art. 212.
+    com18 = ("Entrada: diametro nominal (NPS) del tubo portador, del desplegable de "
+             "DB_B36 segun la norma elegida en D33. No se teclea (regla 14). Se "
+             "guarda como el NPS impreso del codigo, p.ej. '12 (300)'. Alimenta OD, "
+             "espesor y la lista de cedulas.")
+    lab(18, "NPS del tubo portador", "in", "Lista · DB_B36 (segun D33)")
+    inp("D18", "12 (300)", com18)
+    com19 = ("Entrada: cedula (designador de Schedule) del NPS elegido, en la norma "
+             "de D33, del desplegable de DB_B36. No se teclea (regla 14).")
+    lab(19, "Cedula del tubo portador", None, "Lista · DB_B36 (segun D33 y NPS)")
+    inp("D19", "20", com19)
+    com20 = ("Calculo: diametro exterior (OD, mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D33). Vacio si el par no "
+             "existe en la base.")
+    lab(20, "OD del tubo portador", "mm", "DB_B36 (auto, segun D33)")
+    com21 = ("Calculo: espesor de pared (mm) por lookup de la clave NPS|cedula "
+             "(D18|D19) contra DB_B36 de la norma elegida (D33). Vacio si el par no "
+             "existe en la base.")
+    lab(21, "t del tubo portador", "mm", "DB_B36 (auto, segun D33)")
     com_tipo = ("Entrada: 206-1.1.1 Type A —extremos NO soldados "
                "circunferencialmente, no contiene presion, actua como "
                "refuerzo—; 206-1.1.2 Type B —extremos soldados "
@@ -7432,6 +7436,29 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos):
     inp("D31", 1.5)
     lab(32, "Longitud adoptada del sleeve  L_s", "mm", "Entrada: 206-3.4.")
     inp("D32", 250)
+
+    # Fila 33: selector de norma dimensional (nivel 0 de la cascada). Va al final
+    # de la seccion 1 porque las filas 18-32 estan ocupadas y no pueden correrse
+    # sin reapuntar las formulas de calculo; la norma se ELIGE, no se deriva del
+    # material (ver _materializar_cascada_b36). Gobierna las listas de NPS/cedula
+    # (D18/D19) y el lookup de OD/espesor (D20/D21) de arriba.
+    com33 = ("Entrada: norma dimensional del tubo portador. B36.10M (acero al "
+             "carbono y de baja aleacion) o B36.19M (inoxidable, cedulas de la "
+             "serie S). Gobierna las listas de NPS y cedula y el lookup de OD/"
+             "espesor de la seccion 1.")
+    lab(33, "Norma dimensional", "—", "ASME B36.10M / B36.19M")
+    inp("D33", "B36.10M", com33)
+
+    casc = _materializar_cascada_b36(ws, b3610, b3619,
+                                     fila_norma=33, fila_nps=18, fila_ced=19)
+    idx = casc["idx"]
+    clave_key = '$D$18&"|"&$D$19'
+    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com20)
+    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
+         com21)
 
     # --- Parametros de calculo -------------------------------------------
     band(35, "PARAMETROS DE CALCULO")
@@ -8731,15 +8758,13 @@ LITERALES_PERMITIDOS = {
 }
 
 # Deuda declarada, con fecha de vencimiento: las Tareas 7-9 de este plan repuntan
-# NPS y cedula de los dos motores contra DB_B36_10/DB_B36_19. El Art. 212 (MOTOR)
-# ya esta hecho (Tareas 7-8): sus D18/D19 salen de DB_B36 por cascada y no son
-# listas fijas. Queda solo el Art. 206 (COLLAR_MOTOR, Tarea 9), tolerado
-# nombrandolo una a una — nunca por patron, para que una lista fija NUEVA en la
-# misma celda no entre por el mismo hueco.
-DEUDA_LISTA_FIJA = {
-    (COLLAR_MOTOR, "D18"): "NPS: pendiente de DB_B36_10 (Tarea 9).",
-    (COLLAR_MOTOR, "D19"): "Cedula: pendiente de DB_B36_10 (Tarea 9).",
-}
+# NPS y cedula de los dos motores contra DB_B36_10/DB_B36_19. Los dos ya estan
+# hechos — Art. 212 (MOTOR) en las Tareas 7-8, Art. 206 (COLLAR_MOTOR) en la
+# Tarea 9 —: sus D18/D19 salen de DB_B36 por cascada y ninguno es ya una lista
+# fija, asi que no queda deuda. El dict se conserva vacio (no se borra) hasta que
+# la Tarea 10 lo retire junto con el guardia que lo consulta: vaciarlo aqui deja
+# al guardia sin ninguna lista fija tolerada, que es justo el estado buscado.
+DEUDA_LISTA_FIJA = {}
 
 # Celdas que el *oracle* del Art. 212 declara pero que el build ya NO reproduce a
 # proposito. El oracle sigue siendo la hoja heredada tal como se capturo; esta lista
@@ -9361,7 +9386,7 @@ def main(argv=None):
     b3619 = build_db_b36(wb, "B36.19M")
 
     build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
-    build_collar_art206(wb, b313, iid, iidb, fac, rangos)
+    build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
     deprecate_datos_ref(wb)
 
     counts = {

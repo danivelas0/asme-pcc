@@ -631,6 +631,42 @@ class TestCascadaDimensionalArt212:
             assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
 
 
+class TestCascadaDimensionalArt206:
+    """La misma cascada norma -> NPS -> cedula -> OD/espesor del Art. 212
+    (Tareas 7-8), aplicada al Art. 206 (Tarea 9). El Art. 206 no tiene oracle
+    Rev0 (nace 100% en codigo), asi que su correccion la fijan estos tests y no
+    DIVERGENCIAS_*: toda la paridad que aqui se exige es contra DB_B36."""
+    HOJA = "Collar_PCC2_Art206"
+
+    def test_norma_nps_y_cedula_tienen_validacion_de_rango(self, wb):
+        ws = wb[self.HOJA]
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        # D33 = norma, D18 = NPS, D19 = cedula. La norma va en la fila 33 (libre al
+        # final de la seccion 1) y no corre las filas 18-32: moverlas reapuntaria
+        # las formulas de calculo aguas abajo (D45/D46 usan D20, D54/D64 usan D21),
+        # mismo criterio que la fila 22 del Art. 212.
+        for celda in ("D18", "D19", "D33"):
+            f1 = origen.get(celda, "")
+            assert f1.startswith("="), f"{celda}: origen {f1!r}, se esperaba un rango"
+            assert not f1.startswith('"'), f"{celda}: sigue siendo una lista fija"
+
+    def test_la_norma_ofrece_las_dos_y_solo_las_dos(self, wb):
+        ws = wb[self.HOJA]
+        col = B.COL_NORMA_B36
+        vals = [ws.cell(r, col).value for r in range(B.R_DATA, B.R_DATA + 2)]
+        assert vals == ["B36.10M", "B36.19M"]
+
+    def test_od_y_espesor_leen_de_las_dos_ediciones(self, wb):
+        ws = wb[self.HOJA]
+        for celda in ("D20", "D21"):
+            f = str(ws[celda].value or "")
+            assert "DB_B36_10" in f and "DB_B36_19" in f, f"{celda}: {f!r}"
+            assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
+
+
 # ---------------------------------------------------------------------------
 # Las dos fuentes de verdad -Python y VBA- no pueden divergir
 # ---------------------------------------------------------------------------
