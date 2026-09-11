@@ -775,6 +775,29 @@ del Art. 212 nace ahora 100 % en código con `build_parche_art212()`, hermana de
 dependía de `retonar_heredadas()` para su sistema visual. Plan y commits:
 `outputs/plans/plan_desanclado_total_motor_art212.md`, rango `40fc235..3653ccb`.
 
+**Los dos motores reproducen el flujo de proceso aprobado en 8 pasos (2026-09-11).**
+`Parche_PCC2_Art212` y `Collar_PCC2_Art206` ganaron un **anexo de pasos del flujo**
+(filas ≥ 132 en el 212, ≥ 101 en el 206) con **direcciones estables**: los bloques
+nuevos no reordenan la hoja ni desplazan las referencias absolutas (decisión del
+ingeniero 2026-09-11), y los tests de paridad excluyen el anexo (`FILA_ANEXO_FLUJO_212`).
+El 212 cerró sus 6 huecos —compuerta de elegibilidad (F90 antepone D140), F_max con
+cargas externas (212-3.2), topes de filete (212-3.4 NOTA), `e` con separación `g`
+(212-4c) y S_w literal de cilindro, curvatura simple/doble (212-3.5) y energía
+neumática (App. 501)—. El 206 cerró los suyos —selección guiada de tipo (advisory),
+C.A. en el `t_req` Type B (206-3.3), cateto `w` (206-3.5), luz `G≤2,5 mm` (206-4.1,
+al AND de F69) y los avisos de 206-2/3/4/5/6—. **El caso semilla de ambos no cambió
+de valor** (los defaults —cargas externas 0, `g`=0, C.A.=0, plancha plana, cilindro—
+preservan la ec. anterior); solo cambia la esfera del 212 (kf → NA/hand-off) y lo que
+el ingeniero teclee. Regla nº 1: la ec. (2) del 212 y el cateto del 206 se recuperaron
+de sus **imágenes** en `resources/`, y la energía almacenada del App. 501-II/III (ec.
+II-1 general en `k`, II-3, III-1, Tabla 501-III-1-1) se reparó de una **extracción
+colapsada** leyendo el PDF de PCC-2 de la carpeta de standards; `leer_energia_501()`
+lee esos coeficientes de `resources/` y el build aborta si el apéndice no está
+reparado. `verificar.py` estrena **§6e (212)** y **§6f (206)**, que recalculan las
+fórmulas nuevas en Excel real. **Pendiente:** F9 de sign-off del ingeniero, la Fase 9
+(subíndices reales, cosmética) y el re-baseline del oracle del 212, agrupados. Planes:
+`outputs/plans/plan_rediseno_motor_art212_flujo_completo.md` y `…_art206_…md`.
+
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
 datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /

@@ -429,25 +429,21 @@ rótulos, no referencias).
 **Files:** Modify `test_dashboard.py` (`TestBuildCollarArt206` completo), `verificar.py §6f`;
 Modify `CLAUDE.md` (estado del motor 206); Modify este plan (estado final).
 
-- [ ] **Step 1: build completo.** `python build_db_materiales.py --resources … --in
-  ..\..\..\templates\maestro_con_macros.xlsm --out
-  ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm`. Sin abortos.
-- [ ] **Step 2: los gates sin recálculo.** `pytest test_build_db.py test_dashboard.py
-  test_secii_tablas.py -q` → verde. Las anclas por paso de `TestBuildCollarArt206` fijan las
-  fórmulas nuevas por cadena; `TestSistemaVisual`, `TestSincroniaPythonVba` y la visibilidad/
-  navegación de `Collar_PCC2_Art206` pasan. `verificar.py §1-5` (book-wide) sin discrepancias
-  ni matriz dinámica.
-- [ ] **Step 3: entregar para F9 en Excel.** `SendUserFile` del `.xlsm`. Pedir al ingeniero:
-  F9 del caso semilla del 206 con las fórmulas nuevas (Type A y Type B), y confirmar los valores
-  esperados (que **cambian** respecto de hoy por el C.A. en el `t_req` y por el nuevo cateto
-  `w`). Registrar los nuevos valores de referencia del caso semilla del 206.
-- [ ] **Step 4: `verificar.py §6f`.** Con la hoja validada, dejar §6f recalculando en Excel
-  real —desde la misma expresión que emite el motor— `w`/`w_máx`, el tope `G≤2,5`, el `t_req`+
-  C.A. y el tipo recomendado del caso semilla; fijar los valores esperados con los que confirmó
-  el ingeniero.
-- [ ] **Step 5: `verificar.py` completo en Windows** (§1-10 + §6f) → 0 fallos.
-- [ ] **Step 6: documentar.** Actualizar `CLAUDE.md` (sección del motor 206: ahora 8 pasos
-  explícitos; citar la Fase 0 y las decisiones 1-4). Marcar este plan como ejecutado. Commit.
+- [x] **Step 1: build completo.** Sin abortos.
+- [x] **Step 2: los gates sin recálculo.** `pytest` = **252 passed** (incl. `TestBuildCollarArt206`,
+  8 anclas por paso). `TestSistemaVisual`, `TestSincroniaPythonVba` y la visibilidad/navegación
+  del collar verdes. `verificar.py §1-5` sin discrepancias ni matriz dinámica.
+- [x] **Step 3: entregar para F9 en Excel.** `.xlsm` entregado por `SendUserFile` (2026-09-11).
+  Nota: con **C.A.=0 (default) el `t_req` no cambia de valor** y el cateto solo aplica a Type B
+  (el seed es Type A → w «No aplica»); los cambios de valor los ejerce el ingeniero al teclear
+  C.A. o poner Type B.
+- [x] **Step 4: `verificar.py §6f`.** Añadida: recalcula en Excel real el cateto `w`
+  (Type B forzado en el qa), la luz `G≤2,5` y el tipo recomendado. w=9.5, luz CUMPLE, tipo Type A.
+  El `t_req`+C.A. lo fijan las anclas de cadena (`TestBuildCollarArt206`) + §1-5 book-wide.
+- [x] **Step 5: `verificar.py` completo en Windows** (§1-11 + §6f) → **0 fallos**.
+- [~] **Step 6: documentar.** Nota de estado añadida al `CLAUDE.md` del proyecto. **Pendiente de
+  cierre: F9 del ingeniero + Fase 9 (subíndices, agrupada con el 212).** El plan queda en
+  `outputs/plans/` hasta entonces.
 
 ---
 

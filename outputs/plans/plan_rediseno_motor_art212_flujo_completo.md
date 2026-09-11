@@ -442,22 +442,20 @@ no referencias).
 (`TestParidadHojaParche` re-armado), `verificar.py §7`; Modify `CLAUDE.md` (estado del motor);
 Modify este plan (estado final).
 
-- [ ] **Step 1: build completo.** `python build_db_materiales.py --resources … --in … --out
-  ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm`. Sin abortos.
-- [ ] **Step 2: los tres gates sin recálculo.** `pytest test_build_db.py test_dashboard.py
-  test_secii_tablas.py -q` → verde (las anclas por paso de `TestBuildParcheContraOracle`
-  cubren las fórmulas nuevas; `TestSistemaVisual` y `TestSincroniaPythonVba` pasan).
-- [ ] **Step 3: entregar para F9 en Excel.** `SendUserFile` del `.xlsm`. Pedir al ingeniero:
-  F9 del caso semilla con las fórmulas nuevas, y confirmar los valores esperados (que **cambian**
-  respecto de Rev4 por la ec. 5 literal y la posible g). Registrar los nuevos valores de
-  referencia del caso semilla.
-- [ ] **Step 4: re-armar el *oracle* y `verificar.py §7`.** Con la hoja validada, correr
-  `_dump_parche_ref.py` para regenerar `parche_art212_ref.json` desde el `.xlsm` validado, y
-  actualizar los valores esperados de `verificar.py §7` (dictamen del caso semilla). Re-armar
-  `TestParidadHojaParche` contra el nuevo *oracle*.
-- [ ] **Step 5: `verificar.py` completo en Windows** (§1-10, incl. §6e y §7 nuevos) → 0 fallos.
-- [ ] **Step 6: documentar.** Actualizar `CLAUDE.md` (sección del motor 212: ahora 8 pasos
-  explícitos; cita las Fases 0). Marcar este plan como ejecutado. Commit.
+- [x] **Step 1: build completo.** Sin abortos (build a `outputs/Motor_..._Rev4.xlsm`).
+- [x] **Step 2: los tres gates sin recálculo.** `pytest` = **252 passed**. `TestBuildParche
+  ContraOracle` (anclas por paso), `TestParidadHojaParche` (anexo excluido), `TestSistemaVisual`,
+  `TestSincroniaPythonVba` verdes.
+- [x] **Step 3: entregar para F9 en Excel.** `.xlsm` entregado por `SendUserFile` (2026-09-11).
+- [~] **Step 4: re-armar el *oracle* y `verificar.py §7`.** **No hace falta re-baselinar por
+  valores: el caso semilla NO cambió** (cilindro literal ≡ forma anterior, g=0) — §7 sigue en
+  APTO con los mismos 161/138. El re-baseline del oracle se agrupa con la **Fase 9 (subíndices)**,
+  ambos **post-F9 del ingeniero** (`CellRichText` obliga a extender `_dump_parche_ref.py`).
+- [x] **Step 5: `verificar.py` completo en Windows** (§1-11, incl. §6e y §7) → **0 fallos** en
+  Excel real. §6e recalcula F_CP/F_LP/F_C/F_L/F_max, w_min, e, S_w, %Elong y E/TNT/R.
+- [~] **Step 6: documentar.** `CLAUDE.md` del proyecto: nota del estado (8 pasos del flujo en
+  el anexo + Fase 0 del App. 501) añadida. **Pendiente de cierre: F9 del ingeniero + Fase 9
+  (subíndices) + re-baseline del oracle.** Hasta entonces el plan queda en `outputs/plans/`.
 
 ---
 
