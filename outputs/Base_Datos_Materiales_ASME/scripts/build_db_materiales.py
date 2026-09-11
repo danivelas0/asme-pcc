@@ -7388,6 +7388,50 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
          '"Curvatura SIMPLE (coef 50, ec.7) — tuberia/virola")', com173)
     ws.merge_cells("D173:G173")
 
+    # --- PASO 7 — Fabricacion (212-4) — avisos -------------------------------
+    # Avisos de fabricacion (no dictamen de diseno): la separacion de fit-up
+    # (212-4c [82]: <=5 mm; >=1.5 -> e incluye g, ya en el Paso 5), el examen
+    # MT/PT de bordes si T>25 mm (212-4a [80]) y la secuencia/preparacion/venteo
+    # (212-4e/g [85],[88],[90]). Aditivo: no toca el oracle ni F90 (la separacion
+    # es una constraint de ejecucion, no de aceptacion del diseno).
+    banda_literal(175, "PASO 7 · FABRICACIÓN  (ASME PCC-2 Art. 212-4)")
+    encabezado(176, ((1, "Aspecto"), (4, "Aviso"), (7, "Referencia")))
+
+    com177 = ("Aviso: separacion de fit-up g (D167). El codigo exige g <= 5 mm "
+              "(212-4c); si g >= 1.5 mm, la excentricidad e ya incluye g (Paso 5). "
+              "Si g > 5 mm el fit-up no es admisible.")
+    lab(177, "Separación de fit-up", ref="212-4(c) [82]", com=com177)
+    calc("D177",
+         '=IF($D$167>5,"SEPARACION > 5 mm: fit-up no admisible (212-4c)",'
+         'IF($D$167>=1.5,"g >= 1.5 mm: e incluye g (212-4c) — ver Paso 5",'
+         '"fit-up ajustado (g < 1.5 mm)"))', com177)
+    ws.merge_cells("D177:G177")
+
+    com178 = ("Aviso: si el parche es > 25 mm de espesor y el filete es menor que "
+              "el espesor, los bordes de preparacion se examinan por MT/PT para "
+              "detectar laminaciones (212-4a). Laminaciones = rechazo salvo "
+              "reparacion o FFS (API 579).")
+    lab(178, "Examen de bordes (laminaciones)", ref="212-4(a) [80]", com=com178)
+    calc("D178",
+         '=IF($D$29>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
+         '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")',
+         com178)
+    ws.merge_cells("D178:G178")
+
+    com179 = ("Nota de fabricacion (212-4): corte termico -> esmerilar 1.5 mm de "
+              "material calcinado (212-4a); preparar metal blanco en un ancho >= "
+              "40 mm a cada lado del cordon (212-4e); costuras existentes bajo el "
+              "parche esmeriladas a ras + MT/PT (212-4e); secuencia = costuras "
+              "internas del parche primero, luego el perimetro (212-4e); prever "
+              "venteo de gas durante el cierre / PWHT (212-4g).")
+    lab(179, "Secuencia y preparación", ref="212-4(a)(e)(g)", com=com179)
+    d179 = calc("D179",
+                "Corte termico: esmerilar 1.5 mm. Metal blanco >= 40 mm a cada "
+                "lado (212-4e). Costuras internas primero, luego perimetro "
+                "(212-4e). Venteo de gas en el cierre (212-4g).", com179)
+    d179.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D179:G179")
+
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
     # existen en ws, para que comentar_art212_base() aplique sus notas de

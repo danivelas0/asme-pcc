@@ -1040,6 +1040,22 @@ class TestBuildParcheContraOracle:
         assert ws["D77"].value == (
             '=IF($D$11=3,75,50)*$D$29/$D$56*IF($D$172="",1,1-$D$56/$D$172)'), "D77"
 
+    # --- Fase 7: fabricacion (Paso 7, 212-4) — avisos ------------------------
+    # Aviso de separacion (g>5 no admisible, g>=1.5 -> e incluye g, 212-4c),
+    # aviso MT/PT si T_parche>25 mm (212-4a), y notas de fabricacion (secuencia,
+    # prep 40 mm, corte termico, venteo). Aditivo: no toca oracle ni F90.
+    def test_paso7_fabricacion(self):
+        ws = self._construir()
+        assert str(ws["A175"].value).startswith("PASO 7"), ws["A175"].value
+        assert ws["D177"].value == (
+            '=IF($D$167>5,"SEPARACION > 5 mm: fit-up no admisible (212-4c)",'
+            'IF($D$167>=1.5,"g >= 1.5 mm: e incluye g (212-4c) — ver Paso 5",'
+            '"fit-up ajustado (g < 1.5 mm)"))'), "D177"
+        assert ws["D178"].value == (
+            '=IF($D$29>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
+            '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")'), "D178"
+        assert "40 mm" in str(ws["D179"].value), ws["D179"].value
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).

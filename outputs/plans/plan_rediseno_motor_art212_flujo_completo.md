@@ -359,12 +359,15 @@ por laminaciones (bloque [80]); prep. de superficie 40 mm a cada lado (bloque [8
 existentes esmeriladas a ras + MT/PT (bloque [86]); separación ≤ 5 mm (bloque [82]); secuencia
 (costuras internas primero, luego perímetro) (bloque [88]); venteo de gas (bloque [90]).
 
-- [ ] **Step 1: aviso condicional de MT/PT por espesor.** Celda de nota que se activa si
-  `T_parche > 25`: «T > 25 mm: examinar bordes de preparación por MT/PT (laminaciones), 212-4(a)».
-- [ ] **Step 2: aviso de separación.** Nota junto a `g`: «separación máx. 5 mm; si g ≥ 1.5 mm,
-  e incluye g (212-4c) — ver Paso 5». (Refuerza lo ya implementado.)
-- [ ] **Step 3: actualizar los textos de la Sección 6** (secuencia, venteo, prep. 40 mm) para
-  que citen las cláusulas de `resources/` en vez de texto genérico. PASS + commit.
+- [x] **Step 1: aviso condicional de MT/PT por espesor.** D178 = `IF($D$29>25,"...MT/PT
+  (laminaciones), 212-4a","...")`. Anexo Paso 7 (fila 178).
+- [x] **Step 2: aviso de separación.** D177 = aviso de g (>5 no admisible; ≥1.5 → e incluye g,
+  ver Paso 5). 212-4(c) [82]. Se deja como **aviso** (constraint de fabricación, no de
+  aceptación de diseño), fiel al plan; no entra al AND de F90.
+- [x] **Step 3: notas de fabricación citando `resources/`.** D179 (anexo): corte térmico 1.5 mm
+  [80], metal blanco 40 mm a cada lado [85], secuencia costuras internas→perímetro [88], venteo
+  [90]. **Se añaden en el anexo** (no se reescriben las celdas B94-B99 del oracle) para mantener
+  direcciones estables (estrategia elegida). pytest 243 · verificar.py **0 fallos**.
 
 ---
 
