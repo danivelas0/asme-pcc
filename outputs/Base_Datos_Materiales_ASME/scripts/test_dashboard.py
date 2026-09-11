@@ -1030,6 +1030,16 @@ class TestBuildParcheContraOracle:
         assert ws["F67"].value == (
             "=IF($D$11=3,NA(),3*F62*$D$52*$D$55/$D$29^2)"), "F67 flexion Env"
 
+    # --- Fase 6: conformado en frio simple/doble (Paso 6, 212-3.5) -----------
+    # %Elong = coef*T/Rf*(1-Rf/Ro), coef=75 doble (esfera/cabezal, ec.6 [71]) o
+    # 50 simple (cilindro, ec.7 [75]); Ro=infinito (plano) -> factor=1 [73].
+    def test_paso6_conformado(self):
+        ws = self._construir()
+        assert str(ws["A170"].value).startswith("PASO 6"), ws["A170"].value
+        assert ws["D172"].value == "", "Ro default blanco (plano)"
+        assert ws["D77"].value == (
+            '=IF($D$11=3,75,50)*$D$29/$D$56*IF($D$172="",1,1-$D$56/$D$172)'), "D77"
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).
@@ -1196,7 +1206,9 @@ class TestBuildParcheContraOracle:
         "A74", "B74", "C74", "D74", "G74",
         "A75", "B75", "C75", "D75",
         "A76", "C76", "D76", "G76",
-        "A77", "C77", "D77", "G77",
+        # D77 (%Elong) sale del oracle: la Fase 6 le anade la rama simple/doble
+        # (coef 50/75) y el factor (1-Rf/Ro). Lo fija test_paso6_conformado.
+        "A77", "C77", "G77",
         "A78", "B78", "C78", "D78", "G78",
         "A79", "C79", "D79", "G79",
         "A80", "C80", "D80", "G80",

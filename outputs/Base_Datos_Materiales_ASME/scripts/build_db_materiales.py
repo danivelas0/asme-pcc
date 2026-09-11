@@ -6909,12 +6909,20 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("D76", "=$D$75/$D$26", com76)
 
     # B77 no lo declara el *oracle*.
-    com77 = ("Calculo: deformacion por conformado en frio, 50·T_parche/Rf "
-             "(ec. 7), en %; debe ser <=5% (verificacion de la seccion 5, "
-             "fila 86) para no requerir tratamiento termico de conformado.")
+    # Fase 6: deformacion por conformado completa: coef*T/Rf*(1-Rf/Ro), con
+    # coef = 75 para curvatura doble (esfera/cabezal, ec. 6 [71]) o 50 para
+    # curvatura simple (tuberia/virola, ec. 7 [75]), y el factor (1-Rf/Ro) con
+    # Ro = radio original (D172; en blanco = plano, Ro=inf -> factor 1) [73].
+    # El caso semilla (cilindro, Ro plano) da 50*T/Rf como antes. El rotulo A77,
+    # la unidad C77 y la ref G77 siguen anclados al oracle; solo cambia D77.
+    com77 = ("Calculo: deformacion por conformado en frio (%): coef·T/Rf·(1-Rf/Ro), "
+             "coef=75 doble curvatura (esfera/cabezal, ec.6) o 50 simple (tuberia/"
+             "virola, ec.7); Ro=D172 (blanco = plano, factor 1). <=5% para no "
+             "requerir PWHT post-conformado (212-3.5b).")
     lab(77, "Deformación por conformado", unidad="%",
         ref="ec.7: 50·T/Rf ≤ 5%", com=com77)
-    calc("D77", "=50*$D$29/$D$56", com77)
+    calc("D77", '=IF($D$11=3,75,50)*$D$29/$D$56*IF($D$172="",1,1-$D$56/$D$172)',
+         com77)
 
     com78 = ("Calculo: desarrollo de la media carcasa del collar, "
              "(π/2)·(OD + 2·luz + T_parche).")
@@ -7349,6 +7357,36 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
          'analisis; S_w = NA","cilindro: aplica ec.(5) con e = (T+t+g)/2")',
          com168)
     ws.merge_cells("D168:G168")
+
+    # --- PASO 6 — Conformado en frio: curvatura simple/doble (212-3.5) -------
+    # La deformacion (D77) ya usa coef 50/75 y el factor (1-Rf/Ro) (arriba). Aqui
+    # va la ENTRADA del radio original Ro (D172): en blanco = plano (Ro=inf,
+    # factor 1) [bloque 73]. El coeficiente lo elige la geometria: 75 doble
+    # (esfera/cabezal, ec.6 [71]) o 50 simple (cilindro, ec.7 [75]). > 5% exige
+    # PWHT post-conformado (212-3.5b [76]) — lo dictamina F86 (seccion 5).
+    banda_literal(170, "PASO 6 · CONFORMADO EN FRÍO — CURVATURA SIMPLE / DOBLE  "
+                       "(ASME PCC-2 Art. 212-3.5)")
+    encabezado(171, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Valor"), (7, "Referencia / Notas")))
+
+    com172 = ("Entrada: radio original de linea media del material del parche Ro, "
+              "mm, ANTES de conformarlo. Dejar en blanco si parte de plancha "
+              "plana (Ro = infinito -> factor (1-Rf/Ro) = 1) [212-3.5, bloque 73]. "
+              "Dato de campo/plano (se teclea).")
+    lab(172, "Radio original de línea media", unidad="mm",
+        ref="∞ si plano (en blanco)", com=com172)
+    ws.cell(172, 2, "Ro").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D172", "", com172)
+
+    com173 = ("Rama de curvatura (coef del %Elong, D77): 75 para curvatura DOBLE "
+              "(esfera/cabezal, ec. 6) o 50 para curvatura SIMPLE (tuberia/virola, "
+              "ec. 7). Si %Elong > 5%, el parche exige PWHT post-conformado antes "
+              "de instalar (212-3.5b); lo dictamina la verificacion F86.")
+    lab(173, "Rama de curvatura", ref="212-3.5 ec.6/ec.7", com=com173)
+    calc("D173",
+         '=IF($D$11=3,"Curvatura DOBLE (coef 75, ec.6) — esfera/cabezal",'
+         '"Curvatura SIMPLE (coef 50, ec.7) — tuberia/virola")', com173)
+    ws.merge_cells("D173:G173")
 
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
@@ -9190,6 +9228,11 @@ DIVERGENCIAS_REEMPLAZADAS = {
         "esfera (Fase 5). Cilindro sin cambio de valor."),
     ("Parche_PCC2_Art212", "E67"): "S_w flexion (Diseno): idem D67 (Fase 5).",
     ("Parche_PCC2_Art212", "F67"): "S_w flexion (Envolvente): idem D67 (Fase 5).",
+    ("Parche_PCC2_Art212", "D77"): (
+        "Deformacion por conformado: la Fase 6 le anade la rama simple/doble "
+        "(coef 50/75 segun geometria, ec.7/ec.6) y el factor (1-Rf/Ro) con Ro "
+        "(D172). Cilindro con plancha plana da 50*T/Rf como antes. La fija "
+        "test_paso6_conformado."),
 }
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

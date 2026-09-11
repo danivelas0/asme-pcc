@@ -337,17 +337,15 @@ doble `(75·T/R_f)·(1 − R_f/R_o) ≤ 5%` (bloque [71]); `R_o = ∞` si origin
 **Interfaces:** La deformación pasa de `50·T/Rf` (hardcode simple, sin `(1−Rf/Ro)`) a la
 fórmula completa, con **rama simple/doble** según geometría, y entrada `R_o`.
 
-- [ ] **Step 1: test (falla).** `test_paso6_conformado`: entrada `Ro` (con «∞ / plano» → celda
-  vacía o valor grande, manejada por `IF`); coef 50 (cilindro/curvatura simple) vs 75
-  (cabezal-esfera/doble) según `$D$11`; factor `(1−Rf/Ro)` presente; dictamen `≤5% → CUMPLE`,
-  `>5% → "PWHT post-conformado (212-3.5b)"`. → FAIL.
-- [ ] **Step 2: entrada `R_o`.** `inp` «Radio original de línea media Ro» [mm], ref «∞ si plano
-  (dejar en blanco)». `factor = IF($Ro="",1,1-$Rf/$Ro)`.
-- [ ] **Step 3: coef por geometría.** `coef = IF($D$11=3, 75, 50)` (cabezal/esfera = doble
-  curvatura; tubería/virola cilíndrica = simple). Citar bloques [71]/[75].
-- [ ] **Step 4: deformación y dictamen.** `%Elong = coef·T/Rf·factor`; `IF(%Elong≤5,"CUMPLE",
-  "NO CUMPLE — requiere PWHT post-conformado (212-3.5b)")`. Cablear a F90.
-- [ ] **Step 5: PASS + commit** — `Art. 212 Paso 6: curvatura simple/doble y factor (1-Rf/Ro)`.
+- [x] **Step 1: test (falla).** `test_paso6_conformado`: Ro en D172, D77 con coef 50/75 y factor. PASS.
+- [x] **Step 2: entrada `R_o`.** D172 «Radio original de línea media» [mm], blanco = plano (Ro=∞,
+  factor 1) [73]. `factor = IF($D$172="",1,1-$D$56/$D$172)`.
+- [x] **Step 3: coef por geometría.** `coef = IF($D$11=3,75,50)` (esfera/cabezal doble [71];
+  tubería/virola simple [75]). D173 declara la rama.
+- [x] **Step 4: deformación y dictamen.** D77 = `IF($D$11=3,75,50)*$D$29/$D$56*IF($D$172="",1,
+  1-$D$56/$D$172)`. El dictamen ≤5% ya existe en F86 (verificación sección 5); >5% → PWHT
+  (212-3.5b), ya en el AND de F90 vía F86. Seed: %Elong=2.389 (sin cambio).
+- [x] **Step 5: PASS + commit.** §6e recalcula %Elong en Excel. pytest 242 · verificar.py **0**.
 
 ---
 

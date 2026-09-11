@@ -228,6 +228,7 @@ Dictamen global del modulo: **APTO** (OK).
 | Magnitud | Caso | Referencia Python | Hoja | Estado |
 |---|---|---|---|---|
 | e (excentricidad) | — | 7.175 | 7.175 | OK |
+| %Elong conformado | — | 2.389486260454002 | 2.389486260454002 | OK |
 | F_CP | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | F_LP | Operacion | 38.91401303125 | 38.91401303125 | OK |
 | F_C | Operacion | 77.8280260625 | 77.8280260625 | OK |

@@ -1444,6 +1444,20 @@ def auditar():
         ok_e = isinstance(got_e, (int, float)) and abs(got_e - e_ref) <= max(TOL, abs(e_ref) * 1e-9)
         flujo_bad += 0 if ok_e else 1
         log(f"| e (excentricidad) | — | {e_ref} | {got_e} | {'OK' if ok_e else 'FALLO'} |")
+        # Paso 6: %Elong = coef*T/Rf*(1-Rf/Ro); seed cilindro (coef 50) y plancha
+        # plana (Ro en blanco -> factor 1).
+        rf = rec["D56"].value
+        modo = rec["D11"].value
+        ro = rec["D172"].value
+        if isinstance(rf, (int, float)) and rf and isinstance(Tpar, (int, float)):
+            coef = 75 if modo == 3 else 50
+            fac = 1.0 if (ro in ("", None)) else (1 - rf / ro if ro else 1.0)
+            elong_ref = coef * Tpar / rf * fac
+            got_el = rec["D77"].value
+            ok_el = isinstance(got_el, (int, float)) and abs(got_el - elong_ref) <= max(TOL, abs(elong_ref) * 1e-9)
+            flujo_bad += 0 if ok_el else 1
+            log(f"| %Elong conformado | — | {elong_ref} | {got_el} | "
+                f"{'OK' if ok_el else 'FALLO'} |")
     for etiq, pc, cpc, lpc, cc, lc, mc, wc, sw in (
             ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150", "D64", "D68"),
             ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64", "E68"),
