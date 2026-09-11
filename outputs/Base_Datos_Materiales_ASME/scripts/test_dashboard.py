@@ -991,3 +991,20 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_8:
             assert ws[celda].value == oracle["formulas"][celda], celda
+
+
+class TestValidacionesBloqueantes:
+    """Un desplegable que no rechaza lo que no esta en su lista es una sugerencia,
+    no una restriccion — y el error de tecleo sigue siendo posible. Con
+    showErrorMessage=False (como estaba hasta esta tarea) Excel aceptaba en
+    silencio cualquier valor escrito a mano."""
+
+    def test_toda_validacion_de_lista_bloquea(self, wb):
+        flojas = []
+        for ws in wb.worksheets:
+            for dv in ws.data_validations.dataValidation:
+                if dv.type != "list":
+                    continue
+                if not dv.showErrorMessage or dv.errorStyle != "stop":
+                    flojas.append(f"{ws.title}!{sorted(str(r) for r in dv.sqref.ranges)[0]}")
+        assert flojas == [], flojas

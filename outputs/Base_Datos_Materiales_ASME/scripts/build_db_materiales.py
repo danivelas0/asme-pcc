@@ -362,8 +362,15 @@ def _nota(cell, texto, ancho=260, alto=90):
 
 
 def dv_list(ws, cell, formula, comentario=None):
+    # errorStyle="stop": Excel RECHAZA lo que no este en la lista, en vez de
+    # aceptarlo en silencio. Es la mitad que le faltaba a la regla 14 — apuntar el
+    # desplegable a la base no sirve de nada si el usuario puede teclear al lado.
+    # Aviso honesto y deliberado: el bloqueo actua al TECLEAR; no al pegar ni al
+    # escribir por macro. Reduce el error de dedo, no lo vuelve imposible.
     dv = DataValidation(type="list", formula1=formula, allow_blank=True,
-                        showErrorMessage=False)
+                        showErrorMessage=True, errorStyle="stop",
+                        errorTitle="Valor fuera de lista",
+                        error="Elija uno de los valores de la lista desplegable.")
     ws.add_data_validation(dv)
     dv.add(ws[cell])
     if comentario:
