@@ -225,23 +225,26 @@ Dictamen global del modulo: **APTO** (OK).
 
 ## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)
 
-| Magnitud | Caso | Referencia Python (N/mm) | Hoja | Estado |
+| Magnitud | Caso | Referencia Python | Hoja | Estado |
 |---|---|---|---|---|
 | F_CP | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | F_LP | Operacion | 38.91401303125 | 38.91401303125 | OK |
 | F_C | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | F_L | Operacion | 38.91401303125 | 38.91401303125 | OK |
 | F_max | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| w_min | Operacion | 1.0254021879117259 | 1.0254021879117259 | OK |
 | F_CP | Diseno | 155.656052125 | 155.656052125 | OK |
 | F_LP | Diseno | 77.8280260625 | 77.8280260625 | OK |
 | F_C | Diseno | 155.656052125 | 155.656052125 | OK |
 | F_L | Diseno | 77.8280260625 | 77.8280260625 | OK |
 | F_max | Diseno | 155.656052125 | 155.656052125 | OK |
+| w_min | Diseno | 2.0508043758234518 | 2.0508043758234518 | OK |
 | F_CP | Envolvente | 311.31210425 | 311.31210425 | OK |
 | F_LP | Envolvente | 155.656052125 | 155.656052125 | OK |
 | F_C | Envolvente | 311.31210425 | 311.31210425 | OK |
 | F_L | Envolvente | 155.656052125 | 155.656052125 | OK |
 | F_max | Envolvente | 311.31210425 | 311.31210425 | OK |
+| w_min | Envolvente | 4.1016087516469035 | 4.1016087516469035 | OK |
 
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 

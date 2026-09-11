@@ -1421,6 +1421,7 @@ def auditar():
     # formulas en el motor de Excel, no una copia.
     #   Paso 2 (212-3.2): F_CP=P*Dm/2, F_LP=P*Dm/4, F_C=F_CP+F_CO,
     #                     F_L=F_LP+F_LO, F_max=MAX(F_C,F_L).
+    #   Paso 4 (212-3.4): w_min = F_max/(E*Sa), E=D42, Sa=D41 (ec. 4).
     # El caso semilla es cilindro (D11=1), asi que F_max aplica (no NA).
     log("## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)")
     log("")
@@ -1428,12 +1429,14 @@ def auditar():
     dm = rec["D52"].value
     fco = rec["D144"].value or 0
     flo = rec["D145"].value or 0
-    log("| Magnitud | Caso | Referencia Python (N/mm) | Hoja | Estado |")
+    e_fil = rec["D42"].value
+    sa_gob = rec["D41"].value
+    log("| Magnitud | Caso | Referencia Python | Hoja | Estado |")
     log("|---|---|---|---|---|")
-    for etiq, pc, cpc, lpc, cc, lc, mc in (
-            ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150"),
-            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150"),
-            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150")):
+    for etiq, pc, cpc, lpc, cc, lc, mc, wc in (
+            ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150", "D64"),
+            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64"),
+            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150", "F64")):
         P = rec[pc].value
         if not isinstance(P, (int, float)) or not isinstance(dm, (int, float)):
             flujo_bad += 1
@@ -1441,9 +1444,13 @@ def auditar():
             continue
         exp_cp, exp_lp = P * dm / 2, P * dm / 4
         exp_c, exp_l = exp_cp + fco, exp_lp + flo
-        for nombre, celda, ref in (("F_CP", cpc, exp_cp), ("F_LP", lpc, exp_lp),
-                                   ("F_C", cc, exp_c), ("F_L", lc, exp_l),
-                                   ("F_max", mc, max(exp_c, exp_l))):
+        exp_max = max(exp_c, exp_l)
+        comprobaciones = [("F_CP", cpc, exp_cp), ("F_LP", lpc, exp_lp),
+                          ("F_C", cc, exp_c), ("F_L", lc, exp_l),
+                          ("F_max", mc, exp_max)]
+        if isinstance(e_fil, (int, float)) and isinstance(sa_gob, (int, float)) and e_fil * sa_gob:
+            comprobaciones.append(("w_min", wc, exp_max / (e_fil * sa_gob)))
+        for nombre, celda, ref in comprobaciones:
             got = rec[celda].value
             ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-9)
             flujo_bad += 0 if ok else 1

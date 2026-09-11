@@ -6332,12 +6332,15 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # CUMPLE de la seccion 5. El aviso de entalla (REVISAR, T < 0) NO bloquea:
     # es advertencia, deja seguir. Trazado: Art. 212-1/2 (bloques 6,11-13) y el
     # flujo aprobado del ingeniero (servicio letal).
+    # F84-F87: verificaciones de la seccion 5. F161/F162: los dos topes del
+    # filete del Paso 4 (Fase 4). Todos deben dar CUMPLE para APTO.
     ws["F90"] = ('=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
                  'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
                  'IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
                  '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
                  'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
-                 'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
+                 'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE",'
+                 'F161="CUMPLE",F162="CUMPLE"),'
                  '"APTO","REVISAR"))))')
     _nota(ws["F90"], "Calculo: DICTAMEN GLOBAL DEL DISEÑO. Primero la compuerta de "
                     "elegibilidad (Paso 1, D140): si es PROHIBIDO / NO ELEGIBLE / "
@@ -6767,13 +6770,21 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("E63", "=$D$14*E62*$D$52", com63)
     calc("F63", "=$D$14*F62*$D$52", com63)
 
-    com64 = ("Calculo: cateto de filete minimo requerido para este caso "
-             "(ec. 4): F_m / (E · Sa).")
+    # Fase 4: w_min usa la fuerza gobernante F_max del Paso 2 (D150/E150/F150),
+    # no F_m (D63). Para cilindro sin cargas externas F_max = F_CP = F_m, asi
+    # que el caso semilla no cambia de valor; para esfera/cabezal F_max = NA()
+    # (hand-off 212-3.2c), lo que bloquea w_min como debe (decision 3). El
+    # rotulo A64, el simbolo B64, la unidad C64 y la referencia G64 siguen
+    # anclados al oracle: solo cambia la formula (ec. 4, bloques [57],[59]).
+    com64 = ("Calculo: cateto de filete minimo requerido para este caso (ec. 4, "
+             "212-3.4): F_max / (E · Sa), con F_max del Paso 2 (fuerza "
+             "gobernante) y E = 0.55. En esfera/cabezal F_max = NA() -> w_min "
+             "no aplica (hand-off 212-3.2c).")
     lab(64, "Filete requerido", unidad="mm", ref="ec.4: F/(E·Sa)", com=com64)
     ws.cell(64, 2, "w_mín").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D64", "=D63/($D$42*$D$41)", com64)
-    calc("E64", "=E63/($D$42*$D$41)", com64)
-    calc("F64", "=F63/($D$42*$D$41)", com64)
+    calc("D64", "=D150/($D$42*$D$41)", com64)
+    calc("E64", "=E150/($D$42*$D$41)", com64)
+    calc("F64", "=F150/($D$42*$D$41)", com64)
 
     com65 = ("Calculo: espesor de pared requerido para este caso, por B31.3 "
              "(modo tuberia) o por VIII-1 UG-27 (modo esfera/cilindro), "
@@ -7253,6 +7264,41 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                 com157)
     d157.font = Font(name=MONO, size=9, color=GRIS)
     ws.merge_cells("D157:G157")
+
+    # --- PASO 4 — Soldadura perimetral de filete: topes (212-3.4) -----------
+    # w_min (D64:F64) ya usa F_max (arriba). Aqui los DOS topes de la NOTA del
+    # bloque [60]: el cateto de diseno no debe exceder ni el menor espesor de
+    # los materiales unidos (min(T_parche, t_pared)) ni 40 mm (1.5 in.). Los dos
+    # entran al AND de F90. El bisel alternativo (garganta <= nominal) del
+    # bloque [61] va como nota. w adoptado = D32; T_parche = D29; t_pared = D21.
+    banda_literal(159, "PASO 4 · SOLDADURA DE FILETE — TOPES DE LA NOTA  "
+                       "(ASME PCC-2 Art. 212-3.4)")
+    encabezado(160, ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
+                     (6, "Resultado"), (7, "Criterio")))
+
+    lab(161, "Filete ≤ menor espesor unido", ref="w ≤ min(T_parche, t_pared)")
+    ws.merge_cells("A161:C161")
+    calc("D161", "=MIN($D$29,$D$21)")
+    calc("E161", "=$D$32")
+    calc("F161", '=IF(E161<=D161,"CUMPLE",'
+                 '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")')
+
+    lab(162, "Filete ≤ 40 mm (1.5 in.)", ref="w ≤ 40 mm")
+    ws.merge_cells("A162:C162")
+    calc("D162", 40)
+    calc("E162", "=$D$32")
+    calc("F162", '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")')
+
+    com163 = ("Nota (212-3.4b, bloque [61]): alternativamente el borde del filete "
+              "puede biselarse para aumentar la garganta efectiva; en ningun caso "
+              "la garganta efectiva debe exceder el espesor nominal del parche ni "
+              "el del componente original.")
+    lab(163, "Bisel alternativo", ref="212-3.4(b)", com=com163)
+    d163 = calc("D163",
+                "Bisel opcional (212-3.4b): garganta efectiva <= espesor nominal "
+                "del parche o del componente. No excederlo.", com163)
+    d163.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D163:G163")
 
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
@@ -9066,10 +9112,17 @@ DIVERGENCIAS_REEMPLAZADAS = {
     ("Parche_PCC2_Art212", "G22"): "Idem A22: referencia de la norma dimensional.",
     ("Parche_PCC2_Art212", "F90"): (
         "DICTAMEN GLOBAL: la Fase 1 antepone la compuerta de elegibilidad del "
-        "Paso 1 (D140). Si el Paso 1 arroja PROHIBIDO / NO ELEGIBLE / FUERA DE "
-        "ALCANCE, F90 es ese motivo; si no, cae a la logica anterior (material + "
-        "verificaciones). La forma nueva la fija test_paso1_elegibilidad; el "
+        "Paso 1 (D140) y la Fase 4 anade los dos topes de filete (F161, F162) al "
+        "AND de verificaciones. La forma nueva la fija test_paso4_filete; el "
         "oracle Rev0 no la cubre."),
+    ("Parche_PCC2_Art212", "D64"): (
+        "w_min (Operacion): la Fase 4 lo recablea de F_m (D63) a la fuerza "
+        "gobernante F_max del Paso 2 (D150), ec. 4 del 212-3.4. Para cilindro sin "
+        "cargas externas el valor no cambia; lo fija test_paso4_filete."),
+    ("Parche_PCC2_Art212", "E64"): (
+        "w_min (Diseno tipico): recableado a F_max (E150) en la Fase 4. Ver D64."),
+    ("Parche_PCC2_Art212", "F64"): (
+        "w_min (Envolvente): recableado a F_max (F150) en la Fase 4. Ver D64."),
 }
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

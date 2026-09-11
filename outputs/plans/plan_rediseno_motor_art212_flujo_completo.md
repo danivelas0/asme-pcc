@@ -279,15 +279,14 @@ distancia a parches adyacentes (3C) y la nota de esquinas redondeadas.
 **Interfaces:** `w_min` pasa a usar `F_max` (Fase 2) en vez de `F_m`. Se añaden las dos
 verificaciones de tope que hoy faltan.
 
-- [ ] **Step 1: test (falla).** `test_paso4_filete`: `w_min = F_max/(E·Sa)` con `E=0.55`;
-  y dos verificaciones nuevas: `w ≤ MIN(T_parche, t_pared)` y `w ≤ 40`. → FAIL.
-- [ ] **Step 2: `w_min` desde `F_max`.** Cambiar `w_min = F_max/(E·Sa)` (antes `F_m`).
-- [ ] **Step 3: topes.** En la Sección 5 (verificaciones), añadir:
-  `Filete ≤ min(T,t)` → `IF(w≤MIN(T_parche,t_pared),"CUMPLE","NO CUMPLE — excede espesor menor (NOTA 212-3.4)")`;
-  `Filete ≤ 40 mm` → `IF(w≤40,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")`.
-- [ ] **Step 4: nota de bisel.** `comentar_art212_base`: opción de bisel, garganta efectiva
-  ≤ nominal del parche o del componente (bloque [61]).
-- [ ] **Step 5: cablear a F90** (las dos verificaciones entran en el AND del dictamen). PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso4_filete`: D64/F64 = F_max, topes F161/F162. → PASS.
+- [x] **Step 2: `w_min` desde `F_max`.** D64/E64/F64 = `=D150/($D$42*$D$41)` (F_max, no F_m). A/B/
+  C/G64 siguen anclados; D/E/F64 en `DIVERGENCIAS_REEMPLAZADAS`. Seed sin cambio (cilindro).
+- [x] **Step 3: topes.** Anexo Paso 4 (filas 159-162): D161=`MIN($D$29,$D$21)`, F161 dictamen
+  «≤ menor espesor»; D162=40, F162 dictamen «≤ 40 mm». Bloque [60].
+- [x] **Step 4: nota de bisel.** D163 (texto): garganta efectiva ≤ nominal (212-3.4b, [61]).
+- [x] **Step 5: cablear a F90.** AND incluye F161, F162. §6e verifica w_min=F_max/(E·Sa) en
+  Excel (3 casos OK). pytest 240 · verificar.py **0 fallos** · seed → APTO (topes CUMPLE).
 
 ---
 

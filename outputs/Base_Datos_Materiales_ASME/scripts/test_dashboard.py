@@ -912,13 +912,17 @@ class TestBuildParcheContraOracle:
     # Bloque nuevo en el anexo de pasos del flujo (filas 134+), fuera del rango
     # 1-129 del oracle: se fija por cadena aqui (Regla n.1: trazado a Art. 212 y
     # al flujo aprobado del ingeniero), no contra el oracle Rev0.
+    # F90 evoluciona por fases; esta es su forma vigente. Fase 1 antepuso la
+    # compuerta de elegibilidad; Fase 4 anadio los dos topes de filete (F161,
+    # F162) al AND de las verificaciones.
     F90_CON_ELEGIBILIDAD = (
         '=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
         'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
         'IF(OR($D$125="SIN MATERIAL SELECCIONADO",'
         '$E$125="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 7)",'
         'IF(OR($D$125<>"OK",$E$125<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
-        'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE"),'
+        'IF(AND(F84="CUMPLE",F85="CUMPLE",F86="CUMPLE",F87="CUMPLE",'
+        'F161="CUMPLE",F162="CUMPLE"),'
         '"APTO","REVISAR"))))')
     D140_DICTAMEN_ELEGIBILIDAD = (
         '=IF($D$138="Letal / extrema peligrosidad",'
@@ -985,6 +989,25 @@ class TestBuildParcheContraOracle:
             'IF($D$155>=$D$73,"OK","< L_min — reubicar (212-3.3)"))'), "D156"
         # La nota de esquinas cita el 75 mm (recomendacion del flujo).
         assert "75" in str(ws["D157"].value), ws["D157"].value
+
+    # --- Fase 4: filete perimetral con topes (Paso 4, 212-3.4) ---------------
+    # w_min pasa a F_max (ec.4, E=0.55, bloques [57],[59]); topes NOTA [60]:
+    # w <= min(T,t) y w <= 40 mm; ambos entran al AND de F90.
+    def test_paso4_filete(self):
+        ws = self._construir()
+        # w_min (D64:F64) recablea a F_max (D150:F150), no F_m (D63).
+        assert ws["D64"].value == "=D150/($D$42*$D$41)", "D64"
+        assert ws["F64"].value == "=F150/($D$42*$D$41)", "F64"
+        # Bloque de topes.
+        assert str(ws["A159"].value).startswith("PASO 4"), ws["A159"].value
+        assert ws["D161"].value == "=MIN($D$29,$D$21)", "D161 req"
+        assert ws["E161"].value == "=$D$32", "E161 adoptado"
+        assert ws["F161"].value == (
+            '=IF(E161<=D161,"CUMPLE",'
+            '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")'), "F161"
+        assert ws["F162"].value == (
+            '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")'), "F162"
+        assert ws["D162"].value == 40, "D162"
 
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
@@ -1130,7 +1153,11 @@ class TestBuildParcheContraOracle:
         "A61", "B61", "C61", "D61", "E61", "F61", "G61",
         "A62", "B62", "C62", "D62", "E62", "F62", "G62",
         "A63", "B63", "C63", "D63", "E63", "F63", "G63",
-        "A64", "B64", "C64", "D64", "E64", "F64", "G64",
+        # D64/E64/F64 (w_min) salen del oracle: la Fase 4 los recablea a F_max
+        # (D150) en vez de F_m (D63). Su forma nueva la fija test_paso4_filete y
+        # su divergencia se declara en DIVERGENCIAS_REEMPLAZADAS. A/B/C/G64
+        # (rotulo, simbolo, unidad, referencia) siguen anclados al oracle.
+        "A64", "B64", "C64", "G64",
         "A65", "B65", "C65", "D65", "E65", "F65", "G65",
         "A66", "B66", "C66", "D66", "E66", "F66", "G66",
         "A67", "B67", "C67", "D67", "E67", "F67", "G67",
