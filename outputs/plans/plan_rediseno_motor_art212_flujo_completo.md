@@ -406,7 +406,17 @@ calcula E, TNT y la distancia segura R, y avisa; en hidrostática, mantiene el c
 
 ---
 
-## Fase 9 — Notación de símbolos con subíndice (decisión 5)
+## Fase 9 — Notación de símbolos con subíndice (decisión 5) — **DIFERIDA**
+
+> **Estado (2026-09-11): DIFERIDA, para agrupar con el re-baseline del oracle (Fase 10) tras
+> el F9 del ingeniero.** Es la única de las decisiones que es **cosmética** (notación); los 6
+> huecos de ingeniería (Fases 1-8) están cerrados y validados en Excel. Razón del aplazamiento:
+> cambiar cada celda de símbolo de la columna B a `CellRichText` (a) rota decenas de celdas
+> ancladas al oracle → una divergencia por celda, (b) `CellRichText` no lo serializa
+> `_dump_parche_ref.py` sin trabajo extra, justo lo que la Fase 10 tiene que resolver al
+> re-baselinar, y (c) obliga a re-enseñar a `TestSistemaVisual` a leer los *runs*. Hacerlo
+> **junto** al re-baseline (post-F9) evita rehacer el oracle dos veces. No bloquea nada del
+> cálculo. Aplica igual a la Fase 9 del plan del 206.
 
 **Files:** Modify `build_db_materiales.py` (helper `sym()`); aplicarlo en los rótulos de
 símbolo (columna B) de todas las secciones del 212. Modify `TestSistemaVisual` si hace falta.
