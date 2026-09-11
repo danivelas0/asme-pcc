@@ -1008,3 +1008,62 @@ class TestValidacionesBloqueantes:
                 if not dv.showErrorMessage or dv.errorStyle != "stop":
                     flojas.append(f"{ws.title}!{sorted(str(r) for r in dv.sqref.ranges)[0]}")
         assert flojas == [], flojas
+
+
+class TestBasesDimensionalesB36:
+    HOJAS = ("DB_B36_10", "DB_B36_19")
+
+    def test_existen_y_no_llevan_formulas(self, wb):
+        for h in self.HOJAS:
+            ws = wb[h]
+            for fila in ws.iter_rows(min_row=1):
+                for c in fila:
+                    assert not (isinstance(c.value, str) and c.value.startswith("=")), \
+                        f"{h}!{c.coordinate}: una base no lleva formulas"
+
+    def test_orden_contiguo_por_nps(self, wb):
+        # Regla 5: la cascada dependiente usa COUNTIF/INDEX/MATCH sobre bloques
+        # contiguos. Si un NPS aparece en dos tramos separados, la lista de cedulas
+        # de ese NPS sale truncada y nadie se entera.
+        ws = wb["DB_B36_10"]
+        col = B.COL_B36["nps_impreso"]
+        vistos, ultimo = set(), None
+        for r in range(B.R_DATA, ws.max_row + 1):
+            v = ws.cell(r, col).value
+            if v != ultimo:
+                assert v not in vistos, f"NPS {v!r} reaparece fuera de su bloque"
+                vistos.add(v)
+                ultimo = v
+
+    def test_caso_semilla_presente(self, wb):
+        ws = wb["DB_B36_10"]
+        cn, cc, ct = (B.COL_B36["nps_in"], B.COL_B36["cedula"], B.COL_B36["t_mm"])
+        hit = [r for r in range(B.R_DATA, ws.max_row + 1)
+               if ws.cell(r, cn).value == 12.0 and str(ws.cell(r, cc).value) == "20"]
+        assert len(hit) == 1
+        assert ws.cell(hit[0], ct).value == 6.35
+
+    def test_nps_orden_marca_solo_la_primera_fila_del_bloque(self, wb):
+        # nps_orden alimenta la lista de NPS sin repetir (Tarea 7): vale 1,2,3...
+        # en la primera fila de cada bloque contiguo y vacio en el resto.
+        ws = wb["DB_B36_10"]
+        col_nps, col_orden = B.COL_B36["nps_impreso"], B.COL_B36["nps_orden"]
+        vistos, marcados = set(), []
+        for r in range(B.R_DATA, ws.max_row + 1):
+            v = ws.cell(r, col_nps).value
+            orden = ws.cell(r, col_orden).value
+            if v not in vistos:
+                vistos.add(v)
+                assert orden is not None, f"fila {r} (primera de {v!r}) sin nps_orden"
+                marcados.append(orden)
+            else:
+                assert orden is None, f"fila {r} ({v!r} repetido) no deberia llevar nps_orden"
+        assert marcados == list(range(1, len(marcados) + 1))
+
+    def test_clave_combina_nps_impreso_y_designador(self, wb):
+        ws = wb["DB_B36_10"]
+        col_nps, col_des, col_clave = (B.COL_B36["nps_impreso"], B.COL_B36["designador"],
+                                       B.COL_B36["clave"])
+        for r in (B.R_DATA, B.R_DATA + 1):
+            esperada = f"{ws.cell(r, col_nps).value}|{ws.cell(r, col_des).value}"
+            assert ws.cell(r, col_clave).value == esperada

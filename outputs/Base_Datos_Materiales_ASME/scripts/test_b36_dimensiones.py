@@ -20,6 +20,26 @@ def test_doble_unidad_con_nota_al_pie_no_se_descarta():
     assert B.partir_doble_unidad("0.188 (4.78) [Notes (1), (2)]") == (0.188, 4.78)
 
 
+def test_doble_unidad_con_separador_de_miles():
+    # Las tuberias grandes (NPS 40+) imprimen miles con coma en el lado US y con
+    # espacio en el lado metrico -- el mismo valor, solo tipografia distinta.
+    assert B.partir_doble_unidad("40.0 (1 016)") == (40.0, 1016.0)
+    assert B.partir_doble_unidad("1,000.89 (1 489.92)") == (1000.89, 1489.92)
+
+
+def test_nps_con_fraccion_mixta_en_glifo_unicode():
+    # B36.10M imprime 1 1/4, 1 1/2, 2 1/2 y 3 1/2 con el glifo de fraccion pegado
+    # al entero ("1½"), no con barra ASCII como las fracciones puras ("1/8").
+    assert B.partir_nps("1½ (40)") == ("1½ (40)", 1.5, 40.0)
+    assert B.partir_nps("1¼ (32)") == ("1¼ (32)", 1.25, 32.0)
+    assert B.partir_nps("3½ (90)") == ("3½ (90)", 3.5, 90.0)
+
+
+def test_nps_con_dn_separador_de_miles():
+    # DN >= 1000 mm imprime el DN entre parentesis con espacio de miles.
+    assert B.partir_nps("40 (1 000)") == ("40 (1 000)", 40.0, 1000.0)
+
+
 def test_parte_el_nps_fraccionario():
     assert B.partir_nps("1/8 (6)") == ("1/8 (6)", 0.125, 6.0)
     assert B.partir_nps("12 (300)") == ("12 (300)", 12.0, 300.0)

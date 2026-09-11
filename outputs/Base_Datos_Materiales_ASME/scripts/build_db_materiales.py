@@ -58,6 +58,7 @@ from db_lib import (Resources, bilingual_key, build_material_id, clean, disambig
 # Reconstruccion de las tablas de la Seccion II partes A, B y C. Es una
 # libreria pura -sin Excel y sin PDF- y ademas CLI; aqui se usa como libreria.
 import secii_tablas as secii
+import b36_dimensiones
 
 # ---------------------------------------------------------------------------
 # Sistema visual — Swiss Industrial Print
@@ -8911,6 +8912,80 @@ def aplicar_visibilidad(wb):
     return estados
 
 
+# Layout de las dos bases dimensionales. El indice de columna se declara una sola
+# vez y lo consumen el builder, las pruebas y verificar.py: si alguien inserta una
+# columna, se entera todo el mundo a la vez.
+#
+# nps_orden y clave no son datos impresos por el codigo: nps_orden numera la
+# PRIMERA fila de cada bloque de NPS (1,2,3...) para poder listar los NPS sin
+# repetirlos (Tarea 7); clave es nps_impreso & "|" & designador, precalculada
+# aqui como TEXTO (una base no lleva formulas) para que el lookup de OD/espesor
+# de los dos motores (Tarea 8) resuelva con un unico MATCH.
+COL_B36 = {"nps_impreso": 1, "nps_in": 2, "dn_mm": 3, "designador": 4,
+           "cedula": 5, "identificacion": 6, "od_in": 7, "od_mm": 8,
+           "t_in": 9, "t_mm": 10, "peso_lb_ft": 11, "peso_kg_m": 12,
+           "nps_orden": 13, "clave": 14}
+
+CABECERA_B36 = ["NPS impreso", "NPS (in)", "DN (mm)", "Designador",
+                "Schedule No.", "Identification", "OD (in)", "OD (mm)",
+                "Espesor (in)", "Espesor (mm)", "Peso (lb/ft)", "Peso (kg/m)",
+                "nps_orden (auxiliar)", "clave (auxiliar)"]
+
+
+def build_db_b36(wb, norma):
+    """Base dimensional de una de las dos normas de tuberia.
+
+    Una fila por (NPS, cedula), ordenada por NPS y luego por espesor para que cada
+    NPS sea un bloque contiguo (regla 5) — lo exige la lista dependiente de cedula
+    de los motores, que resuelve con COUNTIF/INDEX/MATCH y no con matrices.
+
+    Las dos unidades vienen en columnas separadas porque la norma las publica en la
+    MISMA celda: el conmutador de los motores cambia de columna, nunca convierte
+    (regla 10).
+    """
+    cfg = {"B36.10M": (b36_dimensiones.RUTA_B3610, "DB_B36_10",
+                       "ASME B36.10M-2022 — Welded and Seamless Wrought Steel Pipe"),
+           "B36.19M": (b36_dimensiones.RUTA_B3619, "DB_B36_19",
+                       "ASME B36.19M-2022 — Stainless Steel Pipe")}[norma]
+    ruta, nombre, titulo = cfg
+    filas = b36_dimensiones.cargar(ruta)
+    # Orden: NPS ascendente y, dentro de cada NPS, espesor ascendente. El espesor
+    # ordena mejor que la cedula porque la cedula es texto y mezcla numeros con
+    # STD/XS/XXS y con 5S/10S: ordenarla como texto pondria "10" antes que "5".
+    filas.sort(key=lambda f: (f["nps_in"] if f["nps_in"] is not None else 1e9,
+                              f["t_mm"] if f["t_mm"] is not None else 1e9))
+    ws = new_sheet(wb, nombre, titulo,
+                   f"Fuente: resources/ASME B36/{ruta.parent.name}/{ruta.name}")
+    for j, h in enumerate(CABECERA_B36, start=1):
+        c = ws.cell(R_HDR, j, h)
+        c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
+    vistos = set()
+    orden = 0
+    for i, f in enumerate(filas):
+        r = R_DATA + i
+        for clave, j in COL_B36.items():
+            if clave in ("nps_orden", "clave"):
+                continue
+            ws.cell(r, j, f[clave]).font = DATA_F
+        if f["nps_impreso"] not in vistos:
+            vistos.add(f["nps_impreso"])
+            orden += 1
+            ws.cell(r, COL_B36["nps_orden"], orden).font = DATA_F
+        ws.cell(r, COL_B36["clave"], f"{f['nps_impreso']}|{f['designador']}").font = DATA_F
+    autosize(ws, {"A": 14, "B": 10, "C": 10, "D": 14, "E": 13, "F": 13,
+                  "G": 11, "H": 11, "I": 13, "J": 13, "K": 13, "L": 13,
+                  "M": 14, "N": 20})
+    return {"sheet": nombre, "last_row": R_DATA + len(filas) - 1}
+
+
+def _rango_b36(info, clave):
+    """Rango de columna completa de una base B36, para las formulas de la
+    cascada dimensional (Tareas 7-9). Funcion de modulo para no duplicar la
+    expresion entre _materializar_cascada_b36 y las formulas de OD/espesor."""
+    L = get_column_letter(COL_B36[clave])
+    return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--resources", required=True)
@@ -9135,6 +9210,9 @@ def main(argv=None):
              "Tabla A-3 y esta tabla, asi que el motor no la infiere.",
              Font(name=MONO, size=9, bold=True, color=ROJO)),
         ] + bloques_tabla_ej(filas34)))
+
+    b3610 = build_db_b36(wb, "B36.10M")
+    b3619 = build_db_b36(wb, "B36.19M")
 
     build_parche_art212(wb, b313, iid, iidb, fac, rangos)
     build_collar_art206(wb, b313, iid, iidb, fac, rangos)

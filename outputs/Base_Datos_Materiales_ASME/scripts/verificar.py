@@ -1749,10 +1749,58 @@ def auditar():
         "Cuantas hay, y por que, esta en `IDX_SecII_Tablas`.")
     log("")
 
+    # ---- 11. Bases dimensionales B36 (hoja contra JSON de resources) ------
+    log("## 11. Bases dimensionales B36 (hoja contra JSON de resources)")
+    log("")
+    import b36_dimensiones
+    b36_bad = 0
+    for norma, ruta, hoja in (("B36.10M", b36_dimensiones.RUTA_B3610, "DB_B36_10"),
+                              ("B36.19M", b36_dimensiones.RUTA_B3619, "DB_B36_19")):
+        esperadas = b36_dimensiones.cargar(ruta)
+        esperadas.sort(key=lambda f: (f["nps_in"] if f["nps_in"] is not None else 1e9,
+                                      f["t_mm"] if f["t_mm"] is not None else 1e9))
+        ws = wb[hoja]
+        leidas = ws.max_row - B.R_DATA + 1
+        if leidas != len(esperadas):
+            log(f"- {norma}: la hoja tiene {leidas} filas y el JSON {len(esperadas)}")
+            b36_bad += 1
+            continue
+        vistos, orden, ordenes_esperados = set(), 0, []
+        for esp in esperadas:
+            if esp["nps_impreso"] not in vistos:
+                vistos.add(esp["nps_impreso"])
+                orden += 1
+                ordenes_esperados.append(orden)
+            else:
+                ordenes_esperados.append(None)
+        for i, esp in enumerate(esperadas):
+            r = B.R_DATA + i
+            for clave, j in B.COL_B36.items():
+                if clave == "nps_orden":
+                    esperado_celda = ordenes_esperados[i]
+                elif clave == "clave":
+                    esperado_celda = f"{esp['nps_impreso']}|{esp['designador']}"
+                else:
+                    esperado_celda = esp[clave]
+                leida = ws.cell(r, j).value
+                # openpyxl/XLSX no distingue una celda con cadena vacia de una
+                # celda en blanco al recargar el archivo guardado (round-trip
+                # confirmado: escribir "" y releer da None). No es perdida de
+                # dato -- "" solo la produce designador() cuando ni cedula ni
+                # identificacion aplican -- asi que se tratan como iguales aqui.
+                if leida != esperado_celda and not (esperado_celda == "" and leida is None):
+                    b36_bad += 1
+                    if b36_bad <= 10:
+                        log(f"- {hoja}!{ws.cell(r, j).coordinate}: hoja="
+                            f"{leida!r} esperado={esperado_celda!r}")
+        log(f"- {norma}: {len(esperadas)} filas x {len(B.COL_B36)} columnas auditadas.")
+    log(f"Discrepancias: **{b36_bad}**")
+    log("")
+
     # ---- cierre -----------------------------------------------------------
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
-             + map_bad + sec_bad)
+             + map_bad + sec_bad + b36_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -1766,7 +1814,8 @@ def auditar():
                         ("7. Caso semilla", semilla_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
-                        ("10. Seccion II A/B/C", sec_bad)]:
+                        ("10. Seccion II A/B/C", sec_bad),
+                        ("11. Bases dimensionales B36", b36_bad)]:
         log(f"| {etiqueta} | {v} |")
     log("")
     log(f"**Total de fallos: {total}.**")

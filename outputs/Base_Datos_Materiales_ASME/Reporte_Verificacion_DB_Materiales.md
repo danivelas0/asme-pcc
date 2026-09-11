@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  71 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  73 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -229,7 +229,7 @@ Dictamen global del modulo: **APTO** (OK).
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
 | Las 37 hojas navegables estan hidden | 37 hojas | OK |
-| El resto esta veryHidden | 33 hojas | OK |
+| El resto esta veryHidden | 35 hojas | OK |
 | Ninguna base que alimente un motor es alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
 | Los botones del arbol cubren las 37 hojas navegables | 38 destinos distintos en 16 hojas | OK |
@@ -277,6 +277,12 @@ La comprobacion sin perdida se relee DESDE LA HOJA: la concatenacion de las celd
 
 Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en columnas sin adivinar, y cuyo texto impreso se conserva ENTERO en C01. Cuantas hay, y por que, esta en `IDX_SecII_Tablas`.
 
+## 11. Bases dimensionales B36 (hoja contra JSON de resources)
+
+- B36.10M: 779 filas x 14 columnas auditadas.
+- B36.19M: 114 filas x 14 columnas auditadas.
+Discrepancias: **0**
+
 ## Resultado
 
 | Seccion | Fallos |
@@ -292,5 +298,6 @@ Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en columnas
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |
+| 11. Bases dimensionales B36 | 0 |
 
 **Total de fallos: 0.**

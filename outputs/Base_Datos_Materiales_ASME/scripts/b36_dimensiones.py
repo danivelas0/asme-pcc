@@ -10,6 +10,7 @@ Es libreria y CLI: el builder la importa para escribir DB_B36_10 / DB_B36_19, y
 """
 import json
 import re
+import unicodedata
 from fractions import Fraction
 from pathlib import Path
 
@@ -36,25 +37,53 @@ def partir_doble_unidad(txt):
     una tabla de notas al pie), y el valor SIGUE siendo el que imprime el codigo
     -- omitirlo entero por la nota perdia 67 de 114 filas de B36.19M sin motivo.
     """
-    m = re.match(r"^\s*([\d.]+)\s*\(([\d.]+)\)\s*(?:\[Notes?[^\]]*\])?\s*$", txt or "")
+    # Las tuberias grandes (NPS 40+) imprimen el par con separador de miles: coma
+    # en el lado US ('1,000.89'), espacio en el lado metrico ('1 489.92'). Se
+    # descartan los dos separadores antes de convertir a float; ninguno cambia el
+    # valor impreso, solo su tipografia.
+    m = re.match(r"^\s*([\d,\s]+(?:\.\d+)?)\s*\(([\d,\s]+(?:\.\d+)?)\)\s*"
+                 r"(?:\[Notes?[^\]]*\])?\s*$", txt or "")
     if not m:
         return (None, None)
-    return (float(m.group(1)), float(m.group(2)))
+    a = m.group(1).replace(",", "").replace(" ", "")
+    b = m.group(2).replace(",", "").replace(" ", "")
+    if not a or not b:
+        return (None, None)
+    return (float(a), float(b))
+
+
+
+# B36.10M imprime las cuatro medias/cuartos entre NPS 1 y 4 (1 1/4, 1 1/2, 2 1/2,
+# 3 1/2) con el glifo Unicode de fraccion PEGADO al entero, sin espacio ni barra
+# ("1½", no "1 1/2"): un artefacto tipografico del PDF, no una fraccion aparte.
+# Las fracciones puras (< 1 NPS) si imprimen con barra ASCII ("1/8", "3/4").
+_GLIFOS_FRACCION = "¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞"
 
 
 def partir_nps(txt):
-    """'2 1/2 (65)' -> ('2 1/2 (65)', 2.5, 65.0).
+    """'2 1/2 (65)' -> ('2 1/2 (65)', 2.5, 65.0); '1½ (40)' -> (..., 1.5, 40.0).
 
     El decimal no se imprime en la norma: se deriva para poder ordenar la base y
     para que el caso semilla del Art. 212 (NPS 12) siga casando. El texto impreso
     se conserva intacto como `nps_impreso` (regla 9) y es lo que ve el ingeniero.
     """
     impreso = (txt or "").strip()
-    m = re.match(r"^\s*([\d\s/]+?)\s*\((\d+(?:\.\d+)?)\)\s*$", impreso)
+    # El DN entre parentesis tambien lleva separador de miles con espacio en las
+    # tuberias grandes ('40 (1 000)' = DN 1000): se descarta antes de convertir.
+    m = re.match(r"^\s*(.+?)\s*\(([\d\s]+(?:\.\d+)?)\)\s*$", impreso)
     if not m:
         return (impreso, None, None)
-    crudo, dn = m.group(1).strip(), float(m.group(2))
-    total = sum(Fraction(p) for p in crudo.split())
+    crudo, dn_txt = m.group(1).strip(), m.group(2)
+    dn = float(dn_txt.replace(" ", ""))
+    glifo = None
+    if crudo and crudo[-1] in _GLIFOS_FRACCION:
+        glifo = crudo[-1]
+        crudo = crudo[:-1].strip()
+    if not crudo and glifo is None:
+        return (impreso, None, None)
+    total = sum(Fraction(p) for p in crudo.split()) if crudo else Fraction(0)
+    if glifo:
+        total += Fraction(unicodedata.numeric(glifo)).limit_denominator(64)
     return (impreso, float(total), dn)
 
 
