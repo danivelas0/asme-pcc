@@ -42,6 +42,9 @@ resources/     Códigos y normas (JSON). Fuente única de verdad.
                ├─ ASME B31/ASME B31.3/
                │  ├─ APPEX/                    Apéndices A, B y C
                │  └─ CHAPTERS/tables/          Tablas del cuerpo normativo
+               ├─ ASME B36/                    Dimensiones de tubería
+               │  ├─ b36_10m_2022/             B36.10M (acero al carbono)
+               │  └─ b36_19m_2022/             B36.19M (acero inoxidable)
                ├─ ASME PCC/pcc_2/              Artículos de PCC-2
                └─ ASME_BPVC/Sec_II/
                   ├─ bpvc_ii_a_1/, a_2/, b/, c/  Partes A, B y C: texto íntegro
@@ -163,7 +166,7 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
-(70 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
+(72 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
 a mano. El build entero tarda ~45 s.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación la
@@ -403,6 +406,28 @@ que no inspecciona el layout de celdas de este buscador): módulo E de
 29,26×10⁶ psi a 25 °F en US (fila US interpola entre -100 °F y 70 °F, que es
 la banda que esa edición imprime); Poisson/densidad de `A02040` da
 2800 kg/m³ en SI y 0,101 lb/in³ en US.
+
+### `DB_B36_10` / `DB_B36_19` — las dos bases dimensionales de tubería
+
+Las dimensiones de tubería (NPS, cédula, OD, espesor de pared, peso) salen de dos
+bases, una por norma: `DB_B36_10` (ASME B36.10M-2022, acero al carbono y de baja
+aleación, 779 filas) y `DB_B36_19` (ASME B36.19M-2022, acero inoxidable,
+114 filas). Se construyen con `build_db_b36()` desde
+`resources/ASME B36/b36_10m_2022|b36_19m_2022/table_dimensiones.json` vía el parser
+`b36_dimensiones.py` (librería + CLI, mismo patrón que `secii_tablas.py`); el
+layout de columnas se declara una vez en `COL_B36`. `verificar.py` §11 las audita
+fila a fila contra el JSON.
+
+**Son insumo de motor, no interfaz: NO son navegables** (regla general del libro;
+la excepción son solo las nueve hojas de la Sección II). Las consumen los dos
+motores de cálculo —Art. 212 (`Parche_PCC2_Art212`) y Art. 206
+(`Collar_PCC2_Art206`)—: NPS, cédula, OD y espesor se eligen por cascada de listas
+desplegables contra ellas (reglas 12/14), con un selector de norma dimensional
+como nivel 0 (D22 del motor) que decide de qué base se lee. Las dos unidades
+(in / mm) van en columnas separadas porque el código las publica en la misma
+celda: el conmutador cambia de columna, nunca convierte (regla 10). El marcador
+`'...'` que imprime el código donde una designación no aplica se conserva tal cual
+(regla 9). Estas bases sustituyeron la tabla corta de `Datos_Ref`, ya retirada.
 
 ### Reconstruir
 
@@ -676,9 +701,9 @@ Tres trampas ya pagadas, documentadas en el código:
 
 ### Sistema visual — Swiss Industrial Print (Rev. 4e)
 
-**Las 70 hojas van en un solo sistema, y esa es toda la regla.** Antes había dos:
-el azul corporativo de la Rev. 0 en las tres hojas que trae el maestro y el del
-builder en las otras 67. Ahora hay uno: papel de documentación sin blanquear,
+**Las 72 hojas van en un solo sistema, y esa es toda la regla.** Antes había dos:
+el azul corporativo de la Rev. 0 en las hojas que traía el maestro y el del
+builder en el resto. Ahora hay uno: papel de documentación sin blanquear,
 tinta carbón y **un** acento rojo.
 
 Vive en un bloque único de tokens al principio de `build_db_materiales.py`. Nada
@@ -749,6 +774,18 @@ del Art. 212 nace ahora 100 % en código con `build_parche_art212()`, hermana de
 `header`, sin herencia del maestro) — retiró la última hoja de cálculo que todavía
 dependía de `retonar_heredadas()` para su sistema visual. Plan y commits:
 `outputs/plans/plan_desanclado_total_motor_art212.md`, rango `40fc235..3653ccb`.
+
+**`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
+`HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
+datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /
+`DB_BPVC_IID` y las dimensiones (NPS, cédula, OD, espesor) `DB_B36_10` /
+`DB_B36_19`, todas auditadas contra `resources/` (regla 1); el bloque obsoleto de
+esfuerzos de sus filas 40-47 se fue con la hoja y queda en el historial de git.
+`retirar_datos_ref()` la borra al construir con el mismo patrón defensivo que
+`build_parche_art212()` usa con la suya (el maestro sembrado todavía la trae).
+`test_dashboard.py::TestDatosRefRetirada` fija que la hoja no exista, que ninguna
+celda la mencione y que `HOJAS_HEREDADAS`/`DEUDA_LISTA_FIJA` queden cerradas. Plan:
+`outputs/plans/plan_entradas_de_motor_desde_base_de_datos.md`.
 
 ### Estilo de diseño de los buscadores — no romper
 

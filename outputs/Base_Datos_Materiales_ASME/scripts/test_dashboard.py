@@ -1194,3 +1194,29 @@ class TestBasesDimensionalesB36:
                     assert cc == f"{nps}|{idx}", f"{h}!fila {r}: {cc!r}"
                 else:
                     assert cc is None, f"{h}!fila {r}: designador vacio con clave_ced {cc!r}"
+
+
+class TestDatosRefRetirada:
+    """Cierre de la Tarea 10: la hoja heredada Datos_Ref sale del libro. Su dato
+    vivo (esfuerzos admisibles y dimensiones) esta en las bases auditadas
+    (DB_B31_3, DB_BPVC_IID, DB_B36_10/19); el libro anterior queda en git."""
+
+    def test_la_hoja_no_existe(self, wb):
+        assert "Datos_Ref" not in wb.sheetnames
+
+    def test_ninguna_formula_la_menciona(self, wb):
+        restos = []
+        for ws in wb.worksheets:
+            for fila in ws.iter_rows():
+                for c in fila:
+                    if isinstance(c.value, str) and "Datos_Ref" in c.value:
+                        restos.append(f"{ws.title}!{c.coordinate}")
+        assert restos == [], restos
+
+    def test_solo_queda_una_hoja_heredada(self):
+        import build_db_materiales as B
+        assert B.HOJAS_HEREDADAS == ("Instrucciones",)
+
+    def test_la_deuda_de_listas_fijas_esta_saldada(self):
+        import build_db_materiales as B
+        assert B.DEUDA_LISTA_FIJA == {}

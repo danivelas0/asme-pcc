@@ -6262,8 +6262,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
         columnas=(("D", "Metal base"), ("E", "Collar / parche")),
         modo_cell="$D$11", temp_fuente_cell="$D$25", incluir_ej_ec=True,
         destino_st="D39/D40 de la seccion 3",
-        nota_extra_cascada="La lista corta de Datos_Ref queda como respaldo "
-        "historico y ya no alimenta el calculo.")
+        nota_extra_cascada="El material se resuelve por esta cascada contra las "
+        "bases auditadas (DB_B31_3 / DB_BPVC_IID); no hay lista corta de respaldo.")
 
     # --- Banda IDENTIFICACION (fila 4) + identificacion (filas 5-6) ---------
     # A4 es la banda de seccion, fusionada A4:G4, texto literal del *oracle*
@@ -7056,23 +7056,18 @@ def comentar_art212_base(ws):
             "en los demas casos.",
         14: "Calculo: factor de geometria de la ecuacion de membrana, kf = 0,25 "
             "para esfera (MODO=3) o 0,5 para cilindro (tuberia o virola).",
-        18: "Entrada: diametro nominal (NPS) en pulgadas, de la lista de B36.10M "
-            "en Datos_Ref. Alimenta el lookup de OD y espesor de pared.",
-        19: "Entrada: cedula (Schedule) segun B36.10M, en Datos_Ref, para el NPS "
-            "elegido arriba.",
-        20: "Calculo: diametro exterior (OD) por lookup del NPS (D18) en la "
-            "tabla B36.10M de Datos_Ref.",
-        21: "Calculo: espesor de pared por lookup del NPS (D18) y la cedula "
-            "(D19) en la tabla B36.10M de Datos_Ref. El \"\"&$D$19 fuerza la "
-            "cedula a texto para casar con la fila de encabezados (guardada como "
-            "texto por incluir STD/XS/XXS); sin esto, una cedula numerica del "
-            "desplegable daba #N/D y arrastraba toda la geometria.",
-        22: "Entrada: material del componente reparado (metal base), de la "
-            "lista corta de Datos_Ref. Para el S(T) por temperatura use la "
-            "cascada de la seccion 7.",
-        23: "Entrada: material del parche o collar de refuerzo, de la lista "
-            "corta de Datos_Ref. Para el S(T) por temperatura use la cascada de "
-            "la seccion 7.",
+        18: "Entrada: diametro nominal (NPS), del desplegable de DB_B36 segun la "
+            "norma dimensional elegida en D22. No se teclea (regla 14). Alimenta "
+            "el lookup de OD y espesor de pared.",
+        19: "Entrada: cedula (designador de Schedule) del NPS elegido, del "
+            "desplegable de DB_B36 segun la norma de D22. No se teclea (regla 14).",
+        20: "Calculo: diametro exterior (OD) por lookup del par (NPS|cedula) "
+            "contra DB_B36 de la norma elegida (D22).",
+        21: "Calculo: espesor de pared por lookup del par (NPS|cedula) contra "
+            "DB_B36 de la norma elegida (D22).",
+        22: "Entrada: norma dimensional de la tuberia (B36.10M acero al carbono / "
+            "B36.19M inoxidable), nivel 0 de la cascada dimensional. Gobierna de "
+            "que base (DB_B36_10 o DB_B36_19) leen NPS, cedula, OD y espesor.",
         24: "Entrada informativa: fluido de servicio. No alimenta ningun "
             "calculo de esta hoja.",
         25: "Entrada: temperatura de operacion, en °C. Alimenta la Temperatura "
@@ -7591,15 +7586,16 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     ws.protection.sheet = True
 
 
-def deprecate_datos_ref(wb):
-    ws = wb["Datos_Ref"]
-    ws["A40"] = ("B. [OBSOLETO — ver DB_B31_3 / DB_BPVC_IID]  ESFUERZOS ADMISIBLES S (MPa) — "
-                 "acero al carbono, T <= 40 C. Se conserva como respaldo historico de las "
-                 "memorias ya emitidas; el motor ya NO lee de aqui.")
-    ws["A40"].font = Font(name=MONO, size=10, bold=True, color=ROJO)
-    for r in range(41, 48):
-        for c in range(1, 4):
-            ws.cell(r, c).font = Font(name=MONO, size=10, color=GRIS)
+def retirar_datos_ref(wb):
+    """Borra la hoja heredada Datos_Ref, que el maestro Rev0 aun trae.
+
+    Tarea 10: ninguna hoja de datos viene ya del maestro. El esfuerzo admisible
+    lo dan DB_B31_3 / DB_BPVC_IID y las dimensiones DB_B36_10/19, todas auditadas
+    contra resources/ (regla 1). El bloque obsoleto de esfuerzos que vivia en las
+    filas 40-47 se va con la hoja; el libro anterior queda en el historial de git.
+    Mismo patron defensivo que build_parche_art212 usa con su propia hoja."""
+    if "Datos_Ref" in wb.sheetnames:   # el maestro Rev0 todavia la trae
+        del wb["Datos_Ref"]
 
 
 # ---------------------------------------------------------------------------
@@ -8710,18 +8706,19 @@ def link_volver(wb):
 # ---------------------------------------------------------------------------
 # Retonado de lo que trae el maestro
 # ---------------------------------------------------------------------------
-# Dos hojas no las construye este script: las trae maestro_con_macros.xlsm
-# (Instrucciones y Datos_Ref). Su estilo es el de la Rev. 0 —azules corporativos,
-# Arial, amarillo de entrada— y sin retonarlas el libro tendria dos sistemas
-# visuales a la vez. La plantilla NO se edita a mano (la genera
-# make_vba_seed.py), asi que el mapeo se aplica al construir.
+# Una sola hoja no la construye este script: la trae maestro_con_macros.xlsm
+# (Instrucciones). Su estilo es el de la Rev. 0 —azules corporativos, Arial,
+# amarillo de entrada— y sin retonarla el libro tendria dos sistemas visuales a
+# la vez. La plantilla NO se edita a mano (la genera make_vba_seed.py), asi que
+# el mapeo se aplica al construir. (Datos_Ref tambien la traia el maestro, pero
+# la Tarea 10 la retira del libro: su dato vivo esta en las bases auditadas.)
 #
 # Es una tabla de EQUIVALENCIA EXACTA, no una aproximacion por cercania de
 # color: solo se traduce lo que estaba en el inventario de la plantilla. Asi es
 # idempotente y no puede tocar por accidente una celda que ya nacio en el
 # sistema nuevo —ningun color de la paleta nueva es clave de esta tabla—, y lo
 # que quede sin traducir lo delata la auditoria (celdas_fuera_del_sistema).
-HOJAS_HEREDADAS = ("Instrucciones", "Datos_Ref")
+HOJAS_HEREDADAS = ("Instrucciones",)
 
 # Las doce hojas donde el ingeniero introduce datos. El guardia de verificar.py §5
 # solo mira estas: una DB_*, MAP_* o NAV_* no lleva entradas y no le aplica.
@@ -8757,13 +8754,12 @@ LITERALES_PERMITIDOS = {
         "Idem, variante sin acentos usada en Collar_PCC2_Art206 (D10)."),
 }
 
-# Deuda declarada, con fecha de vencimiento: las Tareas 7-9 de este plan repuntan
-# NPS y cedula de los dos motores contra DB_B36_10/DB_B36_19. Los dos ya estan
-# hechos — Art. 212 (MOTOR) en las Tareas 7-8, Art. 206 (COLLAR_MOTOR) en la
-# Tarea 9 —: sus D18/D19 salen de DB_B36 por cascada y ninguno es ya una lista
-# fija, asi que no queda deuda. El dict se conserva vacio (no se borra) hasta que
-# la Tarea 10 lo retire junto con el guardia que lo consulta: vaciarlo aqui deja
-# al guardia sin ninguna lista fija tolerada, que es justo el estado buscado.
+# Deuda SALDADA (Tarea 10). Las Tareas 7-9 repuntaron NPS y cedula de los dos
+# motores contra DB_B36_10/DB_B36_19 — Art. 212 (MOTOR) en las Tareas 7-8, Art.
+# 206 (COLLAR_MOTOR) en la Tarea 9 —: sus D18/D19 salen de DB_B36 por cascada y
+# ninguno es ya una lista fija. El dict se conserva VACIO (no se elimina) porque
+# el guardia de verificar.py §5 y test_dashboard lo consultan por nombre: vacio,
+# el guardia no tolera ninguna lista fija, que es el estado definitivo buscado.
 DEUDA_LISTA_FIJA = {}
 
 # Celdas que el *oracle* del Art. 212 declara pero que el build ya NO reproduce a
@@ -9387,7 +9383,7 @@ def main(argv=None):
 
     build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
     build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
-    deprecate_datos_ref(wb)
+    retirar_datos_ref(wb)
 
     counts = {
         "A-1 + A-4 -> DB_B31_3":
@@ -9451,7 +9447,7 @@ def main(argv=None):
              "Buscar_B31_3", "Buscar_BPVC_IID",
              "Buscar_BPVC_IID_B", "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
              "Buscar_Prop_B31_3", "Buscar_B31_B1", "Buscar_Ec_A2", "Buscar_Ej_A3",
-             "Datos_Ref", "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
+             "DB_B31_3", "DB_B31_3C", "DB_BPVC_IID",
              "DB_BPVC_IIDC", "DB_BPVC_IID_B", "DB_BPVC_IID_BC", "DB_Su", "DB_SuC",
              "DB_Sy", "DB_SyC", "DB_E", "DB_EC", "DB_TE", "DB_TEC", "DB_TE_G", "DB_TE_GC",
              "DB_PRD", "DB_PRDC",

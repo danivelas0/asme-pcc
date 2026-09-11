@@ -276,3 +276,27 @@ respaldo antes de borrar, no se deja en medio.
 Ninguna pendiente. El ingeniero entregó los dos JSON el 2026-09-10 (§2.6) y los PDF
 para verificarlos están localizados (§2.5). Las tres fases se pueden planificar y
 ejecutar seguidas.
+
+## 8. Estado final (2026-09-11)
+
+Las tres fases ejecutadas; los seis criterios de éxito cumplidos.
+
+- **Criterio 1** — `verificar.py` §5b (guardia listas fijas en hoja de motor,
+  reglas 12/14): **0 infractoras**, y sin deuda declarada (`DEUDA_LISTA_FIJA` vacía).
+- **Criterio 2** — todas las validaciones de lista del libro son bloqueantes
+  (`showErrorMessage`, `errorStyle="stop"`); 0 semillas fuera de lista.
+- **Criterio 3** — `Parche_PCC2_Art212` sin filas D22/D23 de material; divergencias
+  con el *oracle* declaradas en `DIVERGENCIAS_DECLARADAS` (celdas retiradas, exigidas
+  vacías) y `DIVERGENCIAS_REEMPLAZADAS` (bloque dimensional, exigidas no vacías).
+- **Criterio 4** — NPS, cédula, OD y espesor de los dos motores leen de
+  `DB_B36_10` / `DB_B36_19` por cascada, con selector de norma dimensional (D22).
+- **Criterio 5** — `HOJAS_HEREDADAS == ("Instrucciones",)`: `Datos_Ref` retirada del
+  libro (`retirar_datos_ref()`); su dato vivo está en las bases auditadas.
+- **Criterio 6** — gates finales en verde: `test_build_db + test_dashboard +
+  test_secii_tablas` → **236 pasan**; `verificar.py` (recálculo en Excel real,
+  §1-§11) → **total de fallos 0**, con §7 (caso semilla) manteniendo el dictamen
+  APTO y §11 (bases B36) en 0 discrepancias. Libro resultante: 72 hojas.
+
+Validación exclusiva del ingeniero (comportamiento de la UI de Excel, fuera del
+alcance de openpyxl): teclear un valor inválido en un desplegable para ver el
+rechazo, y la revisión visual de `DB_B36_10` / `DB_B36_19` exportadas a PDF/PNG.

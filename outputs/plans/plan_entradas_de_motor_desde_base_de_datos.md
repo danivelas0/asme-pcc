@@ -1360,6 +1360,22 @@ git commit -m "Art. 206: NPS, cedula, OD y espesor salen de la base dimensional"
 
 ## Tarea 10: Retirar `Datos_Ref` y cerrar el guardia
 
+> **EJECUTADA (2026-09-11).** Gates finales: 236 pruebas verdes; `verificar.py`
+> en Excel real → total de fallos 0 (§5b guardia=0 sin deuda, §7 caso semilla
+> APTO, §11 bases B36=0). Libro resultante: 72 hojas. Dos desvíos, ambos
+> deliberados:
+> 1. **`deprecate_datos_ref` → `retirar_datos_ref`.** El diseño solo pedía borrar
+>    la hoja; la función previa la conservaba con un bloque «OBSOLETO». Se
+>    reemplazó por el borrado defensivo (`if "Datos_Ref" in wb.sheetnames: del`).
+> 2. **Dos referencias vivas extra a `Datos_Ref`**, no previstas por el Step 1,
+>    detectadas por `test_ninguna_formula_la_menciona` y por Grep: (a) el valor de
+>    celda `A131` del Art. 212 (venía de `nota_extra_cascada`) y (b) los
+>    comentarios de `comentar_art212_base` para las filas 18-22, que las Tareas 7-8
+>    dejaron citando `Datos_Ref` y describiendo mal D22 (hoy «Norma dimensional»).
+>    Se corrigieron para reflejar `DB_B36` / la cascada; la fila 23 salió del dict
+>    de comentarios (celda retirada). `DEUDA_LISTA_FIJA` ya estaba `{}` desde las
+>    Tareas 7-9; se conserva vacía (la consultan el guardia §5 y el test).
+
 **Files:**
 - Modify: `scripts/build_db_materiales.py` (`HOJAS_HEREDADAS`, `DEUDA_LISTA_FIJA`, `main`, árbol de navegación)
 - Modify: `scripts/test_dashboard.py`
@@ -1370,7 +1386,7 @@ git commit -m "Art. 206: NPS, cedula, OD y espesor salen de la base dimensional"
 - Consume: todo lo anterior.
 - Produce: un libro sin `Datos_Ref`, con `HOJAS_HEREDADAS = ("Instrucciones",)`.
 
-- [ ] **Step 1: Comprobar que nadie más la referencia**
+- [x] **Step 1: Comprobar que nadie más la referencia**
 
 Run:
 ```powershell
@@ -1380,7 +1396,7 @@ Cada aparición restante hay que mirarla: las que queden deben ser **texto hist�
 comentarios**, nunca una fórmula ni una referencia de hoja. Buscar también con Grep en
 todo `scripts/` (incluidas las pruebas) y en `vba/`.
 
-- [ ] **Step 2: Escribir la prueba de cierre**
+- [x] **Step 2: Escribir la prueba de cierre**
 
 ```python
 class TestDatosRefRetirada:
@@ -1405,7 +1421,7 @@ class TestDatosRefRetirada:
         assert B.DEUDA_LISTA_FIJA == {}
 ```
 
-- [ ] **Step 3: Retirar la hoja**
+- [x] **Step 3: Retirar la hoja**
 
 - `HOJAS_HEREDADAS = ("Instrucciones",)`.
 - Vaciar `DEUDA_LISTA_FIJA = {}` (las cuatro celdas ya leen de rango desde las Tareas 7-9).
@@ -1422,7 +1438,7 @@ rotulado `[OBSOLETO — ver DB_B31_3 / DB_BPVC_IID]`) se va con la hoja: el dato
 en las bases auditadas y el libro anterior queda en el historial de git. Decisión del
 ingeniero del 2026-09-10.
 
-- [ ] **Step 4: Reconstruir y correr los tres gates**
+- [x] **Step 4: Reconstruir y correr los tres gates**
 
 Run:
 ```powershell
@@ -1434,14 +1450,14 @@ Espera: suites verdes; `verificar.py` en 0 con §5 mostrando
 `Validaciones infractoras en hojas de motor: **0**` **sin** deuda declarada, y §7
 manteniendo el dictamen APTO del caso semilla.
 
-- [ ] **Step 5: Documentar**
+- [x] **Step 5: Documentar**
 
 En `CLAUDE.md`: `HOJAS_HEREDADAS` queda en una sola hoja; aparecen `DB_B36_10` y
 `DB_B36_19` en la estructura de bases y en el árbol del Dashboard; las entradas
 dimensionales de los dos motores salen de esas bases. En el spec, sección «Estado
 final» con el resultado de los gates.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/build_db_materiales.py scripts/test_dashboard.py CLAUDE.md outputs/plans/spec_entradas_de_motor_desde_base_de_datos.md outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm
