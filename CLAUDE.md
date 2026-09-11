@@ -21,6 +21,19 @@ el vacío explícitamente y se pregunta cómo proceder.
 Todo coeficiente o tabla que alimente un motor de cálculo debe **trazar** al archivo
 concreto de `resources/` del que procede, para permitir auditoría posterior.
 
+**`resources/` es la fuente principal para armar las hojas de cálculo — nunca se pide
+un folio/PDF externo para poblar un motor.** Cuando falte un dato para construir una
+hoja, se extrae de los JSON de `resources/`. Un valor puede vivir ahí como **imagen de
+ecuación**: el bloque `figure`/`equation` que trae `image: figures/…png` **es parte de
+`resources/`**, así que se **lee esa imagen** (con la herramienta Read sobre el PNG) y de
+ahí se recupera la fórmula — no se solicita el PDF del código. Solo si el dato **no está
+en `resources/` ni como texto ni como imagen** (bloque de ecuación vacío y sin `image`,
+en los dos espejos del árbol) se trata como **vacío real**: se declara explícitamente y
+se repara re-extrayendo ese archivo, sin inventarlo desde memoria ni desde un documento
+derivado como `knowledge/claude.md`. El PDF de ASME sigue siendo solo para **corregir y
+verificar** los JSON (ver «Dónde están los PDF fuente»), nunca la entrada directa de un
+motor.
+
 ## Estructura
 
 ```

@@ -72,3 +72,19 @@ Excel 365 y disparó la sección 5 del protocolo.
 (`normalizar_textos_como_formula`). Un round-trip por Excel puede reescribir fórmulas
 que openpyxl había leído sin quejarse: verificar el entregable después del round-trip,
 no solo después del build.
+
+## 2026-09-10 · `resources/` es la fuente para armar hojas — no se pide un folio externo
+
+Al planear el rediseño del motor Art. 212, dos coeficientes no estaban como texto en el
+JSON (ec. 2 del Art. 212 y ec. II-1 del App. 501-II). Propuse una Fase 0 que pedía al
+ingeniero el **folio impreso** con `--pdf`. El ingeniero corrigió: `resources/` es la
+fuente principal para construir las hojas; la información se extrae de sus JSON. Además,
+mi propuesta contradecía la regla ya escrita en `CLAUDE.md` («el PDF solo se usa para
+corregir y verificar los JSON… todo dato que entra a un motor sale de `resources/`»).
+
+**Regla:** cuando falte un dato para una hoja, buscarlo en `resources/` — incluida la
+**imagen de la ecuación**, que vive ahí (`bloque figure/equation` con `image: …png`): se
+lee ese PNG con Read y de ahí se recupera la fórmula. Solo si no está ni como texto ni
+como imagen en los dos espejos es un **vacío real**, que se declara y se repara
+re-extrayendo, nunca se toma de memoria ni de `knowledge/claude.md` (derivado). Registrado
+en `CLAUDE.md` bajo la Regla nº 1.
