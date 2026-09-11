@@ -974,6 +974,18 @@ class TestBuildParcheContraOracle:
         assert ws["D150"].value == "=IF($D$11=3,NA(),MAX(D148,D149))", "F_max Op"
         assert ws["F150"].value == "=IF($D$11=3,NA(),MAX(F148,F149))", "F_max Env"
 
+    # --- Fase 3: proximidad a discontinuidades (Paso 3, 212-3.3) -------------
+    # L_min = 2*sqrt(Rm*t) (ec.3, ya en D73). Nuevo: 3C distancia a parches
+    # adyacentes [51] y nota de esquinas redondeadas (R_min=75 mm, del flujo).
+    def test_paso3_discontinuidad(self):
+        ws = self._construir()
+        assert str(ws["A153"].value).startswith("PASO 3"), ws["A153"].value
+        assert ws["D156"].value == (
+            '=IF($D$155="","No aplica (sin parche adyacente)",'
+            'IF($D$155>=$D$73,"OK","< L_min — reubicar (212-3.3)"))'), "D156"
+        # La nota de esquinas cita el 75 mm (recomendacion del flujo).
+        assert "75" in str(ws["D157"].value), ws["D157"].value
+
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
     # (incluidas B10-B14 y C10-C14, no solo D10-D14 + los rotulos A10-A14).

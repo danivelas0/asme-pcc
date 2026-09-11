@@ -257,13 +257,14 @@ corners», el 75 mm es del flujo — citar como recomendación del flujo, no del
 **Interfaces:** Mantiene `L_min` y la rama 3A/3B (parche local vs refuerzo 360°). Añade la
 distancia a parches adyacentes (3C) y la nota de esquinas redondeadas.
 
-- [ ] **Step 1: test (falla).** `test_paso3_discontinuidad`: `L_min=2·SQRT(Rm·t)`, entrada
-  «distancia a parche adyacente», y dictamen 3C que exige `≥ L_min`. → FAIL.
-- [ ] **Step 2: 3C.** Entrada `inp` «Distancia a bordes de parches adyacentes» [mm]; dictamen
-  `IF(dist_adj≥L_min,"OK","< L_min — reubicar (212-3.3)")`. Reutiliza `L_min` (D73).
-- [ ] **Step 3: nota de esquinas.** Rótulo/nota: esquinas redondeadas `R_min = 75 mm (3")`
-  (recomendación del flujo) + bloque [7]. No es cálculo, es nota en `comentar_art212_base`.
-- [ ] **Step 4: PASS + commit** — `Art. 212 Paso 3: parches adyacentes (3C) y esquinas`.
+- [x] **Step 1: test (falla).** `test_paso3_discontinuidad`: A153, D156 dictamen 3C, nota de 75 mm.
+- [x] **Step 2: 3C.** Anexo (Paso 3, filas 153-156): D155 «Distancia a parches adyacentes» [mm]
+  (blanco = sin adyacente); D156 = `IF($D$155="","No aplica...",IF($D$155>=$D$73,"OK","< L_min
+  — reubicar (212-3.3)"))`. Lee L_min de D73 (no lo modifica). Cita bloque [51].
+- [x] **Step 3: nota de esquinas.** D157 (texto plano, no fórmula): R_min = 75 mm — **anotado
+  como recomendación del flujo**, no del texto del 212 (que solo dice «rounded corners», bloque
+  [7]-f). Regla n.1 respetada.
+- [x] **Step 4: PASS + commit.** pytest 239 · verificar.py **0 fallos**.
 
 ---
 

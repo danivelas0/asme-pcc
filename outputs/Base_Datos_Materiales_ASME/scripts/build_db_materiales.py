@@ -7211,6 +7211,49 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                  '(1) y (2)")', com151)
     ws.merge_cells("D151:G151")
 
+    # --- PASO 3 — Proximidad a discontinuidades (212-3.3) --------------------
+    # L_min = 2*sqrt(Rm*t) (ec. 3, bloque [47]) ya vive en D73, y la rama
+    # 360°/local ya esta en F88 (3A/3B). Aqui se anade la rama 3C: el limite de
+    # proximidad aplica TAMBIEN entre bordes de parches adyacentes [bloque 51].
+    # La nota de esquinas redondeadas (R_min = 75 mm) es una RECOMENDACION DEL
+    # FLUJO: el Art. 212 solo dice "rounded corners" (bloque [7]-f), no imprime
+    # el 75 mm. Se anota como tal (Regla n.1). Solo se LEE D73; no se modifica.
+    banda_literal(153, "PASO 3 · PROXIMIDAD A DISCONTINUIDADES  "
+                       "(ASME PCC-2 Art. 212-3.3)")
+    encabezado(154, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
+                     (4, "Valor"), (7, "Referencia / Notas")))
+
+    com155 = ("Entrada: distancia entre el borde de soldadura de este parche y "
+              "el del parche adyacente mas cercano, mm. Dejar en blanco si no "
+              "hay parches adyacentes. El limite de proximidad L_min (D73) "
+              "aplica tambien entre parches adyacentes (212-3.3 [51]).")
+    lab(155, "Distancia a parches adyacentes", unidad="mm", ref="212-3.3 [51]",
+        com=com155)
+    ws.cell(155, 2, "L_adj").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D155", "", com155)
+
+    com156 = ("Calculo: rama 3C. Si hay parche adyacente, su distancia debe ser "
+              ">= L_min (D73); si no, reubicar. En blanco = sin parche adyacente.")
+    lab(156, "¿Distancia a parche adyacente ≥ L_mín?", unidad="—",
+        ref="212-3.3", com=com156)
+    ws.cell(156, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    calc("D156",
+         '=IF($D$155="","No aplica (sin parche adyacente)",'
+         'IF($D$155>=$D$73,"OK","< L_min — reubicar (212-3.3)"))', com156)
+
+    com157 = ("Nota (recomendacion del flujo, no del texto del 212): las "
+              "esquinas del parche deben redondearse con R_min = 75 mm (3 in.) "
+              "para no concentrar esfuerzos. El Art. 212 solo dice 'rounded "
+              "corners' (bloque 7-f) sin imprimir el radio; el 75 mm lo aporta "
+              "el flujo aprobado.")
+    lab(157, "Esquinas redondeadas", ref="Flujo · 212 bloque 7-f", com=com157)
+    d157 = calc("D157",
+                "Esquinas redondeadas: R_min = 75 mm (3 in.) recomendado por el "
+                "flujo; el Art. 212 (bloque 7-f) solo exige 'rounded corners'.",
+                com157)
+    d157.font = Font(name=MONO, size=9, color=GRIS)
+    ws.merge_cells("D157:G157")
+
     # --- Comentarios de las Secciones 1-6 -----------------------------------
     # Se llama al final, cuando TODAS las celdas de las secciones 1-6 ya
     # existen en ws, para que comentar_art212_base() aplique sus notas de
