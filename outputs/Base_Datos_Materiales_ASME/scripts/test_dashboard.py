@@ -1492,6 +1492,88 @@ class TestBuildParcheContraOracle:
         assert "$D$74*$D$28" in str(ws["B127"].value), ws["B127"].value
 
 
+class TestReglasDeComentario:
+    """Fase 5: donde va un comentario y donde no.
+
+    Antes casi toda fila llevaba el MISMO texto en el rotulo y en la celda de
+    valor. Duplicar no informa: el ingeniero pasa el raton por la celda que esta
+    mirando y un globo repetido solo tapa la hoja.
+    """
+
+    CASOS = [("Parche_PCC2_Art212", B.REGLAS_COMENTARIO_212),
+             ("Collar_PCC2_Art206", B.REGLAS_COMENTARIO_206)]
+
+    @pytest.mark.parametrize("hoja,reglas", CASOS)
+    def test_ninguna_columna_lleva_comentario_de_mas(self, wb, hoja, reglas):
+        ws = wb[hoja]
+        sobran = []
+        for ini, fin, cols, _fuente in reglas:
+            permitidas = {ord(c) - 64 for c in cols}
+            for fila in range(ini, fin + 1):
+                for col in range(1, B.MOTOR_NCOLS + 1):
+                    c = ws.cell(fila, col)
+                    if c.comment is not None and col not in permitidas:
+                        sobran.append(c.coordinate)
+        assert sobran == [], f"{hoja}: {sobran}"
+
+    @pytest.mark.parametrize("hoja,reglas", CASOS)
+    def test_las_columnas_obligadas_lo_llevan(self, wb, hoja, reglas):
+        """Y solo se exige donde hay algo escrito: una seccion de una sola
+        columna de valor (el 206) usa la misma regla que una de dos (el 212)
+        sin fabricar globos sobre celdas vacias."""
+        ws = wb[hoja]
+        faltan = []
+        for ini, fin, cols, _fuente in reglas:
+            for fila in range(ini, fin + 1):
+                if not any(ws.cell(fila, c).comment is not None
+                           for c in range(1, B.MOTOR_NCOLS + 1)):
+                    continue        # fila sin explicacion: no se inventa una
+                for letra in cols:
+                    c = ws.cell(fila, ord(letra) - 64)
+                    if c.value is not None and c.comment is None:
+                        faltan.append(c.coordinate)
+        assert faltan == [], f"{hoja}: {faltan}"
+
+    def test_las_verificaciones_explican_tambien_el_resultado(self, wb):
+        """La columna de Resultado es la que se lee para decidir, asi que lleva
+        comentario propio.
+
+        No se exige que diga "CUMPLE": dos de las seis verificaciones del 212 no
+        resuelven en CUMPLE/NO CUMPLE sino en una RUTA ("Refuerzo 360" frente a
+        "Parche local"; "OK - parche" frente a "Migrar (Art.206)"). Lo que si se
+        exige es que el globo del Resultado NO sea el mismo que el del Requerido:
+        si lo fuera, la columna que decide estaria explicada con el texto de otra.
+        """
+        for hoja, filas in (("Parche_PCC2_Art212", range(112, 118)),
+                            ("Collar_PCC2_Art206", range(85, 87))):
+            ws = wb[hoja]
+            for fila in filas:
+                res, req = ws.cell(fila, 6), ws.cell(fila, 4)
+                assert res.comment is not None, f"{hoja}!F{fila}"
+                if req.comment is not None and hoja == "Parche_PCC2_Art212":
+                    assert res.comment.text != req.comment.text, f"{hoja}!F{fila}"
+
+    def test_ninguna_banda_lleva_parentesis_explicativo(self, wb):
+        """Fase 5: fuera el parentesis aclaratorio de las bandas de seccion. La
+        cita al codigo se conserva —es normativa— pero fuera del parentesis, que
+        en el resto de la hoja significa 'aclaracion prescindible'."""
+        for hoja in ("Parche_PCC2_Art212", "Collar_PCC2_Art206"):
+            ws = wb[hoja]
+            con_parentesis = []
+            # Desde la fila 3: A1/A2 son el TITULO y el subtitulo de la hoja,
+            # y su parentesis es la cita del articulo del codigo — lo que esta
+            # fase conserva a proposito, no un aclaratorio.
+            for fila in range(3, ws.max_row + 1):
+                c = ws.cell(fila, 1)
+                # Una banda de seccion se reconoce por su relleno de tinta.
+                if (c.fill is None or not c.fill.patternType
+                        or _rgb6(getattr(c.fill.fgColor, "rgb", None)) != B.TINTA):
+                    continue
+                if isinstance(c.value, str) and "(" in c.value:
+                    con_parentesis.append((c.coordinate, c.value))
+            assert con_parentesis == [], f"{hoja}: {con_parentesis}"
+
+
 class TestDiagnosticoPlegable:
     """Fase 4: el rastro de la resolucion de material va plegado por defecto.
 

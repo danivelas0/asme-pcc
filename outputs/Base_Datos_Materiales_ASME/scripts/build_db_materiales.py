@@ -6106,6 +6106,92 @@ def _remapear_rango(rango, mapa):
                          max_row=mapa.get(rng.max_row, rng.max_row)))
 
 
+# ---------------------------------------------------------------------------
+# Fase 5 — donde va un comentario y donde no
+# ---------------------------------------------------------------------------
+# Hasta ahora casi toda fila llevaba el MISMO comentario en el rotulo (col. A) y
+# en la celda de valor. Duplicar no informa: el ingeniero pasa el raton por la
+# celda que esta mirando, y un globo repetido solo tapa la hoja. La regla que
+# pidio el ingeniero es por seccion:
+#
+#   - por omision, el comentario va SOLO en la columna de valor;
+#   - en las secciones de CALCULO (cargas/espesor) y de RESULTADOS va tambien
+#     en el rotulo, porque ahi el rotulo es un simbolo (F_m, w_min, S_w) y es
+#     justo lo que hay que poder consultar;
+#   - en VERIFICACIONES va ademas en la columna de Resultado, que es la que se
+#     lee para decidir.
+#
+# No se edita call site por call site (serian ~200): se declara el rango de
+# cada seccion y un pase final reparte lo que YA existe. No se inventa texto
+# ninguno — cuando una columna obligada no trae comentario propio se le pone el
+# de la fila, tomado de la columna que esa seccion declare como fuente.
+#
+# `cols` es el conjunto de columnas que DEBEN llevarlo (y ninguna otra lo lleva);
+# `fuente` es de donde se copia si falta. En VERIFICACIONES la fuente es la
+# columna de Resultado, no la de Requerido: el texto que describe la fila entera
+# es "CUMPLE si ...", no "valor minimo exigido".
+REGLAS_COMENTARIO_212 = (
+    (5, 6, "D", "D"),          # Identificacion
+    (10, 14, "D", "D"),        # Aplicacion y codigo de construccion
+    (18, 35, "D", "D"),        # 1. Datos de entrada
+    (39, 61, "DE", "D"),       # 2. Resolucion de material
+    (63, 63, "A", "A"),        # nota fija de la cascada
+    (67, 76, "D", "D"),        # 3. Parametros de calculo
+    (80, 85, "D", "D"),        # 4. Geometria y propiedades derivadas
+    (89, 97, "ADE", "D"),      # 5. Calculo de cargas y soldadura
+    (101, 108, "AD", "D"),     # 6. Resultados del diseno
+    (112, 117, "ADEF", "F"),   # 7. Verificaciones
+    (118, 118, "AF", "F"),     # Dictamen global
+    (121, 127, "B", "B"),      # 8. Especificaciones tecnicas
+    (129, 129, "A", "A"),      # aviso de responsabilidad
+)
+REGLAS_COMENTARIO_206 = (
+    (5, 6, "D", "D"),
+    (10, 13, "D", "D"),
+    (18, 33, "D", "D"),
+    (37, 56, "D", "D"),        # 2. Resolucion de material (una sola columna)
+    (58, 58, "A", "A"),
+    (62, 65, "D", "D"),        # 3. Parametros de calculo
+    (70, 71, "D", "D"),        # 4. Geometria del sleeve
+    (76, 80, "ADE", "D"),      # 5. Calculo de espesor requerido
+    (85, 91, "ADEF", "F"),     # 6. Verificaciones y avisos
+    (94, 94, "AF", "F"),       # Dictamen global
+)
+
+
+def aplicar_reglas_de_comentario(ws, reglas):
+    """Reparte los comentarios de cada seccion segun `reglas`. Ver arriba.
+
+    Solo mueve y borra lo que ya existe. Nunca pone un comentario en una celda
+    VACIA: asi una seccion de una sola columna de valor (el Art. 206) usa la
+    misma regla que una de dos (el 212) sin fabricar globos sobre la nada.
+    """
+    for ini, fin, cols, fuente in reglas:
+        obligadas = {ord(c) - 64 for c in cols}
+        col_fuente = ord(fuente) - 64
+        for fila in range(ini, fin + 1):
+            propios = {c: ws.cell(fila, c).comment
+                       for c in range(1, MOTOR_NCOLS + 1)
+                       if ws.cell(fila, c).comment is not None}
+            if not propios:
+                continue
+            # Texto de la fila: el de la columna que la seccion declara como
+            # fuente; si esa no lo trae, el primero que haya (orden de columna).
+            base = propios.get(col_fuente) or propios[min(propios)]
+            for col in range(1, MOTOR_NCOLS + 1):
+                celda = ws.cell(fila, col)
+                # La cola de un rango fusionado no admite comentario propio
+                # (openpyxl la deja de solo lectura) y ademas Excel muestra el
+                # de la celda ancla en todo el rango: no hay nada que hacerle.
+                if isinstance(celda, MergedCell):
+                    continue
+                if col not in obligadas or celda.value is None:
+                    celda.comment = None
+                elif celda.comment is None:
+                    celda.comment = Comment(base.text, base.author)
+    return ws
+
+
 def aplicar_leyenda_motor(ws, hasta_fila=None):
     """Pinta la leyenda de edicion sobre A..G de un motor de calculo.
 
@@ -6756,7 +6842,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         "bases auditadas (DB_B31_3 / DB_BPVC_IID); no hay lista corta de respaldo.",
         # Banda literal, sin rotulo(): las del 212 van en mayus/minus mixtas y
         # sin corchetes (el *oracle* Rev0 las trae asi). Ver banda_literal().
-        titulo_banda="2.  RESOLUCIÓN DE MATERIAL  (base de datos ASME)",
+        titulo_banda="2.  RESOLUCIÓN DE MATERIAL",
         banda_rotulo=False, mapa_citas=MAPA_FILAS_212)
 
     # --- Banda IDENTIFICACION (fila 4) + identificacion (filas 5-6) ---------
@@ -6863,8 +6949,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # mayus/minus mixtas, incompatible con un header en mayusculas). Mismo
     # criterio que A1/A2: se escribe el VALOR literal con el estilo de
     # banda/encabezado, sin forzar mayusculas.
-    banda_literal(8, "APLICACIÓN Y CÓDIGO DE CONSTRUCCIÓN  (selector que conmuta "
-                     "S, t_req y la fuerza de membrana)")
+    banda_literal(8, "APLICACIÓN Y CÓDIGO DE CONSTRUCCIÓN")
 
     encabezado(9, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                    (4, "Valor"), (7, "Referencia / Notas")))
@@ -7241,7 +7326,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # La fila 58 queda vacia (no aparece en el *oracle*: ni formula, ni
     # fusionado, ni validacion): separa la Seccion 2 (termina en fila 57) de
     # la banda de esta seccion.
-    banda_literal(59, "5.  CÁLCULO DE CARGAS Y SOLDADURA  (ASME PCC-2, Art. 212)")
+    banda_literal(59, "5.  CÁLCULO DE CARGAS Y SOLDADURA  —  ASME PCC-2 Art. 212")
 
     encabezado(60, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                     (4, "Operación"), (5, "Diseño"), (7, "Referencia")))
@@ -7440,7 +7525,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # en A/D/E/F/G, sin Simbolo ni Unidad en B/C — esta tabla no las tiene),
     # tampoco compatible con un header generico -en mayusculas y que escribe
     # columnas consecutivas desde la 1, sin poder saltar B/C-.
-    banda_literal(82, "7.  VERIFICACIONES  (criterios de aceptación)")
+    banda_literal(82, "7.  VERIFICACIONES")
 
     encabezado(83, ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
                     (6, "Resultado"), (7, "Criterio")))
@@ -7515,8 +7600,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # B, con B fusionado B:G).
     # Numerada 8 mientras siga viviendo en esta hoja. La Fase 9 la saca a
     # pestana propia y entonces deja de llevar numeral (ver el plan).
-    banda_literal(92, "8.  ESPECIFICACIONES TÉCNICAS  (generadas automáticamente "
-                      "a partir de las entradas)")
+    banda_literal(92, "8.  ESPECIFICACIONES TÉCNICAS")
 
     # Filas 93-99: rotulo en A (estilo lab(), sin ref/unidad porque estas
     # filas no tienen columna G propia — el *oracle* no la declara) y el
@@ -7582,7 +7666,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # aprobado del ingeniero (212-2a remite a la Part 1 del estandar). El
     # dictamen D140 alimenta F90: un estado bloqueante detiene el diseno.
     banda_literal(134, "PASO 1 · ELEGIBILIDAD Y CARACTERIZACIÓN DEL DAÑO  "
-                       "(ASME PCC-2 Art. 212-1 / 212-2)")
+                       "—  ASME PCC-2 Art. 212-1 / 212-2")
     encabezado(135, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Valor"), (7, "Referencia / Notas")))
 
@@ -7661,7 +7745,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # del ingeniero: literal, solo cilindro). Bloque nuevo: no toca el oracle.
     # F_max alimenta el filete en el Paso 4 (Fase 4 cablea w_min a F_max).
     banda_literal(142, "PASO 2 · CARGAS DE PRESIÓN Y EXTERNAS COMBINADAS  "
-                       "(ASME PCC-2 Art. 212-3.2)")
+                       "—  ASME PCC-2 Art. 212-3.2")
     encabezado(143, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Operación"), (5, "Diseño"), (7, "Referencia")))
 
@@ -7742,7 +7826,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # FLUJO: el Art. 212 solo dice "rounded corners" (bloque [7]-f), no imprime
     # el 75 mm. Se anota como tal (Regla n.1). Solo se LEE D73; no se modifica.
     banda_literal(153, "PASO 3 · PROXIMIDAD A DISCONTINUIDADES  "
-                       "(ASME PCC-2 Art. 212-3.3)")
+                       "—  ASME PCC-2 Art. 212-3.3")
     encabezado(154, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Valor"), (7, "Referencia / Notas")))
 
@@ -7783,8 +7867,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # los materiales unidos (min(T_parche, t_pared)) ni 40 mm (1.5 in.). Los dos
     # entran al AND de F90. El bisel alternativo (garganta <= nominal) del
     # bloque [61] va como nota. w adoptado = D32; T_parche = D29; t_pared = D21.
-    banda_literal(159, "PASO 4 · SOLDADURA DE FILETE — TOPES DE LA NOTA  "
-                       "(ASME PCC-2 Art. 212-3.4)")
+    banda_literal(159, "PASO 4 · SOLDADURA DE FILETE, TOPES DE LA NOTA  "
+                       "—  ASME PCC-2 Art. 212-3.4")
     encabezado(160, ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
                      (6, "Resultado"), (7, "Criterio")))
 
@@ -7820,7 +7904,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # g >= 1.5 mm, e la incluye (D55). El codigo exige ademas g <= 5 mm (fit-up),
     # que se verifica en el Paso 7. Y la declaracion del hand-off no-cilindro.
     banda_literal(165, "PASO 5 · EXCENTRICIDAD Y SEPARACIÓN EN EL BORDE  "
-                       "(ASME PCC-2 Art. 212-3.4c / 212-4c)")
+                       "—  ASME PCC-2 Art. 212-3.4c / 212-4c")
     encabezado(166, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Valor"), (7, "Referencia / Notas")))
 
@@ -7852,8 +7936,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # factor 1) [bloque 73]. El coeficiente lo elige la geometria: 75 doble
     # (esfera/cabezal, ec.6 [71]) o 50 simple (cilindro, ec.7 [75]). > 5% exige
     # PWHT post-conformado (212-3.5b [76]) — lo dictamina F86 (seccion 5).
-    banda_literal(170, "PASO 6 · CONFORMADO EN FRÍO — CURVATURA SIMPLE / DOBLE  "
-                       "(ASME PCC-2 Art. 212-3.5)")
+    banda_literal(170, "PASO 6 · CONFORMADO EN FRÍO, CURVATURA SIMPLE / DOBLE  "
+                       "—  ASME PCC-2 Art. 212-3.5")
     encabezado(171, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Valor"), (7, "Referencia / Notas")))
 
@@ -7882,7 +7966,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # MT/PT de bordes si T>25 mm (212-4a [80]) y la secuencia/preparacion/venteo
     # (212-4e/g [85],[88],[90]). Aditivo: no toca el oracle ni F90 (la separacion
     # es una constraint de ejecucion, no de aceptacion del diseno).
-    banda_literal(175, "PASO 7 · FABRICACIÓN  (ASME PCC-2 Art. 212-4)")
+    banda_literal(175, "PASO 7 · FABRICACIÓN  —  ASME PCC-2 Art. 212-4")
     encabezado(176, ((1, "Aspecto"), (4, "Aviso"), (7, "Referencia")))
 
     com177 = ("Aviso: separacion de fit-up g (D167). El codigo exige g <= 5 mm "
@@ -7939,7 +8023,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lista_rscaled = '"' + ",".join(f"{v:g}" for _, v in r_ops) + '"'
 
     banda_literal(181, "PASO 8 · NDE Y PRUEBA DE HERMETICIDAD  "
-                       "(ASME PCC-2 Art. 212-5 / 212-6 + App. 501)")
+                       "—  ASME PCC-2 Art. 212-5 / 212-6 + App. 501")
     encabezado(182, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
                      (4, "Valor"), (7, "Referencia / Notas")))
 
@@ -8060,6 +8144,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # aqui, con la hoja entera ya escrita (comentarios y subindices incluidos),
     # aplicando UN mapa de filas — ver _mapa_filas_212().
     remapear_filas(ws, MAPA_FILAS_212)
+
+    # Fase 5: donde va un comentario y donde no. Se declara por seccion y se
+    # reparte lo que ya existe; los rangos son los de DESPUES del remapeo.
+    aplicar_reglas_de_comentario(ws, REGLAS_COMENTARIO_212)
 
     # Leyenda de color de celda + su aplicacion. Van al final, cuando ya existe
     # cada celda en su sitio definitivo: el pase DERIVA el color del estado real
@@ -8547,7 +8635,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("D46", "=$D$20/2+$D$31", com_geo)
 
     # --- Calculo de espesor requerido (Type B) ---------------------------
-    band(49, "5. CALCULO DE ESPESOR REQUERIDO (Type B — 206-3.2/3.3)")
+    band(49, "5. CALCULO DE ESPESOR REQUERIDO, Type B — 206-3.2/3.3")
     # Fase 2: dos casos (Operacion / Diseno), no tres. La columna F se retira y
     # E pasa a leer la presion de diseno maxima admisible (D28) — ver la nota de
     # la fila 27/28 de la seccion 1.
@@ -8655,7 +8743,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # tipo es una decision de diseno, no una compuerta de elegibilidad). Fuente:
     # 206-1.1.1/1.1.2 [5],[6]; 206-2.3 [13]; 206-2.5 [17]; 206-2.6 [19];
     # 206-2.7 [21].
-    band(101, "PASO 1 · CLASIFICACION Y SELECCION GUIADA DE TIPO (206-1 / 206-2)")
+    band(101, "PASO 1 · CLASIFICACION Y SELECCION GUIADA DE TIPO — 206-1 / 206-2")
     header(102, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
 
     com103 = ("Entrada: ¿el defecto fuga o puede llegar a fugar? Si es asi, el "
@@ -8718,7 +8806,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # C.A. (206-3.3 [38]: "corrosion allowances ... in accordance with the
     # engineering design"). Default 0 (valor valido tecleado). No aplica al
     # Type A (206-3.1, no es componente a presion).
-    band(111, "PASO 2 · ESPESOR REQUERIDO CON SOBREESPESOR DE CORROSION (206-3.3)")
+    band(111, "PASO 2 · ESPESOR REQUERIDO CON SOBREESPESOR DE CORROSION — 206-3.3")
     header(112, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com113 = ("Entrada: sobreespesor de corrosion C.A., mm, por el diseno de "
               "ingenieria (206-3.3). Se suma al t_req Type B (D78/E78/F53) en las "
@@ -8740,7 +8828,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # La verificacion de longitud (F61: L_s >= max(100, defecto + 2x50)) ya vive
     # en la seccion de verificaciones y es correcta. Aqui se traza explicitamente
     # y se anota el sobrepaso de 50 mm a cada lado (206-3.4 [40]).
-    band(116, "PASO 3 · DIMENSIONES DEL SLEEVE (206-3.4)")
+    band(116, "PASO 3 · DIMENSIONES DEL SLEEVE — 206-3.4")
     com117 = ("Nota 206-3.4: el sleeve mide >= 100 mm (4 in.) y sobrepasa el "
               "defecto >= 50 mm (2 in.) a CADA lado. La verificacion de longitud "
               "(F86) usa L_s,min = max(100, longitud del defecto + 2x50).")
@@ -8757,7 +8845,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # (fijadas en la Fase 0). Solo Type B (el Type A no lleva soldadura
     # circunferencial de extremo, 206-1.1.1). Ademas la luz radial G <= 2.5 mm
     # (206-4.1 [63]), que entra al AND de F69. Ts=D29, Tp=D21 (nominal), G=D31.
-    band(119, "PASO 4 · CATETO DEL FILETE Y LUZ RADIAL (206-3.5 / 206-4.1)")
+    band(119, "PASO 4 · CATETO DEL FILETE Y LUZ RADIAL — 206-3.5 / 206-4.1")
     header(120, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com121 = ("Calculo: cateto del filete de extremo w (Figs. 206-3.5-1/2, Fase 0). "
               "Type B: w = Ts + G si Ts <= 1.4 Tp, si no 1.4 Tp + G (chaflan "
@@ -8792,7 +8880,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede 2,5 mm (206-4.1)")')
 
     # --- PASO 5 — Presion externa, cavidades y bulging (206-3.6/3.7/3.9/3.10) -
-    band(125, "PASO 5 · PRESION EXTERNA, CAVIDADES Y BULGING (206-3.6/3.7/3.9/3.10)")
+    band(125, "PASO 5 · PRESION EXTERNA, CAVIDADES Y BULGING — 206-3.6/3.7/3.9/3.10")
     header(126, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com127 = ("Entrada: ¿el defecto es externo / hay perdida de pared externa? Si "
               "es asi, 206-3.7/3.9 piden rellenar las cavidades con material "
@@ -8826,7 +8914,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     ws.merge_cells("D130:G130")
 
     # --- PASO 6 — Fatiga y dilatacion diferencial (206-2.4/3.8/3.11) --------
-    band(132, "PASO 6 · FATIGA Y DILATACION DIFERENCIAL (206-2.4/3.8/3.11)")
+    band(132, "PASO 6 · FATIGA Y DILATACION DIFERENCIAL — 206-2.4/3.8/3.11")
     header(133, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com134 = ("Entrada: ¿servicio con ciclos frecuentes de presion o gradientes "
               "termicos through-wall? Todo Type B se evalua a fatiga (206-3.8); "
@@ -8849,7 +8937,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     ws.merge_cells("D136:G136")
 
     # --- PASO 7 — Fabricacion y soldadura en servicio (206-4) ---------------
-    band(138, "PASO 7 · FABRICACION Y SOLDADURA EN SERVICIO (206-4)")
+    band(138, "PASO 7 · FABRICACION Y SOLDADURA EN SERVICIO — 206-4")
     header(139, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com140 = ("Calculo: presion recomendada durante la instalacion del sleeve, "
               "entre 50% y 80% de la presion de operacion (206-4.5; API RP 2201). "
@@ -8883,7 +8971,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # ecuaciones de energia almacenada (el texto del 206 no las publica; no se
     # importa el motor neumatico del App. 501 del 212). El selector no gobierna
     # ningun calculo: solo materializa el requisito y la advertencia de presion.
-    band(145, "PASO 8 · EXAMEN (NDE) Y PRUEBA DE HERMETICIDAD (206-5 / 206-6)")
+    band(145, "PASO 8 · EXAMEN NO DESTRUCTIVO Y PRUEBA DE HERMETICIDAD — 206-5 / 206-6")
     header(146, ["Parametro", "", "Unidad", "Valor", "", "", "Referencia / Notas"])
     com147 = ("Entrada: tipo de prueba de hermeticidad del Type B (206-6, si el "
               "propietario la requiere): prueba del anular presurizado, prueba "
@@ -8930,6 +9018,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # Fase 3: la Seccion de Material sube justo detras de la Seccion 1, con el
     # mismo mecanismo que el 212 — ver _mapa_filas_206().
     remapear_filas(ws, MAPA_FILAS_206)
+    aplicar_reglas_de_comentario(ws, REGLAS_COMENTARIO_206)
 
     # Misma leyenda de color que el Art. 212: es la misma convencion de edicion
     # y tiene que verse igual en los dos motores (ver LEYENDA_MOTOR).
@@ -10357,6 +10446,26 @@ DIVERGENCIAS_REEMPLAZADAS.update({
     ("Parche_PCC2_Art212", "A50"): _FASE4_ETIQUETA + " 'Fila localizada' -> '... en la base'.",
     ("Parche_PCC2_Art212", "A51"): _FASE4_ETIQUETA + " 'n_pts / p1' -> 'Puntos tabulados de la fila'.",
     ("Parche_PCC2_Art212", "A56"): _FASE4_ETIQUETA + " Sin el '/ limite VIII-1' de mas.",
+    # --- Fase 5: fuera el parentesis EXPLICATIVO de las bandas -------------
+    # La cita al codigo se queda -es informacion normativa- pero sale del
+    # parentesis; lo que se va es lo puramente aclaratorio. Una banda no tiene
+    # que explicar como funciona la hoja: para eso esta la pestana de
+    # instrucciones (Fase 10) y el comentario de cada celda.
+    ("Parche_PCC2_Art212", "A8"): (
+        "Fase 5: fuera el parentetico '(selector que conmuta S, t_req y la "
+        "fuerza de membrana)'. Lo explica el comentario de la celda del "
+        "selector, que es donde se mira."),
+    ("Parche_PCC2_Art212", "A110"): (
+        "Fase 3 (numeral 5 -> 7) y Fase 5: fuera el parentetico '(criterios de "
+        "aceptacion)'. Una tabla titulada VERIFICACIONES no necesita que le "
+        "digan que verifica."),
+    ("Parche_PCC2_Art212", "A120"): (
+        "Fase 5: fuera el parentetico '(generadas automaticamente a partir de "
+        "las entradas)', ademas del numeral nuevo de la Fase 3."),
+    ("Parche_PCC2_Art212", "A87"): (
+        "Fase 3 (numeral) y Fase 5: la cita 'ASME PCC-2 Art. 212' se conserva "
+        "-es normativa- pero sale del parentesis, que en el resto de la hoja "
+        "significa 'aclaracion prescindible'."),
     ("Parche_PCC2_Art212", "G41"): (
         "Fase 4: la columna de notas decia 'Lista desplegable en cascada' en los "
         "CINCO niveles. Repetir la misma frase cinco veces no informa: la vuelve "

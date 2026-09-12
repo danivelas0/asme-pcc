@@ -308,7 +308,34 @@ ninguno de los dos motores, no hay frontera de paridad que acotar ahi.*
 </details>
 
 
-### Fase 5 — Encabezados sin paréntesis + comentarios por sección
+### Fase 5 — Encabezados sin paréntesis + comentarios por sección ✅
+
+- [x] **Paréntesis explicativos fuera** de las 22 bandas de los dos motores. La **cita
+      al código se conserva** —es normativa— pero sale del paréntesis, que en el resto
+      de la hoja significa «aclaración prescindible»: `(ASME PCC-2 Art. 212-3.2)` pasa a
+      `— ASME PCC-2 Art. 212-3.2`. El **título** de la hoja (A1) conserva el suyo: ahí
+      el paréntesis es la cita, no una aclaración.
+- [x] Reglas de comentario **declaradas por sección** (`REGLAS_COMENTARIO_212/206`) y
+      repartidas por un pase (`aplicar_reglas_de_comentario`), no editando ~200 llamadas:
+      por omisión solo la columna de valor; `+A` en Cálculo de Cargas/Espesor y en
+      Resultados (ahí el rótulo es un símbolo y es lo que se consulta); `+A +Resultado`
+      en Verificaciones.
+- [x] **No se inventó texto:** cuando una columna obligada no traía comentario propio se
+      le pone el de la fila, tomado de la columna que la sección declara como fuente. En
+      Verificaciones la fuente es **Resultado**, no Requerido: el texto que describe la
+      fila entera es «CUMPLE si …», no «valor mínimo exigido».
+- [x] `TestReglasDeComentario` fija las dos direcciones —que ninguna columna lleve de
+      más y que las obligadas lo lleven— y que ninguna banda conserve paréntesis.
+- [x] **Checkpoint:** `pytest` = **279**, `verificar.py` = **0 fallos**.
+
+**Corrección de dos aserciones mías, que eran más estrictas que la realidad:** (i) dos
+de las seis verificaciones del 212 no resuelven en CUMPLE/NO CUMPLE sino en una **ruta**
+(«Refuerzo 360°» / «Parche local»; «OK — parche» / «Migrar (Art. 206)»), así que exigir
+la palabra «CUMPLE» era falso; se exige en su lugar que el globo del Resultado **no sea
+el mismo** que el del Requerido. (ii) El título de la hoja no es una banda de sección.
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Quitar el texto entre paréntesis de **todas** las bandas de sección en ambos
       motores (lista completa en el reporte de exploración: "1. DATOS DE ENTRADA
       (campo con linea inferior = editable)", "PARÁMETROS DE CÁLCULO (constantes —
@@ -337,6 +364,9 @@ ninguno de los dos motores, no hay frontera de paridad que acotar ahi.*
     comentarios en A/D-E-F/verif/B según diccionarios `simples`/`trip`/`verif`/`textos`;
     ajustar esos diccionarios a la regla nueva en vez de aplicar comentario de columna A
     a todo.
+
+</details>
+
 
 ### Fase 6 — Semáforo VERDE/ROJO en Verificaciones + Dictamen Global resaltado
 - [ ] Agregar tokens nuevos `CUMPLE_OK_FILL`/`CUMPLE_OK_FONT` (reusar `VERDE`+`TINTA`,
