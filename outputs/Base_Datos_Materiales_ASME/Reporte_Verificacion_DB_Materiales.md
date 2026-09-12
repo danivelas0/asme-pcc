@@ -225,7 +225,8 @@ Dictamen global del modulo: **REVISAR** (OK).
 
 Criterios que NO cumplen en el caso semilla (y por eso el dictamen no es APTO):
 
-- **Excentricidad soldadura** (F85): `NO CUMPLE`
+- **Excentricidad soldadura** (F113): `NO CUMPLE`
+- **Conformado en frio** (F114): `NO CUMPLE`
 
 Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da 248.32004565566405 MPa contra un limite 1,5·Sa de 207 MPa. Es el resultado correcto del modelo de presion de dos casos; para volver a APTO hay que cambiar el DISENO (espesor del parche, cateto, material) o la presion de diseno de entrada, no el motor.
 

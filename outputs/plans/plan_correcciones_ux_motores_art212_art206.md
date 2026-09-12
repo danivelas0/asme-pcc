@@ -191,7 +191,36 @@ consulta**. Es un guardia más fuerte —comprueba que el dictamen no contradiga
 propias verificaciones— y no obliga a reescribir un literal cada vez que una decisión de
 ingeniería mueve el resultado, que es justo cuando hay que mirar y no silenciar.
 
-### Fase 3 — Reubicar la Sección de Material después de la Sección 1 (alto riesgo)
+### Fase 3 — Reubicar la Sección de Material después de la Sección 1 ✅
+*Aprobada por el ingeniero con el mapa a la vista (2026-09-12), renumeración incluida
+en la misma fase.*
+
+- [x] `MAPA_FILAS_212` / `MAPA_FILAS_206` + `remapear_filas()` + `remapear_referencias()`:
+      la hoja se construye donde siempre y se mueve entera después, con un solo mapa.
+      **El anexo de Pasos 1-8 no se mueve** — deja intactas las direcciones de
+      `verificar.py` §6e y las anclas por-paso.
+- [x] `remapear_oracle_212.py`: el oracle se **traslada** con el mismo mapa, no se
+      vuelve a volcar. 333 de 469 celdas cambian de dirección, **0 fórmulas cambian de
+      estructura**.
+- [x] **Prueba del movimiento por recálculo en Excel real:** los 968 valores de A..G de
+      los dos motores son idénticos bajo el mapa, 0 diferencias. Fusionados (49 y 13),
+      validaciones (25 y 19) y comentarios verificados uno a uno.
+- [x] Renumeración de bandas (1 Datos · **2 Material** · 3 Parámetros · 4 Geometría ·
+      5 Cargas · 6 Resultados · 7 Verificaciones · 8 Especificaciones) y banda del
+      material con `banda_literal()` en el 212 / `rotulo()` en el 206, vía los
+      parámetros nuevos `titulo_banda` / `banda_rotulo`.
+- [x] Citas de fila legibles: `mapa_citas` + `cita()` en `construir_seccion7_material()`
+      (un `f"(fila {F + 15})"` apuntaba a la fila de **antes** de la mudanza) y repunte
+      de las citas literales de los comentarios con patrones que no pueden confundirse
+      con una designación de material.
+- [x] Claves de `DIVERGENCIAS_*`, anclas de `test_dashboard.py` (281 literales) y
+      direcciones de `verificar.py` §7/§6e (22) movidas con el mismo mapa.
+- [x] 11 divergencias de texto por la renumeración, declaradas una a una;
+      `_ancla()` hace que las listas de anclas respeten la tabla de divergencias en vez
+      de perder cobertura, y `TestNumeracionDeSecciones` fija el **orden** de las bandas.
+- [x] **Checkpoint:** `pytest` = **266**, `verificar.py` = **0 fallos**.
+
+<details><summary>Plan original de la fase (para referencia)</summary>
 Aplica a los dos motores; hacer Art. 212 primero (tiene oracle), luego Art. 206
 (sin oracle, más simple) reusando el patrón validado.
 
@@ -224,6 +253,12 @@ Aplica a los dos motores; hacer Art. 212 primero (tiene oracle), luego Art. 206
       cadena + `verificar.py §6f`); crear `FILA_ANEXO_FLUJO_206` como constante nueva
       (hoy no existe) y usarla igual que en 212 para excluir el anexo de cualquier
       test de paridad futuro.
+
+</details>
+
+*Nota de ejecucion: `FILA_ANEXO_FLUJO_206` no hizo falta. Al no mover el anexo en
+ninguno de los dos motores, no hay frontera de paridad que acotar ahi.*
+
 
 ### Fase 4 — Simplificar la Sección de Material (cascada + diagnóstico plegable)
 - [ ] En `construir_seccion7_material()`: agrupar (Excel `ws.row_dimensions[r].outline_level`

@@ -861,6 +861,69 @@ Las ~25 celdas del 212 que esto aparta del *oracle* Rev0 van declaradas una a un
 `DIVERGENCIAS_REEMPLAZADAS` (A28/B28/G28, E60/E61, D84/G84, A87/D87, E89, B99: se exigen
 **no vacías** y las fija `TestModeloDePresionDosCasos`).
 
+**La Sección de Material subió a la posición 2 y las secciones se renumeraron
+(Fase 3, 2026-09-12).** El bloque vivía al final, detrás de las especificaciones
+técnicas, porque se añadió cuando las secciones 1-6 ya estaban ancladas al *oracle*
+Rev0. Ahora la hoja se lee en el orden en que se rellena: entradas → material →
+cálculo. Orden final en los dos motores:
+
+| Nº | Art. 212 (fila) | Art. 206 (fila) |
+|---|---|---|
+| 1 | Datos de Entrada (16) | Datos de Entrada (16) |
+| **2** | **Resolución de Material (37)** | **Resolución de Material (35)** |
+| 3 | Parámetros de Cálculo (65) | Parámetros de Cálculo (60) |
+| 4 | Geometría y Propiedades (78) | Geometría del Sleeve (68) |
+| 5 | Cálculo de Cargas y Soldadura (87) | Cálculo de Espesor Requerido (74) |
+| 6 | Resultados del Diseño (99) | Verificaciones y Avisos (83) |
+| 7 | Verificaciones (110) | — |
+| 8 | Especificaciones Técnicas (120) | — *(la Fase 9 la saca a pestaña propia)* |
+
+**No se reescribieron las ~1 400 líneas de direcciones literales del builder.** La
+hoja se construye donde siempre y después se le aplica **un** mapa de filas
+(`MAPA_FILAS_212` / `MAPA_FILAS_206` + `remapear_filas()`), por dos razones y la
+segunda es la que decide: (i) el diff queda en un solo sitio auditable en vez de
+repartido por setecientas llamadas a `calc()`; (ii) reescribir el **fuente** con una
+expresión regular es inseguro aquí — el texto del builder está lleno de cosas con
+forma de referencia que no lo son (`A106 Gr.B`, `A516 Gr.70`, `D2737`, `F714`,
+`B31.3`). Sobre la hoja ya construida solo hay que tocar cadenas que empiezan por
+`=`, y dentro de ellas solo lo que cae **fuera de las comillas**.
+
+**El anexo de Pasos 1-8 no se mueve, y es deliberado:** deja intactas las direcciones
+que recalcula `verificar.py` §6e (`D144`, `D150`, `D167`, `D183..D191`) y las anclas
+por-paso de `test_dashboard.py`. El hueco que deja el bloque de material al subir
+absorbe el desplazamiento de todo lo que hay en medio.
+
+**El oracle se trasladó, no se volvió a volcar.** `remapear_oracle_212.py` le aplica
+**el mismo mapa** —a la clave de cada celda y a las filas de las referencias dentro de
+cada fórmula, con la misma función que mueve la hoja, no una copia—. Volcarlo desde la
+hoja reconstruida lo habría convertido en un espejo del builder: pasaría a decir «el
+builder produce lo que el builder produjo» y dejaría de detectar un error del builder.
+**333 de 469 celdas cambian de dirección y ninguna fórmula cambia de estructura**,
+comprobado celda a celda.
+
+**La prueba de que el movimiento no cambió nada es el recálculo, no el diff.** Se
+recalcularon en Excel real el libro anterior y el nuevo: **los 968 valores de A..G de
+los dos motores son idénticos bajo el mapa**, 0 diferencias. Además `remapear_filas()`
+mueve rangos fusionados (49 y 13), validaciones (25 y 19) y comentarios, verificados
+uno a uno.
+
+Dos efectos que el remapeo **no** arregla solo y hubo que tratar aparte:
+- **Las citas de fila que lee una persona.** El bloque de material se escribe en su
+  sitio histórico y se mueve después, así que un `f"(fila {F + 15})"` apuntaría a la
+  fila de antes de la mudanza. `construir_seccion7_material()` recibe ahora
+  `mapa_citas` y su helper `cita()` escribe la fila definitiva. En los dos motores, las
+  citas literales de los comentarios (`(D108)`, `D39/D40`, `fila 89`) se repuntaron con
+  patrones que no pueden confundirse con una designación de material.
+- **Las claves de `DIVERGENCIAS_*`** son direcciones del oracle: se movieron con el
+  mismo mapa, o el guardia se habría quedado mudo.
+
+La renumeración sí produce divergencias contra el oracle —**11, todas de texto**— y van
+declaradas una a una. `TestBuildParcheContraOracle._ancla()` hace que las listas de
+anclas **respeten la tabla de divergencias** en vez de comparar a ciegas: antes,
+declarar una divergencia obligaba a borrar la celda de la lista y con ella su cobertura.
+`TestNumeracionDeSecciones` fija el **orden** de las bandas, no solo su texto — una hoja
+bien numerada pero descolocada pasaría una prueba de texto y seguiría siendo la vieja.
+
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
 datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /
