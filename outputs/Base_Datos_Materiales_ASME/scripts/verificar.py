@@ -1420,12 +1420,49 @@ def auditar():
         semilla_bad += 0 if ok else 1
         dictamen = rec[celda_dict].value if celda_dict else "—"
         log(f"| {etiqueta} | {ref} | {got} | {dictamen} | {'OK' if ok else 'FALLO'} |")
+    # El dictamen global NO se contrasta contra un literal fijo ("APTO"), sino
+    # contra lo que implican los criterios de aceptacion que su propio AND
+    # consulta (F84/F85/F86/F87 de la Seccion 5 y los dos topes de filete del
+    # Paso 4). Es un guardia mas fuerte: un literal solo detecta que el veredicto
+    # cambio, y ademas obliga a reescribirlo cada vez que una decision de
+    # ingenieria mueve el resultado del caso semilla —que es justo cuando hay
+    # que MIRAR, no cuando hay que silenciar—. Asi la §7 comprueba lo que de
+    # verdad importa: que el dictamen no contradiga a sus propias verificaciones.
+    #
+    # Fase 2 (modelo de presion de dos casos): el caso semilla dejo de ser APTO
+    # y pasa a REVISAR, y es correcto que lo haga. Hasta la Fase 2 la Seccion 5
+    # evaluaba el esfuerzo de soldadura contra la presion de "diseno tipico"
+    # (10 kg/cm²) mientras la "envolvente" (20 kg/cm², el rating que la propia
+    # hoja ya traia) solo se miraba de lado, sin entrar al dictamen. Con una
+    # unica presion de diseno —la maxima admisible, que es la que nombran
+    # 212-3.2 y 206-3.3— el parche de 8 mm del caso semilla NO cumple el limite
+    # 1,5·Sa de la ec. (5) del 212-3.4c a esa presion. El hallazgo es de
+    # ingenieria, no de codigo: lo que cambia es contra que presion se juzga.
+    CRIT_DICTAMEN = (("Filete perimetral", "F84"), ("Excentricidad soldadura", "F85"),
+                     ("Conformado en frio", "F86"), ("Espesor de pared", "F87"),
+                     ("Tope de filete (min)", "F161"), ("Tope de filete (max)", "F162"))
+    fallan = [(etq, c) for etq, c in CRIT_DICTAMEN if rec[c].value != "CUMPLE"]
+    dict_esperado = "APTO" if not fallan else "REVISAR"
     dict_global = rec["F90"].value
-    ok_global = dict_global == "APTO"
+    ok_global = dict_global == dict_esperado
     semilla_bad += 0 if ok_global else 1
     log("")
     log(f"Dictamen global del modulo: **{dict_global}** "
-        f"({'OK' if ok_global else 'FALLO — se esperaba APTO'}).")
+        f"({'OK' if ok_global else f'FALLO — sus criterios implican {dict_esperado}'}).")
+    if fallan:
+        log("")
+        log("Criterios que NO cumplen en el caso semilla (y por eso el dictamen "
+            "no es APTO):")
+        log("")
+        for etq, c in fallan:
+            log(f"- **{etq}** ({c}): `{rec[c].value}`")
+        log("")
+        log("Con la presion de diseno del caso semilla en su rating (D28 = 20 "
+            "kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da "
+            f"{rec['E68'].value} MPa contra un limite 1,5·Sa de {rec['D48'].value} "
+            "MPa. Es el resultado correcto del modelo de presion de dos casos; "
+            "para volver a APTO hay que cambiar el DISENO (espesor del parche, "
+            "cateto, material) o la presion de diseno de entrada, no el motor.")
     log("")
 
     # ---- 6e. pasos del flujo 212 recalculados en Excel -------------------
@@ -1473,10 +1510,13 @@ def auditar():
             flujo_bad += 0 if ok_el else 1
             log(f"| %Elong conformado | — | {elong_ref} | {got_el} | "
                 f"{'OK' if ok_el else 'FALLO'} |")
+    # Fase 2: dos casos de presion, no tres. La columna F ("Envolvente") se
+    # retiro del motor: su caso -la presion maxima admisible- es el que ahora
+    # ocupa la columna E, rotulada "Diseno" (212-3.2 define una unica P de
+    # diseno; 206-3.3 la nombra "maximum allowable design pressure").
     for etiq, pc, cpc, lpc, cc, lc, mc, wc, sw in (
             ("Operacion", "D62", "D146", "D147", "D148", "D149", "D150", "D64", "D68"),
-            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64", "E68"),
-            ("Envolvente", "F62", "F146", "F147", "F148", "F149", "F150", "F64", "F68")):
+            ("Diseno", "E62", "E146", "E147", "E148", "E149", "E150", "E64", "E68")):
         P = rec[pc].value
         if not isinstance(P, (int, float)) or not isinstance(dm, (int, float)):
             flujo_bad += 1

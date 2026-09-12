@@ -221,7 +221,13 @@ Temperatura de evaluacion: **25 °C** · metal base `A-1 | A106 | B | Pipe & tub
 | Sa metal base (A106 Gr.B) | 138 | 138 | OK | OK |
 | Sa gobernante | 138 | 138 | — | OK |
 
-Dictamen global del modulo: **APTO** (OK).
+Dictamen global del modulo: **REVISAR** (OK).
+
+Criterios que NO cumplen en el caso semilla (y por eso el dictamen no es APTO):
+
+- **Excentricidad soldadura** (F85): `NO CUMPLE`
+
+Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da 248.32004565566405 MPa contra un limite 1,5·Sa de 207 MPa. Es el resultado correcto del modelo de presion de dos casos; para volver a APTO hay que cambiar el DISENO (espesor del parche, cateto, material) o la presion de diseno de entrada, no el motor.
 
 ## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)
 
@@ -236,20 +242,13 @@ Dictamen global del modulo: **APTO** (OK).
 | F_max | Operacion | 77.8280260625 | 77.8280260625 | OK |
 | w_min | Operacion | 1.0254021879117259 | 1.0254021879117259 | OK |
 | S_w | Operacion | 62.08001141391601 | 62.08001141391601 | OK |
-| F_CP | Diseno | 155.656052125 | 155.656052125 | OK |
-| F_LP | Diseno | 77.8280260625 | 77.8280260625 | OK |
-| F_C | Diseno | 155.656052125 | 155.656052125 | OK |
-| F_L | Diseno | 77.8280260625 | 77.8280260625 | OK |
-| F_max | Diseno | 155.656052125 | 155.656052125 | OK |
-| w_min | Diseno | 2.0508043758234518 | 2.0508043758234518 | OK |
-| S_w | Diseno | 124.16002282783202 | 124.16002282783202 | OK |
-| F_CP | Envolvente | 311.31210425 | 311.31210425 | OK |
-| F_LP | Envolvente | 155.656052125 | 155.656052125 | OK |
-| F_C | Envolvente | 311.31210425 | 311.31210425 | OK |
-| F_L | Envolvente | 155.656052125 | 155.656052125 | OK |
-| F_max | Envolvente | 311.31210425 | 311.31210425 | OK |
-| w_min | Envolvente | 4.1016087516469035 | 4.1016087516469035 | OK |
-| S_w | Envolvente | 248.32004565566405 | 248.32004565566405 | OK |
+| F_CP | Diseno | 311.31210425 | 311.31210425 | OK |
+| F_LP | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_C | Diseno | 311.31210425 | 311.31210425 | OK |
+| F_L | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_max | Diseno | 311.31210425 | 311.31210425 | OK |
+| w_min | Diseno | 4.1016087516469035 | 4.1016087516469035 | OK |
+| S_w | Diseno | 248.32004565566405 | 248.32004565566405 | OK |
 | E (neumatica) | — | 840055853.1289042 | 840055853.1289042 | OK |
 | TNT (neumatica) | — | 196.87640104077514 | 196.87640104077514 | OK |
 | R (neumatica) | — | 146.5900686172443 | 146.59006861724427 | OK |

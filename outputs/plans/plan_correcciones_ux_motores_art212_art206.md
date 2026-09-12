@@ -152,27 +152,44 @@ Sección 1, la numeración se corre. Mapa final:
       colaban por la auditoría de fuentes. El mismo pase les fija `DATA_F`.
 - [x] **Checkpoint:** `pytest` = **257**, `verificar.py` = **0 fallos**.
 
-### Fase 2 — Modelo de presión (2 casos, ambos motores)
-- [ ] Art. 212 Sección 1: eliminar el input "Presión de diseño (típica)"; renombrar
-      "Presión envolvente (cota superior)" a **"Presión de diseño (máxima admisible /
-      rating)"**, citando 206-3.3 y el criterio de conservadurismo también para 212 en
-      el comentario de celda. Mantener "Presión de operación".
-- [ ] Art. 212 Sección "Cálculo de cargas y soldadura" (rows ~59-69 hoy): reducir la
-      tabla de 3 columnas (D/E/F = Operación/Diseño típico/Envolvente) a **2**
-      (D/E = Operación/Diseño). Repropagar todas las fórmulas que hoy leen la columna
-      F (envolvente) para que lean la columna E (ahora "Diseño" = máxima admisible):
-      `F_m`, `w_mín`, `t_req`, `S_w` membrana/flexión/total, verificación CUMPLE/NO
-      CUMPLE por caso. Actualizar Sección "Verificaciones" (F65/F69/F87 hoy) para
-      referenciar la columna E en vez de F.
-- [ ] Art. 206 "Cálculo de espesor requerido" (rows ~49-55 hoy): mismo colapso de 3→2
-      columnas; `T_s,mín gobernante` pasa a leer la columna "Diseño (máxima
-      admisible)" en vez de "Envolvente".
-- [ ] Actualizar todos los comentarios (`_nota`) de esas filas para reflejar el nuevo
-      criterio (cita 212-3.2 / 206-3.3 según corresponda).
-- [ ] Revisar el Paso 8 (energía neumática, App. 501) y cualquier otra referencia a
-      "presión envolvente" en el anexo de flujo — repuntar a la nueva columna/celda de
-      "Diseño (máxima admisible)" donde corresponda; no tocar la presión de prueba
-      (dato independiente).
+### Fase 2 — Modelo de presión (2 casos, ambos motores) ✅
+*Ejecutada antes que la Fase 3 (ver refinamientos): colapsar columnas elimina celdas y
+es más limpio hacerlo antes del remapeo de filas.*
+
+- [x] Art. 212 Sección 1: retirada la fila 27 ("Presión de diseño (típica)"); la fila 28
+      pasa a **"Presión de diseño (máxima admisible / rating)"**, símbolo `P_dis`, con la
+      cita a 212-3.2 y 206-3.3 en el comentario de celda.
+- [x] Art. 212 "Cálculo de cargas y soldadura" (60-69) y Paso 2 del anexo (143-150):
+      de 3 columnas a **2** (D/E = Operación/Diseño). La columna F se retira entera; E
+      pasa a leer `$D$28`. Las filas 62-69 de la columna E no cambian de forma —
+      encadenan desde E61—, así que siguen ancladas al oracle.
+- [x] Verificaciones: `D84 = MAX(D64:E64)`, `D87 = E65`, `E89 = $D$28`, y la presión de
+      prueba hidrostática (`B99`, `D192`) sobre `$D$28`.
+- [x] Art. 206: mismo colapso (51-53); `T_s,mín gobernante` pasa a `$E$53`.
+- [x] Comentarios (`_nota`) y `comentar_art212_base()` actualizados — su bucle `trip`
+      recorre ahora `(4, 5)`, no `(4, 5, 6)`.
+- [x] `verificar.py` §6e: la terna "Envolvente" sale; quedan dos casos.
+- [x] ~25 divergencias contra el oracle declaradas una a una (retiradas vs. reemplazadas),
+      fijadas por `TestModeloDePresionDosCasos`.
+- [x] **Checkpoint:** `pytest` = **262**, `verificar.py` = **0 fallos**.
+
+#### Hallazgo de ingeniería — el caso semilla pasó de APTO a REVISAR
+
+No es un fallo de código. Con una única presión de diseño —la máxima admisible— el
+parche de 8 mm del caso semilla **no cumple** el límite `1,5·Sa` de la ec. (5) del
+212-3.4c a su rating: `S_w = 248,3 MPa` contra `1,5·Sa = 207 MPa` (verificación F85).
+Hasta ahora la Sección 5 juzgaba ese esfuerzo contra los 10 kg/cm² del "diseño típico",
+mientras el rating de 20 kg/cm² —que la hoja **ya traía** en D28— solo se miraba de lado
+y no entraba al dictamen global.
+
+Para volver a APTO hay que cambiar el **diseño** (espesor del parche, cateto, material)
+o la presión de diseño de entrada, **no el motor**. Queda a decisión del ingeniero.
+
+Como consecuencia, `verificar.py` §7 dejó de contrastar el dictamen contra el literal
+`"APTO"` y pasa a contrastarlo contra **lo que implican los criterios que su propio AND
+consulta**. Es un guardia más fuerte —comprueba que el dictamen no contradiga a sus
+propias verificaciones— y no obliga a reescribir un literal cada vez que una decisión de
+ingeniería mueve el resultado, que es justo cuando hay que mirar y no silenciar.
 
 ### Fase 3 — Reubicar la Sección de Material después de la Sección 1 (alto riesgo)
 Aplica a los dos motores; hacer Art. 212 primero (tiene oracle), luego Art. 206

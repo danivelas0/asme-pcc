@@ -1072,18 +1072,19 @@ class TestBuildParcheContraOracle:
     def test_paso2_cargas(self):
         ws = self._construir()
         assert str(ws["A142"].value).startswith("PASO 2"), ws["A142"].value
-        # Entradas de cargas externas (un valor cada una, aplican a los 3 casos).
+        # Entradas de cargas externas (un valor cada una, aplican a los 2 casos).
         assert ws["D144"].value == 0
         assert ws["D145"].value == 0
-        # Fuerzas de presion por caso (Operacion D / Diseno E / Envolvente F).
+        # Fuerzas de presion por caso (Operacion D / Diseno E). La Fase 2 retiro
+        # la tercera columna: ver TestModeloDePresionDosCasos.
         assert ws["D146"].value == "=D62*$D$52/2", "F_CP Op"
-        assert ws["F146"].value == "=F62*$D$52/2", "F_CP Env"
+        assert ws["E146"].value == "=E62*$D$52/2", "F_CP Dis"
         assert ws["D147"].value == "=D62*$D$52/4", "F_LP Op"
         # Totales y gobernante.
         assert ws["D148"].value == "=D146+$D$144", "F_C Op"
         assert ws["D149"].value == "=D147+$D$145", "F_L Op"
         assert ws["D150"].value == "=IF($D$11=3,NA(),MAX(D148,D149))", "F_max Op"
-        assert ws["F150"].value == "=IF($D$11=3,NA(),MAX(F148,F149))", "F_max Env"
+        assert ws["E150"].value == "=IF($D$11=3,NA(),MAX(E148,E149))", "F_max Dis"
 
     # --- Fase 3: proximidad a discontinuidades (Paso 3, 212-3.3) -------------
     # L_min = 2*sqrt(Rm*t) (ec.3, ya en D73). Nuevo: 3C distancia a parches
@@ -1102,9 +1103,9 @@ class TestBuildParcheContraOracle:
     # w <= min(T,t) y w <= 40 mm; ambos entran al AND de F90.
     def test_paso4_filete(self):
         ws = self._construir()
-        # w_min (D64:F64) recablea a F_max (D150:F150), no F_m (D63).
+        # w_min (D64:E64) recablea a F_max (D150:E150), no F_m (D63). La
+        # columna F se retiro en la Fase 2 (modelo de presion de dos casos).
         assert ws["D64"].value == "=D150/($D$42*$D$41)", "D64"
-        assert ws["F64"].value == "=F150/($D$42*$D$41)", "F64"
         # Bloque de topes.
         assert str(ws["A159"].value).startswith("PASO 4"), ws["A159"].value
         assert ws["D161"].value == "=MIN($D$29,$D$21)", "D161 req"
@@ -1134,8 +1135,8 @@ class TestBuildParcheContraOracle:
             "=IF($D$11=3,NA(),D62*$D$52/(2*$D$29))"), "D66 membrana"
         assert ws["D67"].value == (
             "=IF($D$11=3,NA(),3*D62*$D$52*$D$55/$D$29^2)"), "D67 flexion"
-        assert ws["F67"].value == (
-            "=IF($D$11=3,NA(),3*F62*$D$52*$D$55/$D$29^2)"), "F67 flexion Env"
+        assert ws["E67"].value == (
+            "=IF($D$11=3,NA(),3*E62*$D$52*$D$55/$D$29^2)"), "E67 flexion Dis"
 
     # --- Fase 6: conformado en frio simple/doble (Paso 6, 212-3.5) -----------
     # %Elong = coef*T/Rf*(1-Rf/Ro), coef=75 doble (esfera/cabezal, ec.6 [71]) o
@@ -1227,8 +1228,13 @@ class TestBuildParcheContraOracle:
         "A24", "B24", "C24", "D24",
         "A25", "B25", "C25", "D25", "G25",
         "A26", "B26", "C26", "D26", "G26",
-        "A27", "B27", "C27", "D27", "G27",
-        "A28", "B28", "C28", "D28", "G28",
+        # Fase 2: la fila 27 ("Presion de diseno tipica") se RETIRO entera y
+        # A28/B28/G28 se reescriben ("Presion de diseno (maxima admisible /
+        # rating)", simbolo P_dis). Salen del ancla contra el oracle: las
+        # primeras estan en DIVERGENCIAS_DECLARADAS y las segundas en
+        # DIVERGENCIAS_REEMPLAZADAS. Su forma nueva la fija
+        # TestModeloDePresionDosCasos. C28/D28 (unidad y valor) no cambian.
+        "C28", "D28",
         "A29", "B29", "C29", "D29", "G29",
         "A30", "B30", "C30", "D30", "G30",
         "A31", "B31", "C31", "D31", "G31",
@@ -1334,23 +1340,28 @@ class TestBuildParcheContraOracle:
     # formula, ni fusionado, ni validacion): quedan vacias, sin ancla.
     ANCLAS_FILAS_61_80 = (
         "A59",
-        "A60", "B60", "C60", "D60", "E60", "F60", "G60",
-        "A61", "B61", "C61", "D61", "E61", "F61", "G61",
-        "A62", "B62", "C62", "D62", "E62", "F62", "G62",
-        "A63", "B63", "C63", "D63", "E63", "F63", "G63",
-        # D64/E64/F64 (w_min) salen del oracle: la Fase 4 los recablea a F_max
+        # Fase 2: la columna F (caso "Envolvente") se RETIRO de las filas 60-69
+        # y E60/E61 cambian de contenido (E pasa a ser "Diseno" leyendo D28).
+        # Las tres salen del ancla contra el oracle: F* esta en
+        # DIVERGENCIAS_DECLARADAS y E60/E61 en DIVERGENCIAS_REEMPLAZADAS, y su
+        # forma nueva la fija TestModeloDePresionDosCasos.
+        "A60", "B60", "C60", "D60", "G60",
+        "A61", "B61", "C61", "D61", "G61",
+        "A62", "B62", "C62", "D62", "E62", "G62",
+        "A63", "B63", "C63", "D63", "E63", "G63",
+        # D64/E64 (w_min) salen del oracle: la Fase 4 los recablea a F_max
         # (D150) en vez de F_m (D63). Su forma nueva la fija test_paso4_filete y
         # su divergencia se declara en DIVERGENCIAS_REEMPLAZADAS. A/B/C/G64
         # (rotulo, simbolo, unidad, referencia) siguen anclados al oracle.
         "A64", "B64", "C64", "G64",
-        "A65", "B65", "C65", "D65", "E65", "F65", "G65",
+        "A65", "B65", "C65", "D65", "E65", "G65",
         # D66/D67 (componentes membrana y flexion de S_w) salen del oracle: la
         # Fase 5 los pasa a la forma literal de la ec.(5) (P*Dm directa, no via
         # F_m) con NA en esfera. D68 = D66+D67 no cambia de formula (propaga NA).
         "A66", "B66", "C66", "G66",
         "A67", "B67", "C67", "G67",
-        "A68", "B68", "C68", "D68", "E68", "F68", "G68",
-        "A69", "C69", "D69", "E69", "F69", "G69",
+        "A68", "B68", "C68", "D68", "E68", "G68",
+        "A69", "C69", "D69", "E69", "G69",
         "A71",
         "A72", "B72", "C72", "D72", "G72",
         "A73", "B73", "C73", "D73", "G73",
@@ -1388,12 +1399,16 @@ class TestBuildParcheContraOracle:
         "A9", "B9", "C9", "D9", "G9",
         "A82",
         "A83", "D83", "E83", "F83", "G83",
-        "A84", "D84", "E84", "F84", "G84",
+        # Fase 2: D84 (MAX sobre dos casos) y G84 (rotulo "diseno") salen
+        # del ancla; su forma la fija TestModeloDePresionDosCasos.
+        "A84", "E84", "F84",
         "A85", "D85", "E85", "F85", "G85",
         "A86", "D86", "E86", "F86", "G86",
-        "A87", "D87", "E87", "F87", "G87",
+        # Fase 2: A87/D87 pasan del caso "envolvente" al caso "diseno".
+        "E87", "F87", "G87",
         "A88", "D88", "E88", "F88", "G88",
-        "A89", "D89", "E89", "F89", "G89",
+        # Fase 2: E89 lee D28 (diseno maxima admisible) en vez de D27.
+        "A89", "D89", "F89", "G89",
         "A90",
         "A92",
         "A93", "B93",
@@ -1402,7 +1417,10 @@ class TestBuildParcheContraOracle:
         "A96", "B96",
         "A97", "B97",
         "A98", "B98",
-        "A99", "B99",
+        # Fase 2: B99 calcula la presion de prueba sobre D28 (diseno
+        # maxima admisible) en vez de D27, retirada. Lo fija
+        # TestModeloDePresionDosCasos.
+        "A99",
         "A101",
     )
 
@@ -1411,6 +1429,48 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_8:
             assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
+
+    # --- Fase 2: el modelo de presion pasa de tres casos a dos --------------
+    # Lo que el oracle Rev0 ya no cubre. 212-3.2 define una UNICA
+    # P = "internal design pressure" para las ec. (1)/(2) y 206-3.3 la nombra
+    # "maximum allowable design pressure": el "diseno tipico" intermedio no lo
+    # publica ningun codigo y competia con la maxima admisible por gobernar el
+    # t_req. Se retira la fila 27 y la columna F de la tabla de cargas; el caso
+    # que sobrevive es el MAS conservador, ahora en la columna E.
+    def test_la_fila_del_diseno_tipico_esta_retirada(self):
+        ws = self._construir()
+        for celda in ("A27", "B27", "C27", "D27", "G27"):
+            assert ws[celda].value is None, f"{celda} deberia estar vacia"
+
+    def test_la_presion_de_diseno_es_la_maxima_admisible(self):
+        ws = self._construir()
+        assert ws["A28"].value == "Presión de diseño (máxima admisible / rating)"
+        assert _plano(ws["B28"].value) == "Pdis", ws["B28"].value
+        assert ws["D28"].value == 20
+        # encabezado() del 212 escribe el rotulo LITERAL (no pasa por .upper():
+        # el oracle Rev0 trae mayus/minus mixtas en esta tabla).
+        assert ws["E60"].value == "Diseño", ws["E60"].value
+        assert ws["E61"].value == "=$D$28", ws["E61"].value
+
+    def test_la_columna_envolvente_esta_retirada(self):
+        """La tabla de cargas (60-69) y el Paso 2 (143-150) quedan en DOS
+        columnas de valor. Si quedara una celda suelta en F, la hoja mostraria
+        una tercera columna a medio calcular."""
+        ws = self._construir()
+        for fila in list(range(60, 70)) + list(range(143, 151)):
+            assert ws[f"F{fila}"].value is None, f"F{fila}: {ws[f'F{fila}'].value}"
+
+    def test_las_verificaciones_leen_el_caso_de_diseno(self):
+        """El t_req y el filete gobernantes se toman del caso de diseno (E),
+        que es la presion maxima admisible. Antes se tomaban de la columna
+        'Envolvente' (F), que era ese mismo concepto con otro nombre: el valor
+        no cambia, pero la hoja ya no declara un rango que no existe."""
+        ws = self._construir()
+        assert ws["D84"].value == "=MAX(D64:E64)", ws["D84"].value
+        assert ws["D87"].value == "=E65", ws["D87"].value
+        assert ws["E89"].value == "=$D$28", ws["E89"].value
+        # La presion de prueba hidrostatica sale de la misma presion de diseno.
+        assert "$D$46*$D$28" in str(ws["B99"].value), ws["B99"].value
 
 
 class TestBuildCollarArt206:
@@ -1457,11 +1517,24 @@ class TestBuildCollarArt206:
         ws = self._construir()
         assert "PASO 2" in str(ws["A111"].value), ws["A111"].value
         assert ws["D113"].value == 0, "C.A. default 0"
-        # t_req Type B suma C.A. (D113) en las tres columnas.
-        for celda in ("D53", "E53", "F53"):
+        # t_req Type B suma C.A. (D113) en las dos columnas (la Fase 2 retiro la
+        # tercera; ver TestModeloDePresionDosCasos).
+        for celda in ("D53", "E53"):
             assert str(ws[celda].value).endswith("+$D$113"), f"{celda}: {ws[celda].value}"
         # Type A (2/3 Tp) NO lleva C.A.
         assert "$D$113" not in str(ws["D54"].value), "D54 no debe llevar C.A."
+
+    # --- Fase 2 (UX): el modelo de presion de dos casos, tambien aqui --------
+    # 206-3.3 dimensiona contra "the maximum allowable design pressure"
+    # (resources/.../art_206.json, Regla n.1), no contra un tipico intermedio.
+    def test_modelo_de_presion_dos_casos(self):
+        ws = self._construir()
+        assert ws["D27"].value is None, "la fila del diseno tipico se retiro"
+        assert ws["E51"].value == "=$D$28", ws["E51"].value
+        for fila in (51, 52, 53):
+            assert ws[f"F{fila}"].value is None, f"F{fila}: {ws[f'F{fila}'].value}"
+        # El T_s,min gobernante de Type B pasa a leer el caso Diseno (E53).
+        assert ws["D55"].value == f'=IF($D$22="{B.TIPO_A}",$D$54,$E$53)', ws["D55"].value
 
     # --- Fase 3: dimensiones del sleeve (Paso 3, 206-3.4) -------------------
     def test_paso3_dimensiones(self):

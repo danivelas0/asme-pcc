@@ -6774,19 +6774,28 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(26, 2, "P_op").font = Font(name=MONO, size=10, color=TINTA)
     inp("D26", 5, com26)
 
-    com27 = ("Entrada: presion de diseno tipica, en kg/cm². Es el caso "
-             "'Diseno tipico' de la seccion 3; se compara contra la presion "
-             "maxima admisible del parche en la verificacion de la seccion 5 "
-             "(fila 89).")
-    lab(27, "Presión de diseño (típica)", unidad="kg/cm²", ref="Por confirmar", com=com27)
-    ws.cell(27, 2, "P_dis").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D27", 10, com27)
-
-    com28 = ("Entrada: presion envolvente (cota superior / rating), en "
-             "kg/cm². Es el caso mas exigente, evaluado en la seccion 3.")
-    lab(28, "Presión envolvente (cota superior)", unidad="kg/cm²",
-        ref="Rating / envolvente", com=com28)
-    ws.cell(28, 2, "P_env").font = Font(name=MONO, size=10, color=TINTA)
+    # Fase 2 (modelo de presion de 2 casos). La fila 27 —"Presion de diseno
+    # (tipica)"— SE RETIRA. El motor evaluaba tres presiones: operacion, un
+    # "diseno tipico" intermedio y una "envolvente". Ese caso intermedio no lo
+    # pide el codigo: 212-3.2 define una UNICA P = "internal design pressure"
+    # para las ec. (1)/(2) —comprobado en
+    # resources/ASME PCC/pcc_2/p2_welded_repairs/art_212_fillet_welded_patches/
+    # art_212.json, Regla n.1— y el Art. 206, que comparte modelo de presion en
+    # este libro, es explicito en 206-3.3: el espesor se dimensiona contra "the
+    # maximum allowable design pressure". Mantener el caso intermedio ademas de
+    # la maxima admisible dejaba dos columnas compitiendo por gobernar el t_req,
+    # que es exactamente la ambiguedad que un motor de calculo no debe tener.
+    # Las celdas de la fila 27 quedan en DIVERGENCIAS_DECLARADAS.
+    com28 = ("Entrada: presion de diseno, en kg/cm² — la MAXIMA ADMISIBLE "
+             "(rating), no un valor tipico intermedio. Es la que gobierna el "
+             "espesor requerido y el esfuerzo de soldadura: 212-3.2 define una "
+             "unica P = 'internal design pressure' para las ec. (1)/(2), y "
+             "206-3.3 la nombra 'maximum allowable design pressure'. Es el caso "
+             "'Diseno' de la seccion 3 y se compara contra la presion maxima "
+             "admisible del parche en la verificacion de la seccion 5 (fila 89).")
+    lab(28, "Presión de diseño (máxima admisible / rating)", unidad="kg/cm²",
+        ref="Rating / máx. admisible", com=com28)
+    ws.cell(28, 2, "P_dis").font = Font(name=MONO, size=10, color=TINTA)
     inp("D28", 20, com28)
 
     com29 = ("Entrada: espesor adoptado del parche o collar, en mm (debe ser "
@@ -6987,11 +6996,13 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # criterio que las bandas A16/A37/A50 anteriores (la banda y el
     # encabezado que preceden inmediatamente un rango y titulan su seccion
     # se escriben con el mismo criterio en toda la hoja). Encabezado de fila
-    # 60: TRES columnas de valor propias (D/E/F = Operacion/Diseno tipico/
-    # Envolvente, no una sola "Valor" como en las filas 17/38/51), tampoco
-    # compatible con un header generico -en mayusculas y con una sola
-    # columna de valor- asi que se escribe directo con el mismo estilo
-    # (HDR_F/HDR_FILL/BOX_FRANJA).
+    # 60: DOS columnas de valor propias (D/E = Operacion/Diseno, no una sola
+    # "Valor" como en las filas 17/38/51), tampoco compatible con un header
+    # generico -en mayusculas y con una sola columna de valor- asi que se
+    # escribe directo con el mismo estilo (HDR_F/HDR_FILL/BOX_FRANJA).
+    # Fase 2: eran TRES (Operacion/Diseno tipico/Envolvente). La columna F se
+    # retira entera y E pasa a leer la presion de diseno maxima admisible
+    # (D28): ver el comentario de la fila 27/28 en la Seccion 1.
     #
     # La fila 58 queda vacia (no aparece en el *oracle*: ni formula, ni
     # fusionado, ni validacion): separa la Seccion 2 (termina en fila 57) de
@@ -6999,23 +7010,21 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     banda_literal(59, "3.  CÁLCULO DE CARGAS Y SOLDADURA  (ASME PCC-2, Art. 212)")
 
     encabezado(60, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                    (4, "Operación"), (5, "Diseño típico"),
-                    (6, "Envolvente"), (7, "Referencia")))
+                    (4, "Operación"), (5, "Diseño"), (7, "Referencia")))
 
-    # Filas 61-69: los tres casos de presion (Operacion/Diseno tipico/
-    # Envolvente) en columnas D/E/F. Cada fila repite el mismo comentario en
-    # las tres columnas de calculo y en el rotulo de columna A (texto tomado
-    # de comentar_art212_base, sin inventar contenido nuevo — mismo criterio
-    # que en com52-57; comentar_art212_base() sobreescribe estas mismas notas
-    # de forma idempotente al llamarse al final de la funcion).
-    com61 = ("Calculo: repite, para este caso (Operacion / Diseno tipico / "
-             "Envolvente), la presion correspondiente de la seccion 1, en "
-             "kg/cm².")
+    # Filas 61-69: los DOS casos de presion (Operacion/Diseno) en columnas D/E.
+    # Cada fila repite el mismo comentario en las dos columnas de calculo y en
+    # el rotulo de columna A (texto tomado de comentar_art212_base, sin inventar
+    # contenido nuevo — mismo criterio que en com52-57; comentar_art212_base()
+    # sobreescribe estas mismas notas de forma idempotente al llamarse al final
+    # de la funcion).
+    com61 = ("Calculo: repite, para este caso (Operacion / Diseno), la presion "
+             "correspondiente de la seccion 1, en kg/cm². 'Diseno' es la maxima "
+             "admisible (D28): 212-3.2 define una unica P de diseno.")
     lab(61, "Presión evaluada", unidad="kg/cm²", ref="Entradas §1", com=com61)
     ws.cell(61, 2, "P").font = Font(name=MONO, size=10, color=TINTA)
     calc("D61", "=$D$26", com61)
-    calc("E61", "=$D$27", com61)
-    calc("F61", "=$D$28", com61)
+    calc("E61", "=$D$28", com61)
 
     com62 = ("Calculo: conversion a MPa de la presion de este caso, "
              "multiplicando por el factor de conversion D47.")
@@ -7023,7 +7032,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(62, 2, "P").font = Font(name=MONO, size=10, color=TINTA)
     calc("D62", "=D61*$D$47", com62)
     calc("E62", "=E61*$D$47", com62)
-    calc("F62", "=F61*$D$47", com62)
 
     com63 = ("Calculo: fuerza de membrana de este caso (ec. 1 del Art. 212): "
              "kf · P(MPa) · Dm.")
@@ -7032,7 +7040,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(63, 2, "F_m").font = Font(name=MONO, size=10, color=TINTA)
     calc("D63", "=$D$14*D62*$D$52", com63)
     calc("E63", "=$D$14*E62*$D$52", com63)
-    calc("F63", "=$D$14*F62*$D$52", com63)
 
     # Fase 4: w_min usa la fuerza gobernante F_max del Paso 2 (D150/E150/F150),
     # no F_m (D63). Para cilindro sin cargas externas F_max = F_CP = F_m, asi
@@ -7048,7 +7055,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(64, 2, "w_mín").font = Font(name=MONO, size=10, color=TINTA)
     calc("D64", "=D150/($D$42*$D$41)", com64)
     calc("E64", "=E150/($D$42*$D$41)", com64)
-    calc("F64", "=F150/($D$42*$D$41)", com64)
 
     com65 = ("Calculo: espesor de pared requerido para este caso, por B31.3 "
              "(modo tuberia) o por VIII-1 UG-27 (modo esfera/cilindro), "
@@ -7064,10 +7070,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
          '=IF($D$11=1,E62*$D$20/(2*($D$40*$D$44+E62*$D$43)),'
          'IF($D$11=3,E62*$D$54/(2*$D$40*$D$44-0.2*E62),'
          'E62*$D$54/($D$40*$D$44-0.6*E62)))', com65)
-    calc("F65",
-         '=IF($D$11=1,F62*$D$20/(2*($D$40*$D$44+F62*$D$43)),'
-         'IF($D$11=3,F62*$D$54/(2*$D$40*$D$44-0.2*F62),'
-         'F62*$D$54/($D$40*$D$44-0.6*F62)))', com65)
 
     # Fase 5: S_w se escribe LITERAL de la ec. (5) del 212-3.4c, con P*Dm
     # directamente en vez de via F_m/kf (decision 3). Para cilindro el valor no
@@ -7082,7 +7084,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(66, 2, "S_w,m").font = Font(name=MONO, size=10, color=TINTA)
     calc("D66", "=IF($D$11=3,NA(),D62*$D$52/(2*$D$29))", com66)
     calc("E66", "=IF($D$11=3,NA(),E62*$D$52/(2*$D$29))", com66)
-    calc("F66", "=IF($D$11=3,NA(),F62*$D$52/(2*$D$29))", com66)
 
     com67 = ("Calculo: componente de flexion de la ec. (5) del 212-3.4c: "
              "3·P(MPa)·Dm·e/T². En esfera/cabezal (D11=3) -> NA.")
@@ -7091,7 +7092,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(67, 2, "S_w,f").font = Font(name=MONO, size=10, color=TINTA)
     calc("D67", "=IF($D$11=3,NA(),3*D62*$D$52*$D$55/$D$29^2)", com67)
     calc("E67", "=IF($D$11=3,NA(),3*E62*$D$52*$D$55/$D$29^2)", com67)
-    calc("F67", "=IF($D$11=3,NA(),3*F62*$D$52*$D$55/$D$29^2)", com67)
 
     com68 = ("Calculo: esfuerzo de soldadura total de este caso (membrana + "
              "flexion); se compara contra el limite 1,5·Sa en la fila 69.")
@@ -7100,7 +7100,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(68, 2, "S_w").font = Font(name=MONO, size=10, color=TINTA)
     calc("D68", "=D66+D67", com68)
     calc("E68", "=E66+E67", com68)
-    calc("F68", "=F66+F67", com68)
 
     # Fila 69 no lleva simbolo propio: el *oracle* no declara B69 (a
     # diferencia de las filas 61-68, que si lo tienen) — se deja vacio.
@@ -7111,7 +7110,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         com=com69)
     calc("D69", '=IF(D68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
     calc("E69", '=IF(E68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
-    calc("F69", '=IF(F68<=$D$48,"CUMPLE","NO CUMPLE")', com69)
 
     # --- 4. Resultados del diseno (filas 71-80) ------------------------------
     # A71: banda de seccion, fusionada A71:G71 (confirmado en "fusionados"
@@ -7223,9 +7221,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # (Requerido/Adoptado/Resultado), no uno solo compartido como en las
     # secciones anteriores, asi que no hay un "com" unico que pasarle aqui a
     # lab()/calc() sin inventar contenido nuevo.
-    lab(84, "Filete perimetral (cateto)", ref="w ≥ w_mín (envolvente)")
+    # Fase 2: el MAX barre ahora D64:E64 (dos casos, no tres). Con la columna F
+    # retirada, "=MAX(D64:F64)" seguiria dando el mismo numero -F64 esta vacia-
+    # pero dejaria la hoja declarando un rango que ya no existe.
+    lab(84, "Filete perimetral (cateto)", ref="w ≥ w_mín (diseño)")
     ws.merge_cells("A84:C84")
-    calc("D84", "=MAX(D64:F64)")
+    calc("D84", "=MAX(D64:E64)")
     calc("E84", "=$D$32")
     calc("F84", '=IF(E84>=D84,"CUMPLE","NO CUMPLE")')
 
@@ -7241,9 +7242,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     calc("E86", "=$D$77")
     calc("F86", '=IF(E86<=D86,"CUMPLE","NO CUMPLE")')
 
-    lab(87, "Espesor de pared (envolvente)", ref="t ≥ t_req")
+    # Fase 2: el t_req gobernante es el del caso de DISENO (maxima admisible),
+    # que es lo que exige 206-3.3 y lo que 212-3.2 entiende por P. Antes leia la
+    # columna Envolvente (F65), que era ese mismo concepto con otro nombre.
+    lab(87, "Espesor de pared (diseño)", ref="t ≥ t_req")
     ws.merge_cells("A87:C87")
-    calc("D87", "=F65")
+    calc("D87", "=E65")
     calc("E87", "=$D$21")
     calc("F87", '=IF(E87>=D87,"CUMPLE","NO CUMPLE")')
 
@@ -7256,7 +7260,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lab(89, "Presión de diseño vs. parche", ref="P_dis ≤ P_máx del parche")
     ws.merge_cells("A89:C89")
     calc("D89", "=$D$75")
-    calc("E89", "=$D$27")
+    calc("E89", "=$D$28")   # Fase 2: la presion de diseno vive ahora en D28
     calc("F89", '=IF(E89<=D89,"OK — parche","Migrar (Art.206)")')
 
     # Fila 90: DICTAMEN GLOBAL, fusionado A90:E90. F90 ya lo escribio el
@@ -7313,7 +7317,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.merge_cells("B98:G98")
 
     lab(99, "Prueba de hermeticidad")
-    calc("B99", '="Prueba de fuga en servicio (VT+PT/MT) o hidrostática a "&TEXT($D$46*$D$27,"0.0")&" kg/cm² ("&TEXT($D$46,"0.0")&"×P_diseño). Tubería: PCC-2 Art. 212-6 / Art. 501. Recipiente: ASME VIII-1 UG-99."')
+    calc("B99", '="Prueba de fuga en servicio (VT+PT/MT) o hidrostática a "&TEXT($D$46*$D$28,"0.0")&" kg/cm² ("&TEXT($D$46,"0.0")&"×P_diseño). Tubería: PCC-2 Art. 212-6 / Art. 501. Recipiente: ASME VIII-1 UG-99."')
     ws.merge_cells("B99:G99")
 
     # --- Aviso fijo (fila 101) -----------------------------------------------
@@ -7423,8 +7427,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     banda_literal(142, "PASO 2 · CARGAS DE PRESIÓN Y EXTERNAS COMBINADAS  "
                        "(ASME PCC-2 Art. 212-3.2)")
     encabezado(143, ((1, "Parámetro"), (2, "Símbolo"), (3, "Unidad"),
-                     (4, "Operación"), (5, "Diseño típico"),
-                     (6, "Envolvente"), (7, "Referencia")))
+                     (4, "Operación"), (5, "Diseño"), (7, "Referencia")))
 
     com144 = ("Entrada: fuerza unitaria circunferencial por OTRAS cargas "
               "(flexion, torsion, viento, sismo), N/mm. 212-3.1(a) obliga a "
@@ -7450,7 +7453,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(146, 2, "F_CP").font = Font(name=MONO, size=10, color=TINTA)
     calc("D146", "=D62*$D$52/2", com146)
     calc("E146", "=E62*$D$52/2", com146)
-    calc("F146", "=F62*$D$52/2", com146)
 
     com147 = ("Calculo: fuerza unitaria longitudinal por presion (ec. 2, "
               "212-3.2a): F_LP = P(MPa)·Dm/4.")
@@ -7459,7 +7461,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(147, 2, "F_LP").font = Font(name=MONO, size=10, color=TINTA)
     calc("D147", "=D62*$D$52/4", com147)
     calc("E147", "=E62*$D$52/4", com147)
-    calc("F147", "=F62*$D$52/4", com147)
 
     com148 = ("Calculo: fuerza circunferencial total (ec. 212-3.2b): "
               "F_C = F_CP + F_CO.")
@@ -7468,7 +7469,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(148, 2, "F_C").font = Font(name=MONO, size=10, color=TINTA)
     calc("D148", "=D146+$D$144", com148)
     calc("E148", "=E146+$D$144", com148)
-    calc("F148", "=F146+$D$144", com148)
 
     com149 = ("Calculo: fuerza longitudinal total (ec. 212-3.2b): "
               "F_L = F_LP + F_LO.")
@@ -7477,7 +7477,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(149, 2, "F_L").font = Font(name=MONO, size=10, color=TINTA)
     calc("D149", "=D147+$D$145", com149)
     calc("E149", "=E147+$D$145", com149)
-    calc("F149", "=F147+$D$145", com149)
 
     com150 = ("Calculo: fuerza gobernante del filete, F_max = MAX(F_C, F_L). El "
               "filete se dimensiona para que F_A la supere (ec. 4, 212-3.4). En "
@@ -7488,7 +7487,6 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(150, 2, "F_max").font = Font(name=MONO, size=10, color=TINTA)
     calc("D150", "=IF($D$11=3,NA(),MAX(D148,D149))", com150)
     calc("E150", "=IF($D$11=3,NA(),MAX(E148,E149))", com150)
-    calc("F150", "=IF($D$11=3,NA(),MAX(F148,F149))", com150)
 
     com151 = ("212-3.2(c): para componentes esfericos, toriesfericos o "
               "elipsoidales (D11=3) se usan calculos de fuerza alternativos; "
@@ -7790,12 +7788,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     com192 = ("Dictamen del Paso 8: en neumatica, la distancia minima entre el "
               "personal y el equipo durante la prueba; ver Tabla 501-III-2-1 "
               "para distancia por fragmentos. En hidrostatica, presion de prueba "
-              "= 1.5xP de diseno (D46xD27).")
+              "= 1.5xP de diseno (D46xD28).")
     lab(192, "Dictamen de prueba", ref="212-6 / App. 501", com=com192)
     calc("D192",
          '=IF($D$183="Neumatica","NEUMATICA — distancia minima R = "&'
          'TEXT($D$191,"0.0")&" m; precaucion 212-6b; ver Tabla 501-III-2-1 '
-         '(fragmentos)","HIDROSTATICA — presion de prueba "&TEXT($D$46*$D$27,'
+         '(fragmentos)","HIDROSTATICA — presion de prueba "&TEXT($D$46*$D$28,'
          '"0.0")&" kg/cm2 (1.5xP de diseno); sin energia neumatica")', com192)
     ws.merge_cells("D192:G192")
 
@@ -7874,11 +7872,15 @@ def comentar_art212_base(ws):
             "resuelto.",
         26: "Entrada: presion de operacion, en kg/cm². Es el caso 'Operacion' "
             "evaluado en la seccion 3.",
-        27: "Entrada: presion de diseno tipica, en kg/cm². Es el caso 'Diseno "
-            "tipico' de la seccion 3; se compara contra la presion maxima "
-            "admisible del parche en la verificacion de la seccion 5 (fila 89).",
-        28: "Entrada: presion envolvente (cota superior / rating), en kg/cm². "
-            "Es el caso mas exigente, evaluado en la seccion 3.",
+        # Fase 2: la fila 27 ('Diseno tipico') se retiro; su entrada aqui se va
+        # con ella. El guardia `if c.value is not None` del bucle la saltaria de
+        # todas formas, pero dejarla escrita haria creer que la fila existe.
+        28: "Entrada: presion de diseno, en kg/cm² — la MAXIMA ADMISIBLE "
+            "(rating), no un valor tipico intermedio. Gobierna el espesor "
+            "requerido y el esfuerzo de soldadura (212-3.2 define una unica P "
+            "de diseno; 206-3.3 la llama 'maximum allowable design pressure'). "
+            "Es el caso 'Diseno' de la seccion 3 y se compara contra la presion "
+            "maxima admisible del parche en la verificacion de la fila 89.",
         29: "Entrada: espesor adoptado del parche o collar, en mm (debe ser >= "
             "espesor de pared). Alimenta la fuerza de membrana, el esfuerzo de "
             "soldadura y el peso estimado.",
@@ -7947,10 +7949,13 @@ def comentar_art212_base(ws):
         if c.value is not None:
             _nota(c, com)
 
+    # Fase 2: `trip` ya no son tres columnas sino DOS (D/E = Operacion/Diseno);
+    # el nombre se conserva para no renombrar por estetica algo que el resto del
+    # archivo cita, pero el bucle de abajo recorre (4, 5), no (4, 5, 6).
     trip = {
-        61: "Calculo: repite, para este caso (Operacion / Diseno tipico / "
-            "Envolvente), la presion correspondiente de la seccion 1, en "
-            "kg/cm².",
+        61: "Calculo: repite, para este caso (Operacion / Diseno), la presion "
+            "correspondiente de la seccion 1, en kg/cm². 'Diseno' es la maxima "
+            "admisible (D28): 212-3.2 define una unica P de diseno.",
         62: "Calculo: conversion a MPa de la presion de este caso, "
             "multiplicando por el factor de conversion D47.",
         63: "Calculo: fuerza de membrana de este caso (ec. 1 del Art. 212): "
@@ -7971,13 +7976,13 @@ def comentar_art212_base(ws):
             "(D48).",
     }
     for r, com in trip.items():
-        for col in (4, 5, 6):
+        for col in (4, 5):
             c = ws.cell(r, col)
             if c.value is not None:
                 _nota(c, com)
 
     verif = {
-        84: ("Calculo: cateto de filete minimo requerido, el mayor de los tres "
+        84: ("Calculo: cateto de filete minimo requerido, el mayor de los dos "
              "casos de presion (fila 64).",
              "Entrada: cateto adoptado (repite D32).",
              "Calculo: CUMPLE si el cateto adoptado es mayor o igual al "
@@ -7985,14 +7990,14 @@ def comentar_art212_base(ws):
         85: ("Calculo: limite de esfuerzo por excentricidad, 1,5·Sa (repite "
              "D48).",
              "Calculo: esfuerzo de soldadura total adoptado para el diseno "
-             "(repite E68, caso Diseno tipico).",
+             "(repite E68, caso Diseno = presion maxima admisible).",
              "Calculo: CUMPLE si el esfuerzo adoptado no supera el limite."),
         86: ("Entrada: limite normativo de deformacion por conformado en "
              "frio, 5 % (ec. 7).",
              "Calculo: deformacion por conformado calculada (repite D77).",
              "Calculo: CUMPLE si la deformacion calculada no supera el 5 %."),
-        87: ("Calculo: espesor de pared requerido, caso Envolvente (repite "
-             "F65, el mas exigente).",
+        87: ("Calculo: espesor de pared requerido, caso Diseno (repite E65, "
+             "evaluado a la presion maxima admisible — 206-3.3).",
              "Entrada: espesor de pared real adoptado (repite D21).",
              "Calculo: CUMPLE si el espesor real es mayor o igual al "
              "requerido."),
@@ -8004,7 +8009,8 @@ def comentar_art212_base(ws):
              "L_min; 'Parche local' en otro caso."),
         89: ("Calculo: presion maxima admisible del parche, en kg/cm² "
              "(repite D75).",
-             "Entrada: presion de diseno adoptada (repite D27).",
+             "Entrada: presion de diseno adoptada, la maxima admisible "
+             "(repite D28).",
              "Calculo: 'OK — parche' si la presion de diseno no supera la "
              "maxima admisible del parche; 'Migrar (Art.206)' si la supera."),
     }
@@ -8038,7 +8044,7 @@ def comentar_art212_base(ws):
             "especificacion real del propietario del equipo.",
         99: "Calculo: redacta la especificacion de prueba de hermeticidad, "
             "citando el factor de prueba hidrostatica (D46) y la presion de "
-            "diseno (D27).",
+            "diseno maxima admisible (D28).",
     }
     for r, com in textos.items():
         c = ws.cell(r, 2)
@@ -8215,12 +8221,16 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     inp("D25", 25)
     lab(26, "Presion de operacion", "kg/cm2")
     inp("D26", 5)
-    lab(27, "Presion de diseno tipica", "kg/cm2")
-    inp("D27", 10)
-    lab(28, "Presion envolvente / rating (maxima admisible)", "kg/cm2",
-       "Entrada: 206-3.2 la llama 'maximum allowable design pressure'; es el "
-       "caso mas exigente y el que gobierna el t_req de Type B (seccion "
-       "'Calculo de espesor requerido').")
+    # Fase 2 (modelo de presion de 2 casos, igual que el Art. 212). La fila 27
+    # —"Presion de diseno tipica"— se retira: 206-3.3 dimensiona contra "the
+    # maximum allowable design pressure" (resources/ASME PCC/pcc_2/
+    # p2_welded_repairs/art_206_full_encirclement_steel/art_206.json, Regla n.1),
+    # no contra un valor tipico intermedio. Tener las dos dejaba dos columnas
+    # compitiendo por gobernar el T_s,min. La fila 27 queda vacia a proposito.
+    lab(28, "Presion de diseno (maxima admisible / rating)", "kg/cm2",
+       "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la "
+       "que gobierna el t_req de Type B (seccion 'Calculo de espesor "
+       "requerido'), no un valor tipico intermedio.")
     inp("D28", 20)
     lab(29, "Espesor adoptado del sleeve", "mm")
     ws.cell(29, 2, "T_s").font = Font(name=MONO, size=10, color=TINTA)
@@ -8293,16 +8303,17 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
 
     # --- Calculo de espesor requerido (Type B) ---------------------------
     band(49, "CALCULO DE ESPESOR REQUERIDO (Type B — 206-3.2/3.3)")
-    header(50, ["Parametro", "", "Unidad", "Operacion", "Diseno tipico",
-               "Envolvente", "Referencia / Notas"])
+    # Fase 2: dos casos (Operacion / Diseno), no tres. La columna F se retira y
+    # E pasa a leer la presion de diseno maxima admisible (D28) — ver la nota de
+    # la fila 27/28 de la seccion 1.
+    header(50, ["Parametro", "", "Unidad", "Operacion", "Diseno",
+               "", "Referencia / Notas"])
     lab(51, "Presion evaluada", "kg/cm2")
     calc("D51", "=$D$26")
-    calc("E51", "=$D$27")
-    calc("F51", "=$D$28")
+    calc("E51", "=$D$28")
     lab(52, "Presion evaluada", "MPa")
     calc("D52", "=D51*$D$40")
     calc("E52", "=E51*$D$40")
-    calc("F52", "=F51*$D$40")
     com_treq = ("Calculo: 206-3.3 — t_req por el codigo de construccion activo "
                "(D11), misma forma que D65 de Parche_PCC2_Art212 pero con el "
                "S(T) (D37), Ej (D38) y geometria (D45/D46) del SLEEVE, no del "
@@ -8319,20 +8330,16 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("E53", '=(IF($D$11=1,E52*$D$45/(2*($D$37*$D$38+E52*$D$39)),'
                 'IF($D$11=3,E52*$D$46/(2*$D$37*$D$38-0.2*E52),'
                 'E52*$D$46/($D$37*$D$38-0.6*E52))))+$D$113', com_treq)
-    calc("F53", '=(IF($D$11=1,F52*$D$45/(2*($D$37*$D$38+F52*$D$39)),'
-                'IF($D$11=3,F52*$D$46/(2*$D$37*$D$38-0.2*F52),'
-                'F52*$D$46/($D$37*$D$38-0.6*F52))))+$D$113', com_treq)
     lab(54, "T_s,min Type A", "mm", "Referencia / Notas: 206-3.1",
        "Calculo: 206-3.1 — dos tercios del espesor del tubo portador. No "
        "depende de la presion: Type A no es componente a presion.")
     calc("D54", "=2/3*$D$21",
         "Calculo: 206-3.1 — dos tercios del espesor del tubo portador.")
-    lab(55, "T_s,min gobernante", "mm",
-       com="Calculo: si D22=Type A, rige 206-3.1 (D54); si Type B, rige el "
-           "caso Envolvente de 206-3.2/3.3 (F53), el mas exigente de los tres.")
-    calc("D55", f'=IF($D$22="{TIPO_A}",$D$54,$F$53)',
-        "Calculo: si D22=Type A, rige 206-3.1 (D54); si Type B, rige el caso "
-        "Envolvente de 206-3.2/3.3 (F53).")
+    com_gob = ("Calculo: si D22=Type A, rige 206-3.1 (D54); si Type B, rige el "
+               "caso Diseno de 206-3.2/3.3 (E53), evaluado a la presion maxima "
+               "admisible, que es la que el codigo nombra en 206-3.3.")
+    lab(55, "T_s,min gobernante", "mm", com=com_gob)
+    calc("D55", f'=IF($D$22="{TIPO_A}",$D$54,$E$53)', com_gob)
 
     # --- Verificaciones y avisos ------------------------------------------
     band(58, "VERIFICACIONES Y AVISOS")
@@ -9912,6 +9919,38 @@ DIVERGENCIAS_DECLARADAS = {
     ("Parche_PCC2_Art212", "G23"): "Idem A23: la fila entera se retira.",
 }
 
+# --- Fase 2: el modelo de presion pasa de TRES casos a DOS ------------------
+# El motor evaluaba Operacion / "Diseno tipico" / "Envolvente". Ese caso
+# intermedio no lo pide el codigo: 212-3.2 define una UNICA P = "internal
+# design pressure" para las ec. (1)/(2), y el Art. 206 -que comparte modelo de
+# presion en este libro- es explicito en 206-3.3, "the maximum allowable design
+# pressure" (los dos comprobados en resources/, Regla n.1). Con las dos
+# columnas habia dos presiones compitiendo por gobernar el t_req, que es
+# justo la ambiguedad que un motor de calculo no puede tener.
+#
+# Se retira la fila 27 entera y la columna F de la tabla de cargas (filas
+# 60-69). La que sobrevive es la MAS conservadora: lo que se llamaba
+# "Envolvente" pasa a ser el caso "Diseno", en la columna E.
+_FASE2_RETIRA_PRESION = (
+    "Fase 2: la fila 27 ('Presion de diseno tipica') se retira. 212-3.2 define "
+    "una unica P de diseno y 206-3.3 la nombra 'maximum allowable design "
+    "pressure': el caso intermedio no lo publica el codigo y competia con la "
+    "maxima admisible por gobernar el t_req. La presion de diseno vive ahora en "
+    "la fila 28.")
+_FASE2_RETIRA_COL_F = (
+    "Fase 2: la columna F ('Envolvente') se retira de la tabla de cargas. Su "
+    "caso -la presion maxima admisible- no desaparece: es el que ahora ocupa la "
+    "columna E, rotulada 'Diseno'. Lo que se elimino es el 'Diseno tipico' "
+    "intermedio que ocupaba E, no la envolvente.")
+DIVERGENCIAS_DECLARADAS.update({
+    ("Parche_PCC2_Art212", c): _FASE2_RETIRA_PRESION
+    for c in ("A27", "B27", "C27", "D27", "G27")
+})
+DIVERGENCIAS_DECLARADAS.update({
+    ("Parche_PCC2_Art212", f"F{r}"): _FASE2_RETIRA_COL_F
+    for r in range(60, 70)
+})
+
 # Celdas del bloque dimensional (Tareas 7-8) que el build reemplaza a proposito:
 # NPS/cedula/OD/espesor pasan a salir de DB_B36 por cascada (reglas 12/14) y la
 # fila 22 pasa de material descriptivo (lista fija retirada) al selector de norma.
@@ -9954,8 +9993,6 @@ DIVERGENCIAS_REEMPLAZADAS = {
         "cargas externas el valor no cambia; lo fija test_paso4_filete."),
     ("Parche_PCC2_Art212", "E64"): (
         "w_min (Diseno tipico): recableado a F_max (E150) en la Fase 4. Ver D64."),
-    ("Parche_PCC2_Art212", "F64"): (
-        "w_min (Envolvente): recableado a F_max (F150) en la Fase 4. Ver D64."),
     ("Parche_PCC2_Art212", "D55"): (
         "Excentricidad e: la Fase 5 le suma la separacion g del faying edge "
         "(D167) cuando g>=1.5 mm (212-4c). Con g=0 el valor no cambia. La fija "
@@ -9967,18 +10004,57 @@ DIVERGENCIAS_REEMPLAZADAS = {
         "S_w membrana (Op): forma literal de la ec.(5), P*Dm/(2T), NA en esfera "
         "(Fase 5). Cilindro sin cambio de valor. Ver test_paso5_excentricidad."),
     ("Parche_PCC2_Art212", "E66"): "S_w membrana (Diseno): idem D66 (Fase 5).",
-    ("Parche_PCC2_Art212", "F66"): "S_w membrana (Envolvente): idem D66 (Fase 5).",
     ("Parche_PCC2_Art212", "D67"): (
         "S_w flexion (Op): forma literal de la ec.(5), 3*P*Dm*e/T^2, NA en "
         "esfera (Fase 5). Cilindro sin cambio de valor."),
     ("Parche_PCC2_Art212", "E67"): "S_w flexion (Diseno): idem D67 (Fase 5).",
-    ("Parche_PCC2_Art212", "F67"): "S_w flexion (Envolvente): idem D67 (Fase 5).",
     ("Parche_PCC2_Art212", "D77"): (
         "Deformacion por conformado: la Fase 6 le anade la rama simple/doble "
         "(coef 50/75 segun geometria, ec.7/ec.6) y el factor (1-Rf/Ro) con Ro "
         "(D172). Cilindro con plancha plana da 50*T/Rf como antes. La fija "
         "test_paso6_conformado."),
 }
+
+# --- Fase 2: lo que el colapso de presiones REEMPLAZA (no retira) -----------
+# Su correccion la prueba TestModeloDePresionDosCasos, no el oracle Rev0.
+DIVERGENCIAS_REEMPLAZADAS.update({
+    ("Parche_PCC2_Art212", "A28"): (
+        "Rotulo: 'Presion envolvente (cota superior)' pasa a 'Presion de diseno "
+        "(maxima admisible / rating)'. Es el mismo numero con el nombre que le da "
+        "el codigo (206-3.3), y ya no compite con un 'diseno tipico' retirado."),
+    ("Parche_PCC2_Art212", "B28"): (
+        "Simbolo: P_env pasa a P_dis. Es LA presion de diseno del motor, no una "
+        "cota superior aparte de ella."),
+    ("Parche_PCC2_Art212", "G28"): (
+        "Referencia: 'Rating / envolvente' pasa a 'Rating / max. admisible', que "
+        "es como la nombra 206-3.3."),
+    ("Parche_PCC2_Art212", "E60"): (
+        "Encabezado de columna: 'Diseno tipico' pasa a 'Diseno'. La columna E "
+        "deja de llevar el caso intermedio y lleva la presion maxima admisible."),
+    ("Parche_PCC2_Art212", "E61"): (
+        "La columna de diseno lee ahora D28 (maxima admisible) en vez de D27 "
+        "(tipico, retirado). Las filas 62-69 de esa columna no cambian de forma: "
+        "encadenan desde E61, asi que siguen ancladas al oracle."),
+    ("Parche_PCC2_Art212", "D84"): (
+        "El MAX del filete requerido barre D64:E64 (dos casos) en vez de D64:F64. "
+        "Mismo numero -F64 esta vacia- pero la hoja no puede declarar un rango "
+        "que ya no existe."),
+    ("Parche_PCC2_Art212", "G84"): (
+        "Criterio: 'w >= w_min (envolvente)' pasa a '(diseno)', el nombre nuevo "
+        "de ese mismo caso."),
+    ("Parche_PCC2_Art212", "A87"): (
+        "Rotulo: 'Espesor de pared (envolvente)' pasa a '(diseno)'."),
+    ("Parche_PCC2_Art212", "D87"): (
+        "El t_req gobernante se lee de E65 (caso Diseno) en vez de F65 "
+        "(Envolvente, columna retirada). Es el mismo caso fisico: la presion "
+        "maxima admisible que exige 206-3.3."),
+    ("Parche_PCC2_Art212", "E89"): (
+        "La presion de diseno contra la que se compara P_max del parche se lee "
+        "de D28 en vez de D27 (retirada)."),
+    ("Parche_PCC2_Art212", "B99"): (
+        "La presion de prueba hidrostatica se calcula sobre D28 (presion de "
+        "diseno maxima admisible) en vez de D27. El factor (D46) no cambia."),
+})
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl
 # devuelve "FF1A1A1A" en lo que leyo del maestro y "00050505" en lo que acaba de

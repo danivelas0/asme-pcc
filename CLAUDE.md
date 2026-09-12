@@ -831,6 +831,36 @@ la col. B (sin re-baseline por valores; §7 sigue APTO). Tras la Fase 9: `pytest
 —revisión visual del `.xlsm` en Excel real— para los dos motores. Planes:
 `outputs/plans/plan_rediseno_motor_art212_flujo_completo.md` y `…_art206_…md`.
 
+**Los dos motores evalúan DOS presiones, no tres (Fase 2, 2026-09-12).** Antes había
+`Operación` / `Diseño típico` / `Envolvente` en las columnas D/E/F. Ese caso intermedio
+no lo publica ningún código: **212-3.2 define una única `P = internal design pressure`**
+para las ec. (1)/(2), y **206-3.3 es explícito — «the maximum allowable design
+pressure»** (los dos leídos de `resources/`, Regla nº 1). Con las dos columnas había dos
+presiones compitiendo por gobernar el `t_req`. Ahora son `Operación` (D) y `Diseño`
+(E) = la **máxima admisible**; la fila 27 y la columna F se retiran. La que sobrevive es
+la más conservadora: lo que se llamaba «envolvente» es ahora el caso de diseño.
+
+**El caso semilla dejó de ser APTO y pasó a REVISAR — es el resultado correcto, y hay
+que mirarlo.** Con la presión de diseño en su rating (D28 = 20 kg/cm²) el parche de 8 mm
+da un esfuerzo de soldadura de **248,3 MPa contra el límite 1,5·Sa = 207 MPa** de la
+ec. (5) del 212-3.4c: la verificación F85 no cumple. Hasta la Fase 2 la Sección 5 juzgaba
+ese esfuerzo contra los 10 kg/cm² del «diseño típico» mientras el rating, que la hoja ya
+traía, solo se miraba de lado sin entrar al dictamen. Para volver a APTO hay que cambiar
+el **diseño** (espesor del parche, cateto, material) o la presión de entrada, **no el
+motor**.
+
+Por eso `verificar.py` §7 dejó de contrastar el dictamen contra el literal `"APTO"` y
+pasa a contrastarlo **contra lo que implican los criterios que su propio AND consulta**
+(F84/F85/F86/F87 + los dos topes de filete). Es un guardia más fuerte —comprueba que el
+dictamen no contradiga a sus propias verificaciones— y no obliga a reescribir un literal
+cada vez que una decisión de ingeniería mueve el resultado, que es justo cuando hay que
+mirar y no silenciar. El reporte nombra fila a fila qué criterio falla y por qué.
+
+Las ~25 celdas del 212 que esto aparta del *oracle* Rev0 van declaradas una a una en
+`DIVERGENCIAS_DECLARADAS` (fila 27 y columna F de 60-69: se exigen **vacías**) y
+`DIVERGENCIAS_REEMPLAZADAS` (A28/B28/G28, E60/E61, D84/G84, A87/D87, E89, B99: se exigen
+**no vacías** y las fija `TestModeloDePresionDosCasos`).
+
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
 datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /
