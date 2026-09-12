@@ -6048,7 +6048,13 @@ def remapear_filas(ws, mapa, ncols=None):
                          c.comment, c.hyperlink))
     fusiones = [str(r) for r in ws.merged_cells.ranges]
     validaciones = [(dv, str(dv.sqref)) for dv in ws.data_validations.dataValidation]
-    alturas = {r: d.height for r, d in ws.row_dimensions.items() if d.height}
+    # Alto, nivel de outline y plegado viajan JUNTOS con la fila. El outline es
+    # lo que pliega el rastro de la resolucion de material (Fase 4): si se
+    # quedara en las filas viejas, el "+" del margen plegaria un bloque que ya
+    # no esta ahi y el rastro quedaria abierto donde tenia que ir cerrado.
+    dims = {r: (d.height, d.outline_level, d.hidden)
+            for r, d in ws.row_dimensions.items()
+            if d.height or d.outline_level or d.hidden}
 
     # 2. Se vacia la banda. Hay que deshacer las fusiones primero: una MergedCell
     # no admite escritura y sobrevivir a la mudanza con el rango antiguo dejaria
@@ -6080,10 +6086,15 @@ def remapear_filas(ws, mapa, ncols=None):
         dv.sqref = MultiCellRange(
             " ".join(_remapear_rango(str(r), mapa) for r in
                      MultiCellRange(sqref).ranges))
-    for r, alto in alturas.items():
-        if mapa.get(r, r) != r:
-            ws.row_dimensions[mapa[r]].height = alto
-            ws.row_dimensions[r].height = None
+    # Se limpian TODAS las filas de origen antes de escribir los destinos: dos
+    # filas distintas pueden aterrizar donde antes habia otra cosa, y limpiar
+    # sobre la marcha borraria lo que se acaba de poner.
+    for r in dims:
+        d = ws.row_dimensions[r]
+        d.height, d.outline_level, d.hidden = None, 0, False
+    for r, (alto, nivel, oculta) in dims.items():
+        d = ws.row_dimensions[mapa.get(r, r)]
+        d.height, d.outline_level, d.hidden = alto, nivel, oculta
     return ws
 
 
@@ -6279,8 +6290,13 @@ def construir_seccion7_material(
                (F + 9, "5 · Variante (clase / tamano) — opcional",
                 "Entrada opcional: solo hace falta si el paso 4 deja mas de una fila "
                 "posible. En blanco, se toma la primera variante encontrada.")]
-    for r, t, com in niveles:
-        lab(r, t, "Lista desplegable en cascada", com)
+    # La columna de notas decia "Lista desplegable en cascada" en las CINCO
+    # filas. Repetir la misma frase cinco veces no informa: la convierte en
+    # ruido y empuja fuera de la vista lo que si es propio de cada nivel. Se
+    # dice una vez, en el nivel 0, y se declara que los de abajo dependen de el.
+    for i, (r, t, com) in enumerate(niveles):
+        lab(r, t, "Cascada de listas: cada nivel filtra el siguiente" if i == 0
+            else None, com)
         for letra in letras:
             inp(f"{letra}{r}", com=com)
 
@@ -6375,12 +6391,12 @@ def construir_seccion7_material(
              f"NA() si el Dictamen de rango no es OK. Alimenta {destino_st}.",
     }
     etiquetas = [(F + 10, "material_id resuelto", None), (F + 11, "Base de datos activa", None),
-                 (F + 12, "Indice de base (1/2/3)", None), (F + 13, "Fila localizada", None),
-                 (F + 14, "n_pts (puntos tabulados) / p1", None),
+                 (F + 12, "Base ASME aplicada (1/2/3)", None), (F + 13, "Fila localizada en la base", None),
+                 (F + 14, "Puntos tabulados de la fila", None),
                  (F + 15, "T1 — temperatura tabulada inferior", "°C"),
                  (F + 16, "T2 — temperatura tabulada superior", "°C"),
                  (F + 17, "S en T1", "MPa"), (F + 18, "S en T2", "MPa"),
-                 (F + 19, "Temp. max. admisible / limite VIII-1", "°C"),
+                 (F + 19, "Temperatura maxima admisible", "°C"),
                  (F + 20, "Dictamen de rango", None),
                  (F + 21, "S(T) resuelto", "MPa")]
     for r, t, u in etiquetas:
@@ -6478,6 +6494,29 @@ def construir_seccion7_material(
     nota_cascada.font = SRC_F
     _nota(nota_cascada, "Aviso fijo: como usar la cascada de esta seccion y que "
                         "hacer si un material no aparece en ella. No se edita.")
+
+    # --- Fase 4: el rastro de la resolucion se pliega -----------------------
+    # Once filas de trazabilidad (indice de base, fila localizada, puntos
+    # tabulados, T1/T2, S en T1/T2, temperatura maxima) entre la cascada y el
+    # resultado. Son el rastro que permite auditar de donde sale el S(T) y NO
+    # se borran —Regla n.1—, pero abiertas empujan fuera de la pantalla
+    # justamente lo que el ingeniero vino a ver.
+    #
+    # Se agrupan en un outline de Excel, plegado por defecto: el "+" del margen
+    # las despliega. Se pliega de `material_id resuelto` a `Temperatura maxima`
+    # (F+10..F+19) y se dejan SIEMPRE visibles las dos filas que cierran el
+    # bloque: `Dictamen de rango` (F+20) y `S(T) resuelto` (F+21). El dictamen
+    # no se pliega aunque la decision 4 del plan lo listara: es lo que BLOQUEA
+    # el calculo, y una condicion de bloqueo escondida detras de un "+" es una
+    # condicion que nadie ve.
+    for r in range(F + 10, F + 20):
+        dim = ws.row_dimensions[r]
+        dim.outline_level = 1
+        dim.hidden = True
+    # summaryBelow: el "+" aparece junto a la fila-resumen, que aqui queda
+    # DEBAJO del grupo (el dictamen y el S(T) resuelto).
+    ws.sheet_properties.outlinePr.summaryBelow = True
+    ws.sheet_view.showOutlineSymbols = True
 
     return resultado
 
@@ -10305,6 +10344,31 @@ DIVERGENCIAS_REEMPLAZADAS.update({
         "vive la resolucion de material tras la Fase 3."),
     ("Parche_PCC2_Art212", "G68"): "Idem G67: la seccion de material es la 2.",
     ("Parche_PCC2_Art212", "G72"): "Idem G67: la seccion de material es la 2.",
+})
+
+# --- Fase 4: el rastro de la resolucion se pliega y se redacta mas llano ----
+_FASE4_ETIQUETA = (
+    "Fase 4: rotulo reescrito sin jerga de implementacion. La fila se pliega "
+    "por defecto (es rastro de auditoria, no interfaz) y cuando el ingeniero la "
+    "despliega tiene que poder leerla sin conocer el builder. El VALOR de la "
+    "celda no cambia; lo fija TestDiagnosticoPlegable.")
+DIVERGENCIAS_REEMPLAZADAS.update({
+    ("Parche_PCC2_Art212", "A49"): _FASE4_ETIQUETA + " 'Indice de base' -> 'Base ASME aplicada'.",
+    ("Parche_PCC2_Art212", "A50"): _FASE4_ETIQUETA + " 'Fila localizada' -> '... en la base'.",
+    ("Parche_PCC2_Art212", "A51"): _FASE4_ETIQUETA + " 'n_pts / p1' -> 'Puntos tabulados de la fila'.",
+    ("Parche_PCC2_Art212", "A56"): _FASE4_ETIQUETA + " Sin el '/ limite VIII-1' de mas.",
+    ("Parche_PCC2_Art212", "G41"): (
+        "Fase 4: la columna de notas decia 'Lista desplegable en cascada' en los "
+        "CINCO niveles. Repetir la misma frase cinco veces no informa: la vuelve "
+        "ruido y empuja fuera de la vista lo que si es propio de cada nivel. Se "
+        "dice una vez aqui, en el nivel 0."),
+})
+# Los otros cuatro niveles se quedan SIN nota (retirada, no reemplazada).
+DIVERGENCIAS_DECLARADAS.update({
+    ("Parche_PCC2_Art212", f"G{r}"): (
+        "Fase 4: nota de cascada repetida. La explicacion vive una sola vez en "
+        "G41 (nivel 0) y esta fila la hereda; ver TestDiagnosticoPlegable.")
+    for r in range(42, 47)
 })
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

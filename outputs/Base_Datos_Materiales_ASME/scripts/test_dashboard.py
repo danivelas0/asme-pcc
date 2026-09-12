@@ -1492,6 +1492,58 @@ class TestBuildParcheContraOracle:
         assert "$D$74*$D$28" in str(ws["B127"].value), ws["B127"].value
 
 
+class TestDiagnosticoPlegable:
+    """Fase 4: el rastro de la resolucion de material va plegado por defecto.
+
+    Once filas de trazabilidad entre la cascada y el resultado. No se borran
+    —Regla n.1: son lo que permite auditar de donde sale el S(T)— pero abiertas
+    empujan fuera de la pantalla lo que el ingeniero vino a ver.
+    """
+
+    # (hoja, primera y ultima fila del grupo, fila del dictamen, fila del S(T))
+    BLOQUES = [("Parche_PCC2_Art212", 47, 56, 57, 58),
+               ("Collar_PCC2_Art206", 45, 54, 55, 56)]
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_el_rastro_va_agrupado_y_plegado(self, wb, hoja, ini, fin, f_dict, f_st):
+        ws = wb[hoja]
+        for r in range(ini, fin + 1):
+            dim = ws.row_dimensions[r]
+            assert dim.outline_level == 1, f"{hoja}!{r} sin agrupar"
+            assert dim.hidden, f"{hoja}!{r} deberia nacer plegada"
+        assert ws.sheet_properties.outlinePr.summaryBelow is True, hoja
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_el_dictamen_y_el_resultado_NO_se_pliegan(self, wb, hoja, ini, fin,
+                                                      f_dict, f_st):
+        """El dictamen de rango es lo que BLOQUEA el calculo. Una condicion de
+        bloqueo escondida detras de un '+' es una condicion que nadie ve."""
+        ws = wb[hoja]
+        assert str(ws.cell(f_dict, 1).value) == "Dictamen de rango", hoja
+        assert str(ws.cell(f_st, 1).value) == "S(T) resuelto", hoja
+        for r in (f_dict, f_st):
+            dim = ws.row_dimensions[r]
+            assert not dim.hidden, f"{hoja}!{r} no puede nacer plegada"
+            assert not dim.outline_level, f"{hoja}!{r} no entra en el grupo"
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_nada_del_rastro_se_perdio(self, wb, hoja, ini, fin, f_dict, f_st):
+        """Plegar no es borrar: las once filas conservan su rotulo y su valor."""
+        ws = wb[hoja]
+        for r in range(ini, fin + 1):
+            assert ws.cell(r, 1).value, f"{hoja}!A{r} sin rotulo"
+            assert ws.cell(r, 4).value is not None, f"{hoja}!D{r} sin contenido"
+
+    def test_la_nota_de_cascada_no_se_repite_cinco_veces(self, wb):
+        """Decia 'Lista desplegable en cascada' en los cinco niveles. Repetir
+        la misma frase cinco veces no informa: la vuelve ruido."""
+        for hoja, ini in (("Parche_PCC2_Art212", 41), ("Collar_PCC2_Art206", 39)):
+            ws = wb[hoja]
+            notas = [str(ws.cell(r, 7).value or "") for r in range(ini, ini + 6)]
+            assert notas[0], f"{hoja}: el nivel 0 tiene que explicar la cascada"
+            assert all(not n for n in notas[1:]), f"{hoja}: {notas}"
+
+
 class TestNumeracionDeSecciones:
     """Fase 3: la Seccion de Material sube justo detras de los datos de entrada.
 

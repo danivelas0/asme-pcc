@@ -260,7 +260,29 @@ Aplica a los dos motores; hacer Art. 212 primero (tiene oracle), luego Art. 206
 ninguno de los dos motores, no hay frontera de paridad que acotar ahi.*
 
 
-### Fase 4 — Simplificar la Sección de Material (cascada + diagnóstico plegable)
+### Fase 4 — Simplificar la Sección de Material ✅
+
+- [x] Las once filas de trazabilidad (`material_id resuelto` … `Temperatura máxima`)
+      van en un **outline de Excel plegado por defecto**; el "+" del margen las abre.
+      `remapear_filas()` se extendió para arrastrar `outline_level`/`hidden` junto con
+      el alto: si no, el plegado se habría quedado en las filas de antes de la Fase 3.
+- [x] **Desviación deliberada de la decisión 4 del plan:** `Dictamen de rango` **no**
+      se pliega, aunque la decisión lo listaba. Es lo que **bloquea** el cálculo, y una
+      condición de bloqueo escondida detrás de un "+" es una condición que nadie ve.
+      Se pliega `F+10..F+19` y quedan siempre visibles `Dictamen de rango` y
+      `S(T) resuelto`, que es lo que la propia tarea de la Fase 4 pedía dejar a la vista.
+- [x] La columna "Referencia / Notas" decía `Lista desplegable en cascada` en los cinco
+      niveles; ahora lo dice una vez, en el nivel 0.
+- [x] Etiquetas sin jerga: `Indice de base` → `Base ASME aplicada`, `n_pts (puntos
+      tabulados) / p1` → `Puntos tabulados de la fila`, `Temp. max. admisible / limite
+      VIII-1` → `Temperatura maxima admisible`, `Fila localizada` → `… en la base`.
+- [x] 10 divergencias de texto declaradas; `TestDiagnosticoPlegable` fija el grupo, que
+      el dictamen y el resultado **no** se plieguen, y que **nada del rastro se pierda**
+      (las once filas conservan rótulo y valor: plegar no es borrar — Regla nº 1).
+- [x] **Checkpoint:** `pytest` = **273**, `verificar.py` = **0 fallos**.
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] En `construir_seccion7_material()`: agrupar (Excel `ws.row_dimensions[r].outline_level`
       + `outlinePr`/`sheet_view.showOutlineSymbols`) las filas de diagnóstico —
       `material_id resuelto`, `Base de datos activa`, `Índice de base`, `Fila
@@ -282,6 +304,9 @@ ninguno de los dos motores, no hay frontera de paridad que acotar ahi.*
 - [ ] Verificar que agrupar filas no rompe ninguna referencia absoluta ni el
       `merge_cells` existente (el agrupamiento es solo metadato de fila, no mueve
       celdas — bajo riesgo, pero confirmar con `verificar.py` después).
+
+</details>
+
 
 ### Fase 5 — Encabezados sin paréntesis + comentarios por sección
 - [ ] Quitar el texto entre paréntesis de **todas** las bandas de sección en ambos
