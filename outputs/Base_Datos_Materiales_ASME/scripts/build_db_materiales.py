@@ -5994,16 +5994,30 @@ def build_leyenda_motor(ws):
 
 
 def _mapa_filas_212():
-    """fila_vieja -> fila_nueva del Art. 212. Ver el comentario de arriba."""
+    """fila_vieja -> fila_nueva del Art. 212. Ver el comentario de arriba.
+
+    Fase 7: la banda "Aplicacion y codigo de construccion" gana una fila -el
+    selector de sistema de unidades- y por eso todo lo que va DEBAJO de ella
+    baja uno mas que en la Fase 3. El selector tiene que quedar por ENCIMA de
+    los datos de entrada: gobierna las unidades de los campos que se teclean
+    (kg/cm², mm, °C) y un selector debajo de los campos que rotula seria un
+    selector que se descubre tarde.
+
+    El anexo sigue sin moverse: entre el aviso (fila 130) y el PASO 1 (134)
+    quedan tres filas en blanco de holgura, que es de donde sale el hueco.
+    """
     m = {}
-    for r in range(1, 37):      # titulo, identificacion, aplicacion, Seccion 1
-        m[r] = r                # (termina en 35) + su fila separadora (36)
+    for r in range(1, 16):      # titulo, identificacion y banda de aplicacion,
+        m[r] = r                # que ahora llega hasta la fila 15 (el selector)
+    for r in range(16, 36):     # Seccion 1: baja una fila
+        m[r] = r + 1            # 16..35 -> 17..36
     for r in range(105, 132):   # RESOLUCION DE MATERIAL (27 filas) sube
-        m[r] = r - 68           # 105..131 -> 37..63
+        m[r] = r - 67           # 105..131 -> 38..64
     for r in range(37, 102):    # parametros, geometria, cargas, resultados,
-        m[r] = r + 28           # verificaciones, especificaciones y aviso
-    # 102-104 son las tres filas en blanco que separaban el aviso del bloque de
-    # material; se absorben (el hueco sigue existiendo, ahora en 130-133).
+        m[r] = r + 29           # verificaciones, especificaciones y aviso
+    # La fila 36 (separadora) y las 102-104 (las tres en blanco que separaban el
+    # aviso del bloque de material) se absorben: el hueco sigue existiendo, en
+    # la 37 y en las 131-133.
     for r in range(132, 401):   # ANEXO DE PASOS DEL FLUJO: NO se mueve
         m[r] = r
     return m
@@ -6177,17 +6191,17 @@ def _remapear_rango(rango, mapa):
 REGLAS_COMENTARIO_212 = (
     (5, 6, "D", "D"),          # Identificacion
     (10, 14, "D", "D"),        # Aplicacion y codigo de construccion
-    (18, 35, "D", "D"),        # 1. Datos de entrada
-    (39, 61, "DE", "D"),       # 2. Resolucion de material
-    (63, 63, "A", "A"),        # nota fija de la cascada
-    (67, 76, "D", "D"),        # 3. Parametros de calculo
-    (80, 85, "D", "D"),        # 4. Geometria y propiedades derivadas
-    (89, 97, "ADE", "D"),      # 5. Calculo de cargas y soldadura
-    (101, 108, "AD", "D"),     # 6. Resultados del diseno
-    (112, 117, "ADEF", "F"),   # 7. Verificaciones
-    (118, 118, "AF", "F"),     # Dictamen global
-    (121, 127, "B", "B"),      # 8. Especificaciones tecnicas
-    (129, 129, "A", "A"),      # aviso de responsabilidad
+    (19, 36, "D", "D"),        # 1. Datos de entrada
+    (40, 62, "DE", "D"),       # 2. Resolucion de material
+    (64, 64, "A", "A"),        # nota fija de la cascada
+    (68, 77, "D", "D"),        # 3. Parametros de calculo
+    (81, 86, "D", "D"),        # 4. Geometria y propiedades derivadas
+    (90, 98, "ADE", "D"),      # 5. Calculo de cargas y soldadura
+    (102, 109, "AD", "D"),     # 6. Resultados del diseno
+    (113, 118, "ADEF", "F"),   # 7. Verificaciones
+    (119, 119, "AF", "F"),     # Dictamen global
+    (122, 128, "B", "B"),      # 8. Especificaciones tecnicas
+    (130, 130, "A", "A"),      # aviso de responsabilidad
 )
 REGLAS_COMENTARIO_206 = (
     (5, 6, "D", "D"),
@@ -6244,11 +6258,11 @@ def aplicar_reglas_de_comentario(ws, reglas):
 # no son un pasa/no pasa sino una RUTA de reparacion, y ahi lo verde es la rama
 # que deja seguir con el parche. Se declaran fila a fila, leidos de la propia
 # formula del motor, para no suponer que toda celda de resultado dice "CUMPLE".
-SEMAFORO_212 = {112: ("CUMPLE",), 113: ("CUMPLE",), 114: ("CUMPLE",),
-                115: ("CUMPLE",), 116: ("Parche local",), 117: ("OK — parche",),
+SEMAFORO_212 = {113: ("CUMPLE",), 114: ("CUMPLE",), 115: ("CUMPLE",),
+                116: ("CUMPLE",), 117: ("Parche local",), 118: ("OK — parche",),
                 161: ("CUMPLE",), 162: ("CUMPLE",)}
 SEMAFORO_206 = {85: ("CUMPLE",), 86: ("CUMPLE",), 123: ("CUMPLE",)}
-FILA_DICTAMEN_212, FILA_DICTAMEN_206 = 118, 94
+FILA_DICTAMEN_212, FILA_DICTAMEN_206 = 119, 94
 
 
 def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
@@ -7090,6 +7104,23 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         ref="Cil.=0,5 · Esfera=0,25", com=com14)
     ws.cell(14, 2, "kf").font = Font(name=MONO, size=10, color=TINTA)
     calc("D14", '=IF($D$11=3,0.25,0.5)', com14)
+
+    # Fase 7: selector de sistema de unidades. Va en la banda de APLICACION,
+    # por ENCIMA de los datos de entrada, porque gobierna las unidades de los
+    # campos que se teclean mas abajo: un selector colocado debajo de los
+    # campos que rotula es un selector que se descubre tarde.
+    com15 = ("Entrada: sistema de unidades de LECTURA del codigo. Cambia de que "
+    "edicion se lee el esfuerzo admisible -la metrica o la U.S. "
+    "Customary-, NUNCA convierte un valor (regla 9: las dos ediciones "
+    "son extracciones independientes de lo que cada una imprime). Los "
+    "datos que usted teclea -presiones, dimensiones, temperatura- NO se "
+    "convierten al cambiarlo: hay que volver a teclearlos en el sistema "
+    "nuevo, igual que en los cinco buscadores de cascada.")
+    lab(15, "Sistema de unidades", unidad="—", ref="SI (métrico) / US Customary",
+        com=com15)
+    ws.cell(15, 2, "—").font = Font(name=MONO, size=10, color=TINTA)
+    inp("D15", "SI", com15)
+    dv_list(ws, "D15", '"SI,US"', com15)
 
     # --- 1. Datos de entrada (filas 16-35) -----------------------------------
     # A16: texto NUEVO que reemplaza el heredado ("celdas azules sobre fondo
@@ -8595,6 +8626,21 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     calc("D12", '=IF($D$11=1,"ASME B31.3","ASME BPVC VIII-1")')
     lab(13, "Fuente del esfuerzo admisible")
     calc("D13", '=IF($D$11=1,"B31.3 Tabla A-1","ASME II-D Tabla 1A")')
+
+    # Fase 7: selector de sistema de unidades. Aqui cabe en la fila 14 sin
+    # mover nada -esta banda ya dejaba dos filas en blanco antes de la
+    # siguiente-, asi que el 206 no necesita el desplazamiento que si hizo
+    # falta en el 212.
+    com_uni = ("Entrada: sistema de unidades de LECTURA del codigo. Cambia de que "
+    "edicion se lee el esfuerzo admisible -la metrica o la U.S. "
+    "Customary-, NUNCA convierte un valor (regla 9: las dos ediciones "
+    "son extracciones independientes de lo que cada una imprime). Los "
+    "datos que usted teclea -presiones, dimensiones, temperatura- NO se "
+    "convierten al cambiarlo: hay que volver a teclearlos en el sistema "
+    "nuevo, igual que en los cinco buscadores de cascada.")
+    lab(14, "Sistema de unidades", "—", "SI (metrico) / US Customary", com_uni)
+    inp("D14", "SI", com_uni)
+    dv_list(ws, "D14", '"SI,US"', com_uni)
 
     # --- 1. Datos de entrada ---------------------------------------------
     # El parentetico describia el sistema visual anterior ("linea inferior =
@@ -10348,14 +10394,14 @@ DEUDA_LISTA_FIJA = {}
 #       segunda clase, la unica forma de apartarse del oracle era vaciar la celda,
 #       y un rediseño sancionado (lista fija -> cascada de base) no la vacia.
 DIVERGENCIAS_DECLARADAS = {
-    ("Parche_PCC2_Art212", "A23"): (
+    ("Parche_PCC2_Art212", "A24"): (
         "Fila retirada: el material del parche salia de una lista fija (regla 12); "
         "lo resuelve la cascada de la Seccion 7, no una lista fija. La fila 23 "
         "queda vacia (la 22 la ocupa ahora el selector de norma dimensional)."),
-    ("Parche_PCC2_Art212", "B23"): "Idem A23: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "C23"): "Idem A23: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "D23"): "Idem A23: la fila entera se retira.",
-    ("Parche_PCC2_Art212", "G23"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "B24"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "C24"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "D24"): "Idem A23: la fila entera se retira.",
+    ("Parche_PCC2_Art212", "G24"): "Idem A23: la fila entera se retira.",
 }
 
 # --- Fase 2: el modelo de presion pasa de TRES casos a DOS ------------------
@@ -10386,7 +10432,7 @@ _FASE2_RETIRA_COL_F = (
 # 60-69 bajo a 88-97.
 DIVERGENCIAS_DECLARADAS.update({
     ("Parche_PCC2_Art212", c): _FASE2_RETIRA_PRESION
-    for c in ("A27", "B27", "C27", "D27", "G27")
+    for c in ("A28", "B28", "C28", "D28", "G28")
 })
 DIVERGENCIAS_DECLARADAS.update({
     ("Parche_PCC2_Art212", f"F{MAPA_FILAS_212[r]}"): _FASE2_RETIRA_COL_F
@@ -10400,57 +10446,57 @@ DIVERGENCIAS_DECLARADAS.update({
 # celdas de rotulo/unidad/simbolo que NO cambian (A18-A21, B/C del bloque, B22,
 # C22) siguen bajo el oracle y no se listan aqui.
 DIVERGENCIAS_REEMPLAZADAS = {
-    ("Parche_PCC2_Art212", "D18"): (
+    ("Parche_PCC2_Art212", "D19"): (
         "NPS: ya no es una lista fija con valor 12; sale del desplegable de DB_B36 "
         "segun la norma (D22) y se guarda como el NPS impreso del codigo."),
-    ("Parche_PCC2_Art212", "G18"): "Idem D18: la referencia ahora apunta a DB_B36.",
-    ("Parche_PCC2_Art212", "D19"): (
+    ("Parche_PCC2_Art212", "G19"): "Idem D18: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D20"): (
         "Cedula: la validacion pasa de lista fija a rango dependiente de la norma y "
         "el NPS (el valor por defecto '20' coincide con el oracle, pero el origen "
         "de la validacion cambia)."),
-    ("Parche_PCC2_Art212", "G19"): "Idem D19: la referencia ahora apunta a DB_B36.",
-    ("Parche_PCC2_Art212", "D20"): (
+    ("Parche_PCC2_Art212", "G20"): "Idem D19: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D21"): (
         "OD: lookup contra DB_B36 (clave NPS|cedula, edicion segun D22) en vez de la "
         "tabla corta de Datos_Ref, que se retira (regla 1: la fuente es resources/)."),
-    ("Parche_PCC2_Art212", "G20"): "Idem D20: la referencia ahora apunta a DB_B36.",
-    ("Parche_PCC2_Art212", "D21"): (
+    ("Parche_PCC2_Art212", "G21"): "Idem D20: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "D22"): (
         "Espesor: lookup contra DB_B36 (clave NPS|cedula, edicion segun D22) en vez "
         "de Datos_Ref, que se retira."),
-    ("Parche_PCC2_Art212", "G21"): "Idem D21: la referencia ahora apunta a DB_B36.",
-    ("Parche_PCC2_Art212", "A22"): (
+    ("Parche_PCC2_Art212", "G22"): "Idem D21: la referencia ahora apunta a DB_B36.",
+    ("Parche_PCC2_Art212", "A23"): (
         "La fila 22 pasa de 'Material de tuberia' (retirado) al rotulo 'Norma "
         "dimensional': es el nivel 0 de la cascada, se elige B36.10M o B36.19M."),
-    ("Parche_PCC2_Art212", "D22"): (
+    ("Parche_PCC2_Art212", "D23"): (
         "Valor del selector de norma dimensional (B36.10M por defecto); gobierna las "
         "listas de NPS/cedula y el lookup de OD/espesor. Antes era material descriptivo."),
-    ("Parche_PCC2_Art212", "G22"): "Idem A22: referencia de la norma dimensional.",
-    ("Parche_PCC2_Art212", "F118"): (
+    ("Parche_PCC2_Art212", "G23"): "Idem A22: referencia de la norma dimensional.",
+    ("Parche_PCC2_Art212", "F119"): (
         "DICTAMEN GLOBAL: la Fase 1 antepone la compuerta de elegibilidad del "
         "Paso 1 (D140) y la Fase 4 anade los dos topes de filete (F161, F162) al "
         "AND de verificaciones. La forma nueva la fija test_paso4_filete; el "
         "oracle Rev0 no la cubre."),
-    ("Parche_PCC2_Art212", "D92"): (
+    ("Parche_PCC2_Art212", "D93"): (
         "w_min (Operacion): la Fase 4 lo recablea de F_m (D63) a la fuerza "
         "gobernante F_max del Paso 2 (D150), ec. 4 del 212-3.4. Para cilindro sin "
         "cargas externas el valor no cambia; lo fija test_paso4_filete."),
-    ("Parche_PCC2_Art212", "E92"): (
+    ("Parche_PCC2_Art212", "E93"): (
         "w_min (Diseno tipico): recableado a F_max (E150) en la Fase 4. Ver D64."),
-    ("Parche_PCC2_Art212", "D83"): (
+    ("Parche_PCC2_Art212", "D84"): (
         "Excentricidad e: la Fase 5 le suma la separacion g del faying edge "
         "(D167) cuando g>=1.5 mm (212-4c). Con g=0 el valor no cambia. La fija "
         "test_paso5_excentricidad."),
-    ("Parche_PCC2_Art212", "D85"): (
+    ("Parche_PCC2_Art212", "D86"): (
         "C_sw: la Fase 5 lo pasa a la forma literal de cilindro (sin kf) con NA "
         "en esfera (D11=3), ec.(5) 212-3.4c. Para cilindro no cambia de valor."),
-    ("Parche_PCC2_Art212", "D94"): (
+    ("Parche_PCC2_Art212", "D95"): (
         "S_w membrana (Op): forma literal de la ec.(5), P*Dm/(2T), NA en esfera "
         "(Fase 5). Cilindro sin cambio de valor. Ver test_paso5_excentricidad."),
-    ("Parche_PCC2_Art212", "E94"): "S_w membrana (Diseno): idem D66 (Fase 5).",
-    ("Parche_PCC2_Art212", "D95"): (
+    ("Parche_PCC2_Art212", "E95"): "S_w membrana (Diseno): idem D66 (Fase 5).",
+    ("Parche_PCC2_Art212", "D96"): (
         "S_w flexion (Op): forma literal de la ec.(5), 3*P*Dm*e/T^2, NA en "
         "esfera (Fase 5). Cilindro sin cambio de valor."),
-    ("Parche_PCC2_Art212", "E95"): "S_w flexion (Diseno): idem D67 (Fase 5).",
-    ("Parche_PCC2_Art212", "D105"): (
+    ("Parche_PCC2_Art212", "E96"): "S_w flexion (Diseno): idem D67 (Fase 5).",
+    ("Parche_PCC2_Art212", "D106"): (
         "Deformacion por conformado: la Fase 6 le anade la rama simple/doble "
         "(coef 50/75 segun geometria, ec.7/ec.6) y el factor (1-Rf/Ro) con Ro "
         "(D172). Cilindro con plancha plana da 50*T/Rf como antes. La fija "
@@ -10460,40 +10506,40 @@ DIVERGENCIAS_REEMPLAZADAS = {
 # --- Fase 2: lo que el colapso de presiones REEMPLAZA (no retira) -----------
 # Su correccion la prueba TestModeloDePresionDosCasos, no el oracle Rev0.
 DIVERGENCIAS_REEMPLAZADAS.update({
-    ("Parche_PCC2_Art212", "A28"): (
+    ("Parche_PCC2_Art212", "A29"): (
         "Rotulo: 'Presion envolvente (cota superior)' pasa a 'Presion de diseno "
         "(maxima admisible / rating)'. Es el mismo numero con el nombre que le da "
         "el codigo (206-3.3), y ya no compite con un 'diseno tipico' retirado."),
-    ("Parche_PCC2_Art212", "B28"): (
+    ("Parche_PCC2_Art212", "B29"): (
         "Simbolo: P_env pasa a P_dis. Es LA presion de diseno del motor, no una "
         "cota superior aparte de ella."),
-    ("Parche_PCC2_Art212", "G28"): (
+    ("Parche_PCC2_Art212", "G29"): (
         "Referencia: 'Rating / envolvente' pasa a 'Rating / max. admisible', que "
         "es como la nombra 206-3.3."),
-    ("Parche_PCC2_Art212", "E88"): (
+    ("Parche_PCC2_Art212", "E89"): (
         "Encabezado de columna: 'Diseno tipico' pasa a 'Diseno'. La columna E "
         "deja de llevar el caso intermedio y lleva la presion maxima admisible."),
-    ("Parche_PCC2_Art212", "E89"): (
+    ("Parche_PCC2_Art212", "E90"): (
         "La columna de diseno lee ahora D28 (maxima admisible) en vez de D27 "
         "(tipico, retirado). Las filas 62-69 de esa columna no cambian de forma: "
         "encadenan desde E61, asi que siguen ancladas al oracle."),
-    ("Parche_PCC2_Art212", "D112"): (
+    ("Parche_PCC2_Art212", "D113"): (
         "El MAX del filete requerido barre D64:E64 (dos casos) en vez de D64:F64. "
         "Mismo numero -F64 esta vacia- pero la hoja no puede declarar un rango "
         "que ya no existe."),
-    ("Parche_PCC2_Art212", "G112"): (
+    ("Parche_PCC2_Art212", "G113"): (
         "Criterio: 'w >= w_min (envolvente)' pasa a '(diseno)', el nombre nuevo "
         "de ese mismo caso."),
-    ("Parche_PCC2_Art212", "A115"): (
+    ("Parche_PCC2_Art212", "A116"): (
         "Rotulo: 'Espesor de pared (envolvente)' pasa a '(diseno)'."),
-    ("Parche_PCC2_Art212", "D115"): (
+    ("Parche_PCC2_Art212", "D116"): (
         "El t_req gobernante se lee de E65 (caso Diseno) en vez de F65 "
         "(Envolvente, columna retirada). Es el mismo caso fisico: la presion "
         "maxima admisible que exige 206-3.3."),
-    ("Parche_PCC2_Art212", "E117"): (
+    ("Parche_PCC2_Art212", "E118"): (
         "La presion de diseno contra la que se compara P_max del parche se lee "
         "de D28 en vez de D27 (retirada)."),
-    ("Parche_PCC2_Art212", "B127"): (
+    ("Parche_PCC2_Art212", "B128"): (
         "La presion de prueba hidrostatica se calcula sobre D28 (presion de "
         "diseno maxima admisible) en vez de D27. El factor (D46) no cambia."),
 })
@@ -10509,32 +10555,51 @@ _FASE3_RENUMERA = (
     "y pasa a ser la 2, asi que esta banda se renumera. Lo fija "
     "TestNumeracionDeSecciones.")
 DIVERGENCIAS_REEMPLAZADAS.update({
-    ("Parche_PCC2_Art212", "A37"): (
+    ("Parche_PCC2_Art212", "A38"): (
         "Banda de la Seccion de Material. Deja de ser la '7' del final y pasa a "
         "ser la '2'; y se escribe literal (banda_literal) en vez de con "
         "rotulo(), que la dejaba en '[ MAYUSCULAS // CON BARRAS ]' — el unico "
         "rotulo de esta hoja con ese formato, justo al lado de sus vecinas."),
-    ("Parche_PCC2_Art212", "A65"): _FASE3_RENUMERA + (
+    ("Parche_PCC2_Art212", "A66"): _FASE3_RENUMERA + (
         " Ademas pierde el parentetico '(constantes — editables)': con la "
         "leyenda de color de la Fase 1 el 'editables' lo dice el relleno."),
-    ("Parche_PCC2_Art212", "A78"): _FASE3_RENUMERA,
-    ("Parche_PCC2_Art212", "A87"): _FASE3_RENUMERA,
-    ("Parche_PCC2_Art212", "A99"): _FASE3_RENUMERA,
-    ("Parche_PCC2_Art212", "A110"): _FASE3_RENUMERA,
-    ("Parche_PCC2_Art212", "A120"): _FASE3_RENUMERA + (
+    ("Parche_PCC2_Art212", "A79"): _FASE3_RENUMERA,
+    ("Parche_PCC2_Art212", "A88"): _FASE3_RENUMERA,
+    ("Parche_PCC2_Art212", "A100"): _FASE3_RENUMERA,
+    ("Parche_PCC2_Art212", "A111"): _FASE3_RENUMERA,
+    ("Parche_PCC2_Art212", "A121"): _FASE3_RENUMERA + (
         " Numerada 8 mientras siga en esta hoja; la Fase 9 la saca a pestana "
         "propia y entonces pierde el numeral."),
-    ("Parche_PCC2_Art212", "A16"): (
+    ("Parche_PCC2_Art212", "A17"): (
         "La banda de datos de entrada pierde su parentetico '(campo con linea "
         "inferior = editable)': describia el sistema visual ANTERIOR y con la "
         "leyenda de color de la Fase 1 seria falso. Mismo criterio que "
         "TEXTOS_HEREDADOS con los azules del maestro Rev0."),
-    ("Parche_PCC2_Art212", "G67"): (
+    ("Parche_PCC2_Art212", "G68"): (
         "La referencia remite ahora a la 'seccion 2' (antes 7), que es donde "
         "vive la resolucion de material tras la Fase 3."),
-    ("Parche_PCC2_Art212", "G68"): "Idem G67: la seccion de material es la 2.",
-    ("Parche_PCC2_Art212", "G72"): "Idem G67: la seccion de material es la 2.",
+    ("Parche_PCC2_Art212", "G69"): "Idem G67: la seccion de material es la 2.",
+    ("Parche_PCC2_Art212", "G73"): "Idem G67: la seccion de material es la 2.",
 })
+
+# Celdas que existen POR DISEÑO y que el *oracle* Rev0 nunca tuvo. Es una
+# tercera clase, distinta de las dos de arriba y con motivo propio: una celda
+# RETIRADA estaba en el oracle y se vacia; una REEMPLAZADA estaba en el oracle y
+# cambia de contenido; estas no estaban. Meterlas en REEMPLAZADAS "porque
+# funciona" habria dejado el diccionario diciendo algo falso —que el oracle las
+# declara— y con el tiempo nadie sabria cual es cual.
+CELDAS_NUEVAS_FUERA_DEL_ORACLE = {
+    ("Parche_PCC2_Art212", "A15"): (
+        "Fase 7: rotulo del selector de sistema de unidades. La banda de "
+        "aplicacion y codigo gana una fila; el oracle Rev0 solo llegaba a la 14."),
+    ("Parche_PCC2_Art212", "B15"): "Idem A15: simbolo de la fila del selector.",
+    ("Parche_PCC2_Art212", "C15"): "Idem A15: unidad de la fila del selector.",
+    ("Parche_PCC2_Art212", "D15"): (
+        "Fase 7: selector SI / US, con su validacion de lista. Decide de que "
+        "EDICION del codigo se lee el esfuerzo admisible; nunca convierte un "
+        "valor (regla 9). Lo fija TestConmutadorDeUnidades."),
+    ("Parche_PCC2_Art212", "G15"): "Idem A15: referencia de la fila del selector.",
+}
 
 # --- Fase 4: el rastro de la resolucion se pliega y se redacta mas llano ----
 _FASE4_ETIQUETA = (
@@ -10543,10 +10608,10 @@ _FASE4_ETIQUETA = (
     "despliega tiene que poder leerla sin conocer el builder. El VALOR de la "
     "celda no cambia; lo fija TestDiagnosticoPlegable.")
 DIVERGENCIAS_REEMPLAZADAS.update({
-    ("Parche_PCC2_Art212", "A49"): _FASE4_ETIQUETA + " 'Indice de base' -> 'Base ASME aplicada'.",
-    ("Parche_PCC2_Art212", "A50"): _FASE4_ETIQUETA + " 'Fila localizada' -> '... en la base'.",
-    ("Parche_PCC2_Art212", "A51"): _FASE4_ETIQUETA + " 'n_pts / p1' -> 'Puntos tabulados de la fila'.",
-    ("Parche_PCC2_Art212", "A56"): _FASE4_ETIQUETA + " Sin el '/ limite VIII-1' de mas.",
+    ("Parche_PCC2_Art212", "A50"): _FASE4_ETIQUETA + " 'Indice de base' -> 'Base ASME aplicada'.",
+    ("Parche_PCC2_Art212", "A51"): _FASE4_ETIQUETA + " 'Fila localizada' -> '... en la base'.",
+    ("Parche_PCC2_Art212", "A52"): _FASE4_ETIQUETA + " 'n_pts / p1' -> 'Puntos tabulados de la fila'.",
+    ("Parche_PCC2_Art212", "A57"): _FASE4_ETIQUETA + " Sin el '/ limite VIII-1' de mas.",
     # --- Fase 5: fuera el parentesis EXPLICATIVO de las bandas -------------
     # La cita al codigo se queda -es informacion normativa- pero sale del
     # parentesis; lo que se va es lo puramente aclaratorio. Una banda no tiene
@@ -10556,18 +10621,18 @@ DIVERGENCIAS_REEMPLAZADAS.update({
         "Fase 5: fuera el parentetico '(selector que conmuta S, t_req y la "
         "fuerza de membrana)'. Lo explica el comentario de la celda del "
         "selector, que es donde se mira."),
-    ("Parche_PCC2_Art212", "A110"): (
+    ("Parche_PCC2_Art212", "A111"): (
         "Fase 3 (numeral 5 -> 7) y Fase 5: fuera el parentetico '(criterios de "
         "aceptacion)'. Una tabla titulada VERIFICACIONES no necesita que le "
         "digan que verifica."),
-    ("Parche_PCC2_Art212", "A120"): (
+    ("Parche_PCC2_Art212", "A121"): (
         "Fase 5: fuera el parentetico '(generadas automaticamente a partir de "
         "las entradas)', ademas del numeral nuevo de la Fase 3."),
-    ("Parche_PCC2_Art212", "A87"): (
+    ("Parche_PCC2_Art212", "A88"): (
         "Fase 3 (numeral) y Fase 5: la cita 'ASME PCC-2 Art. 212' se conserva "
         "-es normativa- pero sale del parentesis, que en el resto de la hoja "
         "significa 'aclaracion prescindible'."),
-    ("Parche_PCC2_Art212", "G41"): (
+    ("Parche_PCC2_Art212", "G42"): (
         "Fase 4: la columna de notas decia 'Lista desplegable en cascada' en los "
         "CINCO niveles. Repetir la misma frase cinco veces no informa: la vuelve "
         "ruido y empuja fuera de la vista lo que si es propio de cada nivel. Se "
@@ -10578,7 +10643,7 @@ DIVERGENCIAS_DECLARADAS.update({
     ("Parche_PCC2_Art212", f"G{r}"): (
         "Fase 4: nota de cascada repetida. La explicacion vive una sola vez en "
         "G41 (nivel 0) y esta fila la hereda; ver TestDiagnosticoPlegable.")
-    for r in range(42, 47)
+    for r in range(43, 48)
 })
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl

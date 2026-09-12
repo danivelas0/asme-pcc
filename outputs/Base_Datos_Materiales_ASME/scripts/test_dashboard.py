@@ -628,6 +628,14 @@ class TestParidadHojaParche:
         # tener contenido) a la vez: seria una contradiccion silenciosa.
         comunes = set(B.DIVERGENCIAS_DECLARADAS) & set(B.DIVERGENCIAS_REEMPLAZADAS)
         assert not comunes, comunes
+        # Y la tercera clase (celdas que el oracle nunca tuvo) no puede solaparse
+        # con ninguna de las dos: una celda o estaba en el oracle o no estaba.
+        del_oracle = set(B.DIVERGENCIAS_DECLARADAS) | set(B.DIVERGENCIAS_REEMPLAZADAS)
+        assert not (del_oracle & set(B.CELDAS_NUEVAS_FUERA_DEL_ORACLE))
+        oracle = cargar_oracle_parche()
+        for hoja, celda in B.CELDAS_NUEVAS_FUERA_DEL_ORACLE:
+            assert celda not in oracle["formulas"], f"{celda} SI esta en el oracle"
+
 
     def test_todas_las_formulas_y_literales(self, wb):
         oracle = cargar_oracle_parche()
@@ -684,7 +692,8 @@ class TestParidadHojaParche:
         reales = sorted(
             ({"sqref": str(dv.sqref), "formula1": dv.formula1}
              for dv in ws.data_validations.dataValidation
-             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,))
+             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,
+                                                      B.CELDAS_NUEVAS_FUERA_DEL_ORACLE))
              and not en_anexo(str(dv.sqref))),
             key=lambda d: d["sqref"])
         esperadas = [
@@ -724,7 +733,7 @@ class TestCascadaDimensionalArt212:
             for rng in dv.sqref.ranges:
                 origen[str(rng)] = str(dv.formula1 or "")
         # D22 = norma, D18 = NPS, D19 = cedula (la norma no corre las filas 18-21).
-        for celda in ("D18", "D19", "D22"):
+        for celda in ("D19", "D20", "D23"):
             f1 = origen.get(celda, "")
             assert f1.startswith("="), f"{celda}: origen {f1!r}, se esperaba un rango"
             assert not f1.startswith('"'), f"{celda}: sigue siendo una lista fija"
@@ -737,7 +746,7 @@ class TestCascadaDimensionalArt212:
 
     def test_od_y_espesor_leen_de_las_dos_ediciones(self, wb):
         ws = wb[self.HOJA]
-        for celda in ("D20", "D21"):
+        for celda in ("D21", "D22"):
             f = str(ws[celda].value or "")
             assert "DB_B36_10" in f and "DB_B36_19" in f, f"{celda}: {f!r}"
             assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
@@ -1024,8 +1033,8 @@ class TestBuildParcheContraOracle:
             return
         assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
-    ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D47", "E47", "D58", "E58",
-                 "D67", "D68", "D72", "D46", "E46", "D60")
+    ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D48", "E48", "D59", "E59",
+                 "D68", "D69", "D73", "D47", "E47", "D61")
 
     def test_anclas_de_la_tarea_2(self):
         oracle = cargar_oracle_parche()
@@ -1043,10 +1052,10 @@ class TestBuildParcheContraOracle:
     F90_CON_ELEGIBILIDAD = (
         '=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
         'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
-        'IF(OR($D$57="SIN MATERIAL SELECCIONADO",'
-        '$E$57="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 2)",'
-        'IF(OR($D$57<>"OK",$E$57<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
-        'IF(AND(F112="CUMPLE",F113="CUMPLE",F114="CUMPLE",F115="CUMPLE",'
+        'IF(OR($D$58="SIN MATERIAL SELECCIONADO",'
+        '$E$58="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 2)",'
+        'IF(OR($D$58<>"OK",$E$58<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
+        'IF(AND(F113="CUMPLE",F114="CUMPLE",F115="CUMPLE",F116="CUMPLE",'
         'F161="CUMPLE",F162="CUMPLE"),'
         '"APTO","REVISAR"))))')
     D140_DICTAMEN_ELEGIBILIDAD = (
@@ -1056,8 +1065,8 @@ class TestBuildParcheContraOracle:
         'IF($D$137="No","NO ELEGIBLE — dano no caracterizable (212-2c)",'
         'IF($D$139="Si — activa/no analizada",'
         '"NO ELEGIBLE — grieta activa o no analizada (212-2c)",'
-        'IF($D$25>345,"FUERA DE ALCANCE — T > 345 (evaluar creep/fatiga 212-1e)",'
-        'IF($D$25<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
+        'IF($D$26>345,"FUERA DE ALCANCE — T > 345 (evaluar creep/fatiga 212-1e)",'
+        'IF($D$26<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
         '"ELEGIBLE")))))')
 
     def test_paso1_elegibilidad(self):
@@ -1071,7 +1080,7 @@ class TestBuildParcheContraOracle:
         assert ws["D139"].value == "No"
         # Dictamen de elegibilidad y F90 con la compuerta antepuesta.
         assert ws["D140"].value == self.D140_DICTAMEN_ELEGIBILIDAD, "D140"
-        assert ws["F118"].value == self.F90_CON_ELEGIBILIDAD, "F118"
+        assert ws["F119"].value == self.F90_CON_ELEGIBILIDAD, "F119"
         # Las cuatro entradas llevan validacion de lista (no se teclean libres).
         origen = {}
         for dv in ws.data_validations.dataValidation:
@@ -1095,9 +1104,9 @@ class TestBuildParcheContraOracle:
         assert ws["D145"].value == 0
         # Fuerzas de presion por caso (Operacion D / Diseno E). La Fase 2 retiro
         # la tercera columna: ver TestModeloDePresionDosCasos.
-        assert ws["D146"].value == "=D90*$D$80/2", "F_CP Op"
-        assert ws["E146"].value == "=E90*$D$80/2", "F_CP Dis"
-        assert ws["D147"].value == "=D90*$D$80/4", "F_LP Op"
+        assert ws["D146"].value == "=D91*$D$81/2", "F_CP Op"
+        assert ws["E146"].value == "=E91*$D$81/2", "F_CP Dis"
+        assert ws["D147"].value == "=D91*$D$81/4", "F_LP Op"
         # Totales y gobernante.
         assert ws["D148"].value == "=D146+$D$144", "F_C Op"
         assert ws["D149"].value == "=D147+$D$145", "F_L Op"
@@ -1112,7 +1121,7 @@ class TestBuildParcheContraOracle:
         assert str(ws["A153"].value).startswith("PASO 3"), ws["A153"].value
         assert ws["D156"].value == (
             '=IF($D$155="","No aplica (sin parche adyacente)",'
-            'IF($D$155>=$D$101,"OK","< L_min — reubicar (212-3.3)"))'), "D156"
+            'IF($D$155>=$D$102,"OK","< L_min — reubicar (212-3.3)"))'), "D156"
         # La nota de esquinas cita el 75 mm (recomendacion del flujo).
         assert "75" in str(ws["D157"].value), ws["D157"].value
 
@@ -1123,11 +1132,11 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         # w_min (D64:E64) recablea a F_max (D150:E150), no F_m (D63). La
         # columna F se retiro en la Fase 2 (modelo de presion de dos casos).
-        assert ws["D92"].value == "=D150/($D$70*$D$69)", "D92"
+        assert ws["D93"].value == "=D150/($D$71*$D$70)", "D93"
         # Bloque de topes.
         assert str(ws["A159"].value).startswith("PASO 4"), ws["A159"].value
-        assert ws["D161"].value == "=MIN($D$29,$D$21)", "D161 req"
-        assert ws["E161"].value == "=$D$32", "E161 adoptado"
+        assert ws["D161"].value == "=MIN($D$30,$D$22)", "D161 req"
+        assert ws["E161"].value == "=$D$33", "E161 adoptado"
         assert ws["F161"].value == (
             '=IF(E161<=D161,"CUMPLE",'
             '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")'), "F161"
@@ -1145,16 +1154,16 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         assert str(ws["A165"].value).startswith("PASO 5"), ws["A165"].value
         assert ws["D167"].value == 0, "g default 0 (fit-up ajustado)"
-        assert ws["D83"].value == (
-            "=($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2"), "D55 e con g"
-        assert ws["D85"].value == (
-            "=IF($D$11=3,NA(),$D$80/(2*$D$29)*(1+6*$D$83/$D$29))"), "D57 C_sw"
-        assert ws["D94"].value == (
-            "=IF($D$11=3,NA(),D90*$D$80/(2*$D$29))"), "D66 membrana"
+        assert ws["D84"].value == (
+            "=($D$30+$D$22+IF($D$167>=1.5,$D$167,0))/2"), "D55 e con g"
+        assert ws["D86"].value == (
+            "=IF($D$11=3,NA(),$D$81/(2*$D$30)*(1+6*$D$84/$D$30))"), "D57 C_sw"
         assert ws["D95"].value == (
-            "=IF($D$11=3,NA(),3*D90*$D$80*$D$83/$D$29^2)"), "D67 flexion"
-        assert ws["E95"].value == (
-            "=IF($D$11=3,NA(),3*E90*$D$80*$D$83/$D$29^2)"), "E67 flexion Dis"
+            "=IF($D$11=3,NA(),D91*$D$81/(2*$D$30))"), "D66 membrana"
+        assert ws["D96"].value == (
+            "=IF($D$11=3,NA(),3*D91*$D$81*$D$84/$D$30^2)"), "D67 flexion"
+        assert ws["E96"].value == (
+            "=IF($D$11=3,NA(),3*E91*$D$81*$D$84/$D$30^2)"), "E67 flexion Dis"
 
     # --- Fase 6: conformado en frio simple/doble (Paso 6, 212-3.5) -----------
     # %Elong = coef*T/Rf*(1-Rf/Ro), coef=75 doble (esfera/cabezal, ec.6 [71]) o
@@ -1163,8 +1172,8 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         assert str(ws["A170"].value).startswith("PASO 6"), ws["A170"].value
         assert ws["D172"].value == "", "Ro default blanco (plano)"
-        assert ws["D105"].value == (
-            '=IF($D$11=3,75,50)*$D$29/$D$84*IF($D$172="",1,1-$D$84/$D$172)'), "D105"
+        assert ws["D106"].value == (
+            '=IF($D$11=3,75,50)*$D$30/$D$85*IF($D$172="",1,1-$D$85/$D$172)'), "D106"
 
     # --- Fase 7: fabricacion (Paso 7, 212-4) — avisos ------------------------
     # Aviso de separacion (g>5 no admisible, g>=1.5 -> e incluye g, 212-4c),
@@ -1178,7 +1187,7 @@ class TestBuildParcheContraOracle:
             'IF($D$167>=1.5,"g >= 1.5 mm: e incluye g (212-4c) — ver Paso 5",'
             '"fit-up ajustado (g < 1.5 mm)"))'), "D177"
         assert ws["D178"].value == (
-            '=IF($D$29>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
+            '=IF($D$30>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
             '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")'), "D178"
         assert "40 mm" in str(ws["D179"].value), ws["D179"].value
 
@@ -1235,31 +1244,31 @@ class TestBuildParcheContraOracle:
     # (B18-B35 y C18-C35 incluidas, no solo D18-D35 + A16 + G22/G23) — mismo
     # criterio de exhaustividad que ANCLAS_SECCION_3.
     ANCLAS_SECCION_4 = (
-        "A16",
-        "A17", "B17", "C17", "D17", "G17",
+        "A17",
         "A18", "B18", "C18", "D18", "G18",
         "A19", "B19", "C19", "D19", "G19",
         "A20", "B20", "C20", "D20", "G20",
         "A21", "B21", "C21", "D21", "G21",
         "A22", "B22", "C22", "D22", "G22",
         "A23", "B23", "C23", "D23", "G23",
-        "A24", "B24", "C24", "D24",
-        "A25", "B25", "C25", "D25", "G25",
+        "A24", "B24", "C24", "D24", "G24",
+        "A25", "B25", "C25", "D25",
         "A26", "B26", "C26", "D26", "G26",
+        "A27", "B27", "C27", "D27", "G27",
         # Fase 2: la fila 27 ("Presion de diseno tipica") se RETIRO entera y
         # A28/B28/G28 se reescriben ("Presion de diseno (maxima admisible /
         # rating)", simbolo P_dis). Salen del ancla contra el oracle: las
         # primeras estan en DIVERGENCIAS_DECLARADAS y las segundas en
         # DIVERGENCIAS_REEMPLAZADAS. Su forma nueva la fija
         # TestModeloDePresionDosCasos. C28/D28 (unidad y valor) no cambian.
-        "C28", "D28",
-        "A29", "B29", "C29", "D29", "G29",
+        "C29", "D29",
         "A30", "B30", "C30", "D30", "G30",
         "A31", "B31", "C31", "D31", "G31",
         "A32", "B32", "C32", "D32", "G32",
         "A33", "B33", "C33", "D33", "G33",
         "A34", "B34", "C34", "D34", "G34",
         "A35", "B35", "C35", "D35", "G35",
+        "A36", "B36", "C36", "D36", "G36",
     )
 
     def test_seccion_4(self):
@@ -1290,18 +1299,18 @@ class TestBuildParcheContraOracle:
     # para que esta seccion quede completa por si sola — redundante pero
     # correcto.
     ANCLAS_SECCION_5 = (
-        "A65",
-        "A66", "B66", "C66", "D66", "G66",
+        "A66",
         "A67", "B67", "C67", "D67", "G67",
         "A68", "B68", "C68", "D68", "G68",
         "A69", "B69", "C69", "D69", "G69",
         "A70", "B70", "C70", "D70", "G70",
         "A71", "B71", "C71", "D71", "G71",
         "A72", "B72", "C72", "D72", "G72",
-        "A73", "B73", "C73", "D73",
-        "A74", "B74", "C74", "D74", "G74",
+        "A73", "B73", "C73", "D73", "G73",
+        "A74", "B74", "C74", "D74",
         "A75", "B75", "C75", "D75", "G75",
         "A76", "B76", "C76", "D76", "G76",
+        "A77", "B77", "C77", "D77", "G77",
     )
 
     def test_seccion_5(self):
@@ -1321,17 +1330,17 @@ class TestBuildParcheContraOracle:
     # exhaustividad que ANCLAS_SECCION_3/4/5. El *oracle* no declara ninguna
     # validacion de datos en este rango.
     ANCLAS_SECCION_6 = (
-        "A78",
-        "A79", "B79", "C79", "D79", "G79",
+        "A79",
         "A80", "B80", "C80", "D80", "G80",
         "A81", "B81", "C81", "D81", "G81",
         "A82", "B82", "C82", "D82", "G82",
+        "A83", "B83", "C83", "D83", "G83",
         # D55 (e) y D57 (C_sw) salen del oracle: la Fase 5 les anade la
         # separacion g y las pasa a la forma literal de cilindro con NA en
         # esfera. Su forma nueva la fija test_paso5_excentricidad.
-        "A83", "B83", "C83", "G83",
-        "A84", "B84", "C84", "D84", "G84",
-        "A85", "B85", "C85", "G85",
+        "A84", "B84", "C84", "G84",
+        "A85", "B85", "C85", "D85", "G85",
+        "A86", "B86", "C86", "G86",
     )
 
     def test_seccion_6(self):
@@ -1357,41 +1366,41 @@ class TestBuildParcheContraOracle:
     # no traen B). La fila 58 y la fila 70 no aparecen en el *oracle* (ni
     # formula, ni fusionado, ni validacion): quedan vacias, sin ancla.
     ANCLAS_FILAS_61_80 = (
-        "A87",
+        "A88",
         # Fase 2: la columna F (caso "Envolvente") se RETIRO de las filas 60-69
         # y E60/E61 cambian de contenido (E pasa a ser "Diseno" leyendo D28).
         # Las tres salen del ancla contra el oracle: F* esta en
         # DIVERGENCIAS_DECLARADAS y E60/E61 en DIVERGENCIAS_REEMPLAZADAS, y su
         # forma nueva la fija TestModeloDePresionDosCasos.
-        "A88", "B88", "C88", "D88", "G88",
         "A89", "B89", "C89", "D89", "G89",
-        "A90", "B90", "C90", "D90", "E90", "G90",
+        "A90", "B90", "C90", "D90", "G90",
         "A91", "B91", "C91", "D91", "E91", "G91",
+        "A92", "B92", "C92", "D92", "E92", "G92",
         # D64/E64 (w_min) salen del oracle: la Fase 4 los recablea a F_max
         # (D150) en vez de F_m (D63). Su forma nueva la fija test_paso4_filete y
         # su divergencia se declara en DIVERGENCIAS_REEMPLAZADAS. A/B/C/G64
         # (rotulo, simbolo, unidad, referencia) siguen anclados al oracle.
-        "A92", "B92", "C92", "G92",
-        "A93", "B93", "C93", "D93", "E93", "G93",
+        "A93", "B93", "C93", "G93",
+        "A94", "B94", "C94", "D94", "E94", "G94",
         # D66/D67 (componentes membrana y flexion de S_w) salen del oracle: la
         # Fase 5 los pasa a la forma literal de la ec.(5) (P*Dm directa, no via
         # F_m) con NA en esfera. D68 = D66+D67 no cambia de formula (propaga NA).
-        "A94", "B94", "C94", "G94",
         "A95", "B95", "C95", "G95",
-        "A96", "B96", "C96", "D96", "E96", "G96",
-        "A97", "C97", "D97", "E97", "G97",
-        "A99",
-        "A100", "B100", "C100", "D100", "G100",
+        "A96", "B96", "C96", "G96",
+        "A97", "B97", "C97", "D97", "E97", "G97",
+        "A98", "C98", "D98", "E98", "G98",
+        "A100",
         "A101", "B101", "C101", "D101", "G101",
         "A102", "B102", "C102", "D102", "G102",
-        "A103", "B103", "C103", "D103",
-        "A104", "C104", "D104", "G104",
+        "A103", "B103", "C103", "D103", "G103",
+        "A104", "B104", "C104", "D104",
+        "A105", "C105", "D105", "G105",
         # D77 (%Elong) sale del oracle: la Fase 6 le anade la rama simple/doble
         # (coef 50/75) y el factor (1-Rf/Ro). Lo fija test_paso6_conformado.
-        "A105", "C105", "G105",
-        "A106", "B106", "C106", "D106", "G106",
-        "A107", "C107", "D107", "G107",
+        "A106", "C106", "G106",
+        "A107", "B107", "C107", "D107", "G107",
         "A108", "C108", "D108", "G108",
+        "A109", "C109", "D109", "G109",
     )
 
     def test_filas_61_80(self):
@@ -1415,31 +1424,31 @@ class TestBuildParcheContraOracle:
         "A4", "A5", "D5", "G5", "A6", "D6", "G6",
         "A8",
         "A9", "B9", "C9", "D9", "G9",
-        "A110",
-        "A111", "D111", "E111", "F111", "G111",
+        "A111",
+        "A112", "D112", "E112", "F112", "G112",
         # Fase 2: D84 (MAX sobre dos casos) y G84 (rotulo "diseno") salen
         # del ancla; su forma la fija TestModeloDePresionDosCasos.
-        "A112", "E112", "F112",
-        "A113", "D113", "E113", "F113", "G113",
+        "A113", "E113", "F113",
         "A114", "D114", "E114", "F114", "G114",
+        "A115", "D115", "E115", "F115", "G115",
         # Fase 2: A87/D87 pasan del caso "envolvente" al caso "diseno".
-        "E115", "F115", "G115",
-        "A116", "D116", "E116", "F116", "G116",
+        "E116", "F116", "G116",
+        "A117", "D117", "E117", "F117", "G117",
         # Fase 2: E89 lee D28 (diseno maxima admisible) en vez de D27.
-        "A117", "D117", "F117", "G117",
-        "A118",
-        "A120",
-        "A121", "B121",
+        "A118", "D118", "F118", "G118",
+        "A119",
+        "A121",
         "A122", "B122",
         "A123", "B123",
         "A124", "B124",
         "A125", "B125",
         "A126", "B126",
+        "A127", "B127",
         # Fase 2: B99 calcula la presion de prueba sobre D28 (diseno
         # maxima admisible) en vez de D27, retirada. Lo fija
         # TestModeloDePresionDosCasos.
-        "A127",
-        "A129",
+        "A128",
+        "A130",
     )
 
     def test_seccion_8(self):
@@ -1457,18 +1466,18 @@ class TestBuildParcheContraOracle:
     # que sobrevive es el MAS conservador, ahora en la columna E.
     def test_la_fila_del_diseno_tipico_esta_retirada(self):
         ws = self._construir()
-        for celda in ("A27", "B27", "C27", "D27", "G27"):
+        for celda in ("A28", "B28", "C28", "D28", "G28"):
             assert ws[celda].value is None, f"{celda} deberia estar vacia"
 
     def test_la_presion_de_diseno_es_la_maxima_admisible(self):
         ws = self._construir()
-        assert ws["A28"].value == "Presión de diseño (máxima admisible / rating)"
-        assert _plano(ws["B28"].value) == "Pdis", ws["B28"].value
-        assert ws["D28"].value == 20
+        assert ws["A29"].value == "Presión de diseño (máxima admisible / rating)"
+        assert _plano(ws["B29"].value) == "Pdis", ws["B29"].value
+        assert ws["D29"].value == 20
         # encabezado() del 212 escribe el rotulo LITERAL (no pasa por .upper():
         # el oracle Rev0 trae mayus/minus mixtas en esta tabla).
-        assert ws["E88"].value == "Diseño", ws["E88"].value
-        assert ws["E89"].value == "=$D$28", ws["E89"].value
+        assert ws["E89"].value == "Diseño", ws["E89"].value
+        assert ws["E90"].value == "=$D$29", ws["E90"].value
 
     def test_la_columna_envolvente_esta_retirada(self):
         """La tabla de cargas (60-69) y el Paso 2 (143-150) quedan en DOS
@@ -1484,12 +1493,12 @@ class TestBuildParcheContraOracle:
         'Envolvente' (F), que era ese mismo concepto con otro nombre: el valor
         no cambia, pero la hoja ya no declara un rango que no existe."""
         ws = self._construir()
-        assert ws["D112"].value == "=MAX(D92:E92)", ws["D112"].value
-        assert ws["D115"].value == "=E93", ws["D115"].value
-        assert ws["E117"].value == "=$D$28", ws["E117"].value
+        assert ws["D113"].value == "=MAX(D93:E93)", ws["D113"].value
+        assert ws["D116"].value == "=E94", ws["D116"].value
+        assert ws["E118"].value == "=$D$29", ws["E118"].value
         # La presion de prueba hidrostatica sale de la misma presion de diseno.
-        # D74 es el factor de prueba hidrostatica tras la Fase 3 (era D46).
-        assert "$D$74*$D$28" in str(ws["B127"].value), ws["B127"].value
+        # D75 es el factor de prueba hidrostatica tras la Fase 7 (era D46).
+        assert "$D$75*$D$29" in str(ws["B128"].value), ws["B128"].value
 
 
 class TestSemaforoDeAceptacion:
@@ -1635,7 +1644,7 @@ class TestReglasDeComentario:
         exige es que el globo del Resultado NO sea el mismo que el del Requerido:
         si lo fuera, la columna que decide estaria explicada con el texto de otra.
         """
-        for hoja, filas in (("Parche_PCC2_Art212", range(112, 118)),
+        for hoja, filas in (("Parche_PCC2_Art212", range(113, 119)),
                             ("Collar_PCC2_Art206", range(85, 87))):
             ws = wb[hoja]
             for fila in filas:
@@ -1674,7 +1683,7 @@ class TestDiagnosticoPlegable:
     """
 
     # (hoja, primera y ultima fila del grupo, fila del dictamen, fila del S(T))
-    BLOQUES = [("Parche_PCC2_Art212", 47, 56, 57, 58),
+    BLOQUES = [("Parche_PCC2_Art212", 48, 57, 58, 59),
                ("Collar_PCC2_Art206", 45, 54, 55, 56)]
 
     @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
@@ -1710,7 +1719,7 @@ class TestDiagnosticoPlegable:
     def test_la_nota_de_cascada_no_se_repite_cinco_veces(self, wb):
         """Decia 'Lista desplegable en cascada' en los cinco niveles. Repetir
         la misma frase cinco veces no informa: la vuelve ruido."""
-        for hoja, ini in (("Parche_PCC2_Art212", 41), ("Collar_PCC2_Art206", 39)):
+        for hoja, ini in (("Parche_PCC2_Art212", 42), ("Collar_PCC2_Art206", 39)):
             ws = wb[hoja]
             notas = [str(ws.cell(r, 7).value or "") for r in range(ini, ini + 6)]
             assert notas[0], f"{hoja}: el nivel 0 tiene que explicar la cascada"
@@ -1729,14 +1738,14 @@ class TestNumeracionDeSecciones:
     """
 
     ORDEN_212 = (
-        (16, "1.  DATOS DE ENTRADA"),
-        (37, "2.  RESOLUCIÓN DE MATERIAL"),
-        (65, "3.  PARÁMETROS DE CÁLCULO"),
-        (78, "4.  GEOMETRÍA Y PROPIEDADES DERIVADAS"),
-        (87, "5.  CÁLCULO DE CARGAS Y SOLDADURA"),
-        (99, "6.  RESULTADOS DEL DISEÑO"),
-        (110, "7.  VERIFICACIONES"),
-        (120, "8.  ESPECIFICACIONES TÉCNICAS"),
+        (17, "1.  DATOS DE ENTRADA"),
+        (38, "2.  RESOLUCIÓN DE MATERIAL"),
+        (66, "3.  PARÁMETROS DE CÁLCULO"),
+        (79, "4.  GEOMETRÍA Y PROPIEDADES DERIVADAS"),
+        (88, "5.  CÁLCULO DE CARGAS Y SOLDADURA"),
+        (100, "6.  RESULTADOS DEL DISEÑO"),
+        (111, "7.  VERIFICACIONES"),
+        (121, "8.  ESPECIFICACIONES TÉCNICAS"),
     )
     ORDEN_206 = (
         (16, "1. DATOS DE ENTRADA"),
@@ -1761,7 +1770,7 @@ class TestNumeracionDeSecciones:
     def test_el_material_va_pegado_a_los_datos_de_entrada(self, wb):
         """Una sola fila en blanco entre la Seccion 1 y la de Material: si se
         colara un bloque en medio, dejaria de leerse de un tiron."""
-        for hoja, fin_seccion1, banda_material in (("Parche_PCC2_Art212", 35, 37),
+        for hoja, fin_seccion1, banda_material in (("Parche_PCC2_Art212", 36, 38),
                                                    ("Collar_PCC2_Art206", 33, 35)):
             ws = wb[hoja]
             hueco = ws.cell(banda_material - 1, 1).value

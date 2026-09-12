@@ -55,6 +55,21 @@ def main():
     args = ap.parse_args()
 
     viejo = json.loads(ORACLE.read_text(encoding="utf-8"))
+
+    # Este script NO es idempotente y no puede serlo: aplicar el mapa dos veces
+    # compone dos traslaciones y deja el oracle en un layout que no existe. La
+    # entrada tiene que ser SIEMPRE el volcado Rev0 original; si hace falta
+    # rehacerlo tras cambiar el mapa, se recupera de git:
+    #   git show <commit anterior a la Fase 3>:.../parche_art212_ref.json
+    # La marca que lo delata es la banda de la Seccion 1, que en el Rev0 esta
+    # en A16 y trae su parentetico original.
+    banda = viejo["formulas"].get("A16", "")
+    if not str(banda).startswith("1.  DATOS DE ENTRADA"):
+        raise SystemExit(
+            "parche_art212_ref.json no parece el volcado Rev0 original (A16 = "
+            f"{banda!r}). Recuperelo de git antes de remapear; aplicar el mapa "
+            "sobre un oracle ya trasladado compone dos traslaciones.")
+
     nuevo = remapear(viejo, B.MAPA_FILAS_212)
 
     # Un mapa inyectivo no puede perder ni fabricar celdas. Si el conteo no
