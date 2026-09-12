@@ -6069,6 +6069,26 @@ def build_reinicio_motor(ws):
     return entradas
 
 
+def build_botones_documentos(ws, espec=None, instr=None):
+    """Atajos del motor a sus documentos (Fases 9 y 10).
+
+    Van apilados en H1:J1 y H2:J2, encima del boton de reinicio (H3:J3): las tres
+    filas estan congeladas, asi que la esquina superior derecha queda siempre a la
+    vista. El retorno del arbol (A3:C3) sube al nodo del articulo; estos botones
+    son el atajo lateral, para no tener que subir un nivel solo para cambiar de
+    pestana del mismo articulo.
+    """
+    for fila, texto, destino in ((FILA_BTN_ESPEC, TXT_BTN_ESPEC, espec),
+                                 (FILA_BTN_INSTR, TXT_BTN_INSTR, instr)):
+        if destino is None:
+            continue
+        b = _boton(ws, fila, COL_BTN_DOC_1, COL_BTN_DOC_2, texto, destino)
+        b.protection = Protection(locked=False)
+        _celda_clave(ws, fila, COL_BTN_DOC_1).protection = Protection(locked=False)
+    _ocultar_columnas_clave(ws, (COL_BTN_DOC_1,))
+    return ws
+
+
 # ---------------------------------------------------------------------------
 # Fase 3 — la Seccion de Material sube justo detras de la Seccion 1
 # ---------------------------------------------------------------------------
@@ -8126,54 +8146,22 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.cell(90, 1).font = Font(name=MACRO, size=11, color=TINTA)
     ws.merge_cells("A90:E90")
 
-    # --- 6. Especificaciones tecnicas (filas 93-99) --------------------------
-    # A92: banda de seccion, fusionada A92:G92, texto literal con el numeral
-    # "6." y el doble espacio antes del parentesis, mismo criterio que las
-    # bandas anteriores. Esta seccion no lleva fila de encabezado propia (el
-    # *oracle* no la declara): pasa directo de la banda al contenido, porque
-    # la tabla no es Parametro/Simbolo/Valor sino Metodo/Especificacion (A +
-    # B, con B fusionado B:G).
-    # Numerada 8 mientras siga viviendo en esta hoja. La Fase 9 la saca a
-    # pestana propia y entonces deja de llevar numeral (ver el plan).
-    banda_literal(92, "8.  ESPECIFICACIONES TÉCNICAS")
-
-    # Filas 93-99: rotulo en A (estilo lab(), sin ref/unidad porque estas
-    # filas no tienen columna G propia — el *oracle* no la declara) y el
-    # contenido en B, fusionado B:G. Tres filas son formula que redacta el
-    # texto a partir de las entradas (93/95/99: calc()) y cuatro son texto
-    # estandar editable (94/96/97/98: WPS, END en servicio, recubrimiento de
-    # ejemplo — inp(), mismo criterio "Editable" que documenta
-    # comentar_art212_base). El comentario de cada B93-B99 lo aplica
-    # comentar_art212_base() al final (dict "textos"); no se duplica aqui
-    # para no repetir literalmente los mismos parrafos largos dos veces en
-    # el codigo fuente.
-    lab(93, "Método")
-    calc("B93", '="Reparación por parche/collar de refuerzo soldado (ASME PCC-2-2022, Art. 212/206). Aplicación: "&$D$10&". Código: "&$D$12&". Plancha "&$D$23&" de "&TEXT($D$29,"0")&" mm; peso aprox. "&TEXT($D$80,"0.0")&" kg."')
-    ws.merge_cells("B93:G93")
-
-    lab(94, "Juntas de cierre")
-    inp("B94", "Juntas a tope en V, penetración completa (C.J.P), raíz abierta sin respaldo. Raíz GTAW ER70S-6; relleno/peine SMAW E7018 bajo hidrógeno. Ángulo incluido 60°–75°, talón 1,5 mm, luz de raíz 2–3 mm.")
-    ws.merge_cells("B94:G94")
-
-    lab(95, "Filetes perimetrales")
-    calc("B95", '="Filetes de cateto "&TEXT($D$32,"0")&" mm sobre metal sano; solape ≥ "&TEXT($D$33,"0")&" mm por extremo, verificado por UT. Sin soldaduras de tapón en collar de encierro total."')
-    ws.merge_cells("B95:G95")
-
-    lab(96, "Soldadura en servicio (Art. 210)")
-    inp("B96", "Electrodo bajo hidrógeno E7018 (Ø 2,4–3,2 mm); precalentamiento ≥ 100 °C; control de aporte térmico frente a perforación e hidrógeno. WPS calificado con el Apéndice Obligatorio 210-I; END diferido 24–72 h. Tramo drenado/despresurizado antes del cordón de cierre.")
-    ws.merge_cells("B96:G96")
-
-    lab(97, "Ensayos no destructivos")
-    inp("B97", "100 % VT + 100 % PT/MT de juntas y filetes (criterio del código de construcción); UT de espesores bajo filetes y del área reparada; END diferido 24–72 h si es en servicio (Art. 210, 210-5.2).")
-    ws.merge_cells("B97:G97")
-
-    lab(98, "Recubrimiento (ejemplo Repsol)")
-    inp("B98", "ED-B-06.00 / PE-B-0600.01 Esquema N° 1: Sa 2½ (ISO 8501-1); imprimación epoxi-Al 70 µm + intermedia epoxi MIO 110 µm + PU alifático 2×40 µm = 260 µm. Aplicación EC-B-53.00. Ajustar a la especificación del propietario.")
-    ws.merge_cells("B98:G98")
-
-    lab(99, "Prueba de hermeticidad")
-    calc("B99", '="Prueba de fuga en servicio (VT+PT/MT) o hidrostática a "&TEXT($D$46*$D$28,"0.0")&" kg/cm² ("&TEXT($D$46,"0.0")&"×P_diseño). Tubería: PCC-2 Art. 212-6 / Art. 501. Recipiente: ASME VIII-1 UG-99."')
-    ws.merge_cells("B99:G99")
+    # --- Especificaciones tecnicas: FUERA de esta hoja (Fase 9) --------------
+    # La seccion vivia aqui, en las filas 93-99 (121-128 tras el remapeo), con
+    # siete filas de parrafo largo fusionadas B:G. Era el bloque mas denso de la
+    # hoja y el unico que no se lee mientras se calcula: se consulta cuando el
+    # calculo ya esta cerrado y hay que redactar el procedimiento. Pasa a
+    # Espec_PCC2_Art212, donde ademas cabe lo que aqui no cabia — la cita del
+    # parrafo concreto de PCC-2 que sostiene cada especificacion.
+    #
+    # De la banda se conserva la fila (A121, fusionada A121:G121, ya declarada en
+    # DIVERGENCIAS_REEMPLAZADAS desde la Fase 5) reescrita como LETRERO: quien
+    # busque la seccion 8 tiene que encontrar adonde se fue. Pierde el numeral,
+    # porque ya no es una seccion de esta hoja. Las siete filas de contenido
+    # quedan VACIAS y declaradas en DIVERGENCIAS_DECLARADAS, sus fusionados
+    # incluidos.
+    banda_literal(92, "ESPECIFICACIONES TÉCNICAS  //  EN SU PROPIA PESTAÑA — "
+                      "BOTÓN ARRIBA A LA DERECHA")
 
     # --- Aviso fijo (fila 101) -----------------------------------------------
     # Mismo estilo que los avisos fijos del Art. 206 (nota206/nota206b, mas
@@ -8725,6 +8713,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # manifiesto es una lista de direcciones y se DERIVA de ese estado.
     build_reinicio_motor(ws)
 
+    # Fase 9: atajo a las especificaciones tecnicas, que dejaron esta hoja.
+    build_botones_documentos(ws, espec=ESPEC_212)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -8922,33 +8913,12 @@ def comentar_art212_base(ws):
     _nota(ws.cell(90, 1), "Resultado global del diseno: ver el dictamen calculado "
                          "en la celda F90 (a la derecha).")
 
-    textos = {
-        93: "Calculo: redacta automaticamente la especificacion de metodo de "
-            "reparacion, citando la aplicacion (D10), el codigo (D12), el "
-            "espesor del parche/collar (D29) y el peso estimado (D108).",
-        94: "Entrada/texto estandar: especificacion de juntas de cierre "
-            "(preparacion, proceso y consumibles de soldadura). Editable si "
-            "el WPS del proyecto exige otra cosa.",
-        95: "Calculo: redacta la especificacion de filetes perimetrales "
-            "citando el cateto adoptado (D32) y el solape minimo (D33) de la "
-            "seccion 1.",
-        96: "Entrada/texto estandar: especificacion de soldadura en servicio "
-            "(Art. 210) — electrodo, precalentamiento y END diferido. "
-            "Editable segun el procedimiento calificado del proyecto.",
-        97: "Entrada/texto estandar: especificacion de ensayos no "
-            "destructivos. Editable segun el criterio de aceptacion del "
-            "codigo de construccion activo (D12).",
-        98: "Entrada/texto de ejemplo: especificacion de recubrimiento "
-            "(esquema de un propietario de referencia). Ajustar a la "
-            "especificacion real del propietario del equipo.",
-        99: "Calculo: redacta la especificacion de prueba de hermeticidad, "
-            "citando el factor de prueba hidrostatica (D74) y la presion de "
-            "diseno maxima admisible (D28).",
-    }
-    for r, com in textos.items():
-        c = ws.cell(r, 2)
-        if c.value is not None:
-            _nota(c, com)
+    # Las siete filas de especificaciones tecnicas (93-99) ya no viven en esta
+    # hoja: la Fase 9 las saco a Espec_PCC2_Art212. Su diccionario de
+    # comentarios se retira con ellas y NO se deja "por si acaso": el bucle
+    # estaba guardado por `if c.value is not None`, asi que un diccionario
+    # huerfano no daria error — se quedaria callado, que es peor. El comentario
+    # de cada especificacion vive ahora en su fila de la pestana.
 
     if ws.cell(101, 1).value is not None:
         _nota(ws.cell(101, 1), "Aviso fijo: alcance y limitaciones de la "
@@ -9626,6 +9596,10 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 8: mismo manifiesto y mismo boton que el 212 (ver build_reinicio_motor).
     build_reinicio_motor(ws)
 
+    # Fase 9: el 206 no tenia especificaciones tecnicas; ahora las tiene, en
+    # pestana propia y construidas desde cero contra resources/.
+    build_botones_documentos(ws, espec=ESPEC_206)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -9640,6 +9614,522 @@ def retirar_datos_ref(wb):
     Mismo patron defensivo que build_parche_art212 usa con su propia hoja."""
     if "Datos_Ref" in wb.sheetnames:   # el maestro Rev0 todavia la trae
         del wb["Datos_Ref"]
+
+
+# ---------------------------------------------------------------------------
+# Fase 9 — Especificaciones tecnicas, una pestana por motor
+# ---------------------------------------------------------------------------
+# En el 212 esto vivia dentro de la hoja del motor, en siete filas de parrafo
+# fusionadas B:G; en el 206 no existia. Sale a pestana propia por dos razones:
+#
+#   1. No se consulta mientras se calcula. Se lee cuando el calculo ya esta
+#      cerrado y hay que redactar el procedimiento de la reparacion, asi que
+#      ocupaba con el bloque mas denso de la hoja el sitio por el que se pasa
+#      en cada iteracion del diseno.
+#   2. La cita no cabia. Cada especificacion sale de un parrafo concreto de
+#      PCC-2 y ahi no habia donde ponerlo: el texto se generaba correcto pero
+#      sin decir de donde venia, que es justo lo que la Regla n.1 pide que se
+#      pueda auditar. Aqui cada fila lleva su clausula en columna propia.
+#
+# ESTAS HOJAS SON PARTE DE SU MOTOR, no un segundo motor, y por eso leen sus
+# celdas (`Parche_PCC2_Art212!$D$30`). La regla 13 —un motor no lee otro— separa
+# motores de BUSQUEDA de motores de CALCULO para que ninguno dependa del estado
+# de otro; aqui hay un solo motor repartido en dos pestanas del mismo articulo, y
+# lo contrario seria peor: una especificacion que dijera un espesor distinto del
+# que se calculo.
+#
+# El texto de cada fila TRANSCRIBE el requisito de su parrafo, con las unidades
+# como el codigo las imprime —«5 mm (3/16 in.)»— y no convertidas (regla 9). Por
+# eso estas hojas no llevan conmutador SI/US propio: lo que publica el codigo en
+# las dos unidades a la vez no se conmuta. Lo que SI depende del sistema son las
+# cifras que vienen del motor, y esas se rotulan con el selector del motor.
+ESPEC_212, ESPEC_206 = "Espec_PCC2_Art212", "Espec_PCC2_Art206"
+ESPEC_NCOLS = 7
+ESPEC_ANCHO = {"A": 34, "B": 20, "C": 20, "D": 20, "E": 20, "F": 20, "G": 30}
+# Boton de ida y vuelta entre el motor y sus documentos. Van en H1:J1, H2:J2 y
+# H3:J3 —las tres filas congeladas, a la derecha de la tabla— y NO en A..G: esa
+# banda la compara celda a celda el *oracle* del 212, y las columnas K..AB de un
+# motor estan ocultas (ahi viven las listas de cascada materializadas), asi que
+# H, I y J son el unico sitio visible que queda fuera de la tabla.
+COL_BTN_DOC_1, COL_BTN_DOC_2 = 8, 10
+FILA_BTN_ESPEC, FILA_BTN_INSTR = 1, 2
+TXT_BTN_ESPEC = "[ > ] ESPECIFICACIONES TECNICAS"
+TXT_BTN_INSTR = "[ ? ] INSTRUCCIONES DE ESTE MOTOR"
+TXT_BTN_MOTOR = "[ < ] IR AL MOTOR DE CALCULO"
+
+AVISO_ESPEC = (
+    "Herramienta de ingenieria de referencia. Cada fila transcribe el requisito "
+    "del parrafo de ASME PCC-2 que cita a su derecha; verificar contra el codigo "
+    "vigente y complementar con WPS/PQR, ATS/JSA y los registros del propietario. "
+    "El criterio de aceptacion es el del codigo de construccion o "
+    "post-construccion aplicable.")
+
+
+def _espec_fila(ws, r, concepto, texto, cita, editable=False, com=None):
+    """Una fila de especificacion: concepto | texto (B:F) | clausula citada."""
+    a = ws.cell(r, 1, concepto)
+    a.font = Font(name=MONO, size=10, bold=True, color=TINTA)
+    a.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+
+    v = _mrg(ws, r, 2, 6, texto)
+    v.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    if editable:
+        # AMARILLO esta acotado por nombre de hoja a los dos motores, asi que
+        # aqui el campo editable se distingue como en un buscador: papel limpio
+        # con la linea inferior de tinta. El relleno hay que ponerlo en toda la
+        # cola del fusionado (el BORDE no se hereda del ancla; ver franja()).
+        v.font = IN_F
+        v.protection = Protection(locked=False)
+        for c in range(2, 7):
+            ws.cell(r, c).border = CAJA_CAMPO
+    else:
+        v.font = DATA_F
+
+    g = ws.cell(r, 7, cita)
+    g.font = SRC_F
+    g.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    if com:
+        _nota(v, com)
+
+    # Excel no autoajusta el alto de una fila fusionada, asi que se calcula: B:F
+    # suma 100 unidades de ancho y la mono de 9 pt entra a ~95 caracteres por
+    # linea. Una fila corta de mas se lee; una corta de menos oculta el texto.
+    lineas = max(1,
+                 -(-len(str(texto)) // 95),
+                 -(-len(str(cita)) // 30),
+                 -(-len(str(concepto)) // 32))
+    ws.row_dimensions[r].height = 13.5 * lineas + 4
+    return r + 1
+
+
+def build_especificaciones(wb, nombre, motor, titulo, subtitulo, bloques):
+    """Hoja de especificaciones tecnicas de un motor de calculo.
+
+    `bloques` es ((rotulo de banda, (filas,)), ...) y cada fila es
+    (concepto, texto, clausula) o (concepto, texto, clausula, "EDITABLE").
+    """
+    if nombre in wb.sheetnames:
+        del wb[nombre]
+    ws = new_sheet(wb, nombre, titulo, subtitulo)
+    autosize(ws, ESPEC_ANCHO)
+    ws.merge_cells(f"A1:{get_column_letter(ESPEC_NCOLS)}1")
+    ws.merge_cells(f"A2:{get_column_letter(ESPEC_NCOLS)}2")
+    # La fila 3 se deja libre: ahi ancla link_volver() el boton de retorno de
+    # toda hoja destino (ANCLA_VOLVER), y en H3:J3 va el atajo al motor.
+    _boton(ws, 3, COL_BTN_DOC_1, COL_BTN_DOC_2, TXT_BTN_MOTOR, motor)
+    _ocultar_columnas_clave(ws, (COL_BTN_DOC_1,))
+
+    r = 5
+    for rotulo_banda, filas in bloques:
+        banda(ws, r, rotulo_banda, ESPEC_NCOLS)
+        r += 1
+        for j, h in ((1, "Concepto"), (2, "Especificación"), (7, "Cláusula citada")):
+            c = ws.cell(r, j, h)
+            c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
+        for j in range(3, 7):          # la cabecera cierra a todo el ancho
+            c = ws.cell(r, j)
+            c.fill, c.border = HDR_FILL, BOX_FRANJA
+        ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=6)
+        r += 1
+        for fila in filas:
+            concepto, texto, cita = fila[:3]
+            r = _espec_fila(ws, r, concepto, texto, cita,
+                            editable=(len(fila) > 3 and fila[3] == "EDITABLE"))
+        r += 1
+
+    ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=ESPEC_NCOLS)
+    av = ws.cell(r, 1, AVISO_ESPEC)
+    av.font = SRC_F
+    av.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    ws.row_dimensions[r].height = 30
+
+    ws.protection.password = "0000"
+    ws.protection.sheet = True
+    return ws
+
+
+def _ref_motor(hoja, mapa, col, fila):
+    """Referencia absoluta a una celda del motor, con la fila ya remapeada.
+
+    Las filas se dan como las escribe el builder (ANTES del mapa de la Fase 3) y
+    se traducen aqui con el mismo mapa que movio la hoja: escribir la direccion
+    final a mano seria una copia del mapa que nadie volveria a revisar.
+    """
+    return f"{hoja}!${col}${mapa.get(fila, fila)}"
+
+
+def _rot_unidad(hoja, celda_sel, clase):
+    """Rotulo de unidad que sigue al selector SI/US del motor (Fase 7)."""
+    si, us = _U[clase]
+    return f'IF({hoja}!{celda_sel}="SI","{si}","{us}")'
+
+
+def build_especificaciones_art212(wb):
+    """Especificaciones tecnicas del Art. 212, citando 212-3.4, 212-4, 212-5,
+    212-6 y el Art. 210. Todo el texto transcribe el parrafo que cita a su
+    derecha, leido de resources/.../art_212.json (Regla n.1)."""
+    d = lambda col, fila: _ref_motor(MOTOR, MAPA_FILAS_212, col, fila)
+    ul = _rot_unidad(MOTOR, UNIDAD_212, "len")
+    up = _rot_unidad(MOTOR, UNIDAD_212, "peso")
+    upr = _rot_unidad(MOTOR, UNIDAD_212, "pres")
+
+    # La plancha se identifica con el material_id que resolvio la cascada de la
+    # Seccion 2 (columna del collar/parche), NO con la fila descriptiva de lista
+    # fija: esa se retiro en la Tarea 7-8 y la formula heredada seguia
+    # apuntandola, asi que imprimia "Plancha  de 8 mm" con el hueco en medio.
+    # La fila "material_id resuelto" es F+10 del bloque de material, que el
+    # builder escribe en la fila 105.
+    mat = d("E", 105 + 10)
+    metodo = (
+        '="Reparación por parche de plancha con soldadura de filete perimetral '
+        f'(ASME PCC-2, Art. 212). Aplicación: "&{d("D", 10)}&". Código de '
+        f'construcción: "&{d("D", 12)}&". Material del parche: "&IF({mat}="","'
+        f'(sin resolver en la Sección 2)",{mat})&". Espesor "&TEXT({d("D", 29)},'
+        f'"0.0")&" "&{ul}&"; peso estimado "&TEXT({d("D", 80)},"0.0")&" "&{up}&"."')
+    filetes = (
+        '="Filete perimetral de cateto "&TEXT(' + d("D", 32) + ',"0.0")&" "&' + ul +
+        '&" sobre metal sano, con solape mínimo de "&TEXT(' + d("D", 33) + ',"0")&'
+        '" "&' + ul + '&" por extremo. El cateto se dimensiona con la ec. (4) del '
+        '212-3.4(a), F_A = E·S_a·w_mín con E = 0,55, y la carga excéntrica con la '
+        'ec. (5) del 212-3.4(c): las dos las verifica la Sección 7 del motor."')
+    prueba = (
+        '="Prueba de fuga del componente y del parche instalado conforme al código '
+        'post-construcción aplicable (212-6b). Si es hidrostática, presión de '
+        'prueba "&TEXT(' + d("D", 46) + "*" + d("D", 28) + ',"0.0")&" "&' + upr +
+        '&" ("&TEXT(' + d("D", 46) + ',"0.0")&"× la presión de diseño). Se toman '
+        'precauciones especiales de seguridad si la prueba es neumática."')
+
+    bloques = (
+        ("METODO Y ALCANCE  //  ASME PCC-2 Art. 212-1 / 212-2", (
+            ("Método de reparación", metodo, "212-1(a) a (d) · se redacta con las "
+             "entradas del motor"),
+            ("Alcance del método", "El método cubre la selección, limitaciones de "
+             "aplicación, diseño, fabricación, examen y prueba de parches de "
+             "superficie soldados con filete a componentes que retienen presión. "
+             "Se aplica típicamente a envolventes con adelgazamiento local de "
+             "pared (incluido el traspasante) por erosión, corrosión y otros "
+             "mecanismos locales, y es aplicable a envolventes cilíndricas, "
+             "esféricas, planas y cónicas, además de otros componentes a presión.",
+             "212-1(a) · 212-1(c) · 212-1(d)"),
+            ("Limitaciones", "No se usa el método si el mecanismo de daño, su "
+             "extensión o el daño futuro no se pueden caracterizar. Una grieta o "
+             "defecto tipo grieta solo se admite si el crecimiento está detenido y "
+             "hay evaluación de aptitud para el servicio conforme a "
+             "API 579-1/ASME FFS-1. La compuerta de elegibilidad la resuelve el "
+             "Paso 1 del anexo del motor, y un estado bloqueante detiene el "
+             "dictamen global.", "212-2(c) · 212-2 [11] a [13]"),
+        )),
+        ("PREPARACION Y AJUSTE  //  212-4 FABRICATION", (
+            ("Corte y preparación de bordes", "Los bordes de la plancha pueden "
+             "cortarse por medios mecánicos (mecanizado, cizallado, esmerilado) o "
+             "térmicos (oxicorte o corte por arco). Si se usan medios térmicos, se "
+             "retira por esmerilado o mecanizado un mínimo de 1,5 mm (1/16 in.) de "
+             "material adicional. Si la plancha es de más de 25 mm (1 in.) de "
+             "espesor y el cateto del filete es menor que el espesor de la plancha, "
+             "los bordes preparados se examinan por partículas magnéticas (MT) o "
+             "líquidos penetrantes (PT) para detectar laminaciones; una laminación "
+             "es causa de rechazo salvo que se repare o se acepte por evaluación de "
+             "aptitud para el servicio según API 579-1/ASME FFS-1.", "212-4(a)"),
+            ("Conformado y secciones partidas", "La plancha puede conformarse a la "
+             "geometría requerida por cualquier proceso que no deteriore "
+             "indebidamente sus propiedades mecánicas. Cuando el tamaño de la "
+             "plancha o el acceso lo exijan, se admiten secciones partidas unidas "
+             "por soldaduras de penetración completa. El límite de deformación por "
+             "conformado en frío lo verifica el motor con el 212-3.5.",
+             "212-4(b) · 212-3.5"),
+            ("Ajuste (fit-up)", "Las partes a unir con filete se ajustan tan "
+             "apretadas como sea practicable y en ningún caso con separación mayor "
+             "de 5 mm (3/16 in.). Si la separación en el borde de apoyo de la "
+             "plancha es de 1,5 mm (1/16 in.) o mayor, el tamaño del filete "
+             "perimetral se recalcula sumando esa separación a la excentricidad e "
+             "— es exactamente lo que hace el campo de separación g del motor.",
+             "212-4(c) · 212-4c [82]"),
+            ("Limpieza previa", "Se retiran pintura, cascarilla, óxido, líquidos y "
+             "materia extraña de la zona de soldadura y de una franja no menor de "
+             "40 mm (1 1/2 in.) a cada lado del cordón. En las áreas que quedarán "
+             "cubiertas por la plancha, las costuras longitudinales o "
+             "circunferenciales existentes deberían esmerilarse a ras del diámetro "
+             "exterior y examinarse por MT o PT.", "212-4(e)(1) y (2)"),
+            ("Secuencia de montaje", "La plancha se posiciona por cualquier método "
+             "adecuado. Las costuras internas de la propia plancha se ejecutan "
+             "primero y después se completa el cordón perimetral; se admiten grapas "
+             "o cuñas para asegurar alineación y ajuste.",
+             "212-4(e)(3) y (4)"),
+            ("Venteo", "Para impedir la acumulación de presión de gas entre la "
+             "plancha y la frontera de presión puede ser necesario ventear durante "
+             "el cordón de cierre final y, si aplica, durante el tratamiento "
+             "térmico post-soldadura. Si la plancha se diseñó para un defecto "
+             "traspasante pero se instala antes de que la pared se perfore, el "
+             "venteo se sella al terminar la soldadura y el PWHT.", "212-4(g)"),
+        )),
+        ("SOLDADURA  //  212-3.4 · 212-4(d) · Art. 210", (
+            ("Filetes perimetrales", filetes,
+             "212-3.4(a) ec. (4) · 212-3.4(c) ec. (5)"),
+            ("Tope máximo del filete", "El tamaño de diseño del filete no excede el "
+             "espesor del más delgado de los materiales unidos ni 40 mm (1,5 in.). "
+             "Alternativamente el borde del cordón perimetral puede biselarse para "
+             "aumentar la garganta efectiva, sin que esa garganta supere el espesor "
+             "nominal de la plancha de reparación ni el espesor nominal original "
+             "del componente. Los dos topes los verifica el Paso 4 del anexo del "
+             "motor.", "212-3.4 NOTA · 212-3.4(b)"),
+            ("Juntas de cierre", "Juntas a tope en V, penetración completa (C.J.P), "
+             "raíz abierta sin respaldo. Raíz GTAW ER70S-6; relleno y peine SMAW "
+             "E7018 bajo hidrógeno. Ángulo incluido 60°–75°, talón 1,5 mm, luz de "
+             "raíz 2–3 mm. Ajustar al WPS calificado del proyecto.",
+             "212-4(d) · WPS del proyecto", "EDITABLE"),
+            ("Calificación de procedimientos y soldadores", "Los procedimientos, "
+             "soldadores y operadores se califican conforme a los requisitos "
+             "vigentes del código de construcción o post-construcción aplicable. Si "
+             "no se especifica otra cosa, puede usarse ASME BPVC Sección IX para "
+             "calificación de procedimiento y de desempeño. Para soldadura en "
+             "servicio se consulta el Art. 210 y para tratamiento térmico en campo "
+             "el Art. 214.", "212-4(d)"),
+            ("Soldadura en servicio", "Electrodo bajo hidrógeno E7018 "
+             "(Ø 2,4–3,2 mm); precalentamiento ≥ 100 °C; control del aporte térmico "
+             "frente a perforación e hidrógeno. WPS calificado con el Apéndice "
+             "Obligatorio 210-I; END diferido 24–72 h. Tramo drenado y "
+             "despresurizado antes del cordón de cierre. Ajustar al procedimiento "
+             "calificado del proyecto.", "212-4(d) · Art. 210", "EDITABLE"),
+        )),
+        ("EXAMEN  //  212-5 EXAMINATION", (
+            ("Examen de las uniones del parche", "Las soldaduras de unión de la "
+             "plancha se examinan conforme al código de construcción o "
+             "post-construcción aplicable por MT o por PT, salvo que el método esté "
+             "limitado por temperatura. Si el código no especifica procedimientos, "
+             "el END se ejecuta con procedimientos escritos y calificados según "
+             "ASME BPVC Sección V.", "212-5(a)"),
+            ("Orejas de izaje y elementos temporales", "Si se usan orejas de izaje "
+             "y se dejan en su sitio, sus soldaduras de unión se examinan por MT o "
+             "PT. En toda ubicación donde se retiren orejas temporales, grapas "
+             "soldadas o cuñas después de instalar la plancha, la zona de remoción "
+             "se examina por MT o PT.", "212-5(b)"),
+            ("Costuras entre piezas de la plancha", "Las soldaduras que unen "
+             "secciones de plancha hechas de piezas separadas deberían contornearse "
+             "en superficie y examinarse volumétricamente por radiografía o "
+             "ultrasonido en la medida posible. Si no es practicable, se ejecutan "
+             "exámenes PT o MT multicapa.", "212-5(c)"),
+            ("END después del PWHT", "Si se requiere tratamiento térmico "
+             "post-soldadura, el examen se realiza después de aplicarlo. El criterio "
+             "de aceptación del examen es el del código de construcción o "
+             "post-construcción aplicable.", "212-5(d) · 212-5(e)"),
+            ("Alcance de END del proyecto", "100 % VT + 100 % PT/MT de juntas y "
+             "filetes (criterio del código de construcción); UT de espesores bajo "
+             "filetes y del área reparada; END diferido 24–72 h si la soldadura es "
+             "en servicio (Art. 210). Ajustar al criterio de aceptación del código "
+             "activo.", "212-5 · Art. 210", "EDITABLE"),
+        )),
+        ("PRUEBA Y CIERRE  //  212-6 TESTING · App. 501", (
+            ("Prueba de hermeticidad", prueba, "212-6(a) · 212-6(b)"),
+            ("Alternativas a la prueba de fuga", "Si el código post-construcción lo "
+             "permite, el examen no destructivo puede ejecutarse como alternativa a "
+             "la prueba de fuga. También puede hacerse una inspección de servicio "
+             "inicial de todas las juntas soldadas una vez que el componente ha "
+             "vuelto a su presión y temperatura normales de operación, si estas se "
+             "habían reducido para soldar.", "212-6(c)"),
+            ("Energía neumática", "Cuando la prueba de fuga es neumática se toman "
+             "precauciones especiales de seguridad. La energía almacenada, su "
+             "equivalente en TNT y la distancia mínima al personal las calcula el "
+             "Paso 8 del anexo del motor con las ecuaciones del Apéndice "
+             "Obligatorio 501-II/III, leídas de resources/.",
+             "212-6(b) · App. 501-II / 501-III"),
+            ("Orden de las actividades de cierre", "Las pruebas e inspecciones se "
+             "ejecutan antes de reaplicar recubrimiento, aislamiento o forro. Las "
+             "superficies metálicas expuestas deberían recubrirse de nuevo, si "
+             "aplica, una vez completados todos los exámenes y pruebas.",
+             "212-6(d) · 212-4(f)"),
+            ("Recubrimiento", "ED-B-06.00 / PE-B-0600.01 Esquema N° 1: Sa 2½ "
+             "(ISO 8501-1); imprimación epoxi-Al 70 µm + intermedia epoxi MIO "
+             "110 µm + PU alifático 2×40 µm = 260 µm. Aplicación EC-B-53.00. "
+             "Ajustar a la especificación del propietario.",
+             "212-4(f) · especificación del propietario", "EDITABLE"),
+        )),
+    )
+    return build_especificaciones(
+        wb, ESPEC_212, MOTOR,
+        "ESPECIFICACIONES TECNICAS — PARCHE SOLDADO (ASME PCC-2 Art. 212)",
+        "Fabricacion, examen y prueba. Cada fila transcribe el parrafo de PCC-2 "
+        "que cita a su derecha; las cifras las lee del motor Parche_PCC2_Art212.",
+        bloques)
+
+
+def build_especificaciones_art206(wb):
+    """Especificaciones tecnicas del Art. 206 (no existian): 206-2, 206-3.5,
+    206-4, 206-5 y 206-6, leidos de resources/.../art_206.json (Regla n.1)."""
+    d = lambda col, fila: _ref_motor(COLLAR_MOTOR, MAPA_FILAS_206, col, fila)
+    ul = _rot_unidad(COLLAR_MOTOR, UNIDAD_206, "len")
+
+    metodo = (
+        '="Collar de encierro total soldado sobre tuberia (ASME PCC-2, Art. 206). '
+        f'Tipo: "&{d("D", 22)}&". Código de construcción: "&{d("D", 12)}&". Collar '
+        f'de "&TEXT({d("D", 29)},"0.0")&" "&{ul}&" de espesor y "&TEXT('
+        f'{d("D", 32)},"0")&" "&{ul}&" de longitud, con luz radial "&TEXT('
+        f'{d("D", 31)},"0.0")&" "&{ul}&"."')
+    # El cateto lo calcula el Paso del anexo (fila 121), que no se remapea.
+    #
+    # Esa celda NO siempre devuelve un numero: en Type A no hay cordon de cierre
+    # y publica el texto "No aplica - Type A (206-1.1.1)". Un TEXT() a secas lo
+    # dejaba pasar y la fila decia «w = No aplica - Type A (206-1.1.1) mm», con
+    # una unidad pegada a una frase. Se distingue con ISNUMBER: el numero lleva
+    # unidad, el dictamen se transcribe tal cual.
+    w = d("D", 121)
+    cateto = (
+        '="Cateto del filete de extremo: "&IF(ISNUMBER(' + w + '),"w = "&TEXT('
+        + w + ',"0.0")&" "&' + ul + ',' + w + ')&". Segun la Fig. 206-3.5-1 '
+        '(w = T_s + G cuando T_s ≤ 1,4 T_p) o la Fig. 206-3.5-2 '
+        '(w_máx = 1,4 T_p + G cuando T_s > 1,4 T_p, con chaflán opcional). '
+        'G es la luz radial y T_p el espesor del tubo portador."')
+
+    bloques = (
+        ("METODO Y TIPO DE COLLAR  //  206-1 · 206-3.1 · 206-3.2 · 206-3.3", (
+            ("Método de reparación", metodo, "206-1.1 · se redacta con las entradas "
+             "del motor"),
+            ("Type A frente a Type B", "El collar Type A refuerza el tubo portador "
+             "y NO contiene presión: sus extremos no se sueldan al portador. El "
+             "Type B sí contiene presión, lleva cordones circunferenciales de "
+             "cierre en los extremos y se dimensiona con un espesor de pared igual "
+             "o mayor que el requerido para la presión de diseño máxima admisible "
+             "del tubo portador.", "206-1.1.1 · 206-1.1.2 · 206-3.1 · 206-3.2 · "
+             "206-3.3"),
+            ("Precauciones y limitaciones", "Defecto con fuga: exige Type B "
+             "(206-2.3). Operación cíclica: valorar la fatiga de los cordones de "
+             "cierre (206-2.4 y 206-3.8). Defecto circunferencial: el Type A no lo "
+             "refuerza (206-2.5) y el motor lo advierte. Ver además corrosión bajo "
+             "el collar (206-2.6), refuerzo de soldadura del portador (206-2.7), "
+             "requisitos de tamaño del collar (206-2.8), soldadura (206-2.9) y "
+             "material de aporte (206-2.10).", "206-2.1 a 206-2.10"),
+            ("Dilatación térmica diferencial", "Si el collar y el tubo portador son "
+             "de materiales con coeficientes de dilatación distintos, se considera "
+             "la dilatación térmica diferencial.", "206-3.11"),
+        )),
+        ("INSTALACION Y AJUSTE  //  206-4.1 · 206-4.2 · 206-4.3", (
+            ("Limpieza y ajuste", "Toda la circunferencia del tubo portador en la "
+             "zona que cubrirá el collar se limpia a metal desnudo. Si se va a usar "
+             "material de relleno endurecible, se aplica en todas las "
+             "indentaciones, picaduras, huecos y depresiones. El collar se ajusta "
+             "apretado alrededor del portador; puede usarse apriete mecánico con "
+             "equipo hidráulico, pernos de arrastre u otros dispositivos. En "
+             "general debería lograrse un ajuste «sin luz»; se admite una luz "
+             "radial de hasta 2,5 mm (3/32 in.) máximo. Con collares de extremos "
+             "soldados, una luz excesiva puede exigir ajustes del tamaño de "
+             "soldadura y de la técnica del soldador, como pasadas de manteado.",
+             "206-4.1"),
+            ("Material de relleno del anular", "Si se usa relleno entre tubo y "
+             "collar, se cuida que no se extruya a las zonas de soldadura: quemarlo "
+             "durante la soldadura compromete la calidad del cordón. El exceso se "
+             "retira antes de soldar. Bombear el relleno al anular después de "
+             "soldar el collar en su sitio elimina el problema, siempre que las "
+             "luces anulares sean bastante grandes para que el relleno fluya a "
+             "todos los huecos.", "206-4.2 · 206-3.10"),
+            ("Defecto con fuga", "En un defecto con fuga, el área del defecto se "
+             "aísla antes de soldar. En líneas con contenido inflamable, el collar "
+             "se purga con nitrógeno u otro gas inerte para impedir la formación de "
+             "una mezcla combustible bajo el collar.", "206-4.3"),
+        )),
+        ("SOLDADURA  //  206-3.5 · 206-4.4 a 206-4.7 · Art. 210", (
+            ("Costuras del collar y venteo", "Si se ejecutan cordones "
+             "circunferenciales de filete en los extremos, las costuras "
+             "longitudinales del collar se sueldan a tope con penetración completa "
+             "(Fig. 206-1.1.2-1) y se prevé venteo durante el cordón de cierre "
+             "final. Si no se ejecutan los cordones circunferenciales (Type A), las "
+             "costuras longitudinales pueden ser una junta a tope en ranura o una "
+             "junta solapada soldada con filete (Fig. 206-1.1.1-1).", "206-4.4"),
+            ("Cateto del filete de extremo", cateto,
+             "206-3.5 · Fig. 206-3.5-1 y -2"),
+            ("Procedimiento y bajo hidrógeno", "El procedimiento de los cordones "
+             "circunferenciales de filete debe ser adecuado a los materiales y a "
+             "las condiciones de severidad de enfriamiento del cordón en la "
+             "ubicación instalada, conforme al código de construcción o "
+             "post-construcción. Debería usarse técnica de soldadura de bajo "
+             "hidrógeno. Para costuras longitudinales sin fleje de respaldo, ver "
+             "206-4.5.", "206-4.4"),
+            ("Presión durante la reparación", "Se recomienda reducir la presión de "
+             "operación del portador manteniendo el flujo mientras se ejecuta la "
+             "reparación; ver API RP 2201 para recomendaciones de soldadura de "
+             "tubería en servicio. La presión recomendada durante la instalación "
+             "del collar está entre el 50 % y el 80 % de la presión de operación. "
+             "La línea también puede sacarse de servicio para reparar, pero "
+             "entonces hay que considerar la perforación por quemado.", "206-4.5"),
+            ("Soldadura en servicio", "Se consulta el Art. 210. Como mínimo, la "
+             "calificación del proceso de soldadura debe tener en cuenta (a) el "
+             "potencial de agrietamiento inducido por hidrógeno en la zona afectada "
+             "por el calor, por la velocidad de enfriamiento acelerada y el "
+             "hidrógeno del ambiente de soldadura; (b) el riesgo de formar una ZAT "
+             "inaceptablemente dura por la química del material base del collar y "
+             "del tubo; y (c) la posible perforación del tubo.",
+             "206-4.6 · Art. 210"),
+            ("Calificación de procedimientos y soldadores", "Los procedimientos, "
+             "soldadores y operadores se califican conforme al código "
+             "post-construcción vigente. Si no se especifica otra cosa, se usa ASME "
+             "BPVC Sección IX para calificación de procedimiento y de desempeño. La "
+             "guía de precalentamiento y de tratamiento térmico post-soldadura, y "
+             "la de soldadura en servicio cuando aplique, se toma del código de "
+             "construcción o post-construcción aplicable.", "206-4.7"),
+            ("Consumibles del proyecto", "Consumible compatible de resistencia "
+             "igual o mayor que el metal base, técnica de bajo hidrógeno. Ajustar "
+             "al WPS calificado del proyecto.",
+             "206-2.10 · 206-4.4 · WPS del proyecto", "EDITABLE"),
+        )),
+        ("EXAMEN  //  206-5", (
+            ("Examen visual", "Todos los ajustes del collar se inspeccionan antes "
+             "de soldar. Las soldaduras se examinan visualmente.", "206-5.1"),
+            ("Collar Type A", "En un collar Type A, la zona de raíz del cordón se "
+             "examina visualmente durante la soldadura para verificar penetración y "
+             "fusión adecuadas. Las costuras longitudinales se examinan por "
+             "líquidos penetrantes, partículas magnéticas o ultrasonido una vez "
+             "completadas.", "206-5.2"),
+            ("Collar Type B", "En un collar Type B, el material base del tubo "
+             "portador se examina por ultrasonido —espesor, grietas y posible "
+             "laminación— en la zona donde se aplicarán los cordones "
+             "circunferenciales. Si no se usa fleje de respaldo bajo la costura "
+             "longitudinal, la zona bajo ella también se examina por ultrasonido "
+             "antes de soldar. Las costuras longitudinales se inspeccionan al "
+             "terminar. La primera y la última pasada de los cordones "
+             "circunferenciales deberían examinarse por partículas magnéticas o "
+             "líquidos penetrantes después de soldar.", "206-5.3"),
+            ("Agrietamiento diferido", "Donde el agrietamiento diferido sea una "
+             "preocupación, el examen no destructivo de los cordones "
+             "circunferenciales no debería ejecutarse antes de 24 h de terminada la "
+             "soldadura. Como alternativa, no antes de 48 h de terminada una "
+             "soldadura en servicio cuando haya alta probabilidad de agrietamiento "
+             "por hidrógeno.", "206-5.3"),
+            ("Examen en proceso", "El propietario puede exigir examen visual «en "
+             "proceso» completo de la instalación soldada del collar, tal como lo "
+             "describe el para. 344.7 de ASME B31.3. Cuando se ejecuta, los "
+             "resultados se documentan. Los exámenes los realiza personal que "
+             "cumple los requisitos de calificación del código de construcción o "
+             "post-construcción aplicable.", "206-5.4"),
+            ("Procedimiento y criterio de END", "Los procedimientos de examen no "
+             "destructivo deberían calificarse conforme al código de construcción o "
+             "post-construcción aplicable; si ese código no fija requisitos de "
+             "procedimiento, debería calificarse según ASME BPVC Sección V. El "
+             "criterio de aceptación debería ser el del código aplicable, salvo que "
+             "el propio Art. 206 dé criterios alternativos; donde no haya criterio, "
+             "debería usarse el de ASME BPVC Sección VIII, División 1 o 2.",
+             "206-5.5"),
+        )),
+        ("PRUEBA  //  206-6 TESTING · Art. 501", (
+            ("Prueba de hermeticidad del anular", "Si el propietario lo requiere, "
+             "debería ejecutarse una prueba de hermeticidad en collares Type B, por "
+             "una de dos vías: (a) presurizar el anular entre el collar y el tubo "
+             "portador conforme al código de construcción o post-construcción "
+             "aplicable, con una presión de prueba elegida de modo que el tubo "
+             "interior NO colapse por presión externa; o (b) ejecutar una prueba de "
+             "fuga sensible como la describe el para. 345.8 de ASME B31.3 u otra "
+             "norma nacional reconocida. El Art. 501 da guía adicional.",
+             "206-6(a) · 206-6(b) · Art. 501"),
+            ("Energía neumática", "Si la prueba se ejecuta con gas, la energía "
+             "almacenada exige precauciones de seguridad y una distancia mínima al "
+             "personal. El Paso 8 del anexo del motor las calcula con las "
+             "ecuaciones del Apéndice Obligatorio 501-II/III, leídas de resources/.",
+             "Art. 501-II / 501-III"),
+        )),
+    )
+    return build_especificaciones(
+        wb, ESPEC_206, COLLAR_MOTOR,
+        "ESPECIFICACIONES TECNICAS — COLLAR DE ENCIERRO TOTAL (ASME PCC-2 Art. 206)",
+        "Fabricacion, examen y prueba. Cada fila transcribe el parrafo de PCC-2 "
+        "que cita a su derecha; las cifras las lee del motor Collar_PCC2_Art206.",
+        bloques)
 
 
 # ---------------------------------------------------------------------------
@@ -10076,16 +10566,62 @@ ARBOL = Nodo(
                                     hoja="NAV_CAL_PCC2",
                                     banda="ARTICULOS CARGADOS",
                                     hijos=(
-                                        _hoja_final(
-                                            "ART. 212 · PARCHE DE PLANCHA",
-                                            "Parche con soldadura de filete, Art. 212",
-                                            "Tuberia B31.3 · virola BPVC VIII-1",
-                                            "Parche_PCC2_Art212"),
-                                        _hoja_final(
-                                            "ART. 206 · COLLAR DE ENCIERRO TOTAL",
-                                            "Sleeve de refuerzo full-encirclement, Type A/B",
-                                            "Tuberia B31.3 · virola/cabezal BPVC VIII-1",
-                                            "Collar_PCC2_Art206"),
+                                        # Fase 9: cada articulo pasa de ser una
+                                        # tarjeta que abre el motor a ser un NIVEL
+                                        # con los documentos de ese articulo. Es
+                                        # lo que pedia el plan —las hojas nuevas
+                                        # cuelgan del nodo del motor— y un nodo
+                                        # tiene `hoja` o `destino`, nunca las dos:
+                                        # para tener hijos, el articulo necesita
+                                        # su propia hoja NAV_*. El motor sigue a
+                                        # un clic desde su pantalla, y desde el
+                                        # motor hay boton directo a cada
+                                        # documento (no hay que subir para
+                                        # cambiar de pestana).
+                                        Nodo(
+                                            titulo="ART. 212 · PARCHE DE PLANCHA",
+                                            corto="ART. 212",
+                                            subtitulo=f"{T_CAL} · ASME PCC-2 Art. 212 "
+                                                      f"(Fillet Welded Patches)",
+                                            lineas=("Parche con soldadura de filete",
+                                                    "Motor, especificaciones e "
+                                                    "instrucciones"),
+                                            hoja="NAV_CAL_ART212",
+                                            banda="DOCUMENTOS DE ESTE ARTICULO",
+                                            hijos=(
+                                                _hoja_final(
+                                                    "MOTOR DE CALCULO",
+                                                    "Diseno del parche, Art. 212",
+                                                    "Tuberia B31.3 · virola BPVC VIII-1",
+                                                    "Parche_PCC2_Art212"),
+                                                _hoja_final(
+                                                    "ESPECIFICACIONES TECNICAS",
+                                                    "Fabricacion, examen y prueba",
+                                                    "212-3.4 · 212-4 · 212-5 · 212-6",
+                                                    ESPEC_212),
+                                            )),
+                                        Nodo(
+                                            titulo="ART. 206 · COLLAR DE ENCIERRO TOTAL",
+                                            corto="ART. 206",
+                                            subtitulo=f"{T_CAL} · ASME PCC-2 Art. 206 "
+                                                      f"(Full Encirclement Sleeves)",
+                                            lineas=("Sleeve de refuerzo, Type A/B",
+                                                    "Motor, especificaciones e "
+                                                    "instrucciones"),
+                                            hoja="NAV_CAL_ART206",
+                                            banda="DOCUMENTOS DE ESTE ARTICULO",
+                                            hijos=(
+                                                _hoja_final(
+                                                    "MOTOR DE CALCULO",
+                                                    "Diseno del collar, Art. 206",
+                                                    "Tuberia B31.3 · Type A y Type B",
+                                                    "Collar_PCC2_Art206"),
+                                                _hoja_final(
+                                                    "ESPECIFICACIONES TECNICAS",
+                                                    "Fabricacion, examen y prueba",
+                                                    "206-2 · 206-4 · 206-5 · 206-6",
+                                                    ESPEC_206),
+                                            )),
                                         _marcador(
                                             "RESTO DE ARTICULOS DE PCC-2",
                                             "Manguitos, envolventes, obturaciones",
@@ -10993,9 +11529,11 @@ DIVERGENCIAS_REEMPLAZADAS.update({
     ("Parche_PCC2_Art212", "E118"): (
         "La presion de diseno contra la que se compara P_max del parche se lee "
         "de D28 en vez de D27 (retirada)."),
-    ("Parche_PCC2_Art212", "B128"): (
-        "La presion de prueba hidrostatica se calcula sobre D28 (presion de "
-        "diseno maxima admisible) en vez de D27. El factor (D46) no cambia."),
+    # B128 (la prueba de hermeticidad) estuvo aqui en la Fase 2 —su presion de
+    # prueba pasaba a leerse de D28—, y la Fase 9 la RETIRA de la hoja junto con
+    # el resto de la seccion de especificaciones tecnicas. Una celda no puede
+    # estar en las dos tablas (TestParidadHojaParche lo exige), asi que su
+    # entrada se fue a DIVERGENCIAS_DECLARADAS, mas abajo.
 })
 
 # --- Fase 3: la Seccion de Material sube a la posicion 2 --------------------
@@ -11022,8 +11560,10 @@ DIVERGENCIAS_REEMPLAZADAS.update({
     ("Parche_PCC2_Art212", "A100"): _FASE3_RENUMERA,
     ("Parche_PCC2_Art212", "A111"): _FASE3_RENUMERA,
     ("Parche_PCC2_Art212", "A121"): _FASE3_RENUMERA + (
-        " Numerada 8 mientras siga en esta hoja; la Fase 9 la saca a pestana "
-        "propia y entonces pierde el numeral."),
+        " Fase 9: la seccion sale de esta hoja a Espec_PCC2_Art212 y con ella "
+        "el numeral -ya no es una seccion de este motor-. La fila se conserva "
+        "como LETRERO que dice adonde se fue: quien busque la seccion 8 aqui "
+        "tiene que encontrar la pista, no un hueco."),
     ("Parche_PCC2_Art212", "A17"): (
         "La banda de datos de entrada pierde su parentetico '(campo con linea "
         "inferior = editable)': describia el sistema visual ANTERIOR y con la "
@@ -11146,6 +11686,35 @@ DIVERGENCIAS_DECLARADAS.update({
         "Fase 4: nota de cascada repetida. La explicacion vive una sola vez en "
         "G41 (nivel 0) y esta fila la hereda; ver TestDiagnosticoPlegable.")
     for r in range(43, 48)
+})
+
+# --- Fase 9: las especificaciones tecnicas salen a su propia pestana ---------
+# Las siete filas de parrafo (93-99 del oracle; 122-128 tras el mapa de la Fase
+# 3) se retiran de la hoja del motor y renacen, con la cita del parrafo de PCC-2
+# que sostiene cada una, en Espec_PCC2_Art212. Es el bloque mas denso de la hoja
+# y el unico que no se consulta mientras se calcula.
+#
+# Se retiran el rotulo (columna A) y el parrafo (columna B, que estaba fusionado
+# B:G). La banda A121 NO se retira: se reescribe como letrero y por eso sigue en
+# DIVERGENCIAS_REEMPLAZADAS, arriba.
+_FASE9_A_PESTANA = (
+    "Fase 9: la seccion de especificaciones tecnicas sale de la hoja del motor "
+    "a Espec_PCC2_Art212, donde cada especificacion cita el parrafo de PCC-2 que "
+    "la sostiene (212-3.4, 212-4, 212-5, 212-6 y Art. 210) — la cita no cabia "
+    "en una fila de esta hoja. La fila queda vacia; el letrero de A121 dice "
+    "adonde se fue.")
+DIVERGENCIAS_DECLARADAS.update({
+    ("Parche_PCC2_Art212", f"{col}{MAPA_FILAS_212[r]}"): _FASE9_A_PESTANA
+    for r in range(93, 100) for col in ("A", "B")
+})
+DIVERGENCIAS_REEMPLAZADAS.update({
+    ("Parche_PCC2_Art212", "A3"): (
+        "Fase 9: el boton de retorno dice '<<< VOLVER A ART. 212' en vez de "
+        "'<<< VOLVER A PCC-2'. No es un cambio de texto: el articulo paso de ser "
+        "una tarjeta que abre el motor a ser un NIVEL del arbol con los "
+        "documentos de ese articulo (motor, especificaciones e instrucciones), asi "
+        "que el padre de esta hoja cambio. El texto lo deriva _texto_volver() de "
+        "PADRE; no se escribe a mano en ningun sitio."),
 })
 
 # Los rgb se comparan por sus SEIS digitos de color, sin el alfa: openpyxl
@@ -11730,6 +12299,10 @@ def main(argv=None):
     build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619,
                         b313c=b313c, iid1ac=iidc, iidbc=iidbc,
                         umbrales=umbrales)
+    # Fase 9: las especificaciones tecnicas de cada articulo, en pestana propia.
+    # Van DESPUES de sus motores: leen celdas suyas y la hoja tiene que existir.
+    build_especificaciones_art212(wb)
+    build_especificaciones_art206(wb)
     retirar_datos_ref(wb)
 
     counts = {

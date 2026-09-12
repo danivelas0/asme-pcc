@@ -722,7 +722,15 @@ class TestParidadHojaParche:
             < B.FILA_ANEXO_FLUJO_212
             and openpyxl.worksheet.cell_range.CellRange(str(r)).min_col
             <= B.MOTOR_NCOLS)
-        assert reales == oracle["fusionados"]
+        # Una celda RETIRADA se lleva su fusionado. Las siete filas de
+        # especificaciones tecnicas (Fase 9) estaban fusionadas B:G y ya no
+        # existen: exigir su merge seria exigir la fusion de una fila vacia.
+        # Se filtra por el ANCLA del rango, que es la celda que se declaro.
+        esperados = [
+            f for f in oracle["fusionados"]
+            if (self.HOJA, f.split(":")[0].replace("$", ""))
+            not in B.DIVERGENCIAS_DECLARADAS]
+        assert reales == esperados
 
 
 # ---------------------------------------------------------------------------
@@ -1554,8 +1562,24 @@ class TestBuildParcheContraOracle:
         assert ws["D116"].value == "=E94", ws["D116"].value
         assert ws["E118"].value == "=$D$29", ws["E118"].value
         # La presion de prueba hidrostatica sale de la misma presion de diseno.
-        # D75 es el factor de prueba hidrostatica tras la Fase 7 (era D46).
-        assert "$D$75*$D$29" in str(ws["B128"].value), ws["B128"].value
+        # D75 es el factor de prueba hidrostatica tras la Fase 7 (era D46). La
+        # Fase 9 se llevo esa fila a Espec_PCC2_Art212, asi que se comprueba
+        # donde vive ahora: la formula sigue leyendo las dos celdas del motor.
+        assert ws["B128"].value is None, ws["B128"].value
+        espec = [f for _, f, _ in self._filas_espec_212()
+                 if isinstance(f, str) and "$D$75" in f]
+        assert espec and all(
+            f"{B.MOTOR}!$D$75*{B.MOTOR}!$D$29" in f for f in espec), espec
+
+    @staticmethod
+    def _filas_espec_212():
+        """Las filas de Espec_PCC2_Art212 tal como las declara el builder."""
+        import openpyxl as _op
+        wb = _op.Workbook()
+        B.build_especificaciones_art212(wb)
+        ws = wb[B.ESPEC_212]
+        return [(ws.cell(r, 1).value, ws.cell(r, 2).value, ws.cell(r, 7).value)
+                for r in range(1, ws.max_row + 1)]
 
 
 class TestColumnasOcultasApuntanBien:
@@ -1837,7 +1861,11 @@ class TestNumeracionDeSecciones:
         (88, "5.  CÁLCULO DE CARGAS Y SOLDADURA"),
         (100, "6.  RESULTADOS DEL DISEÑO"),
         (111, "7.  VERIFICACIONES"),
-        (121, "8.  ESPECIFICACIONES TÉCNICAS"),
+        # La Fase 9 saco las especificaciones tecnicas a Espec_PCC2_Art212, y con
+        # ellas el numeral: ya no son una seccion de esta hoja. La fila se queda
+        # como LETRERO, y eso es lo que se fija aqui — si alguien la borrase, la
+        # seccion 8 desapareceria sin dejar rastro de adonde se fue.
+        (121, "ESPECIFICACIONES TÉCNICAS"),
     )
     ORDEN_206 = (
         (16, "1. DATOS DE ENTRADA"),
@@ -2138,6 +2166,96 @@ class TestDatosRefRetirada:
     def test_la_deuda_de_listas_fijas_esta_saldada(self):
         import build_db_materiales as B
         assert B.DEUDA_LISTA_FIJA == {}
+
+
+# ---------------------------------------------------------------------------
+# Fase 9 — las especificaciones tecnicas, en pestana propia
+# ---------------------------------------------------------------------------
+# El valor de estas hojas es la CITA: el texto ya se generaba antes (en el 212) y
+# lo que no tenia era de donde salia. Por eso la prueba central es que ninguna
+# fila se quede sin clausula, y que toda cifra que la hoja toma del motor apunte
+# a una celda que de verdad tiene contenido — el defecto que esta fase destapo:
+# la formula del metodo seguia leyendo la fila de material de lista fija que se
+# retiro en la Tarea 7-8, e imprimia "Plancha  de 8 mm" con el hueco en medio.
+class TestEspecificacionesTecnicas:
+    PARES = ((B.ESPEC_212, "Parche_PCC2_Art212", ("212-4", "212-5", "212-6")),
+             (B.ESPEC_206, "Collar_PCC2_Art206", ("206-4", "206-5", "206-6")))
+
+    def _filas(self, ws):
+        """(fila, concepto, texto, cita) de cada fila de especificacion."""
+        return [(r, ws.cell(r, 1).value, ws.cell(r, 2).value, ws.cell(r, 7).value)
+                for r in range(1, ws.max_row + 1)
+                if ws.cell(r, 2).value is not None
+                and ws.cell(r, 1).value != "Concepto"]
+
+    def test_las_dos_hojas_existen_y_cuelgan_de_su_articulo(self, wb):
+        for hoja, motor, _ in self.PARES:
+            assert hoja in wb.sheetnames
+            assert hoja in B.NAVEGABLES
+            # Hermanas del motor bajo el nodo del articulo, no hijas del motor:
+            # un nodo tiene `hoja` o `destino`, nunca las dos.
+            assert B.PADRE[hoja] == B.PADRE[motor]
+            assert B.PADRE[hoja].startswith("NAV_CAL_ART")
+
+    def test_ninguna_fila_se_queda_sin_clausula(self, wb):
+        for hoja, _, _ in self.PARES:
+            sin_cita = [r for r, _, _, cita in self._filas(wb[hoja])
+                        if not str(cita or "").strip()]
+            assert sin_cita == [], f"{hoja}: filas sin clausula citada: {sin_cita}"
+
+    def test_toda_cifra_viene_de_una_celda_viva_del_propio_motor(self, wb):
+        """Una referencia a una celda vacia no da error en Excel: da un hueco en
+        medio de la frase. Y una referencia a OTRO motor acoplaria dos motores
+        (regla 13): estas hojas solo leen el suyo."""
+        for hoja, motor, _ in self.PARES:
+            ws = wb[hoja]
+            for r, _, texto, _ in self._filas(ws):
+                if not (isinstance(texto, str) and texto.startswith("=")):
+                    continue
+                for h, col, fila in re.findall(r"(\w+)!\$([A-Z]+)\$(\d+)", texto):
+                    assert h == motor, f"{hoja}!B{r} lee {h}, no {motor}"
+                    v = wb[motor][f"{col}{fila}"].value
+                    assert v is not None, f"{hoja}!B{r} lee {h}!{col}{fila}, vacia"
+
+    def test_el_contenido_migrado_esta_entero(self, wb):
+        """Las tres partes del articulo que el plan manda citar —fabricacion,
+        examen y prueba— tienen que estar las tres. Una hoja que solo citara la
+        fabricacion habria perdido la mitad del bloque que salio del motor."""
+        for hoja, _, marcas in self.PARES:
+            citas = " ".join(str(c) for _, _, _, c in self._filas(wb[hoja]))
+            for m in marcas:
+                assert m in citas, f"{hoja}: no cita {m}"
+
+    def test_ninguna_funcion_de_matriz_dinamica(self, wb):
+        for hoja, _, _ in self.PARES:
+            for fila in wb[hoja].iter_rows():
+                for c in fila:
+                    if isinstance(c.value, str):
+                        for mala in DINAMICAS:
+                            assert mala not in c.value, f"{hoja}!{c.coordinate}"
+
+    def test_el_atajo_va_y_vuelve(self, wb):
+        """Del motor a sus especificaciones y de vuelta, sin subir al arbol."""
+        for hoja, motor, _ in self.PARES:
+            assert (B.FILA_BTN_ESPEC, hoja) in [
+                (c.row, k) for c, k in _claves(wb[motor])], f"{motor} -> {hoja}"
+            assert motor in [k for _, k in _claves(wb[hoja])], f"{hoja} -> {motor}"
+
+    def test_no_hay_amarillo_en_estas_hojas(self, wb):
+        """El amarillo esta acotado a los dos motores (leyenda de la Fase 1): el
+        campo editable de esta hoja se distingue como en un buscador, por la
+        linea inferior de tinta. Lo comprueba tambien el guardia global del
+        amarillo; aqui se fija que SI hay campos editables, o el guardia pasaria
+        por no haber ninguno."""
+        for hoja, _, _ in self.PARES:
+            ws = wb[hoja]
+            editables = [c.coordinate for fila in ws.iter_rows(max_col=B.ESPEC_NCOLS)
+                         for c in fila
+                         if not isinstance(c, openpyxl.cell.cell.MergedCell)
+                         and c.hyperlink is None and c.protection is not None
+                         and c.protection.locked is False]
+            assert editables, f"{hoja}: ninguna especificacion es editable"
+            assert hoja not in HOJAS_CON_AMARILLO
 
 
 # ---------------------------------------------------------------------------

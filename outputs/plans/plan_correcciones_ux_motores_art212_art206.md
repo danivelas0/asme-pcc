@@ -561,7 +561,50 @@ teclear y lo que el botón borra sean el mismo conjunto por construcción.*
 
 </details>
 
-### Fase 9 — Pestaña "Especificaciones Técnicas" por motor
+### Fase 9 — Pestaña "Especificaciones Técnicas" por motor ✅
+- [x] `build_especificaciones()` (genérica) + `build_especificaciones_art212/206()`:
+      `Espec_PCC2_Art212` (21 filas) y `Espec_PCC2_Art206` (20 filas, **no existían**).
+      Layout `Concepto | Especificación (B:F) | Cláusula citada (G)`, alto de fila
+      calculado del largo del texto (Excel no autoajusta una fila fusionada).
+- [x] **La cita es el motivo de la pestaña.** El texto del 212 ya se generaba bien; lo
+      que no tenía era de dónde salía, y en una fila de la hoja del motor no cabía.
+      Cada fila transcribe su párrafo de `art_212.json` / `art_206.json` y lo cita:
+      212-1/212-2, 212-3.4 (ec. 4 y 5 + su NOTA), 212-4(a) a (g), 212-5(a) a (e),
+      212-6(a) a (d) y App. 501; 206-1.1, 206-2.1 a 2.10, 206-3.5/3.10/3.11,
+      206-4.1 a 4.7, 206-5.1 a 5.5 y 206-6(a)(b).
+- [x] **El árbol gana un nivel por artículo** (`NAV_CAL_ART212` / `NAV_CAL_ART206`):
+      el plan pedía las hojas nuevas «como hijas del nodo de cada motor», y un `Nodo`
+      tiene `hoja` **o** `destino`, nunca las dos — para tener hijos, el artículo
+      necesita su propia hoja NAV. El motor y sus documentos quedan hermanos bajo el
+      artículo, y desde el motor hay **botón directo** a cada pestaña (H1:J1/H2:J2,
+      encima del de reinicio): no hay que subir un nivel para cambiar de pestaña.
+      `NAVEGABLES` pasa de 36 a 41 y `HojasNavegables()` se sincronizó en preorden.
+- [x] La Sección 8 sale de la hoja del 212: 14 celdas **declaradas** (retiradas) y sus
+      7 fusionados con ellas — `test_rangos_fusionados` filtra ahora por el ancla
+      declarada, porque una celda retirada se lleva su merge. `B128` pasó de
+      REEMPLAZADA a DECLARADA (una celda no puede estar en las dos tablas). La banda
+      **se conserva como letrero** («ESPECIFICACIONES TÉCNICAS // EN SU PROPIA PESTAÑA»):
+      quien busque la sección 8 tiene que encontrar adónde se fue, no un hueco.
+- [x] `A3` del 212 entra en REEMPLAZADAS: el botón de retorno dice ahora «VOLVER A
+      ART. 212» porque cambió el padre. El texto lo deriva `_texto_volver()` de `PADRE`.
+- [x] **Dos defectos encontrados al recalcular en Excel real** (no los veía openpyxl):
+      1. La fórmula del método seguía leyendo `$D$23` → tras el mapa, `D24`, que es la
+         **fila de material de lista fija retirada en la Tarea 7-8**: imprimía
+         «Plancha  de 8 mm» con el hueco en medio. Ahora lee el `material_id resuelto`
+         de la cascada de la Sección 2 (`E48`), que es la fuente auditada.
+      2. El cateto del 206 lee `D121`, que en Type A **no devuelve un número** sino
+         «No aplica - Type A (206-1.1.1)»: el `TEXT()` lo dejaba pasar y la fila decía
+         «w = No aplica - Type A (206-1.1.1) mm». Se distingue con `ISNUMBER`.
+- [x] Las cinco fórmulas nuevas **recalculadas en Excel real**, 0 errores.
+- [x] `TestEspecificacionesTecnicas` (7 pruebas): ninguna fila sin cláusula, toda
+      referencia apunta a una celda **viva del propio motor** (el defecto 1 no puede
+      volver, y tampoco acoplar un motor con otro — regla 13), las tres partes del
+      artículo citadas, cero matriz dinámica, el atajo va y vuelve, y que hay campos
+      editables **sin** amarillo (acotado a los dos motores por la Fase 1).
+- [x] **Checkpoint:** `pytest test_dashboard.py` = **148**.
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Crear `build_especificaciones_art212(wb)` y `build_especificaciones_art206(wb)`:
       hojas nuevas navegables, mismo sistema visual del libro (no heredado).
 - [ ] Art. 212: migrar el contenido actual de la Sección 6 (método, juntas de
@@ -580,6 +623,8 @@ teclear y lo que el botón borra sean el mismo conjunto por construcción.*
       misma posición de preorden (`test_dashboard.py::TestSincroniaPythonVba`).
 - [ ] Botón de acceso desde cada motor ("📋 ESPECIFICACIONES TÉCNICAS →") y botón de
       retorno (`ANCLA_VOLVER` por defecto `(3,1,3)` debería servir; confirmar layout).
+
+</details>
 
 ### Fase 10 — Pestaña "Instrucciones" por motor (paso a paso)
 - [ ] Crear `build_instrucciones_art212(wb)` y `build_instrucciones_art206(wb)`
