@@ -8395,18 +8395,34 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     encabezado(160, ((1, "Verificación"), (4, "Requerido"), (5, "Adoptado"),
                      (6, "Resultado"), (7, "Criterio")))
 
+    # Los seis comentarios de estas dos filas los destapo la guia de uso de la
+    # Fase 10: eran las unicas celdas de formula del 212 sin nota propia, asi que
+    # su fila de la guia salia sin explicacion. El pase declara en ISSUES toda
+    # celda sin comentario, de modo que un hueco asi ya no puede quedar callado.
     lab(161, "Filete ≤ menor espesor unido", ref="w ≤ min(T_parche, t_pared)")
     ws.merge_cells("A161:C161")
-    calc("D161", "=MIN($D$29,$D$21)")
-    calc("E161", "=$D$32")
+    calc("D161", "=MIN($D$29,$D$21)",
+         "Calculo: primer tope de la NOTA de 212-3.4 — el menor de los espesores "
+         "unidos: espesor del parche (D29) y espesor de pared del componente (D21).")
+    calc("E161", "=$D$32",
+         "Calculo: repite el cateto de filete adoptado en la seccion 1 (D32), que "
+         "es el que se compara contra el tope.")
     calc("F161", '=IF(E161<=D161,"CUMPLE",'
-                 '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")')
+                 '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")',
+         "Calculo: veredicto del primer tope. La NOTA de 212-3.4 exige que el "
+         "cateto de diseno no exceda el espesor del mas delgado de los materiales "
+         "unidos. Entra al AND del dictamen global.")
 
     lab(162, "Filete ≤ 40 mm (1.5 in.)", ref="w ≤ 40 mm")
     ws.merge_cells("A162:C162")
-    calc("D162", f'={umbral(UMBR, "212_filete_max", ES_SI_212)}')
-    calc("E162", "=$D$32")
-    calc("F162", '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede el tope de la NOTA 212-3.4")')
+    calc("D162", f'={umbral(UMBR, "212_filete_max", ES_SI_212)}',
+         "Calculo: segundo tope de la NOTA de 212-3.4, leido del codigo en el "
+         "sistema activo — PCC-2 lo imprime como 40 mm (1.5 in.) y no se convierte "
+         "de una unidad a la otra (regla 9).")
+    calc("E162", "=$D$32",
+         "Calculo: repite el cateto de filete adoptado en la seccion 1 (D32).")
+    calc("F162", '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede el tope de la NOTA 212-3.4")',
+         "Calculo: veredicto del segundo tope. Entra al AND del dictamen global.")
 
     com163 = ("Nota (212-3.4b, bloque [61]): alternativamente el borde del filete "
               "puede biselarse para aumentar la garganta efectiva; en ningun caso "
@@ -8714,7 +8730,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     build_reinicio_motor(ws)
 
     # Fase 9: atajo a las especificaciones tecnicas, que dejaron esta hoja.
-    build_botones_documentos(ws, espec=ESPEC_212)
+    build_botones_documentos(ws, espec=ESPEC_212, instr=INSTR_212)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
@@ -9039,9 +9055,15 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     calc("D11", '=IF($D$10="Tuberia (B31.3)",1,IF($D$10="Cabezal/esfera (VIII-1)",3,2))',
         com_app)
     lab(12, "Codigo de construccion")
-    calc("D12", '=IF($D$11=1,"ASME B31.3","ASME BPVC VIII-1")')
+    calc("D12", '=IF($D$11=1,"ASME B31.3","ASME BPVC VIII-1")',
+         "Calculo: ASME B31.3 si MODO=1 (tuberia); ASME BPVC VIII-1 en los demas "
+         "casos. El codigo activo decide de que tabla sale el esfuerzo admisible y "
+         "cual es el criterio de aceptacion del examen.")
     lab(13, "Fuente del esfuerzo admisible")
-    calc("D13", '=IF($D$11=1,"B31.3 Tabla A-1","ASME II-D Tabla 1A")')
+    calc("D13", '=IF($D$11=1,"B31.3 Tabla A-1","ASME II-D Tabla 1A")',
+         "Calculo: cita la tabla del codigo activo de la que sale el esfuerzo "
+         "admisible S — Tabla A-1 del B31.3 si MODO=1, Tabla 1A de ASME II-D en los "
+         "demas casos.")
 
     # Fase 7: selector de sistema de unidades. Aqui cabe en la fila 14 sin
     # mover nada -esta banda ya dejaba dos filas en blanco antes de la
@@ -9112,10 +9134,18 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lab(24, "Defecto circunferencial?   [206-2.5]", com=com_circ)
     inp("D24", "No", com_circ)
     dv_list(ws, "D24", '"Si,No"', com_circ)
-    lab(25, "Temperatura de operacion", "°C")
-    inp("D25", 25)
-    lab(26, "Presion de operacion", "kg/cm2")
-    inp("D26", 5)
+    com25_206 = ("Entrada: temperatura de operacion del tubo portador. Es la "
+                 "temperatura a la que se lee el esfuerzo admisible del collar en "
+                 "la seccion de resolucion de material; no la publica ninguna "
+                 "tabla, la da el servicio.")
+    lab(25, "Temperatura de operacion", "°C", com=com25_206)
+    inp("D25", 25, com25_206)
+    com26_206 = ("Entrada: presion de operacion del tubo portador. Es el caso "
+                 "'Operacion' de la seccion de calculo de espesor; el espesor "
+                 "gobernante NO sale de ella sino de la presion de diseno "
+                 "(206-3.3).")
+    lab(26, "Presion de operacion", "kg/cm2", com=com26_206)
+    inp("D26", 5, com26_206)
     # Fase 2 (modelo de presion de 2 casos, igual que el Art. 212). La fila 27
     # —"Presion de diseno tipica"— se retira: 206-3.3 dimensiona contra "the
     # maximum allowable design pressure" (resources/ASME PCC/pcc_2/
@@ -9126,18 +9156,35 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
        "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la "
        "que gobierna el t_req de Type B (seccion 'Calculo de espesor "
        "requerido'), no un valor tipico intermedio.")
-    inp("D28", 20)
-    lab(29, "Espesor adoptado del sleeve", "mm")
+    inp("D28", 20,
+        "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la que "
+        "gobierna el t_req de Type B, no un valor tipico intermedio.")
+    com29_206 = ("Entrada: espesor nominal que usted adopta para el collar (T_s "
+                 "de las Figs. 206-3.5-1/-2). La verificacion lo compara contra el "
+                 "T_s,min gobernante; tambien decide el cateto del filete de "
+                 "extremo, que cambia segun T_s <= 1,4 T_p o no.")
+    lab(29, "Espesor adoptado del sleeve", "mm", com=com29_206)
     ws.cell(29, 2, "T_s").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D29", 8)
-    lab(30, "Longitud del defecto", "mm", "Entrada: 206-3.4.")
-    inp("D30", 100)
-    lab(31, "Luz radial sleeve-portador", "mm")
+    inp("D29", 8, com29_206)
+    com30_206 = ("Entrada: longitud del defecto medida en campo, a lo largo del "
+                 "eje del tubo. Fija la longitud minima del collar: 206-3.4 exige "
+                 "que sobrepase el defecto por los dos extremos.")
+    lab(30, "Longitud del defecto", "mm", com=com30_206)
+    inp("D30", 100, com30_206)
+    com31_206 = ("Entrada: luz radial entre collar y tubo portador (G de las "
+                 "Figs. 206-3.5-1/-2), medida tras el ajuste. 206-4.1 pide en "
+                 "general ajuste 'sin luz' y admite un maximo; la verificacion la "
+                 "compara contra ese maximo, y G se suma al cateto del filete.")
+    lab(31, "Luz radial sleeve-portador", "mm", com=com31_206)
     ws.cell(31, 2, "G").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D31", 1.5)
-    lab(32, "Longitud adoptada del sleeve", "mm", "Entrada: 206-3.4.")
+    inp("D31", 1.5, com31_206)
+    com32_206 = ("Entrada: longitud que usted adopta para el collar. La "
+                 "verificacion la compara contra la minima que exige 206-3.4 "
+                 "(longitud del defecto mas el sobrepaso por cada extremo, y nunca "
+                 "menos del minimo absoluto del codigo).")
+    lab(32, "Longitud adoptada del sleeve", "mm", com=com32_206)
     ws.cell(32, 2, "L_s").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D32", 250)
+    inp("D32", 250, com32_206)
 
     # Fila 33: selector de norma dimensional (nivel 0 de la cascada). Va al final
     # de la seccion 1 porque las filas 18-32 estan ocupadas y no pueden correrse
@@ -9168,7 +9215,10 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lab(37, "S(T) del sleeve", "MPa",
        "Calculo: trae el S(T) del sleeve resuelto en la seccion de resolucion "
        "de material si su Dictamen de rango es OK; NA() si no.")
-    calc("D37", f'=IF({dictamen_sleeve}="OK",{s_t_sleeve},NA())')
+    calc("D37", f'=IF({dictamen_sleeve}="OK",{s_t_sleeve},NA())',
+         "Calculo: trae el S(T) del sleeve resuelto en la seccion de resolucion de "
+         "material si su Dictamen de rango es OK; NA() si no. Un NA() aqui propaga "
+         "hacia abajo a proposito: sin esfuerzo admisible no hay t_req que valga.")
     com_ej206 = ("Calculo: 206-3.2 — 0,80 salvo que D23='Si' (costura "
                 "longitudinal del sleeve examinada 100% por UT), en cuyo caso "
                 "1,00. NO es un lookup de la Tabla A-3 (a diferencia del Art. "
@@ -9206,12 +9256,20 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # la fila 27/28 de la seccion 1.
     header(50, ["Parametro", "", "Unidad", "Operacion", "Diseno",
                "", "Referencia / Notas"])
-    lab(51, "Presion evaluada", "kg/cm2")
-    calc("D51", "=$D$26")
-    calc("E51", "=$D$28")
-    lab(52, "Presion evaluada", "MPa")
-    calc("D52", "=D51*$D$40")
-    calc("E52", "=E51*$D$40")
+    com_pev = ("Calculo: la presion de cada caso, traida de la seccion 1 — "
+               "columna Operacion de D26 y columna Diseno de D28 (la maxima "
+               "admisible que exige 206-3.3). El t_req gobernante sale de la "
+               "columna Diseno.")
+    lab(51, "Presion evaluada", "kg/cm2", com=com_pev)
+    calc("D51", "=$D$26", com_pev)
+    calc("E51", "=$D$28", com_pev)
+    com_pev2 = ("Calculo: la misma presion del caso, convertida a la unidad de "
+                "esfuerzo con el factor de la seccion de parametros (D40). Las "
+                "ecuaciones del codigo son dimensionales: la presion y el esfuerzo "
+                "admisible tienen que entrar en la misma unidad.")
+    lab(52, "Presion evaluada", "MPa", com=com_pev2)
+    calc("D52", "=D51*$D$40", com_pev2)
+    calc("E52", "=E51*$D$40", com_pev2)
     com_treq = ("Calculo: 206-3.3 — t_req por el codigo de construccion activo "
                "(D11), misma forma que D65 de Parche_PCC2_Art212 pero con el "
                "S(T) (D62), Ej (D63) y geometria (D70/D71) del SLEEVE, no del "
@@ -9441,9 +9499,18 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
               "al dictamen global (F94).")
     lab(123, "Luz radial G (206-4.1)", None, "206-4.1 [63]", com=com123)
     ws.merge_cells("A123:C123")
-    calc("D123", f'={umbral(UMBR, "206_luz_radial", ES_SI_206)}')
-    calc("E123", "=$D$31")
-    calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede la luz maxima (206-4.1)")')
+    calc("D123", f'={umbral(UMBR, "206_luz_radial", ES_SI_206)}',
+         "Calculo: luz radial maxima admitida, leida del codigo en el sistema "
+         "activo — 206-4.1 la imprime como 2.5 mm (3/32 in.) y no se convierte de "
+         "una unidad a la otra (regla 9).")
+    calc("E123", "=$D$31",
+         "Calculo: repite la luz radial medida en la seccion 1 (D31), que es la que "
+         "se compara contra el maximo.")
+    calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede la luz maxima (206-4.1)")',
+         "Calculo: veredicto de la luz radial. 206-4.1 pide en general un ajuste "
+         "'sin luz' y admite el maximo de D123; por encima, el codigo advierte que "
+         "pueden requerirse ajustes de tamano de soldadura y de tecnica. Entra al "
+         "AND del dictamen global.")
 
     # --- PASO 5 — Presion externa, cavidades y bulging (206-3.6/3.7/3.9/3.10) -
     band(125, "PASO 5 · PRESION EXTERNA, CAVIDADES Y BULGING — 206-3.6/3.7/3.9/3.10")
@@ -9598,7 +9665,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
 
     # Fase 9: el 206 no tenia especificaciones tecnicas; ahora las tiene, en
     # pestana propia y construidas desde cero contra resources/.
-    build_botones_documentos(ws, espec=ESPEC_206)
+    build_botones_documentos(ws, espec=ESPEC_206, instr=INSTR_206)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True
@@ -10133,6 +10200,412 @@ def build_especificaciones_art206(wb):
 
 
 # ---------------------------------------------------------------------------
+# Fase 10 — Instrucciones de uso, una pestana por motor
+# ---------------------------------------------------------------------------
+# El plan pide explicar «por cada fila o celda no bloqueada qué debe insertar el
+# ingeniero» y «por cada celda de fórmula qué calcula y de qué cláusula sale».
+# Son ~45 celdas de entrada y ~200 de formula por motor, y escribirlas a mano
+# aqui seria una segunda copia de lo que el motor ya dice —la clase de copia que
+# este libro ya vio divergir dos veces (HojasNavegables, la leyenda de color)—.
+#
+# Asi que la tabla NO se escribe: se DERIVA de la hoja del motor ya construida.
+# Cada celda de un motor lleva, puesto por lab()/inp()/calc(), todo lo que esta
+# pestana necesita: el rotulo en la columna A de su fila, la unidad en C, la
+# referencia al codigo en G y un comentario de Excel que empieza por «Entrada:»
+# o «Calculo:» y dice exactamente que hacer o que calcula. El tipo de celda no se
+# declara: se lee del estado real —desbloqueada, con validacion de lista, o
+# formula—, el mismo criterio con el que la leyenda pinta y el boton de reinicio
+# limpia. Y el EJEMPLO de cada entrada es el valor del caso precargado, que es un
+# caso real ya validado.
+#
+# Lo que si se escribe a mano es lo que el motor no puede decir de si mismo: para
+# que sirve, que se hace en cada seccion, y como se leen la leyenda, el
+# conmutador de unidades, el semaforo y el boton de reinicio.
+INSTR_212, INSTR_206 = "Instruc_PCC2_Art212", "Instruc_PCC2_Art206"
+INSTR_NCOLS = 7
+INSTR_ANCHO = {"A": 10, "B": 40, "C": 13, "D": 24, "E": 24, "F": 24, "G": 30}
+INSTR_HDR = ((1, "Celda"), (2, "Qué es"), (3, "Tipo"),
+             (4, "Qué debe insertar / qué calcula"), (7, "Referencia del motor"))
+
+AVISO_INSTR = (
+    "Esta hoja se genera del propio motor: el rotulo, el tipo de celda, la "
+    "explicacion y la referencia son los que la hoja del motor lleva en cada "
+    "celda, no una copia escrita aparte. Si el motor cambia, esta hoja cambia con "
+    "el. El EJEMPLO de cada entrada es el valor del caso precargado.")
+
+
+def _celdas_con_lista(ws):
+    """Coordenadas cubiertas por una validacion de lista en `ws`."""
+    out = set()
+    for dv in ws.data_validations.dataValidation:
+        if dv.type != "list":
+            continue
+        for rango in dv.sqref.ranges:
+            for fila in range(rango.min_row, rango.max_row + 1):
+                for col in range(rango.min_col, rango.max_col + 1):
+                    out.add(f"{get_column_letter(col)}{fila}")
+    return out
+
+
+def _es_banda(ws, c):
+    """True si la celda es la banda de una seccion del motor.
+
+    Se reconoce por la ESTRUCTURA que le dio el builder —fusionada de A a G y
+    con el relleno de banda—, no por su texto: el texto de las bandas cambia
+    (numeral, parentetico, mayusculas) y un reconocimiento por cadena habria que
+    perseguirlo cada vez que se renumera una seccion.
+    """
+    if c.column != 1 or c.value is None or c.row < 4:
+        return False
+    # Bloque de tinta + macrotipografia: es lo que distingue una banda de la fila
+    # de encabezado, que comparte el relleno pero va en la mono del libro. NO se
+    # exige que este fusionada: el 212 fusiona A:G sus bandas y el 206 no, y esa
+    # diferencia es de estilo de cada motor, no de que cosa es una banda.
+    if c.font is None or c.font.name != MACRO:
+        return False
+    return (c.fill is not None and c.fill.patternType
+            and str(getattr(c.fill.fgColor, "rgb", ""))[-6:].upper() == TINTA)
+
+
+def _guia_de_celdas(ws):
+    """(banda, [(celda, rotulo, tipo, texto, referencia, ejemplo)]) del motor.
+
+    Recorre la hoja de arriba abajo en A..G y reparte cada celda de entrada o de
+    formula bajo la ultima banda de seccion que encontro. Devuelve las secciones
+    en el orden en que se leen, que es el orden en que se rellena la hoja.
+    """
+    listas = _celdas_con_lista(ws)
+    fin = _fin_tabla_motor(ws)
+    secciones, actual = [], None
+    sin_nota = []
+    for fila in ws.iter_rows(min_row=1, max_row=fin, max_col=MOTOR_NCOLS):
+        for c in fila:
+            if _es_banda(ws, c):
+                actual = (str(c.value), [])
+                secciones.append(actual)
+        if actual is None:
+            continue
+        rotulo_fila = ws.cell(fila[0].row, 1).value
+        unidad = ws.cell(fila[0].row, 3).value
+        referencia = ws.cell(fila[0].row, MOTOR_NCOLS).value
+        for c in fila[3:MOTOR_NCOLS - 1]:          # columnas D, E y F: los valores
+            if c.value is None or c.hyperlink is not None:
+                continue
+            if isinstance(c, MergedCell):
+                continue
+            formula = isinstance(c.value, str) and c.value.startswith("=")
+            entrada = _es_entrada_motor(c)
+            if not (formula or entrada):
+                continue
+            tipo = ("LISTA" if c.coordinate in listas
+                    else "SE TECLEA" if entrada else "FORMULA")
+            nota = c.comment.text if c.comment is not None else ""
+            if not nota:
+                sin_nota.append(f"{ws.title}!{c.coordinate}")
+            # La direccion de la celda queda en la guia (columna «Celda»), y es
+            # lo que distingue dos columnas de la misma fila cuando la seccion
+            # tiene varios casos en paralelo: D es metal base u operacion, E es
+            # collar/parche o diseno. El comentario de cada celda ya lo dice.
+            rot = str(rotulo_fila or "").strip()
+            # Tras la Fase 7 el rotulo de unidad de casi toda fila es la formula
+            # del selector, `=IF(<sel>,"mm","in")`. Se muestran las DOS unidades,
+            # que es la informacion util aqui: leer "[mm / in]" dice ademas que esa
+            # fila cambia de unidad con el conmutador.
+            u = str(unidad or "")
+            if u.startswith("="):
+                m = re.search(r'"([^"]*)"\s*,\s*"([^"]*)"\s*\)\s*$', u)
+                u = f"{m.group(1)} / {m.group(2)}" if m else ""
+            if u:
+                rot = f"{rot}   [{u}]"
+            # `ejemplo` es None en una formula (no se teclea) y el valor del caso
+            # precargado en una entrada. Una entrada VACIA en el caso precargado
+            # -los cinco niveles de la cascada de material, que el caso resuelve
+            # por la via de escape- se queda como cadena vacia, y la guia lo dice
+            # en vez de callarlo: «se elige de la lista» es una instruccion, «sin
+            # ejemplo» es un hueco.
+            actual[1].append((c.coordinate, rot, tipo, nota,
+                              str(referencia or ""),
+                              None if formula else c.value))
+    if sin_nota:
+        ISSUES.append(
+            f"{ws.title}: {len(sin_nota)} celda(s) de entrada o formula sin "
+            f"comentario propio; su fila de la guia de uso queda sin explicacion "
+            f"({', '.join(sin_nota[:6])}).")
+    return [(b, filas) for b, filas in secciones if filas]
+
+
+def _plano(ws, r, c, v):
+    """Escribe TEXTO, aunque empiece por «=».
+
+    La guia copia rotulos y referencias de la hoja del motor, y ahi hay celdas
+    cuyo texto empieza por «=» —la columna de referencia dice cosas como
+    «= $D$26» para explicar de donde sale un valor—. openpyxl lo escribiria como
+    FORMULA y en la guia se evaluaria contra ESTA hoja: en vez de la explicacion
+    se veria un numero de otra fila, o un error. Mismo criterio y mismo arreglo
+    que `_txt_celda` en las hojas de la Seccion II.
+    """
+    cel = ws.cell(r, c)
+    cel.value = "" if v is None else str(v)
+    if cel.value[:1] in "=+-@":
+        cel.data_type = "s"
+    return cel
+
+
+def _instr_parrafo(ws, r, rotulo, texto):
+    """Fila de prosa: rotulo en A:B y parrafo en C:G."""
+    a = _mrg(ws, r, 1, 2, rotulo)
+    a.font = Font(name=MONO, size=10, bold=True, color=TINTA)
+    a.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    v = _mrg(ws, r, 3, INSTR_NCOLS, texto)
+    v.font = DATA_F
+    v.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    ws.row_dimensions[r].height = 13.5 * max(1, -(-len(str(texto)) // 105)) + 4
+    return r + 1
+
+
+def build_instrucciones_motor(wb, nombre, motor, titulo, subtitulo, prosa):
+    """Guia de uso de un motor: prosa escrita + tabla derivada de la hoja.
+
+    `prosa` es ((rotulo de banda, ((rotulo, parrafo), ...)), ...) y se escribe
+    antes de la guia celda a celda.
+    """
+    if nombre in wb.sheetnames:
+        del wb[nombre]
+    ws = new_sheet(wb, nombre, titulo, subtitulo)
+    autosize(ws, INSTR_ANCHO)
+    ws.merge_cells(f"A1:{get_column_letter(INSTR_NCOLS)}1")
+    ws.merge_cells(f"A2:{get_column_letter(INSTR_NCOLS)}2")
+    _boton(ws, 3, COL_BTN_DOC_1, COL_BTN_DOC_2, TXT_BTN_MOTOR, motor)
+    _ocultar_columnas_clave(ws, (COL_BTN_DOC_1,))
+
+    r = 5
+    for rotulo_banda, filas in prosa:
+        banda(ws, r, rotulo_banda, INSTR_NCOLS)
+        r += 1
+        for rot, texto in filas:
+            r = _instr_parrafo(ws, r, rot, texto)
+        r += 1
+
+    banda(ws, r, "GUIA CELDA A CELDA  //  DERIVADA DE LA HOJA DEL MOTOR",
+          INSTR_NCOLS)
+    r += 1
+    n_entradas = n_formulas = 0
+    for seccion, filas in _guia_de_celdas(wb[motor]):
+        # La banda de la seccion del motor se repite aqui TAL CUAL, incluido su
+        # numeral: es la unica forma de que el ingeniero sepa en que seccion de
+        # la hoja esta la celda que esta leyendo.
+        s = _mrg(ws, r, 1, INSTR_NCOLS, seccion)
+        s.font = Font(name=MACRO, size=10, color=TINTA)
+        s.fill = PatternFill("solid", fgColor=PAPEL_2)
+        s.alignment = Alignment(vertical="center", indent=1)
+        franja(ws, r, 1, INSTR_NCOLS)
+        r += 1
+        for j, h in INSTR_HDR:
+            c = ws.cell(r, j, h)
+            c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
+        for j in range(5, 7):
+            c = ws.cell(r, j)
+            c.fill, c.border = HDR_FILL, BOX_FRANJA
+        ws.merge_cells(start_row=r, start_column=4, end_row=r, end_column=6)
+        r += 1
+        for celda, rot, tipo, nota, ref, ejemplo in filas:
+            ws.cell(r, 1, celda).font = Font(name=MONO, size=9, bold=True,
+                                             color=TINTA)
+            b = _plano(ws, r, 2, rot)
+            b.font = DATA_F
+            b.alignment = Alignment(vertical="top", wrap_text=True)
+            t = ws.cell(r, 3, tipo)
+            t.font = Font(name=MONO, size=9, bold=True,
+                          color=TINTA if tipo == "FORMULA" else ROJO)
+            if ejemplo is None:
+                texto = nota
+            elif str(ejemplo).strip() == "":
+                texto = (f"{nota}  ·  Ejemplo: vacia en el caso precargado; se "
+                         f"rellena eligiendo de la lista desplegable.")
+            else:
+                texto = f"{nota}  ·  Ejemplo: {ejemplo}"
+
+            v = _mrg(ws, r, 4, 6)
+            _plano(ws, r, 4, texto)
+            v.font = DATA_F
+            v.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+            g = _plano(ws, r, 7, ref)
+            g.font = SRC_F
+            g.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+            ws.row_dimensions[r].height = 12.5 * max(
+                1, -(-len(str(texto)) // 72), -(-len(str(rot)) // 38)) + 3
+            n_entradas += tipo != "FORMULA"
+            n_formulas += tipo == "FORMULA"
+            r += 1
+        r += 1
+
+    ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=INSTR_NCOLS)
+    av = ws.cell(r, 1, AVISO_INSTR)
+    av.font = SRC_F
+    av.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
+    ws.row_dimensions[r].height = 30
+
+    ISSUES.append(f"{nombre}: guia de uso derivada del motor — "
+                  f"{n_entradas} celdas de entrada y {n_formulas} de formula.")
+    ws.protection.password = "0000"
+    ws.protection.sheet = True
+    return ws
+
+
+# Prosa comun a los dos motores: la leyenda de color, el conmutador de unidades,
+# el semaforo y el boton de reinicio son el mismo mecanismo en los dos, y
+# describirlos dos veces era garantizar que un dia dijeran cosas distintas.
+def _prosa_comun(motor, celda_unidad, fila_dictamen):
+    return (
+        ("COMO SE LEE LA HOJA  //  COLOR, UNIDADES, SEMAFORO Y REINICIO", (
+            ("Leyenda de color",
+             "Cada celda declara con su relleno quien la rellena, y la leyenda "
+             "esta impresa en la fila 3 de la hoja del motor: AMARILLO = la "
+             "rellena usted, tecleando o eligiendo de una lista desplegable; GRIS "
+             "= la calcula el libro y esta bloqueada; PAPEL = rotulo, unidad o "
+             "referencia. El color no se pone celda a celda: se deriva del estado "
+             "real de cada celda, asi que la leyenda no puede mentir."),
+            ("Que se teclea y que se elige",
+             "Si el dato esta tabulado en una base del libro —diametro nominal, "
+             "cedula, espesor, material— se elige de una lista desplegable y no se "
+             "teclea: esa es la regla 14 del proyecto, y existe para eliminar el "
+             "error de tecleo como clase de fallo. Lo que se teclea es lo que "
+             "ninguna tabla publica: presion y temperatura de operacion, "
+             "dimensiones del defecto, sobreespesor de corrosion y medidas de la "
+             "reparacion. La columna «Tipo» de la guia de abajo lo dice celda a "
+             "celda."),
+            ("Conmutador SI / US",
+             f"La celda {celda_unidad} de la hoja del motor elige el sistema de "
+             "unidades. Cambia DE QUE EDICION del codigo se lee —la metrica o la "
+             "U.S. Customary— y los rotulos de unidad de toda la hoja; NUNCA "
+             "convierte un valor, porque las dos ediciones son extracciones "
+             "independientes de lo que cada una imprime. Los datos que usted ya "
+             "tecleo no se convierten al cambiarlo: hay que volver a teclearlos en "
+             "el sistema nuevo. Si un material no tiene homologo en la edicion US, "
+             "el motor lo dice y bloquea el resultado en vez de dar un numero en "
+             "la unidad equivocada."),
+            ("Semaforo de aceptacion",
+             "Cada verificacion se pinta sola: VERDE cuando cumple y ROJO cuando "
+             "no. El rojo se pinta por complemento —todo lo que no sea el "
+             "resultado favorable—, asi que un error de calculo o una celda vacia "
+             "tambien salen en rojo en vez de pasar por buenos."),
+            ("Dictamen global",
+             f"La fila {fila_dictamen} de la hoja del motor es el dictamen del "
+             "diseno completo, en bloque propio. Primero resuelve la compuerta de "
+             "elegibilidad; si el material esta sin elegir o fuera de rango de "
+             "temperatura lo dice; y solo da APTO si ademas TODAS las "
+             "verificaciones cumplen. Un dictamen distinto de APTO se arregla "
+             "cambiando el DISENO o las entradas, no el motor."),
+            ("Boton de reiniciar entradas",
+             "El boton [ RESET ] de la esquina superior derecha vacia todas las "
+             "celdas de entrada de la hoja —las amarillas— y deja el motor en "
+             "blanco para un caso nuevo. Pide confirmacion, no se puede deshacer, "
+             "y no toca el formato, las listas desplegables ni las formulas. La "
+             "lista de celdas que limpia la publica el propio motor en una columna "
+             "oculta, asi que ninguna entrada nueva se le puede quedar fuera."),
+            ("Que NO hace este libro",
+             "No sustituye el criterio del ingeniero ni el codigo. Es una "
+             "herramienta de calculo trazable: todo valor normativo sale de la "
+             "extraccion auditada de la norma y cada resultado cita el parrafo del "
+             "que sale. Verificar entradas y resultados, y complementar con "
+             "WPS/PQR, ATS/JSA y los registros del propietario."),
+        )),
+    )
+
+
+def build_instrucciones_art212(wb):
+    prosa = (
+        ("QUE HACE ESTE MOTOR  //  ASME PCC-2 Art. 212", (
+            ("Para que sirve",
+             "Dimensiona una reparacion por PARCHE DE PLANCHA soldado con filete "
+             "perimetral sobre un componente que retiene presion, segun el "
+             "Art. 212 de ASME PCC-2. Resuelve el espesor requerido por presion "
+             "interna, la carga admisible del filete perimetral, el limite de "
+             "conformado en frio de la plancha y las verificaciones de aceptacion, "
+             "y ademas conduce el flujo completo de la reparacion en ocho pasos."),
+            ("Cuando NO se usa",
+             "Cuando el mecanismo de dano, su extension o el dano futuro no se "
+             "pueden caracterizar; cuando hay grietas sin arresto ni evaluacion de "
+             "aptitud para el servicio; y en servicio letal o de extrema "
+             "peligrosidad. El Paso 1 del anexo resuelve esa compuerta y un estado "
+             "bloqueante detiene el dictamen global."),
+            ("Codigo de construccion",
+             "El selector de aplicacion decide el codigo y con el la fuente del "
+             "esfuerzo admisible: ASME B31.3 (Tabla A-1) para tuberia, o ASME BPVC "
+             "Seccion VIII-1 con la Tabla 1A de la Seccion II-D para virola "
+             "cilindrica y cabezal/esfera."),
+            ("El orden en que se rellena",
+             "De arriba abajo, y la hoja esta ordenada asi a proposito: 1 datos de "
+             "entrada -> 2 resolucion del material (es otra entrada, la mas larga) "
+             "-> 3 parametros -> 4 geometria -> 5 cargas y soldadura -> 6 "
+             "resultados -> 7 verificaciones. Debajo, el anexo con los ocho pasos "
+             "del flujo. Las especificaciones tecnicas viven en su propia pestana."),
+            ("Que se hace en la seccion 2",
+             "Se identifica el material del metal base y el del parche con una "
+             "cascada de seis listas dependientes (familia -> composicion -> forma "
+             "-> especificacion -> tipo/grado -> variante) contra las bases "
+             "auditadas del libro, y el motor devuelve el esfuerzo admisible S a "
+             "la temperatura de evaluacion. La celda «Variante» es una via de "
+             "escape: si ya conoce el identificador del material, peguelo ahi. El "
+             "rastro de como se resolvio (fila localizada, puntos tabulados, T1/T2, "
+             "S en T1/T2, temperatura maxima) va PLEGADO: se abre con el «+» del "
+             "margen izquierdo para auditarlo."),
+        )),
+    ) + _prosa_comun(MOTOR, UNIDAD_212.replace("$", ""), MAPA_FILAS_212.get(90, 90))
+    return build_instrucciones_motor(
+        wb, INSTR_212, MOTOR,
+        "INSTRUCCIONES DE USO — PARCHE SOLDADO (ASME PCC-2 Art. 212)",
+        "Que hace el motor, que se rellena en cada seccion y que calcula cada "
+        "celda. La guia celda a celda se deriva de la propia hoja del motor.",
+        prosa)
+
+
+def build_instrucciones_art206(wb):
+    prosa = (
+        ("QUE HACE ESTE MOTOR  //  ASME PCC-2 Art. 206", (
+            ("Para que sirve",
+             "Dimensiona un COLLAR DE ENCIERRO TOTAL (full encirclement sleeve) "
+             "soldado sobre tuberia, segun el Art. 206 de ASME PCC-2, en sus dos "
+             "tipos: Type A, que refuerza el portador y no contiene presion, y "
+             "Type B, que si la contiene y lleva cordones circunferenciales de "
+             "cierre. Resuelve el espesor requerido, las dimensiones del collar y "
+             "las verificaciones de aceptacion, y conduce el flujo en ocho pasos."),
+            ("La eleccion del tipo es lo primero",
+             "Un defecto con FUGA exige Type B (206-2.3), y un defecto "
+             "circunferencial no lo refuerza un Type A (206-2.5). El motor guia la "
+             "eleccion y avisa cuando el tipo elegido no corresponde al defecto "
+             "declarado, pero el aviso NO decide por usted: es criterio de "
+             "ingenieria."),
+            ("Que espesor exige el codigo",
+             "El Type B se dimensiona con un espesor de pared igual o mayor que el "
+             "requerido para la PRESION DE DISENO MAXIMA ADMISIBLE del tubo "
+             "portador (206-3.3), no para la presion de operacion. Por eso el motor "
+             "evalua dos presiones —operacion y diseno— y el espesor gobernante "
+             "sale de la de diseno. El Type A tiene ademas su propio minimo de dos "
+             "tercios del espesor del portador."),
+            ("El orden en que se rellena",
+             "1 datos de entrada -> 2 resolucion del material -> 3 parametros -> 4 "
+             "geometria del collar -> 5 espesor requerido -> 6 verificaciones y "
+             "avisos, y debajo el anexo con los ocho pasos del flujo. Las "
+             "especificaciones tecnicas viven en su propia pestana."),
+            ("Que se hace en la seccion 2",
+             "Igual que en el Art. 212: el material del collar se identifica con "
+             "la cascada de seis listas dependientes contra las bases auditadas del "
+             "libro, y el motor devuelve su esfuerzo admisible a la temperatura de "
+             "evaluacion. El rastro de la resolucion va plegado y se abre con el "
+             "«+» del margen."),
+        )),
+    ) + _prosa_comun(COLLAR_MOTOR, UNIDAD_206.replace("$", ""),
+                     MAPA_FILAS_206.get(69, 69))
+    return build_instrucciones_motor(
+        wb, INSTR_206, COLLAR_MOTOR,
+        "INSTRUCCIONES DE USO — COLLAR DE ENCIERRO TOTAL (ASME PCC-2 Art. 206)",
+        "Que hace el motor, que se rellena en cada seccion y que calcula cada "
+        "celda. La guia celda a celda se deriva de la propia hoja del motor.",
+        prosa)
+
+
+# ---------------------------------------------------------------------------
 # Instrucciones y _meta
 # ---------------------------------------------------------------------------
 INSTRUCCIONES = [
@@ -10599,6 +11072,11 @@ ARBOL = Nodo(
                                                     "Fabricacion, examen y prueba",
                                                     "212-3.4 · 212-4 · 212-5 · 212-6",
                                                     ESPEC_212),
+                                                _hoja_final(
+                                                    "INSTRUCCIONES DE USO",
+                                                    "Que se rellena y que calcula cada celda",
+                                                    "Guia celda a celda del motor",
+                                                    INSTR_212),
                                             )),
                                         Nodo(
                                             titulo="ART. 206 · COLLAR DE ENCIERRO TOTAL",
@@ -10621,6 +11099,11 @@ ARBOL = Nodo(
                                                     "Fabricacion, examen y prueba",
                                                     "206-2 · 206-4 · 206-5 · 206-6",
                                                     ESPEC_206),
+                                                _hoja_final(
+                                                    "INSTRUCCIONES DE USO",
+                                                    "Que se rellena y que calcula cada celda",
+                                                    "Guia celda a celda del motor",
+                                                    INSTR_206),
                                             )),
                                         _marcador(
                                             "RESTO DE ARTICULOS DE PCC-2",
@@ -12303,6 +12786,10 @@ def main(argv=None):
     # Van DESPUES de sus motores: leen celdas suyas y la hoja tiene que existir.
     build_especificaciones_art212(wb)
     build_especificaciones_art206(wb)
+    # Fase 10: la guia de uso se DERIVA de la hoja del motor, asi que va
+    # necesariamente despues de que el motor este entero y remapeado.
+    build_instrucciones_art212(wb)
+    build_instrucciones_art206(wb)
     retirar_datos_ref(wb)
 
     counts = {

@@ -626,7 +626,56 @@ teclear y lo que el botón borra sean el mismo conjunto por construcción.*
 
 </details>
 
-### Fase 10 — Pestaña "Instrucciones" por motor (paso a paso)
+### Fase 10 — Pestaña "Instrucciones" por motor (paso a paso) ✅
+*Desviación deliberada: la tabla «por cada celda» **no se escribe, se deriva** de la hoja
+del motor ya construida. Son ~50 celdas de entrada y ~120 de fórmula por motor, y
+escribirlas a mano era una segunda copia de lo que el motor ya dice — la clase de copia
+que este libro ya vio divergir dos veces (`HojasNavegables`, la leyenda de color). Cada
+celda ya lleva puesto todo lo que la guía necesita: el rótulo en A, la unidad en C, la
+referencia en G y un comentario que empieza por «Entrada:» o «Cálculo:». El **tipo** no
+se declara: se lee del estado real (desbloqueada / con validación de lista / fórmula),
+el mismo criterio de la leyenda y del botón de reinicio. El **ejemplo** de cada entrada
+es el valor del caso precargado.*
+
+- [x] `build_instrucciones_motor()` + `_guia_de_celdas()`: `Instruc_PCC2_Art212` (244
+      filas: 51 entradas y 117 fórmulas) y `Instruc_PCC2_Art206` (31 y 55), repartidas
+      **bajo la banda de la sección del motor**, con su numeral, y en el mismo orden en
+      que se rellena la hoja.
+- [x] La prosa escrita a mano es solo lo que el motor no puede decir de sí mismo: para
+      qué sirve, cuándo NO se usa, qué se hace en cada sección, y los cuatro mecanismos
+      —leyenda de color, conmutador SI/US, semáforo y botón de reinicio— en `_prosa_comun`,
+      una sola vez para los dos motores.
+- [x] **La banda de sección se reconoce por su ESTRUCTURA** (tinta + macrotipografía), no
+      por su texto: el 212 fusiona A:G sus bandas y el 206 no, y el texto cambia cada vez
+      que se renumera una sección. La primera versión exigía el fusionado y la guía del
+      206 salió **vacía** (0 filas) sin dar error.
+- [x] **Tres defectos que la guía destapó, por ser derivada:**
+      1. **23 celdas sin comentario propio** — 6 en el 212 (los dos topes de filete del
+         Paso 4) y 17 en el 206 (temperatura, presiones, espesor, luz radial, longitudes,
+         `S(T)`, las presiones evaluadas y la verificación de luz radial). Su fila de la
+         guía salía muda. Documentadas las 23; el pase **declara en ISSUES** toda celda
+         sin comentario, así que un hueco así ya no puede quedar callado.
+      2. **La columna de referencia del motor trae textos que empiezan por `=`**
+         («= $D$26»). Copiados a la guía, openpyxl los escribía como **fórmula** y se
+         evaluaban contra la hoja de la guía: donde debía haber una explicación saldría un
+         número de otra fila. `_plano()` los fuerza a texto — mismo arreglo que
+         `_txt_celda` en la Sección II — y la prueba comprueba el **tipo** de celda, no si
+         el texto empieza por «=».
+      3. Las cinco celdas de la cascada de material están **vacías** en el caso precargado
+         (lo resuelve la vía de escape «Variante»). La guía lo dice —«se rellena eligiendo
+         de la lista desplegable»— en vez de dejar la fila sin ejemplo.
+- [x] `TestInstruccionesDeMotor` (7 pruebas). La fuerte: **la guía lista exactamente las
+      mismas celdas de entrada que el manifiesto de reinicio**, que sale del mismo estado
+      por otro camino — si las dos listas no coinciden, una está mal y no hay que adivinar
+      cuál (51 = 51 y 31 = 31).
+- [x] Árbol y `HojasNavegables()`: `NAVEGABLES` pasa de 41 a **43**. Botón
+      `[ ? ] INSTRUCCIONES DE ESTE MOTOR` en H2:J2 de cada motor, **además** del MANUAL DE
+      USO global, que no se toca.
+- [x] **Checkpoint:** `pytest` = **314**. `make_vba_seed.py` corrido ya (una sola
+      resiembra para las Fases 8, 9 y 10); `AccessVBOM` restaurado (ausente).
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Crear `build_instrucciones_art212(wb)` y `build_instrucciones_art206(wb)`
       (hojas nuevas, navegables, mismo patrón de `rewrite_instrucciones` pero con
       contenido propio — **no** se mezcla con la `Instrucciones` global, que es sobre
@@ -645,6 +694,8 @@ teclear y lo que el botón borra sean el mismo conjunto por construcción.*
 - [ ] Botón de acceso ("❔ INSTRUCCIONES DE ESTE MOTOR →") desde cada motor, además
       del botón global "MANUAL DE USO" ya existente (no se reemplaza, se suma).
 - [ ] Sincronizar `ARBOL`/`HojasNavegables()` igual que en la Fase 9.
+
+</details>
 
 ### Fase 11 — Verificación
 - [ ] `pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q`

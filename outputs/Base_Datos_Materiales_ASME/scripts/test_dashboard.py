@@ -2259,6 +2259,102 @@ class TestEspecificacionesTecnicas:
 
 
 # ---------------------------------------------------------------------------
+# Fase 10 — la guia de uso, derivada del motor
+# ---------------------------------------------------------------------------
+# Lo que hay que proteger aqui es que la guia sea DERIVADA y no una copia: si
+# alguien anade un campo al motor y la guia no lo lista, la hoja que dice
+# explicar «cada celda» pasa a tener un hueco silencioso. La prueba fuerte es la
+# cobertura contra el manifiesto de reinicio, que se deriva del mismo estado por
+# otro camino: las dos listas tienen que salir iguales.
+class TestInstruccionesDeMotor:
+    PARES = ((B.INSTR_212, "Parche_PCC2_Art212"),
+             (B.INSTR_206, "Collar_PCC2_Art206"))
+
+    def _guia(self, ws):
+        """(celda, rotulo, tipo, texto) de cada fila de la guia celda a celda."""
+        out = []
+        for r in range(1, ws.max_row + 1):
+            celda, tipo = ws.cell(r, 1).value, ws.cell(r, 3).value
+            if tipo in ("SE TECLEA", "LISTA", "FORMULA"):
+                out.append((str(celda), ws.cell(r, 2).value, tipo,
+                            ws.cell(r, 4).value))
+        return out
+
+    def test_las_dos_hojas_cuelgan_de_su_articulo(self, wb):
+        for hoja, motor in self.PARES:
+            assert hoja in wb.sheetnames and hoja in B.NAVEGABLES
+            assert B.PADRE[hoja] == B.PADRE[motor]
+
+    def test_la_guia_lista_TODA_celda_de_entrada_del_motor(self, wb):
+        """La cobertura es lo unico que hace verdad el titulo de la hoja. Se
+        compara contra el manifiesto de reinicio (Fase 8), que sale del mismo
+        estado por otro camino: si las dos listas no coinciden, una de las dos
+        esta mal y no hay que adivinar cual."""
+        for hoja, motor in self.PARES:
+            man = set(TestReinicioDeEntradas()._manifiesto(wb[motor]))
+            guia = {c for c, _, t, _ in self._guia(wb[hoja]) if t != "FORMULA"}
+            assert guia == man, (
+                f"{hoja}: en la guia y no en el reinicio {sorted(guia - man)}; "
+                f"en el reinicio y no en la guia {sorted(man - guia)}")
+
+    def test_ninguna_fila_de_la_guia_se_queda_sin_explicacion(self, wb):
+        for hoja, _ in self.PARES:
+            mudas = [c for c, _, _, texto in self._guia(wb[hoja])
+                     if not str(texto or "").strip()]
+            assert mudas == [], f"{hoja}: filas sin explicacion: {mudas}"
+
+    def test_cada_entrada_trae_su_ejemplo_y_cada_formula_no(self, wb):
+        """El ejemplo es el valor del caso precargado: una entrada sin ejemplo
+        seria una instruccion sin un caso que mirar. Una formula no lo lleva
+        porque su valor no se teclea."""
+        for hoja, _ in self.PARES:
+            for celda, _, tipo, texto in self._guia(wb[hoja]):
+                if tipo == "FORMULA":
+                    assert "Ejemplo:" not in str(texto), f"{hoja}!{celda}"
+                else:
+                    assert "Ejemplo:" in str(texto), f"{hoja}!{celda}"
+
+    def test_la_guia_va_seccion_por_seccion_y_en_orden(self, wb):
+        """Las secciones se repiten TAL CUAL las rotula el motor —numeral
+        incluido— o el ingeniero no sabria en que parte de la hoja esta la celda
+        que lee. Y van en el mismo orden: la guia se lee mientras se rellena."""
+        for hoja, motor in self.PARES:
+            ws, wm = wb[hoja], wb[motor]
+            bandas_motor = [str(wm.cell(r, 1).value) for r in range(4, wm.max_row + 1)
+                            if B._es_banda(wm, wm.cell(r, 1))]
+            en_guia = [str(ws.cell(r, 1).value) for r in range(1, ws.max_row + 1)
+                       if str(ws.cell(r, 1).value) in bandas_motor]
+            assert en_guia, f"{hoja}: la guia no repite ninguna banda del motor"
+            assert en_guia == [b for b in bandas_motor if b in en_guia], (
+                f"{hoja}: las secciones de la guia no siguen el orden del motor")
+
+    def test_la_prosa_explica_los_cuatro_mecanismos(self, wb):
+        """Color, unidades, semaforo y reinicio: los cuatro son mecanismos que no
+        se adivinan mirando la hoja, y el plan los pide explicados."""
+        for hoja, _ in self.PARES:
+            texto = " ".join(str(c.value or "") for fila in wb[hoja].iter_rows()
+                             for c in fila).upper()
+            for clave in ("LEYENDA", "AMARILLO", "SI / US", "SEMAFORO",
+                          "REINICIAR", "DICTAMEN"):
+                assert clave in texto, f"{hoja}: la prosa no explica {clave}"
+
+    def test_la_guia_no_lleva_formulas(self, wb):
+        """Es una hoja de texto: si copiara la formula del motor en vez de
+        describirla, tendria que recalcularla y podria decir otra cosa.
+
+        El criterio es el TIPO de celda, no si el texto empieza por «=» — mismo
+        criterio que en las nueve hojas de la Seccion II. La guia copia la columna
+        de referencia del motor, y ahi hay explicaciones que empiezan asi
+        («= $D$26», «de donde sale este valor»): son texto y tienen que seguir
+        siendolo, y `_plano()` es quien lo garantiza.
+        """
+        for hoja, _ in self.PARES:
+            for fila in wb[hoja].iter_rows():
+                for c in fila:
+                    assert c.data_type != "f", f"{hoja}!{c.coordinate}: {c.value!r}"
+
+
+# ---------------------------------------------------------------------------
 # Fase 8 — el boton de reinicio y su manifiesto
 # ---------------------------------------------------------------------------
 # Lo que hay que comprobar no es que el boton exista, sino que su manifiesto
