@@ -5967,6 +5967,109 @@ def build_leyenda_motor(ws):
 
 
 # ---------------------------------------------------------------------------
+# Fase 8 — boton de reinicio de entradas
+# ---------------------------------------------------------------------------
+# El VBA no lleva ni una direccion de celda: cada motor publica en una columna
+# oculta el MANIFIESTO de sus celdas de entrada y `LimpiarEntradas` lo lee de
+# ahi. Es la misma razon por la que `HojasNavegables()` vive en un solo sitio —
+# dos copias de la misma lista divergen el dia que alguien anade un campo—, y
+# aqui el precio de divergir es peor que una navegacion rota: un boton que dice
+# «reiniciar» y deja un campo con el valor del caso anterior.
+#
+# El manifiesto se DERIVA del estado real de la hoja, con el mismo criterio con
+# el que `aplicar_leyenda_motor` decide pintarla de amarillo (desbloqueada, sin
+# hipervinculo, dentro de A..G). Las tres cosas —lo que la leyenda promete que
+# se teclea, lo que Excel deja teclear y lo que el boton limpia— quedan asi por
+# construccion en el mismo conjunto: un campo nuevo entra en los tres a la vez
+# o en ninguno.
+# Columna 100 (CV): por encima de COL_CLAVE_BASE (66) y de la clave mas alta que
+# puede grabar un boton (66 + su columna), con margen para que anadir un boton
+# manana no aterrice encima del manifiesto.
+COL_MANIFIESTO_RESET = 100       # DEBE coincidir con COL_MANIFIESTO del VBA.
+SENTINEL_RESET = "RESET_MANIFIESTO"
+PREFIJO_RESET = "RESET:"
+# Texto ASCII a proposito: las dos fuentes del sistema son las que trae Windows
+# (Consolas / Arial Black) y un glifo que la fuente no tenga sale como recuadro
+# vacio en el entregable. Mismo formato que TXT_MANUAL ("[ ? ] MANUAL DE USO").
+TXT_RESET = "[ RESET ] REINICIAR ENTRADAS"
+# Fila 3 —la de acciones, la del boton VOLVER— pero a la DERECHA de la tabla
+# (H..J). No entra en A..G a proposito: esa banda la compara celda a celda el
+# *oracle* del 212 y la pinta `aplicar_leyenda_motor`.
+FILA_RESET, COL_RESET_1, COL_RESET_2 = 3, 8, 10
+
+
+def _es_entrada_motor(c):
+    """True si `c` es una celda que rellena el ingeniero en un motor.
+
+    Un boton de navegacion se entrega tambien DESBLOQUEADO (para no depender de
+    que Excel deje seguir un hipervinculo en celda bloqueada), asi que pasaria
+    por entrada; lo que de verdad lo distingue es el hipervinculo.
+    """
+    # La cola de un rango fusionado no es una celda propia: openpyxl le arrastra
+    # la proteccion del ancla (por eso D5:F5 daria tres entradas donde hay un
+    # solo campo) y escribir en ella por macro no es legal. Se cuenta el ancla.
+    if isinstance(c, MergedCell):
+        return False
+    if c.hyperlink is not None:
+        return False
+    return c.protection is not None and c.protection.locked is False
+
+
+def _fin_tabla_motor(ws):
+    """Ultima fila con contenido en A..G (no `ws.max_row`).
+
+    Las listas de cascada materializadas viven en columnas ocultas a la derecha
+    y bajan cientos de filas mas que la tabla del motor.
+    """
+    return max((c.row for fila in ws.iter_rows(max_col=MOTOR_NCOLS) for c in fila
+                if c.value is not None), default=1)
+
+
+def celdas_de_entrada(ws, hasta_fila=None):
+    """Direcciones de las celdas de entrada de un motor, en orden de lectura."""
+    fin = hasta_fila or _fin_tabla_motor(ws)
+    return [c.coordinate
+            for fila in ws.iter_rows(min_row=1, max_row=fin, max_col=MOTOR_NCOLS)
+            for c in fila if _es_entrada_motor(c)]
+
+
+def build_reinicio_motor(ws):
+    """Manifiesto de entradas + boton de reinicio de un motor de calculo.
+
+    Se corre como ULTIMO paso, con las filas ya en su sitio definitivo (despues
+    de `remapear_filas`): el manifiesto guarda direcciones, y escritas antes del
+    remapeo apuntarian a las filas de antes de la mudanza.
+    """
+    entradas = celdas_de_entrada(ws)
+    if not entradas:
+        raise SystemExit(
+            f"{ws.title}: el manifiesto de reinicio sale vacio. O la hoja no "
+            f"tiene ni un campo editable, o inp() dejo de desbloquear las "
+            f"celdas: en los dos casos el boton de reinicio mentiria.")
+
+    col = COL_MANIFIESTO_RESET
+    # El centinela es lo que el VBA comprueba antes de borrar nada: sin el, un
+    # nombre de hoja equivocado en la clave del boton haria ClearContents sobre
+    # una hoja que no publica manifiesto.
+    cs = ws.cell(1, col, SENTINEL_RESET)
+    cs.font = DATA_F
+    for k, direccion in enumerate(entradas, start=2):
+        ws.cell(k, col, direccion).font = DATA_F
+    ws.column_dimensions[get_column_letter(col)].hidden = True
+
+    b = _boton(ws, FILA_RESET, COL_RESET_1, COL_RESET_2, TXT_RESET,
+               PREFIJO_RESET + ws.title)
+    b.protection = Protection(locked=False)
+    _nota(b, "Boton: vacia TODAS las celdas de entrada de esta hoja (las "
+             "amarillas de la leyenda), con confirmacion previa. No toca "
+             "formato, validacion ni formula: solo el contenido. Deja el motor "
+             "en blanco para un caso nuevo.")
+    _celda_clave(ws, FILA_RESET, COL_RESET_1).protection = Protection(locked=False)
+    _ocultar_columnas_clave(ws, (COL_RESET_1,))
+    return entradas
+
+
+# ---------------------------------------------------------------------------
 # Fase 3 — la Seccion de Material sube justo detras de la Seccion 1
 # ---------------------------------------------------------------------------
 # El ingeniero pide leer la hoja en el orden en que se rellena: primero los
@@ -6466,20 +6569,16 @@ def aplicar_leyenda_motor(ws, hasta_fila=None):
     # bajan cientos de filas mas que la tabla del motor. Pintar hasta ahi no se
     # veria (el sustrato de columna ya es papel) y solo multiplicaria las celdas
     # con estilo del .xlsm.
-    fin = hasta_fila or max(
-        (c.row for fila in ws.iter_rows(max_col=MOTOR_NCOLS) for c in fila
-         if c.value is not None), default=1)
+    fin = hasta_fila or _fin_tabla_motor(ws)
     for fila in ws.iter_rows(min_row=1, max_row=fin, max_col=MOTOR_NCOLS):
         for c in fila:
-            # Un boton de navegacion tambien se entrega DESBLOQUEADO (para no
-            # depender de que Excel deje seguir un hipervinculo en celda
-            # bloqueada), asi que pasaria por editable y saldria amarillo. Se
-            # excluye por el hipervinculo, que es lo que de verdad lo distingue:
-            # asi el pase da el mismo resultado se corra antes o despues de la
-            # capa de navegacion.
+            # `_es_entrada_motor` es la MISMA funcion con la que el manifiesto de
+            # reinicio (Fase 8) decide que celda limpiar, y excluye los botones
+            # de navegacion por el hipervinculo. Compartirla es lo que impide que
+            # la leyenda prometa amarillo donde el boton no borra, o al reves.
             if c.hyperlink is not None:
                 continue
-            if c.protection is not None and c.protection.locked is False:
+            if _es_entrada_motor(c):
                 c.fill = MOTOR_IN_FILL
             elif isinstance(c.value, str) and c.value.startswith("="):
                 c.fill = MOTOR_CALC_FILL
@@ -8621,6 +8720,11 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # su banda y su semaforo tienen que ganar.
     aplicar_semaforo_motor(ws, SEMAFORO_212, FILA_DICTAMEN_212)
 
+    # Fase 8: manifiesto de entradas + boton de reinicio. Va al final, con las
+    # filas ya remapeadas y la proteccion de cada celda ya definitiva: el
+    # manifiesto es una lista de direcciones y se DERIVA de ese estado.
+    build_reinicio_motor(ws)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -9518,6 +9622,9 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     build_leyenda_motor(ws)
     aplicar_leyenda_motor(ws)
     aplicar_semaforo_motor(ws, SEMAFORO_206, FILA_DICTAMEN_206)
+
+    # Fase 8: mismo manifiesto y mismo boton que el 212 (ver build_reinicio_motor).
+    build_reinicio_motor(ws)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

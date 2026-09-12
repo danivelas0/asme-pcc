@@ -48,6 +48,15 @@ Private Sub Workbook_SheetFollowHyperlink(ByVal Sh As Object, ByVal Target As Hy
     clave = Trim$(CStr(CeldaClave(Sh, Target.Range.Row, Target.Range.Column).Value))
     If Len(clave) = 0 Then Exit Sub
 
+    ' Dos clases de clave, y solo dos: el nombre de la hoja destino (navegar) o
+    ' "RESET:<hoja>" (vaciar las entradas de esa hoja). El prefijo lleva ":", que
+    ' Excel no admite en un nombre de hoja, asi que las dos clases no pueden
+    ' confundirse ni por una hoja que se llamase como el prefijo.
+    If Left$(clave, Len(PREFIJO_RESET)) = PREFIJO_RESET Then
+        LimpiarEntradas Mid$(clave, Len(PREFIJO_RESET) + 1)
+        Exit Sub
+    End If
+
     IrAHoja clave, Sh
 
 Salir:

@@ -493,7 +493,50 @@ plausible. Arreglados, cada uno con su guardia:
 </details>
 
 
-### Fase 8 — Botón de reinicio (limpiar entradas)
+### Fase 8 — Botón de reinicio (limpiar entradas) ✅
+*Desviación deliberada del plan: el manifiesto **no** se recolecta con un `.append()`
+dentro de `inp()`, se **deriva del estado real de la hoja** —desbloqueada, sin
+hipervínculo, dentro de A..G— con la misma función que `aplicar_leyenda_motor` usa para
+pintarla de amarillo (`_es_entrada_motor`). Es la lección de la Fase 1: una lista
+paralela a ~200 llamadas se queda corta sin que nadie lo note, y aquí el precio de
+quedarse corta es un botón que dice «reiniciar» y deja el valor del caso anterior en un
+campo. Compartir la función hace que lo que la leyenda promete, lo que Excel deja
+teclear y lo que el botón borra sean el mismo conjunto por construcción.*
+
+- [x] `celdas_de_entrada()` + `build_reinicio_motor()`: manifiesto en la **columna 100**
+      (oculta), centinela `RESET_MANIFIESTO` en la fila 1 y una dirección por fila. El
+      build **aborta** si sale vacío.
+- [x] Se escribe como **último** paso de cada motor, después de `remapear_filas()`: son
+      direcciones, y escritas antes apuntarían a las filas de antes de la mudanza. No
+      empiezan por `=`, así que el segundo pase del remapeo no las toca (prueba propia).
+- [x] `mod_nav.vba`: `LimpiarEntradas(hoja)` lee el manifiesto y hace `ClearContents`
+      (no `Clear`: el relleno de la leyenda, el borde, la validación y el comentario se
+      quedan). **Sin una sola dirección de celda en el VBA.** Comprueba el centinela
+      antes de borrar, pide confirmación (`vbDefaultButton2`) y avisa si alguna celda no
+      se pudo vaciar. No hace falta desproteger: `ClearContents` sobre celda
+      desbloqueada es legal bajo protección de hoja.
+- [x] `this_workbook.vba`: dos clases de clave y solo dos — nombre de hoja destino, o
+      `RESET:<hoja>`. El prefijo lleva `:`, que Excel no admite en un nombre de hoja, así
+      que no pueden confundirse.
+- [x] Botón `[ RESET ] REINICIAR ENTRADAS` en **H3:J3** (fila de acciones, a la derecha
+      de la tabla). Texto ASCII a propósito: las dos fuentes del sistema son las de
+      Windows y un glifo ausente sale como recuadro vacío en el entregable — por eso no
+      lleva el `⟲` del plan.
+- [x] **Fuera de A..G a propósito**, y eso obligó a acotar el alcance del *oracle*:
+      `test_rangos_fusionados` comparaba **todos** los merges de las filas < 132, y el
+      *oracle* Rev0 solo capturó la tabla del motor (A..G). Ahora filtra también por
+      columna. No es una divergencia declarada: es que no hay con qué comparar.
+- [x] `TestReinicioDeEntradas` (7 pruebas) comprueba las **dos direcciones** —que el
+      manifiesto cubra exactamente lo editable, releído del archivo con el criterio
+      recalculado en la propia prueba, y que no incluya ningún botón ni celda de clave—,
+      más el ancla del selector SI/US y la columna oculta. `TestSincroniaPythonVba` gana
+      la columna, el centinela y el prefijo, y que el despacho por prefijo exista.
+- [x] **Checkpoint:** `pytest test_dashboard.py` = **141**. `make_vba_seed.py` queda
+      pendiente hasta cerrar la Fase 10 (que vuelve a tocar `HojasNavegables()`): una
+      sola resiembra para las tres fases.
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Al construir cada motor, recolectar en una lista Python la dirección de cada
       celda `inp()` (ya se llama una vez por celda editable — agregar `.append()` a la
       lista en el propio helper `inp()` de cada motor).
@@ -515,6 +558,8 @@ plausible. Arreglados, cada uno con su guardia:
       coincide exactamente con las celdas que de verdad tienen `Protection(locked=False)`
       en cada hoja (ninguna celda editable queda fuera del reinicio, y ninguna celda
       de botón/navegación queda incluida por error).
+
+</details>
 
 ### Fase 9 — Pestaña "Especificaciones Técnicas" por motor
 - [ ] Crear `build_especificaciones_art212(wb)` y `build_especificaciones_art206(wb)`:

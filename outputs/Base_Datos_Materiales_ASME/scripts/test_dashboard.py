@@ -709,10 +709,19 @@ class TestParidadHojaParche:
         # Los merges del anexo de pasos del flujo (bandas de las filas >=
         # FILA_ANEXO) son nuevos por diseno y salen de la paridad contra el
         # oracle Rev0 (que solo cubre 1-129).
+        #
+        # Tambien salen los que caen ENTERAMENTE a la derecha de G: el oracle
+        # captura la tabla del motor, que es A..G (los 968 valores que compara el
+        # recalculo y las columnas que pinta aplicar_leyenda_motor). Lo que vive
+        # mas a la derecha es mobiliario de la hoja —hoy el boton de reinicio de
+        # la Fase 8, en H3:J3— y no hay nada con que compararlo: exigir que el
+        # oracle Rev0 lo declare seria pedirle que declare algo que nunca vio.
         reales = sorted(
             str(r) for r in ws.merged_cells.ranges
             if openpyxl.worksheet.cell_range.CellRange(str(r)).min_row
-            < B.FILA_ANEXO_FLUJO_212)
+            < B.FILA_ANEXO_FLUJO_212
+            and openpyxl.worksheet.cell_range.CellRange(str(r)).min_col
+            <= B.MOTOR_NCOLS)
         assert reales == oracle["fusionados"]
 
 
@@ -823,6 +832,32 @@ class TestSincroniaPythonVba:
                       fuente_vba["mod_nav.vba"])
         assert m, "no se encontro TXT_INACTIVAS en mod_nav.vba"
         assert wb[B.DASH].cell(B.FILA_AVISO, 1).value == m.group(1)
+
+    def test_mismo_manifiesto_de_reinicio(self, fuente_vba):
+        """Columna, centinela y prefijo del boton de reinicio (Fase 8).
+
+        El VBA no lleva ninguna direccion de celda —las lee del manifiesto— pero
+        si lleva DONDE esta el manifiesto y COMO se reconoce. Si esas tres cosas
+        divergen del builder, el boton no encuentra la lista y no limpia nada, o
+        peor: la encuentra a medias.
+        """
+        src = fuente_vba["mod_nav.vba"]
+        m = re.search(r"COL_MANIFIESTO\s+As\s+Long\s*=\s*(\d+)", src)
+        assert m and int(m.group(1)) == B.COL_MANIFIESTO_RESET
+        m = re.search(r'SENTINEL_RESET\s+As\s+String\s*=\s*"([^"]+)"', src)
+        assert m and m.group(1) == B.SENTINEL_RESET
+        m = re.search(r'PREFIJO_RESET\s+As\s+String\s*=\s*"([^"]+)"', src)
+        assert m and m.group(1) == B.PREFIJO_RESET
+
+    def test_el_reinicio_se_despacha_por_el_prefijo(self, fuente_vba):
+        """El evento de hipervinculo tiene que distinguir las dos clases de
+        clave. Sin esta rama, un clic en REINICIAR ENTRADAS llamaria a IrAHoja
+        con "RESET:Parche_PCC2_Art212" y solo saldria un aviso de hoja
+        inexistente."""
+        src = fuente_vba["this_workbook.vba"]
+        codigo = "\n".join(l for l in src.splitlines()
+                           if not l.lstrip().startswith("'"))
+        assert "PREFIJO_RESET" in codigo and "LimpiarEntradas" in codigo
 
     def test_misma_hoja_de_inicio(self, fuente_vba):
         assert re.search(rf'HOJA_INICIO\s+As\s+String\s*=\s*"{B.DASH}"',
@@ -2103,3 +2138,97 @@ class TestDatosRefRetirada:
     def test_la_deuda_de_listas_fijas_esta_saldada(self):
         import build_db_materiales as B
         assert B.DEUDA_LISTA_FIJA == {}
+
+
+# ---------------------------------------------------------------------------
+# Fase 8 — el boton de reinicio y su manifiesto
+# ---------------------------------------------------------------------------
+# Lo que hay que comprobar no es que el boton exista, sino que su manifiesto
+# cubra EXACTAMENTE las celdas de entrada: una que falte deja un valor del caso
+# anterior en una hoja que dice estar en blanco, y una de mas podria borrar una
+# formula o un boton. Las dos direcciones se comprueban.
+class TestReinicioDeEntradas:
+    MOTORES = ("Parche_PCC2_Art212", "Collar_PCC2_Art206")
+
+    def _manifiesto(self, ws):
+        col = B.COL_MANIFIESTO_RESET
+        assert ws.cell(1, col).value == B.SENTINEL_RESET, (
+            f"{ws.title}: falta el centinela del manifiesto de reinicio")
+        out, r = [], 2
+        while True:
+            v = ws.cell(r, col).value
+            if v is None or str(v).strip() == "":
+                return out
+            out.append(str(v).strip())
+            r += 1
+
+    def _editables(self, ws):
+        """Celdas de entrada releidas del archivo, con el criterio de la leyenda.
+
+        Se recalcula aqui en vez de llamar a B.celdas_de_entrada() a proposito:
+        asi la prueba no comparte con el builder la funcion que podria estar mal,
+        solo el criterio (desbloqueada, sin hipervinculo, dentro de A..G).
+        """
+        colas = {rc for rango in ws.merged_cells.ranges for rc in rango.cells}
+        colas -= {(r.min_row, r.min_col) for r in ws.merged_cells.ranges}
+        fin = max((c.row for f in ws.iter_rows(max_col=B.MOTOR_NCOLS) for c in f
+                   if c.value is not None), default=1)
+        out = []
+        for f in ws.iter_rows(min_row=1, max_row=fin, max_col=B.MOTOR_NCOLS):
+            for c in f:
+                if (c.row, c.column) in colas or c.hyperlink is not None:
+                    continue
+                if c.protection is not None and c.protection.locked is False:
+                    out.append(c.coordinate)
+        return out
+
+    def test_el_manifiesto_cubre_exactamente_las_entradas(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            assert self._manifiesto(ws) == self._editables(ws), nombre
+
+    def test_el_manifiesto_no_esta_vacio(self, wb):
+        for nombre in self.MOTORES:
+            assert len(self._manifiesto(wb[nombre])) > 20, nombre
+
+    def test_el_selector_de_unidades_entra_en_el_reinicio(self, wb):
+        """Ancla explicita: el selector SI/US de la Fase 7 es una entrada y tiene
+        que volver a su estado inicial como cualquier otra."""
+        for nombre, celda in (("Parche_PCC2_Art212", "D15"),
+                              ("Collar_PCC2_Art206", "D14")):
+            ws = wb[nombre]
+            assert ws[celda].value in ("SI", "US"), f"{nombre}!{celda}"
+            assert celda in self._manifiesto(ws), f"{nombre}!{celda}"
+
+    def test_ningun_boton_ni_celda_de_clave_entra_en_el_reinicio(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            man = set(self._manifiesto(ws))
+            for c, _ in _claves(ws):
+                assert c.coordinate not in man, f"{nombre}: {c.coordinate} es un boton"
+            # Las celdas de clave viven mas alla de G; el manifiesto no las mira.
+            assert all(openpyxl.utils.column_index_from_string(
+                re.match(r"([A-Z]+)", d).group(1)) <= B.MOTOR_NCOLS for d in man)
+
+    def test_el_boton_de_reinicio_esta_en_su_sitio(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            b = ws.cell(B.FILA_RESET, B.COL_RESET_1)
+            assert b.value == B.TXT_RESET, nombre
+            assert b.hyperlink is not None, nombre
+            assert b.protection.locked is False, nombre
+            clave = ws.cell(B.FILA_RESET, B.COL_CLAVE_BASE + B.COL_RESET_1).value
+            assert clave == B.PREFIJO_RESET + nombre, nombre
+
+    def test_la_columna_del_manifiesto_esta_oculta(self, wb):
+        from openpyxl.utils import get_column_letter as L
+        col = L(B.COL_MANIFIESTO_RESET)
+        for nombre in self.MOTORES:
+            assert wb[nombre].column_dimensions[col].hidden, nombre
+
+    def test_el_manifiesto_no_lleva_formulas(self, wb):
+        """Son direcciones de texto. Si alguna empezase por "=", el segundo pase
+        de remapear_filas la reescribiria como si fuese una referencia."""
+        for nombre in self.MOTORES:
+            for d in self._manifiesto(wb[nombre]):
+                assert not d.startswith("="), f"{nombre}: {d}"

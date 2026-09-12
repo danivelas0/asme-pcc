@@ -55,6 +55,24 @@ Private Const TXT_ACTIVAS As String = _
 Private Const TXT_INACTIVAS As String = _
     "/// MACROS DESHABILITADAS - HABILITELAS PARA NAVEGAR ENTRE LOS MOTORES ///"
 
+' Columna oculta donde cada motor de calculo publica el MANIFIESTO de sus
+' celdas de entrada: el centinela en la fila 1 y una direccion por fila a
+' partir de la 2. Este modulo NO lleva ni una direccion de celda de entrada, a
+' proposito: con la lista duplicada aqui, el dia que el builder anada un campo
+' el boton de reinicio dejaria de limpiarlo sin que nadie se enterase (la misma
+' razon por la que HojasNavegables vive en un solo sitio).
+'
+' DEBE coincidir con COL_MANIFIESTO_RESET y SENTINEL_RESET de
+' build_db_materiales.py. Lo comprueba test_dashboard.py::TestSincroniaPythonVba.
+Public Const COL_MANIFIESTO As Long = 100
+Public Const SENTINEL_RESET As String = "RESET_MANIFIESTO"
+
+' Prefijo que distingue una clave de reinicio de una clave de navegacion. La
+' clave de un boton es siempre el destino; "RESET:Hoja" es la excepcion, y la
+' lleva el prefijo justo para que no pueda confundirse con un nombre de hoja
+' (Excel no admite ":" en el nombre de una hoja).
+Public Const PREFIJO_RESET As String = "RESET:"
+
 ' ---- fin de las declaraciones de modulo ----------------------------------
 ' VBA exige que TODA declaracion de nivel de modulo (Const, Dim, Type, Declare)
 ' preceda a la primera rutina. Una constante colocada mas abajo no da error en
@@ -229,6 +247,80 @@ Public Sub IrAHoja(ByVal destino As String, ByVal origen As Object)
         origen.Visible = xlSheetHidden
     End If
     Application.ScreenUpdating = True
+End Sub
+
+
+' Vacia todas las celdas de entrada de un motor de calculo.
+'
+' Lee la lista de direcciones del manifiesto que el builder publica en la
+' columna oculta COL_MANIFIESTO de esa misma hoja. No conoce ninguna direccion:
+' si el motor gana o pierde un campo, esta rutina no cambia.
+'
+' ClearContents y NO Clear: borra el contenido y deja intactos el relleno de la
+' leyenda, el borde, la validacion de lista y el comentario de la celda. Un
+' .Clear dejaria la hoja sin la mitad de su interfaz.
+'
+' La hoja se entrega protegida con las celdas de entrada desbloqueadas, asi que
+' no hace falta desproteger nada: ClearContents sobre una celda desbloqueada es
+' legal bajo proteccion. Si alguna direccion del manifiesto apuntase a una celda
+' bloqueada, el On Error la salta y se cuenta como no borrada.
+Public Sub LimpiarEntradas(ByVal hoja As String)
+    Dim ws As Object
+    Dim fila As Long
+    Dim direccion As String
+    Dim borradas As Long
+    Dim omitidas As Long
+
+    On Error Resume Next
+    Set ws = ThisWorkbook.Worksheets(hoja)
+    On Error GoTo 0
+
+    If ws Is Nothing Then
+        MsgBox "La hoja '" & hoja & "' no existe en este libro.", _
+               vbExclamation, "Motor de Calculo ASME PCC"
+        Exit Sub
+    End If
+
+    ' Centinela: sin el, una clave corrompida podria disparar un borrado sobre
+    ' una hoja que no publica manifiesto (una base de datos, por ejemplo).
+    If StrComp(Trim$(CStr(ws.Cells(1, COL_MANIFIESTO).Value)), _
+               SENTINEL_RESET, vbTextCompare) <> 0 Then
+        MsgBox "La hoja '" & hoja & "' no publica un manifiesto de entradas." & _
+               vbCrLf & "Reconstruya el libro con build_db_materiales.py.", _
+               vbExclamation, "Motor de Calculo ASME PCC"
+        Exit Sub
+    End If
+
+    If MsgBox("Se van a vaciar TODAS las celdas de entrada de '" & hoja & _
+              "' (las amarillas de la leyenda)." & vbCrLf & vbCrLf & _
+              "El formato, las listas desplegables y las formulas no se tocan." & _
+              vbCrLf & "Esta accion no se puede deshacer. Continuar?", _
+              vbExclamation + vbYesNo + vbDefaultButton2, _
+              "Reiniciar entradas") <> vbYes Then Exit Sub
+
+    Application.ScreenUpdating = False
+    fila = 2
+    Do While Len(Trim$(CStr(ws.Cells(fila, COL_MANIFIESTO).Value))) > 0
+        direccion = Trim$(CStr(ws.Cells(fila, COL_MANIFIESTO).Value))
+        On Error Resume Next
+        Err.Clear
+        ws.Range(direccion).ClearContents
+        If Err.Number = 0 Then
+            borradas = borradas + 1
+        Else
+            omitidas = omitidas + 1
+        End If
+        On Error GoTo 0
+        fila = fila + 1
+    Loop
+    Application.ScreenUpdating = True
+
+    If omitidas > 0 Then
+        MsgBox "Se vaciaron " & borradas & " celdas de entrada; " & omitidas & _
+               " no se pudieron vaciar." & vbCrLf & _
+               "Reconstruya el libro con build_db_materiales.py.", _
+               vbExclamation, "Motor de Calculo ASME PCC"
+    End If
 End Sub
 
 
