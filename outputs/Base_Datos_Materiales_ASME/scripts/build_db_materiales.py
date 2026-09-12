@@ -3694,6 +3694,50 @@ SEL_OK_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
 SEL_BAD_FILL = PatternFill("solid", fgColor=AMBAR)
 SEL_BAD_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
 
+# Semaforo de ACEPTACION de los dos motores de calculo (Fase 6). Mismo mecanismo
+# que el de arriba —formato condicional, bloque macizo, el color lo pone el
+# relleno— pero sobre la columna de Resultado de las verificaciones y sobre el
+# dictamen global. Es la tercera excepcion declarada al acento unico, y la que
+# mas derecho tiene a serlo: en un motor de calculo el criterio de aceptacion es
+# informacion de seguridad, y la diferencia entre "cumple" y "no cumple" tiene
+# que leerse sin leerse.
+#
+# El ROJO aparece aqui como RELLENO por primera vez fuera del aviso de macros, y
+# con el mismo significado que tiene en todo el libro: bloqueado. Va en formato
+# condicional (dxf), no como estilo de celda, asi que el guardia
+# test_el_aviso_de_macros_es_el_unico_relleno_rojo sigue valiendo tal cual.
+CUMPLE_OK_FILL = PatternFill("solid", fgColor=VERDE)
+CUMPLE_OK_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
+CUMPLE_BAD_FILL = PatternFill("solid", fgColor=ROJO)
+CUMPLE_BAD_FONT = Font(name=MONO, size=10, bold=True, color=PAPEL)
+# El dictamen global va en macrotipografia: es la frase que se lee primero.
+DICTAMEN_OK_FONT = Font(name=MACRO, size=16, color=TINTA)
+DICTAMEN_BAD_FONT = Font(name=MACRO, size=16, color=PAPEL)
+DICTAMEN_ESPERA_FILL = PatternFill("solid", fgColor=AMBAR)
+DICTAMEN_ESPERA_FONT = Font(name=MACRO, size=16, color=TINTA)
+
+
+def semaforo_resultado(ws, rango, celda, favorables):
+    """Verde si la celda de Resultado dice algo favorable; rojo si no.
+
+    `favorables` son los textos que cuentan como aceptacion. No siempre es
+    "CUMPLE": dos de las verificaciones del Art. 212 no resuelven en
+    cumple/no cumple sino en una RUTA de reparacion —"Refuerzo 360" frente a
+    "Parche local", "OK - parche" frente a "Migrar (Art.206)"—, y ahi lo verde
+    es la rama que deja seguir con el parche.
+
+    La regla del rojo es el complemento (`<>` de todas las favorables) y no una
+    lista de textos desfavorables: asi una celda vacia, un #N/A o un texto que
+    nadie previo salen en ROJO, que es el lado seguro. Enumerar lo malo dejaria
+    lo imprevisto en blanco, indistinguible de "aun no calculado".
+    """
+    ok = "OR(" + ",".join(f'{celda}="{t}"' for t in favorables) + ")"
+    ws.conditional_formatting.add(
+        rango, FormulaRule(formula=[ok], fill=CUMPLE_OK_FILL, font=CUMPLE_OK_FONT))
+    ws.conditional_formatting.add(
+        rango, FormulaRule(formula=[f'AND({celda}<>"",NOT({ok}))'],
+                           fill=CUMPLE_BAD_FILL, font=CUMPLE_BAD_FONT))
+
 
 def banda(ws, r, texto, n=NCOLS):
     """Banda de seccion: bloque de tinta a todo el ancho, rotulo en
@@ -6192,6 +6236,56 @@ def aplicar_reglas_de_comentario(ws, reglas):
     return ws
 
 
+# ---------------------------------------------------------------------------
+# Fase 6 — semaforo de aceptacion y dictamen global destacado
+# ---------------------------------------------------------------------------
+# Los textos que cuentan como ACEPTACION en cada fila de resultado. Cuatro de
+# las seis verificaciones del 212 resuelven en CUMPLE/NO CUMPLE; las otras dos
+# no son un pasa/no pasa sino una RUTA de reparacion, y ahi lo verde es la rama
+# que deja seguir con el parche. Se declaran fila a fila, leidos de la propia
+# formula del motor, para no suponer que toda celda de resultado dice "CUMPLE".
+SEMAFORO_212 = {112: ("CUMPLE",), 113: ("CUMPLE",), 114: ("CUMPLE",),
+                115: ("CUMPLE",), 116: ("Parche local",), 117: ("OK — parche",),
+                161: ("CUMPLE",), 162: ("CUMPLE",)}
+SEMAFORO_206 = {85: ("CUMPLE",), 86: ("CUMPLE",), 123: ("CUMPLE",)}
+FILA_DICTAMEN_212, FILA_DICTAMEN_206 = 118, 94
+
+
+def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
+    """Semaforo en las celdas de Resultado y bloque propio para el dictamen."""
+    for fila, favorables in semaforo.items():
+        semaforo_resultado(ws, f"F{fila}:F{fila}", f"$F${fila}", favorables)
+
+    # --- Dictamen global: bloque propio, no una fila mas de la tabla --------
+    # Es la frase que se lee primero y la que se firma. Va en macrotipografia a
+    # todo el ancho, separada de la tabla de arriba por la misma franja roja que
+    # cierra las bandas de seccion —el limite duro entre dos zonas, dibujado y
+    # no insinuado— y con la fila mas alta para que respire.
+    for col in range(1, MOTOR_NCOLS + 1):
+        c = ws.cell(fila_dictamen, col)
+        c.fill = BAND_FILL
+        c.font = DICTAMEN_BAD_FONT if col > 1 else Font(
+            name=MACRO, size=16, color=PAPEL)
+    franja(ws, fila_dictamen, 1, MOTOR_NCOLS, arriba=True)
+    ws.row_dimensions[fila_dictamen].height = 26
+
+    rango = f"A{fila_dictamen}:G{fila_dictamen}"
+    ref = f"$F${fila_dictamen}"
+    # APTO -> verde. ELIJA MATERIAL -> ambar: no es un fallo, es que todavia
+    # falta una entrada, y pintarlo de rojo confundiria "aun no has elegido"
+    # con "no cumple". Todo lo demas -REVISAR, PROHIBIDO, NO ELEGIBLE, FUERA DE
+    # ALCANCE- es rojo, otra vez por complemento: lo imprevisto sale bloqueado.
+    ws.conditional_formatting.add(rango, FormulaRule(
+        formula=[f'{ref}="APTO"'], fill=CUMPLE_OK_FILL, font=DICTAMEN_OK_FONT))
+    ws.conditional_formatting.add(rango, FormulaRule(
+        formula=[f'LEFT({ref},14)="ELIJA MATERIAL"'],
+        fill=DICTAMEN_ESPERA_FILL, font=DICTAMEN_ESPERA_FONT))
+    ws.conditional_formatting.add(rango, FormulaRule(
+        formula=[f'AND({ref}<>"",{ref}<>"APTO",LEFT({ref},14)<>"ELIJA MATERIAL")'],
+        fill=CUMPLE_BAD_FILL, font=DICTAMEN_BAD_FONT))
+    return ws
+
+
 def aplicar_leyenda_motor(ws, hasta_fila=None):
     """Pinta la leyenda de edicion sobre A..G de un motor de calculo.
 
@@ -8156,6 +8250,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     build_leyenda_motor(ws)
     aplicar_leyenda_motor(ws)
 
+    # Fase 6: DESPUES de la leyenda, a proposito. El pase de leyenda pinta de
+    # gris toda celda de formula, y el dictamen global lo es; pero el dictamen
+    # no es un dato mas de la tabla sino la frase que se lee primero, asi que
+    # su banda y su semaforo tienen que ganar.
+    aplicar_semaforo_motor(ws, SEMAFORO_212, FILA_DICTAMEN_212)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -9024,6 +9124,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # y tiene que verse igual en los dos motores (ver LEYENDA_MOTOR).
     build_leyenda_motor(ws)
     aplicar_leyenda_motor(ws)
+    aplicar_semaforo_motor(ws, SEMAFORO_206, FILA_DICTAMEN_206)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

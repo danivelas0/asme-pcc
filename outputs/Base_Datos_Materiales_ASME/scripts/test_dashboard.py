@@ -1492,6 +1492,97 @@ class TestBuildParcheContraOracle:
         assert "$D$74*$D$28" in str(ws["B127"].value), ws["B127"].value
 
 
+class TestSemaforoDeAceptacion:
+    """Fase 6: verde/rojo en la columna de Resultado y dictamen global en bloque.
+
+    En un motor de calculo el criterio de aceptacion es informacion de
+    seguridad: la diferencia entre cumple y no cumple tiene que leerse sin
+    leerse. El rojo aparece aqui como relleno por primera vez fuera del aviso de
+    macros, con el mismo significado que tiene en todo el libro: bloqueado.
+    """
+
+    CASOS = [("Parche_PCC2_Art212", B.SEMAFORO_212, B.FILA_DICTAMEN_212),
+             ("Collar_PCC2_Art206", B.SEMAFORO_206, B.FILA_DICTAMEN_206)]
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_texto_favorable_existe_en_la_formula(self, wb, hoja, tabla, fila_dict):
+        """El fallo silencioso mas probable de esta fase: que el texto que la
+        regla considera favorable no sea LETRA POR LETRA el que escribe la
+        formula. Una raya larga distinta basta para que no case nunca, y nadie
+        se enteraria — la celda saldria roja siempre, que parece un resultado.
+        """
+        ws = wb[hoja]
+        for fila, favorables in tabla.items():
+            formula = str(ws.cell(fila, 6).value)
+            for texto in favorables:
+                assert f'"{texto}"' in formula, f"{hoja}!F{fila}: {texto!r}"
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_cada_resultado_tiene_sus_dos_reglas(self, wb, hoja, tabla, fila_dict):
+        ws = wb[hoja]
+        por_rango = {}
+        for rango in ws.conditional_formatting:
+            for r in rango.rules:
+                if r.dxf is not None and r.dxf.fill is not None:
+                    por_rango.setdefault(str(rango.sqref), []).append(
+                        _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)))
+        for fila in tabla:
+            colores = por_rango.get(f"F{fila}")
+            assert colores == [B.VERDE, B.ROJO], f"{hoja}!F{fila}: {colores}"
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_rojo_se_pinta_por_COMPLEMENTO(self, wb, hoja, tabla, fila_dict):
+        """La regla roja es 'no es ninguno de los favorables', no una lista de
+        textos malos. Asi un #N/A o un texto que nadie previo sale en ROJO, que
+        es el lado seguro; enumerar lo malo dejaria lo imprevisto en blanco,
+        indistinguible de 'aun no calculado'."""
+        ws = wb[hoja]
+        for rango in ws.conditional_formatting:
+            if not str(rango.sqref).startswith("F"):
+                continue
+            for r in rango.rules:
+                if (r.dxf is not None and r.dxf.fill is not None
+                        and _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)) == B.ROJO):
+                    assert "NOT(" in str(r.formula[0]), str(rango.sqref)
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_dictamen_global_es_un_bloque_propio(self, wb, hoja, tabla, fila_dict):
+        ws = wb[hoja]
+        assert "DICTAMEN GLOBAL" in str(ws.cell(fila_dict, 1).value), hoja
+        # Banda de tinta a todo el ancho, en macrotipografia grande. La cola de
+        # un rango fusionado se salta: Excel pinta todo el rango con el relleno
+        # de la celda ANCLA, y openpyxl ni siquiera deja asignarselo (lo mismo
+        # pasa en las demas bandas del libro — ver franja() en el builder, que
+        # recorre el rango justamente porque el BORDE si necesita ponerse celda
+        # a celda y el relleno no).
+        for col in range(1, B.MOTOR_NCOLS + 1):
+            c = ws.cell(fila_dict, col)
+            if isinstance(c, openpyxl.cell.cell.MergedCell):
+                assert c.border.top.style == "thick", c.coordinate
+                continue
+            assert _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.TINTA, c.coordinate
+        # La franja roja de arriba separa el dictamen de la tabla: es el limite
+        # duro entre dos zonas, dibujado y no insinuado.
+        assert ws.cell(fila_dict, 1).border.top.style == "thick", hoja
+        assert ws.cell(fila_dict, 1).font.name == B.MACRO
+        assert ws.cell(fila_dict, 1).font.size >= 16
+        assert ws.row_dimensions[fila_dict].height >= 20
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_elija_material_va_en_ambar_no_en_rojo(self, wb, hoja, tabla, fila_dict):
+        """Falta una entrada, no falla una verificacion. Pintarlo de rojo
+        confundiria 'aun no has elegido' con 'no cumple'."""
+        ws = wb[hoja]
+        rango = f"A{fila_dict}:G{fila_dict}"
+        reglas = [r for rg in ws.conditional_formatting if str(rg.sqref) == rango
+                  for r in rg.rules if r.dxf is not None and r.dxf.fill is not None]
+        colores = {_rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)): str(r.formula[0])
+                   for r in reglas}
+        assert set(colores) == {B.VERDE, B.AMBAR, B.ROJO}, f"{hoja}: {set(colores)}"
+        assert "ELIJA MATERIAL" in colores[B.AMBAR], hoja
+        assert "APTO" in colores[B.VERDE], hoja
+
+
 class TestReglasDeComentario:
     """Fase 5: donde va un comentario y donde no.
 

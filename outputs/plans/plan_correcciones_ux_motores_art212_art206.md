@@ -368,7 +368,41 @@ el mismo** que el del Requerido. (ii) El título de la hoja no es una banda de s
 </details>
 
 
-### Fase 6 — Semáforo VERDE/ROJO en Verificaciones + Dictamen Global resaltado
+### Fase 6 — Semáforo VERDE/ROJO + Dictamen Global resaltado ✅
+
+- [x] Tokens `CUMPLE_OK_*` / `CUMPLE_BAD_*` y `DICTAMEN_*`. El **ROJO aparece como
+      relleno por primera vez fuera del aviso de macros**, con el mismo significado que
+      tiene en todo el libro: bloqueado. Va en formato condicional (dxf), no como estilo
+      de celda, así que `test_el_aviso_de_macros_es_el_unico_relleno_rojo` sigue valiendo
+      sin tocarlo.
+- [x] Semáforo en las 8 celdas de Resultado del 212 (incluidos los dos topes de filete
+      del anexo) y las 3 del 206. Los textos favorables se declaran **fila a fila**
+      (`SEMAFORO_212/206`): cuatro verificaciones resuelven en CUMPLE/NO CUMPLE, pero dos
+      resuelven en una **ruta** de reparación y ahí lo verde es la rama que deja seguir
+      con el parche.
+- [x] **El rojo se pinta por complemento**, no por lista de textos malos: así un `#N/A`
+      o un texto que nadie previó sale bloqueado, que es el lado seguro. Enumerar lo malo
+      dejaría lo imprevisto en blanco, indistinguible de «aún no calculado».
+- [x] **Dictamen Global como bloque propio:** banda de tinta a todo el ancho, `MACRO` 16,
+      fila más alta y **franja roja arriba** separándolo de la tabla. CF sobre la fila
+      entera: APTO → verde, `ELIJA MATERIAL…` → **ámbar** (falta una entrada, no falla
+      una verificación: pintarlo de rojo confundiría «aún no has elegido» con «no
+      cumple»), todo lo demás → rojo.
+- [x] Se ejecuta **después** del pase de leyenda, a propósito: la leyenda pinta de gris
+      toda celda de fórmula y el dictamen lo es, pero no es un dato más de la tabla.
+- [x] `TestSemaforoDeAceptacion` (8 pruebas), incluida la que ataja el **fallo silencioso
+      más probable de la fase**: que el texto considerado favorable no sea letra por
+      letra el que escribe la fórmula — una raya larga distinta bastaría para que el
+      semáforo no encendiera nunca y la celda saliera roja siempre, que parece un
+      resultado.
+- [x] **Checkpoint:** `pytest` = **289**, `verificar.py` = **0 fallos**.
+
+*Desviación: el dictamen no se movió a una fila nueva con separador en blanco (habría
+exigido otro remapeo completo). Se le dio separación con la franja roja superior y el
+alto de fila, que consigue el mismo aislamiento visual sin volver a mover la hoja.*
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Agregar tokens nuevos `CUMPLE_OK_FILL`/`CUMPLE_OK_FONT` (reusar `VERDE`+`TINTA`,
       igual patrón que `SEL_OK_FILL/FONT`) y `CUMPLE_BAD_FILL`/`CUMPLE_BAD_FONT`
       (`ROJO` de fill + texto en `PAPEL` para contraste, ya que `ROJO` como fill sólido
@@ -387,6 +421,9 @@ el mismo** que el del Requerido. (ii) El título de la hoja no es una banda de s
       resultado sea APTO/REVISAR/PROHIBIDO/ELIJA MATERIAL — en ese caso, aplicar
       `conditional_formatting` sobre la fila entera: APTO→verde, REVISAR/PROHIBIDO/NO
       ELEGIBLE/FUERA DE ALCANCE→rojo, ELIJA MATERIAL→ámbar (reusando `AMBAR`).
+
+</details>
+
 
 ### Fase 7 — Conmutador SI/US (Sección de Material + resto del motor)
 - [ ] Agregar celda selector "Sistema de unidades" con `dv_list(ws, celda, '"SI,US"')`
