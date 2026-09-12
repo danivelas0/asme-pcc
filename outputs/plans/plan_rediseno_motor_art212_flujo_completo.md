@@ -453,9 +453,13 @@ Modify este plan (estado final).
   visible (`_plano`=`str`). El resto del oracle Rev0 queda intacto. §7 sigue APTO (161/138).
 - [x] **Step 5: `verificar.py` completo en Windows** (§1-11, incl. §6e y §7) → **0 fallos** en
   Excel real. §6e recalcula F_CP/F_LP/F_C/F_L/F_max, w_min, e, S_w, %Elong y E/TNT/R.
-- [~] **Step 6: documentar.** `CLAUDE.md` del proyecto: nota del estado (8 pasos del flujo en
-  el anexo + Fase 0 del App. 501) añadida. **Pendiente de cierre: F9 del ingeniero + Fase 9
-  (subíndices) + re-baseline del oracle.** Hasta entonces el plan queda en `outputs/plans/`.
+- [x] **Step 6: documentar.** `CLAUDE.md` del proyecto: nota del estado (8 pasos del flujo en
+  el anexo + Fase 0 del App. 501) añadida. La **Fase 9 (subíndices reales) se ejecutó en
+  `fba1417`** y el **oracle ya se actualizó** para las 20 celdas de símbolo de la col. B (no
+  hizo falta re-baseline por valores; §7 sigue APTO); `verificar.py` = **0 fallos** (§6e/§6f
+  incl.) y `pytest` = **254** tras la Fase 9. **Único pendiente de cierre: F9 del ingeniero**
+  —revisión visual del `.xlsm` entregado, en Excel real—. Hasta esa firma el plan queda en
+  `outputs/plans/`.
 
 ---
 

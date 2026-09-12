@@ -719,7 +719,37 @@ fuente que no sea una de las dos.
 | `ROJO` | `E61919` | **único** acento: aviso, bloqueo, dato vital |
 | `GRIS` · `GRIS_2` | `8A8A85` · `C9C7C1` | trama 55 % (metadato, marcador) · 25 % (retícula) |
 | `VERDE` · `AMBAR` · `AMBAR_TXT` | `4AF626` · `E6A019` · `8A5D00` | semáforo funcional |
+| `AMARILLO` | `FAEFC0` | celda editable — **solo en los dos motores de cálculo** |
 | `MACRO` · `MONO` | Arial Black · Consolas | estructura y cifra de KPI · todo el dato |
+
+**`AMARILLO` es la segunda excepción declarada al acento único, y está acotada por
+nombre de hoja.** En un buscador la única celda que se teclea se distingue por ser el
+único rectángulo cerrado de la zona (`CAJA_TECLEO`), y con dos o tres campos eso basta.
+Un motor de cálculo tiene cuarenta y tantas celdas mezcladas —editables, de fórmula y de
+rótulo— y ahí el borde ya no separa nada, así que la distinción pasa al **relleno**, con
+tres estados y una **leyenda impresa en la fila 3** de cada motor (`LEYENDA_MOTOR` /
+`build_leyenda_motor`): amarillo = lo rellena el ingeniero, `GRIS_2` = lo calcula el
+libro, `PAPEL` = rótulo, unidad o referencia.
+
+El color **no se etiqueta celda a celda** en los ~200 sitios que escriben cada hoja:
+`aplicar_leyenda_motor()` lo **deriva del estado real** —`Protection(locked=False)` →
+amarillo, valor que empieza por `=` → gris, el resto sin relleno propio → papel—, que
+es la única forma de que la leyenda impresa no pueda mentir. Corre como último paso de
+cada motor y **solo toca el relleno y la fuente**: valor, borde, validación y comentario
+quedan intactos, y por eso el *oracle* del 212 (que compara valores) no se ve afectado.
+Excluye por hipervínculo los botones de navegación, que también se entregan
+desbloqueados y si no saldrían amarillos.
+
+Tres pruebas lo sostienen en `test_dashboard.py::TestSistemaVisual`: que el amarillo
+**solo** aparezca en esas dos hojas, que las dos lleven su leyenda con el relleno que de
+verdad describe, y —el reverso, que es lo que la hace verdad— que **toda** celda
+editable esté amarilla, no solo que lo amarillo sea editable. La cola de un rango
+fusionado se excluye: openpyxl le arrastra la protección del ancla pero no su relleno.
+
+Efecto lateral que el pase destapó: había celdas **con texto y sin fuente propia** en
+los dos motores. Se veían bien —heredaban la mono del sustrato de columna— pero se
+colaban por la auditoría de fuentes, que solo mira celdas con estilo. Al darles relleno
+dejan de ser invisibles, así que el mismo pase les fija `DATA_F`.
 
 Las dos fuentes vienen instaladas con Windows **a propósito**: una que Excel no
 encuentra la sustituye en silencio y deshace la retícula, así que aquí no entra
@@ -794,8 +824,11 @@ II-1 general en `k`, II-3, III-1, Tabla 501-III-1-1) se reparó de una **extracc
 colapsada** leyendo el PDF de PCC-2 de la carpeta de standards; `leer_energia_501()`
 lee esos coeficientes de `resources/` y el build aborta si el apéndice no está
 reparado. `verificar.py` estrena **§6e (212)** y **§6f (206)**, que recalculan las
-fórmulas nuevas en Excel real. **Pendiente:** F9 de sign-off del ingeniero, la Fase 9
-(subíndices reales, cosmética) y el re-baseline del oracle del 212, agrupados. Planes:
+fórmulas nuevas en Excel real. La **Fase 9 (subíndices reales, cosmética) ya se ejecutó**
+(`fba1417`) y con ella el **oracle del 212 se actualizó** para las 20 celdas de símbolo de
+la col. B (sin re-baseline por valores; §7 sigue APTO). Tras la Fase 9: `pytest` = 254 y
+`verificar.py` = 0 fallos (§6e/§6f incl.). **Único pendiente:** F9 de sign-off del ingeniero
+—revisión visual del `.xlsm` en Excel real— para los dos motores. Planes:
 `outputs/plans/plan_rediseno_motor_art212_flujo_completo.md` y `…_art206_…md`.
 
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella

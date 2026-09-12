@@ -397,8 +397,15 @@ class TestPortabilidadDelDashboard:
 # falso positivo de auditar styles.xml entero -que conserva entradas heredadas
 # del maestro que ya no referencia ninguna celda-.
 PALETA = {B.PAPEL, B.PAPEL_2, B.TINTA, B.TINTA_2, B.ROJO, B.GRIS, B.GRIS_2,
-          B.VERDE, B.AMBAR, B.AMBAR_TXT}
+          B.VERDE, B.AMBAR, B.AMBAR_TXT, B.AMARILLO}
 FUENTES_DEL_SISTEMA = {B.MONO, B.MACRO}
+
+# El AMARILLO entra en la paleta del libro pero NO es de uso libre: marca la
+# celda editable y solo existe en los dos motores de calculo (leyenda impresa en
+# la fila 3 de cada uno). La lista blanca de arriba se resuelve por indice de
+# estilo y no sabe de que hoja viene cada uno, asi que el alcance lo fija una
+# prueba aparte, por nombre de hoja —mismo patron que el rojo del aviso—.
+HOJAS_CON_AMARILLO = {"Parche_PCC2_Art212", "Collar_PCC2_Art206"}
 
 
 def _rgb6(v):
@@ -482,6 +489,60 @@ class TestSistemaVisual:
                  if c.fill is not None and c.fill.patternType
                  and _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.ROJO]
         assert rojas == [(B.DASH, f"A{B.FILA_AVISO}")]
+
+    def test_el_amarillo_solo_vive_en_los_dos_motores_de_calculo(self, wb):
+        """El amarillo significa «aqui escribe usted». Fuera de un motor de
+        calculo no hay nada que escribir, y si apareciera en un buscador o en
+        una hoja de datos dejaria de significar eso.
+
+        Se recorre con el mismo ancho acotado que el guardia del rojo: el
+        amarillo solo puede nacer en la banda A..G de un motor.
+        """
+        hojas = {ws.title
+                 for ws in wb.worksheets
+                 for row in ws.iter_rows(max_col=B.DASH_NCOLS)
+                 for c in row
+                 if c.fill is not None and c.fill.patternType
+                 and _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.AMARILLO}
+        assert hojas <= HOJAS_CON_AMARILLO, sorted(hojas - HOJAS_CON_AMARILLO)
+
+    def test_los_dos_motores_llevan_su_leyenda_de_color(self, wb):
+        """La leyenda tiene que estar impresa en la hoja: un color que hay que
+        adivinar no es una convencion, es un acertijo. Y cada muestra lleva el
+        relleno que de verdad describe."""
+        esperado = {celda: _rgb6(relleno.fgColor.rgb)
+                    for celda, _, relleno in B.LEYENDA_MOTOR}
+        for nombre in HOJAS_CON_AMARILLO:
+            ws = wb[nombre]
+            for celda, rgb in esperado.items():
+                c = ws[celda]
+                assert c.value, f"{nombre}!{celda} sin texto de leyenda"
+                assert _rgb6(getattr(c.fill.fgColor, "rgb", None)) == rgb, \
+                    f"{nombre}!{celda}"
+
+    def test_toda_celda_editable_de_un_motor_va_en_amarillo(self, wb):
+        """El reverso de la leyenda, y lo que la hace verdad: no basta con que
+        lo amarillo sea editable —hay que comprobar que TODO lo editable esta
+        amarillo—, o el ingeniero encontraria celdas que acepta Excel y que la
+        hoja no anuncia. El boton de volver se entrega desbloqueado a proposito
+        (ver reponer_botones_de_retorno) y se excluye por su hipervinculo.
+        """
+        for nombre in HOJAS_CON_AMARILLO:
+            ws = wb[nombre]
+            # La cola de un rango fusionado no se comprueba: no tiene contenido
+            # propio y Excel pinta todo el rango con el formato de la celda
+            # ancla (la trampa que ya documenta franja() en el builder). Ademas
+            # openpyxl le arrastra la proteccion del ancla pero no su relleno,
+            # asi que mirarla daria un falso positivo en cada boton.
+            fuera = [c.coordinate
+                     for row in ws.iter_rows(max_col=B.MOTOR_NCOLS)
+                     for c in row
+                     if not isinstance(c, openpyxl.cell.cell.MergedCell)
+                     and c.hyperlink is None
+                     and c.protection is not None
+                     and c.protection.locked is False
+                     and _rgb6(getattr(c.fill.fgColor, "rgb", None)) != B.AMARILLO]
+            assert fuera == [], f"{nombre}: editables sin amarillo: {fuera}"
 
     def test_el_semaforo_conserva_sus_tres_estados(self, wb):
         """Retonados, no eliminados: el estado de la consulta es informacion de

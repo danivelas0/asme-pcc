@@ -96,6 +96,22 @@ VERDE = "4AF626"        # relleno: seleccion completa / en rango
 AMBAR = "E6A019"        # relleno: seleccion incompleta / dato con reserva
 AMBAR_TXT = "8A5D00"    # el mismo ambar como TEXTO sobre papel, ya legible
 
+# Leyenda de edicion de los DOS MOTORES DE CALCULO — excepcion declarada y
+# acotada por nombre de hoja (Parche_PCC2_Art212 y Collar_PCC2_Art206), del
+# mismo tipo que el semaforo funcional de arriba. En un buscador la unica celda
+# que se teclea se distingue por ser el UNICO rectangulo cerrado de la zona
+# (CAJA_TECLEO), y con dos o tres campos eso basta. Un motor de calculo tiene
+# cuarenta y tantas celdas mezcladas —editables, de formula y de rotulo— y ahi
+# el borde ya no separa nada: el ingeniero necesita ver de un golpe donde puede
+# escribir y donde no. Por eso la distincion pasa al RELLENO, con tres estados
+# y una leyenda impresa en la propia hoja:
+#   AMARILLO  celda editable (valor libre o lista desplegable)
+#   GRIS_2    celda bloqueada: formula
+#   PAPEL     rotulo, unidad, descripcion o especificacion
+# El tono es el minimo que se distingue del papel sin dejar de ser papel y sin
+# competir con el rojo del acento; TINTA encima mantiene contraste de sobra.
+AMARILLO = "FAEFC0"     # relleno: celda editable (SOLO en los dos motores)
+
 MACRO = "Arial Black"
 MONO = "Consolas"
 
@@ -128,6 +144,13 @@ LBL_F = Font(name=MONO, size=10, bold=True, color=TINTA)
 # nunca se confunde con una lista desplegable.
 IN_F = Font(name=MONO, size=10, bold=True, color=TINTA)
 IN_FILL = PatternFill("solid", fgColor=PAPEL)
+# Leyenda de edicion de los dos motores de calculo (ver el token AMARILLO). Los
+# tres rellenos se declaran JUNTOS para que la leyenda que se imprime en la hoja
+# y lo que se pinta en las celdas no puedan divergir: si alguien cambia uno,
+# cambia el que la leyenda muestra.
+MOTOR_IN_FILL = PatternFill("solid", fgColor=AMARILLO)    # editable
+MOTOR_CALC_FILL = PatternFill("solid", fgColor=GRIS_2)    # formula, bloqueada
+MOTOR_LBL_FILL = PAPEL_FILL                               # rotulo / unidad / nota
 # La lista desplegable lleva SOLO la linea inferior, como el hueco de un
 # formulario impreso. Encajonarla por los cuatro lados se probo y se descarto al
 # mirarlo exportado: siete campos seguidos con caja completa se ven como una
@@ -5851,6 +5874,102 @@ MOTOR = "Parche_PCC2_Art212"
 # (validaciones y fusionados) lo excluyen de la comparacion contra el oracle.
 FILA_ANEXO_FLUJO_212 = 132
 
+# Ancho de la tabla de los dos motores: columnas A..G (ver autosize() de cada
+# uno). La leyenda y su pase se mueven dentro de esa banda y no mas alla, que es
+# donde viven las columnas ocultas de listas materializadas y las de clave de
+# navegacion (COL_CLAVE_BASE): pintarlas seria colorear metadato invisible.
+MOTOR_NCOLS = 7
+
+# La leyenda impresa. Cada muestra lleva EL MISMO objeto de relleno que
+# `aplicar_leyenda_motor` pone en las celdas, no una copia del color: asi la
+# muestra no puede acabar describiendo un tono que la hoja ya no usa —el fallo
+# que TEXTOS_HEREDADOS tuvo que reparar a mano cuando el maestro Rev0 seguia
+# explicando sus «celdas azules sobre fondo amarillo»—.
+#
+# Va en D3/E3/F3 con la nota en G3 (la columna de «Referencia / Notas» de estos
+# motores) y SIN FUSIONAR ninguna celda: A3:C3 ya lo ocupa el boton de volver, y
+# un merge nuevo por debajo de FILA_ANEXO_FLUJO_212 romperia la comparacion de
+# fusionados contra el *oracle* del 212 (que es justo la red que hay que
+# conservar intacta hasta la Fase 3).
+LEYENDA_MOTOR = (
+    ("D3", "SE TECLEA", MOTOR_IN_FILL),
+    ("E3", "FORMULA", MOTOR_CALC_FILL),
+    ("F3", "ROTULO", MOTOR_LBL_FILL),
+)
+LEYENDA_MOTOR_NOTA = (
+    "Leyenda de color de celda: amarillo = lo rellena usted (tecleado o lista "
+    "desplegable) · gris = lo calcula el libro, esta bloqueada · papel = rotulo, "
+    "unidad o referencia.")
+
+
+def build_leyenda_motor(ws):
+    """Escribe la leyenda de color en la fila 3 de un motor de calculo."""
+    for celda, texto, relleno in LEYENDA_MOTOR:
+        c = ws[celda]
+        c.value = texto
+        c.font = Font(name=MONO, size=9, bold=True, color=TINTA)
+        c.fill = relleno
+        c.border = BOX
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        _nota(c, LEYENDA_MOTOR_NOTA)
+    g = ws["G3"]
+    g.value = "Leyenda de color de celda"
+    g.font = SRC_F
+    _nota(g, LEYENDA_MOTOR_NOTA)
+    return ws
+
+
+def aplicar_leyenda_motor(ws, hasta_fila=None):
+    """Pinta la leyenda de edicion sobre A..G de un motor de calculo.
+
+    NO se etiqueta celda a celda en los ~200 sitios que escriben la hoja: el
+    color se DERIVA del estado que la celda ya tiene, que es la unica forma de
+    que la leyenda impresa no pueda mentir.
+
+      celda desbloqueada  -> AMARILLO   (la escribe el ingeniero: `inp()` es lo
+                            unico del libro que pone Protection(locked=False))
+      formula             -> GRIS_2     (la calcula el libro)
+      lo demas sin relleno propio -> PAPEL
+
+    Se corre como ULTIMO paso de cada motor, despues de comentarios y
+    subindices, y solo toca el relleno: valor, fuente, borde, validacion y
+    comentario quedan intactos —por eso el *oracle* del 212, que compara
+    valores, no se ve afectado—. Una celda que ya trajo relleno propio (banda,
+    cabecera, boton, KPI, semaforo) se respeta: ya dice otra cosa.
+    """
+    # Hasta la ultima fila con contenido EN A..G, no hasta ws.max_row: las
+    # listas de cascada materializadas viven en columnas ocultas a la derecha y
+    # bajan cientos de filas mas que la tabla del motor. Pintar hasta ahi no se
+    # veria (el sustrato de columna ya es papel) y solo multiplicaria las celdas
+    # con estilo del .xlsm.
+    fin = hasta_fila or max(
+        (c.row for fila in ws.iter_rows(max_col=MOTOR_NCOLS) for c in fila
+         if c.value is not None), default=1)
+    for fila in ws.iter_rows(min_row=1, max_row=fin, max_col=MOTOR_NCOLS):
+        for c in fila:
+            # Un boton de navegacion tambien se entrega DESBLOQUEADO (para no
+            # depender de que Excel deje seguir un hipervinculo en celda
+            # bloqueada), asi que pasaria por editable y saldria amarillo. Se
+            # excluye por el hipervinculo, que es lo que de verdad lo distingue:
+            # asi el pase da el mismo resultado se corra antes o despues de la
+            # capa de navegacion.
+            if c.hyperlink is not None:
+                continue
+            if c.protection is not None and c.protection.locked is False:
+                c.fill = MOTOR_IN_FILL
+            elif isinstance(c.value, str) and c.value.startswith("="):
+                c.fill = MOTOR_CALC_FILL
+            elif c.fill is None or not c.fill.patternType:
+                c.fill = MOTOR_LBL_FILL
+            # Una celda con texto y SIN fuente propia se veia bien —heredaba la
+            # mono del sustrato de columna— pero se colaba por la auditoria de
+            # fuentes, que solo mira las celdas con estilo. Al darles relleno
+            # aqui dejan de ser invisibles, asi que hay que fijarles tambien la
+            # fuente del sistema o el libro pasaria a declarar Calibri.
+            if c.value is not None and c.font.name not in (MONO, MACRO):
+                c.font = DATA_F
+    return ws
+
 
 def construir_seccion7_material(
     ws, fila_base, b313, iid1a, iidb, fac_info, rangos,
@@ -5903,7 +6022,10 @@ def construir_seccion7_material(
     def inp(cell, value="", com=None):
         c = ws[cell]
         c.value = value
-        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
+        # Relleno AMARILLO: este bloque solo lo construyen los dos motores de
+        # calculo, y en ellos la celda editable se distingue por el relleno
+        # (ver el token AMARILLO y la leyenda de cada motor), no por el borde.
+        c.font, c.fill, c.border = IN_F, MOTOR_IN_FILL, CAJA_CAMPO
         c.protection = Protection(locked=False)
         if com:
             _nota(c, com)
@@ -6361,7 +6483,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     def inp(cell, value="", com=None):
         c = ws[cell]
         c.value = value
-        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
+        c.font, c.fill, c.border = IN_F, MOTOR_IN_FILL, CAJA_CAMPO
         c.protection = Protection(locked=False)
         if com:
             _nota(c, com)
@@ -7700,6 +7822,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # todas las celdas ya escritas.
     _aplicar_subindices(ws)
 
+    # Leyenda de color de celda + su aplicacion. Van al final, cuando ya existe
+    # cada celda: el pase DERIVA el color del estado real (desbloqueada /
+    # formula / rotulo) y correrlo antes dejaria sin pintar lo que falte.
+    build_leyenda_motor(ws)
+    aplicar_leyenda_motor(ws)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -7963,7 +8091,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     def inp(cell, value="", com=None):
         c = ws[cell]
         c.value = value
-        c.font, c.fill, c.border = IN_F, IN_FILL, CAJA_CAMPO
+        c.font, c.fill, c.border = IN_F, MOTOR_IN_FILL, CAJA_CAMPO
         c.protection = Protection(locked=False)
         if com:
             _nota(c, com)
@@ -8546,6 +8674,11 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # L_s, T_p...) van embebidos en la prosa de la columna A, no en una columna
     # B propia como en el 212; el mismo paso los convierte token a token.
     _aplicar_subindices(ws)
+
+    # Misma leyenda de color que el Art. 212: es la misma convencion de edicion
+    # y tiene que verse igual en los dos motores (ver LEYENDA_MOTOR).
+    build_leyenda_motor(ws)
+    aplicar_leyenda_motor(ws)
 
     ws.protection.password = "0000"
     ws.protection.sheet = True

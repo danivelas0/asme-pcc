@@ -444,9 +444,10 @@ Modify `CLAUDE.md` (estado del motor 206); Modify este plan (estado final).
   (Type B forzado en el qa), la luz `G≤2,5` y el tipo recomendado. w=9.5, luz CUMPLE, tipo Type A.
   El `t_req`+C.A. lo fijan las anclas de cadena (`TestBuildCollarArt206`) + §1-5 book-wide.
 - [x] **Step 5: `verificar.py` completo en Windows** (§1-11 + §6f) → **0 fallos**.
-- [~] **Step 6: documentar.** Nota de estado añadida al `CLAUDE.md` del proyecto. **Pendiente de
-  cierre: F9 del ingeniero + Fase 9 (subíndices, agrupada con el 212).** El plan queda en
-  `outputs/plans/` hasta entonces.
+- [~] **Step 6: documentar.** Nota de estado añadida al `CLAUDE.md` del proyecto. La **Fase 9
+  (subíndices reales, agrupada con el 212 — `T_s` y `L_s` movidos a la columna B) se ejecutó en
+  `fba1417`**; `verificar.py` = **0 fallos** (§6f incl.) y `pytest` = **254** tras ella. **Único
+  pendiente de cierre: F9 del ingeniero.** El plan queda en `outputs/plans/` hasta esa firma.
 
 ---
 
