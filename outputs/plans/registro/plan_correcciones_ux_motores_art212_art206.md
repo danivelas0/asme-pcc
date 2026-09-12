@@ -697,17 +697,39 @@ es el valor del caso precargado.*
 
 </details>
 
-### Fase 11 — Verificación
-- [ ] `pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q`
-- [ ] `verificar.py --resources ... --wb ...` (0 fallos, incluidas §6e/§6f
-      ampliadas de la Fase 7).
-- [ ] Exportar ambas hojas a PDF/PNG desde Excel real y revisar visualmente: leyenda
-      de colores, semáforo, Dictamen Global, agrupamiento plegable, ausencia de
-      paréntesis en bandas, dos columnas de presión.
-- [ ] Entregar el `.xlsm` reconstruido para el F9 final del ingeniero.
-- [ ] Actualizar CLAUDE.md con el nuevo estado (numeración, paleta, conmutador
-      SI/US en estos motores, botón de reinicio) y mover este plan a
-      `outputs/plans/registro/` con su fila en `LEEME.md` una vez cerrado.
+### Fase 11 — Verificación ✅
+- [x] `pytest test_build_db.py test_dashboard.py test_secii_tablas.py -q` = **314**.
+- [x] `verificar.py` = **0 fallos** en las 15 secciones, §6e/§6f/§6g incluidas y con la
+      capa de navegación ya a 43 hojas.
+- [x] **Revisión visual sobre el PDF exportado desde Excel real** (`ExportAsFixedFormat`
+      + rasterizado), que es la única evidencia válida del aspecto en este libro.
+      Comprobado: leyenda de color en la fila 3 de los dos motores, entradas en amarillo
+      y fórmulas en gris, bandas numeradas y **sin paréntesis**, dos columnas de presión,
+      subíndices reales, el rastro de material plegado, el semáforo y el Dictamen Global
+      en bloque propio, y las cuatro hojas nuevas enteras.
+- [x] **Seis defectos que solo se ven mirando, y que openpyxl no puede delatar:**
+      1. **No había área de impresión**: la hoja se imprimía con el área de uso entera
+         —hasta las columnas ocultas y la 100 del manifiesto— y, ajustada a una página de
+         ancho, la tabla salía microscópica. `preparar_impresion()` declara `A1:G<fin>`,
+         ajuste a lo ancho y fila 1 repetida, en las seis hojas.
+      2. El rótulo más largo del 212 («Presión de diseño (máxima admisible / rating)») se
+         cortaba contra la columna de símbolo: columna A de 44 a **50**.
+      3. El **título del 206 se cortaba a media palabra** por no estar fusionado A:G como
+         el del 212.
+      4. Una referencia de la columna G del 206 se salía del ancho; se acortó y la
+         explicación entera vive en el comentario de su celda (regla de la Fase 5).
+      5. Los altos de fila calculados fallaban **en las dos direcciones**: primero con
+         aire de sobra, y al apretarlos, **cortando la última línea**. Medidos sobre el
+         PDF: 100 caracteres por línea en las especificaciones y 78 en la guía.
+      6. En una celda de **fórmula** se medía el fuente y no lo que se ve: una fila de
+         cinco líneas para un texto que ocupa dos. Ahora se miden los literales.
+- [x] `.xlsm` reconstruido y entregado para el F9 del ingeniero (78 hojas, 11,7 MB).
+- [x] CLAUDE.md actualizado: 78 hojas y 43 navegables, el árbol con un nivel por
+      artículo, el botón de reinicio y su manifiesto, las cuatro hojas acompañantes, y el
+      área de impresión.
+
+**Lo único que queda es del ingeniero:** el F9 de sign-off en Excel real sobre los dos
+motores y sus cuatro pestañas nuevas. No es un paso que pueda ejecutar el agente.
 
 ## Notas de riesgo
 

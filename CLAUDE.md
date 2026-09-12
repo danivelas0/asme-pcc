@@ -166,15 +166,17 @@ solapes ni huecos. Los PDF no se versionan; se pasan con `--pdfs`.
 ## Motor de cálculo — estado actual
 
 Entregable vigente: `outputs/Motor_de_Calculo_ASME_PCC_Rev4.xlsm`
-(72 hojas, **una sola visible**, 11 MB). Se **genera por script**, nunca se edita
+(78 hojas, **una sola visible**, 11,7 MB). Se **genera por script**, nunca se edita
 a mano. El build entero tarda ~45 s.
 
 **Es un libro con macros.** Al abrirlo se ve solo el `Dashboard`; la navegación la
-hace un proyecto VBA de dos componentes, y alcanza **36 hojas**: los doce motores
-(Art. 212, los 10 buscadores, `Instrucciones`), las nueve hojas de datos de la
-Sección II y las **quince hojas `NAV_*`** del árbol de navegación. Los estados de
-visibilidad van **grabados en el archivo**, así que con las macros bloqueadas no se
-expone ninguna base que alimente un motor.
+hace un proyecto VBA de dos componentes, y alcanza **43 hojas**: los doce motores
+(Art. 212 y Art. 206 de cálculo, los diez buscadores), el manual `Instrucciones`,
+las **cuatro hojas acompañantes de los dos motores** (especificaciones técnicas e
+instrucciones de uso de cada artículo), las nueve hojas de datos de la Sección II y las
+**dieciocho hojas `NAV_*`** del árbol de navegación. Los estados de visibilidad van
+**grabados en el archivo**, así que con las macros bloqueadas no se expone ninguna
+base que alimente un motor.
 
 **Primero el tipo de artefacto, y solo después la norma.** El `Dashboard` conserva
 sus tres bandas —`1 · MOTORES DE CÁLCULO`, `2 · MOTORES DE BÚSQUEDA`, `3 · BASES DE
@@ -186,7 +188,10 @@ CONCRETO`— y cada tarjeta abre el nivel siguiente:
 ```
 Dashboard
 ├ 1 · MOTORES DE CALCULO
-│    ASME → REPARACIONES ───→ PCC ─→ PCC-2 ──→ Art. 212
+│    ASME → REPARACIONES ───→ PCC ─→ PCC-2 ─┬→ Art. 212 ─┬→ MOTOR DE CALCULO
+│                                           │            ├→ ESPECIFICACIONES TECNICAS
+│                                           │            └→ INSTRUCCIONES DE USO
+│                                           └→ Art. 206 ─┴→ (las mismas tres)
 ├ 2 · MOTORES DE BUSQUEDA
 │    ASME → PIPING ─────────→ B31 ─→ B31.3 ─→ 5 buscadores del B31.3
 │         → PRESSURE VESSELS → BPVC → SEC. II → 5 buscadores de la Parte D
@@ -539,7 +544,8 @@ comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
 
 | Concepto | Python | VBA |
 |---|---|---|
-| Hojas navegables (36, **en preorden**) | `NAVEGABLES` | `HojasNavegables()` |
+| Hojas navegables (43, **en preorden**) | `NAVEGABLES` | `HojasNavegables()` |
+| Manifiesto de reinicio: columna, centinela y prefijo | `COL_MANIFIESTO_RESET` · `SENTINEL_RESET` · `PREFIJO_RESET` | `COL_MANIFIESTO` · `SENTINEL_RESET` · `PREFIJO_RESET` |
 | Columna base de claves | `COL_CLAVE_BASE = 66` | `COL_CLAVE_BASE` |
 | Celda del aviso | `FILA_AVISO = 4` | `CELDA_AVISO = "A4"` |
 | Texto y color del aviso | `build_dashboard` + `AVISO_ROJO_*` | `TXT_INACTIVAS` · `TXT_ACTIVAS` y sus `RGB(...)` |
@@ -996,6 +1002,115 @@ plausible. Están arreglados y cada uno dejó su guardia.
    comparaba un número con un texto — cosa que en Excel da **CUMPLE**. La comprobación
    seguía en verde comprobando otra cosa. Ahora las celdas se buscan **por rótulo** y
    aborta si la fila no está; además exige que la temperatura leída sea numérica.
+
+### Los dos motores se reinician con un botón, y el VBA no sabe ninguna dirección
+
+**Fase 8 (2026-09-12).** `[ RESET ] REINICIAR ENTRADAS`, en **H3:J3** de cada motor,
+vacía todas las celdas de entrada de la hoja con confirmación previa. `ClearContents`
+y **no** `Clear`: el relleno de la leyenda, el borde, la validación de lista y el
+comentario se quedan. No hace falta desproteger nada — `ClearContents` sobre celda
+desbloqueada es legal bajo protección de hoja.
+
+**La lista de celdas la publica el propio motor**, en la **columna 100** (oculta), con
+el centinela `RESET_MANIFIESTO` en la fila 1 y una dirección por fila: `LimpiarEntradas`
+la lee de ahí y **no lleva ni una dirección de celda**. Es la misma razón por la que
+`HojasNavegables()` vive en un solo sitio, y aquí el precio de divergir es peor que una
+navegación rota: un botón que dice «reiniciar» y deja el valor del caso anterior en un
+campo. La clave del botón es `RESET:<hoja>` y el prefijo lleva `:`, que Excel no admite
+en un nombre de hoja, así que no puede confundirse con una clave de navegación.
+
+**El manifiesto se DERIVA del estado real de la hoja** (`_es_entrada_motor`:
+desbloqueada, sin hipervínculo, dentro de A..G, ancla de fusionado) con la **misma
+función** con la que `aplicar_leyenda_motor` decide pintarla de amarillo. Lo que la
+leyenda promete, lo que Excel deja teclear y lo que el botón borra son así el mismo
+conjunto por construcción. Se escribe **después** de `remapear_filas()`: son
+direcciones, y escritas antes apuntarían a las filas de antes de la mudanza.
+`TestReinicioDeEntradas` comprueba las dos direcciones —que el manifiesto cubra
+exactamente lo editable y que no incluya ningún botón ni celda de clave—.
+
+### Cada artículo es un nivel del árbol, con tres hojas (Fases 9 y 10, 2026-09-12)
+
+`PCC-2 → Art. 212` ya no es una tarjeta que abre el motor: es un **nodo** (`NAV_CAL_ART212`
+/ `NAV_CAL_ART206`) con los tres artefactos del artículo —motor, especificaciones técnicas
+e instrucciones de uso—. Un `Nodo` tiene `hoja` **o** `destino`, nunca las dos: para tener
+hijos, el artículo necesita su propia hoja NAV. Desde el motor hay **botón directo** a cada
+pestaña (H1:J1 y H2:J2, encima del de reinicio), así que no hay que subir un nivel para
+cambiar de pestaña del mismo artículo. El botón de retorno del motor pasó a decir
+«VOLVER A ART. 212» y eso es una divergencia declarada contra el *oracle* (`A3`).
+
+**`Espec_PCC2_Art212` y `Espec_PCC2_Art206` — especificaciones técnicas.** En el 212
+vivían dentro de la hoja del motor (siete filas de párrafo fusionadas B:G, la sección 8);
+en el 206 no existían. Salen por dos razones: no se consultan mientras se calcula, y **la
+cita no cabía** — cada especificación sale de un párrafo concreto de PCC-2 y ahí no había
+dónde ponerlo. Ahora cada fila lleva su cláusula en columna propia: 212-1/212-2, 212-3.4
+(ec. 4 y 5 + su NOTA), 212-4(a) a (g), 212-5, 212-6 y App. 501; 206-1.1, 206-2.1 a 2.10,
+206-3.5/3.10/3.11, 206-4.1 a 4.7, 206-5 y 206-6. De la sección 8 del 212 se conserva la
+banda como **letrero** que dice adónde se fue; sus 14 celdas de contenido van declaradas,
+y `test_rangos_fusionados` filtra por el ancla declarada porque **una celda retirada se
+lleva su merge**.
+
+**Estas hojas son parte de su motor, no un segundo motor**, y por eso leen sus celdas.
+La regla 13 separa motores de búsqueda de motores de cálculo para que ninguno dependa del
+estado de otro; aquí hay un motor repartido en dos pestañas del mismo artículo, y lo
+contrario sería peor: una especificación que dijera un espesor distinto del calculado. El
+texto transcribe el requisito con las unidades **como el código las imprime** —«5 mm
+(3/16 in.)»—, así que estas hojas no llevan conmutador propio; lo que sí depende del
+sistema son las cifras que vienen del motor, y esas se rotulan con su selector.
+
+**`Instruc_PCC2_Art212` e `Instruc_PCC2_Art206` — la guía de uso se DERIVA del motor.**
+El plan pedía explicar «por cada celda». Son ~50 entradas y ~120 fórmulas por motor:
+escribirlas a mano era una segunda copia de lo que el motor ya dice. Cada celda ya lleva
+puesto todo lo que la guía necesita —rótulo en A, unidad en C, referencia en G y un
+comentario que empieza por «Entrada:» o «Cálculo:»— y el **tipo** no se declara, se lee
+del estado real (desbloqueada / con lista / fórmula). El **ejemplo** es el valor del caso
+precargado. Lo escrito a mano es solo lo que el motor no puede decir de sí mismo: para qué
+sirve, cuándo NO se usa, qué se hace en cada sección y los cuatro mecanismos (leyenda de
+color, conmutador SI/US, semáforo y botón de reinicio), una sola vez para los dos motores.
+La **banda de sección se reconoce por su estructura** (tinta + macrotipografía) y no por
+su texto: el 212 fusiona A:G sus bandas y el 206 no. La prueba fuerte es la cobertura: la
+guía lista **exactamente** las mismas celdas de entrada que el manifiesto de reinicio, que
+sale del mismo estado por otro camino.
+
+**Cinco defectos que estas dos fases destaparon, ninguno de los cuales daba error:**
+
+1. La fórmula del método seguía leyendo `$D$23` —tras el mapa de la Fase 3, `D24`, la fila
+   de material de **lista fija retirada en la Tarea 7-8**—: imprimía «Plancha  de 8 mm»
+   con el hueco en medio. Ahora lee el `material_id resuelto` por la cascada de la
+   Sección 2, que es la fuente auditada.
+2. El cateto del 206 lee una celda que en Type A **no devuelve un número** sino «No aplica
+   - Type A (206-1.1.1)»: el `TEXT()` lo dejaba pasar y la fila decía «w = No aplica …
+   mm». Se distingue con `ISNUMBER`.
+3. **23 celdas de los motores sin comentario propio** (6 en el 212, 17 en el 206): su fila
+   de la guía salía muda. Documentadas todas, y el pase **declara en `ISSUES`** toda celda
+   sin comentario para que un hueco así no vuelva a quedar callado.
+4. La columna de referencia del motor trae textos que empiezan por `=` («= $D$26»).
+   Copiados a la guía, openpyxl los escribía como **fórmula** y se evaluaban contra la
+   hoja de la guía. `_plano()` los fuerza a texto —mismo arreglo que `_txt_celda` en la
+   Sección II— y la prueba mira el **tipo** de celda, no si el texto empieza por «=».
+5. La primera versión del reconocimiento de bandas exigía el fusionado A:G y la guía del
+   206 salió **vacía**, sin dar error.
+
+**`AMARILLO` sigue acotado a los dos motores.** En las cuatro hojas acompañantes el campo
+editable se distingue como en un buscador (papel limpio con la línea inferior de tinta):
+son hojas de documento, no motores, y el guardia del amarillo las excluye por nombre.
+
+**El área de impresión se declara (`preparar_impresion`), y eso lo destapó exportar.**
+Sin ella, la hoja se imprime —y se exporta a PDF— con el área de uso **entera**, que llega
+hasta las columnas ocultas de listas materializadas y de claves de navegación (la 100 del
+manifiesto de reinicio): ajustada a una página de ancho, la tabla de A..G quedaba
+microscópica y el resto del folio en blanco. Las seis hojas (los dos motores y sus cuatro
+acompañantes) declaran ahora `A1:G<fin>`, ajuste a lo ancho y **fila 1 repetida** en cada
+página —son largas, y una página 4 sin título no dice de qué motor es—.
+
+La misma revisión, hecha **mirando el PDF** y no openpyxl, encontró otras cuatro cosas
+que no se ven de ninguna otra forma: el rótulo más largo del 212 se cortaba contra la
+columna de símbolo (columna A de 44 a 50), el título del 206 se cortaba a media palabra
+por no estar fusionado A:G como el del 212, una referencia de la columna G del 206 se
+salía del ancho (se acortó, y la explicación entera vive en el comentario de su celda), y
+los altos de fila calculados de las hojas nuevas estaban mal en las dos direcciones —con
+sobra de aire primero y **cortando la última línea** después—. El alto de una fila
+fusionada no lo ajusta Excel: hay que calcularlo, y en una celda de fórmula se mide lo que
+se **verá** (los literales entre comillas), no el fuente.
 
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de

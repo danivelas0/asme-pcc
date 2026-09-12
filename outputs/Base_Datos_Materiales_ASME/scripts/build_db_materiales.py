@@ -7293,7 +7293,11 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         'ASME PCC-2 Art. 212 (Fillet Welded Patches). El collar de encierro '
         'total (Art. 206) es un motor aparte. Caso precargado: Linea '
         '12"-CWS-46-032-B1 (U46).')
-    autosize(ws, {"A": 44, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
+    # Columna A a 50: con 44, el rotulo mas largo de la hoja —«Presion de diseno
+    # (maxima admisible / rating)»— se cortaba a media palabra contra la columna
+    # de simbolo, que no esta vacia y por tanto no deja desbordar el texto. Visto
+    # exportando la hoja a PDF en la Fase 11, no en openpyxl.
+    autosize(ws, {"A": 50, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
     # new_sheet() escribe A1/A2 con rotulo() (formato de banda: "[ ... ]" en
     # mayusculas). El titulo de ESTA hoja va literal, tal como lo capturo el
     # *oracle* desde el maestro Rev0 (corregir_art212_fase1 lo hacia igual,
@@ -8732,6 +8736,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 9: atajo a las especificaciones tecnicas, que dejaron esta hoja.
     build_botones_documentos(ws, espec=ESPEC_212, instr=INSTR_212)
 
+    # Fase 11: el area de impresion es A..G, no el area de uso (que llega a las
+    # columnas ocultas). Se descubrio al exportar la hoja para revisarla.
+    preparar_impresion(ws, MOTOR_NCOLS)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -8974,7 +8982,17 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
                    "ASME PCC-2 Art. 206 (Full Encirclement Steel Reinforcing Sleeves), "
                    "Type A y Type B. Fuente: resources/ASME PCC/pcc_2/"
                    "p2_welded_repairs/art_206_full_encirclement_steel/art_206.json")
-    autosize(ws, {"A": 44, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
+    # Titulo y subtitulo fusionados A:G, igual que en el Art. 212. Sin el merge,
+    # el titulo se cortaba a media palabra —«[ MOTOR DE CALCULO // COLLAR DE
+    # ENC»— en cuanto la celda de al lado dejaba de estar libre. Visto en el PDF
+    # exportado de la Fase 11.
+    ws.merge_cells(f"A1:{get_column_letter(MOTOR_NCOLS)}1")
+    ws.merge_cells(f"A2:{get_column_letter(MOTOR_NCOLS)}2")
+    # Columna A a 50: con 44, el rotulo mas largo de la hoja —«Presion de diseno
+    # (maxima admisible / rating)»— se cortaba a media palabra contra la columna
+    # de simbolo, que no esta vacia y por tanto no deja desbordar el texto. Visto
+    # exportando la hoja a PDF en la Fase 11, no en openpyxl.
+    autosize(ws, {"A": 50, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
 
     def lab(r, text, unidad=None, ref=None, com=None):
         cl = ws.cell(r, 1, text)
@@ -9152,10 +9170,11 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # p2_welded_repairs/art_206_full_encirclement_steel/art_206.json, Regla n.1),
     # no contra un valor tipico intermedio. Tener las dos dejaba dos columnas
     # compitiendo por gobernar el T_s,min. La fila 27 queda vacia a proposito.
+    # La REFERENCIA de la columna G va corta: el parrafo entero se salia del
+    # ancho de la columna y se cortaba al imprimir. La explicacion completa vive
+    # en el comentario de D28, que es donde la regla de la Fase 5 la pide.
     lab(28, "Presion de diseno (maxima admisible / rating)", "kg/cm2",
-       "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la "
-       "que gobierna el t_req de Type B (seccion 'Calculo de espesor "
-       "requerido'), no un valor tipico intermedio.")
+       "206-3.3 · maximum allowable design pressure")
     inp("D28", 20,
         "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la que "
         "gobierna el t_req de Type B, no un valor tipico intermedio.")
@@ -9667,6 +9686,8 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # pestana propia y construidas desde cero contra resources/.
     build_botones_documentos(ws, espec=ESPEC_206, instr=INSTR_206)
 
+    preparar_impresion(ws, MOTOR_NCOLS)
+
     ws.protection.password = "0000"
     ws.protection.sheet = True
 
@@ -9761,8 +9782,15 @@ def _espec_fila(ws, r, concepto, texto, cita, editable=False, com=None):
     # Excel no autoajusta el alto de una fila fusionada, asi que se calcula: B:F
     # suma 100 unidades de ancho y la mono de 9 pt entra a ~95 caracteres por
     # linea. Una fila corta de mas se lee; una corta de menos oculta el texto.
+    # 100 caracteres por linea en B:F, medidos sobre el PDF exportado. Y en una
+    # celda de FORMULA no se mide el fuente sino lo que se vera: los literales
+    # entre comillas mas un hueco por cada TEXT(). Medir la formula entera daba
+    # una fila de cinco lineas para un texto que ocupa dos.
+    visible = texto if not str(texto).startswith("=") else (
+        "".join(re.findall(r'"([^"]*)"', str(texto)))
+        + " " * 10 * str(texto).count("TEXT("))
     lineas = max(1,
-                 -(-len(str(texto)) // 95),
+                 -(-len(str(visible)) // 100),
                  -(-len(str(cita)) // 30),
                  -(-len(str(concepto)) // 32))
     ws.row_dimensions[r].height = 13.5 * lineas + 4
@@ -9810,6 +9838,7 @@ def build_especificaciones(wb, nombre, motor, titulo, subtitulo, bloques):
     av.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
     ws.row_dimensions[r].height = 30
 
+    preparar_impresion(ws, ESPEC_NCOLS)
     ws.protection.password = "0000"
     ws.protection.sheet = True
     return ws
@@ -10334,6 +10363,31 @@ def _guia_de_celdas(ws):
     return [(b, filas) for b, filas in secciones if filas]
 
 
+def preparar_impresion(ws, ncols, hasta_fila=None):
+    """Area de impresion y ajuste a lo ancho de una hoja de motor o documento.
+
+    Sin esto la hoja se imprime -y se exporta a PDF- con el area de uso ENTERA,
+    que llega hasta las columnas ocultas de listas materializadas y de claves de
+    navegacion (la 100 del manifiesto de reinicio): al ajustar a una pagina de
+    ancho, la tabla de A..G queda microscopica y el resto del folio en blanco.
+    Se descubrio exportando la hoja y mirandola, que es la unica evidencia valida
+    del aspecto en este libro.
+
+    La fila 1 se repite en cada pagina: estas hojas son largas y una pagina 4 sin
+    titulo no dice de que motor es.
+    """
+    fin = hasta_fila or max(
+        (c.row for fila in ws.iter_rows(max_col=ncols) for c in fila
+         if c.value is not None), default=1)
+    ws.print_area = f"A1:{get_column_letter(ncols)}{fin}"
+    ws.print_title_rows = "1:1"
+    ws.sheet_properties.pageSetUpPr.fitToPage = True
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.page_setup.orientation = "landscape"
+    return ws
+
+
 def _plano(ws, r, c, v):
     """Escribe TEXTO, aunque empiece por «=».
 
@@ -10409,14 +10463,19 @@ def build_instrucciones_motor(wb, nombre, motor, titulo, subtitulo, prosa):
         ws.merge_cells(start_row=r, start_column=4, end_row=r, end_column=6)
         r += 1
         for celda, rot, tipo, nota, ref, ejemplo in filas:
-            ws.cell(r, 1, celda).font = Font(name=MONO, size=9, bold=True,
-                                             color=TINTA)
+            a = ws.cell(r, 1, celda)
+            a.font = Font(name=MONO, size=9, bold=True, color=TINTA)
+            # Alineacion SUPERIOR en las tres columnas cortas: con el alto que
+            # pide un parrafo de cuatro lineas, una celda centrada o al pie deja
+            # la direccion flotando lejos de la fila que nombra. Visto en el PDF.
+            a.alignment = Alignment(vertical="top")
             b = _plano(ws, r, 2, rot)
             b.font = DATA_F
             b.alignment = Alignment(vertical="top", wrap_text=True)
             t = ws.cell(r, 3, tipo)
             t.font = Font(name=MONO, size=9, bold=True,
                           color=TINTA if tipo == "FORMULA" else ROJO)
+            t.alignment = Alignment(vertical="top")
             if ejemplo is None:
                 texto = nota
             elif str(ejemplo).strip() == "":
@@ -10432,8 +10491,11 @@ def build_instrucciones_motor(wb, nombre, motor, titulo, subtitulo, prosa):
             g = _plano(ws, r, 7, ref)
             g.font = SRC_F
             g.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
-            ws.row_dimensions[r].height = 12.5 * max(
-                1, -(-len(str(texto)) // 72), -(-len(str(rot)) // 38)) + 3
+            # 78 caracteres por linea en D:F y 38 en B, medidos sobre el PDF
+            # exportado. Con 72 sobraba aire; con 92 se cortaba la ultima linea,
+            # que es peor: una instruccion a medias no se lee como una fila alta.
+            ws.row_dimensions[r].height = 13.2 * max(
+                1, -(-len(str(texto)) // 78), -(-len(str(rot)) // 38)) + 3
             n_entradas += tipo != "FORMULA"
             n_formulas += tipo == "FORMULA"
             r += 1
@@ -10445,6 +10507,7 @@ def build_instrucciones_motor(wb, nombre, motor, titulo, subtitulo, prosa):
     av.alignment = Alignment(vertical="top", wrap_text=True, indent=1)
     ws.row_dimensions[r].height = 30
 
+    preparar_impresion(ws, INSTR_NCOLS)
     ISSUES.append(f"{nombre}: guia de uso derivada del motor — "
                   f"{n_entradas} celdas de entrada y {n_formulas} de formula.")
     ws.protection.password = "0000"
