@@ -924,6 +924,79 @@ declarar una divergencia obligaba a borrar la celda de la lista y con ella su co
 `TestNumeracionDeSecciones` fija el **orden** de las bandas, no solo su texto — una hoja
 bien numerada pero descolocada pasaría una prueba de texto y seguiría siendo la vieja.
 
+**Los dos motores llevan conmutador SI ↔ US y es de TODO el motor, no solo del
+material (Fase 7, 2026-09-12).** El selector vive en la banda de aplicación y código
+(`D15` en el 212, `D14` en el 206), **por encima** de los datos de entrada: gobierna las
+unidades de los campos que se teclean más abajo, y un selector colocado debajo de los
+campos que rotula es un selector que se descubre tarde.
+
+**No podía ser solo del bloque de material.** La edición US publica el esfuerzo admisible
+en **ksi**, y meter un ksi en una cadena que opera en MPa/mm da un número equivocado. Lo
+que hace viable el cambio completo es que las ecuaciones del código son **dimensionales**
+y no llevan constantes de unidad: `t = PD/(2(SE+PY))` da pulgadas con ksi y pulgadas, y
+`w = F/(E·Sa)` da pulgadas con kip/in y ksi. Así que solo hay tres cosas que cambiar.
+
+1. **De qué edición se lee.** `construir_seccion7_material()` pasa de un `CHOOSE` de tres
+   ramas a uno de **seis** (las tres bases métricas y sus tres gemelas US), con el índice
+   `+3` en modo US. Se hace con **un** CHOOSE y no con un `IF` envolviendo cada uno:
+   `IF(cond, rangoA, rangoB)` como argumento de `MATCH` exigiría entrada matricial (CSE),
+   que la regla 1 de diseño prohíbe. **El `material_id` NO coincide entre ediciones** —el
+   tag es `A-1` frente a `A-1C` y el tamaño va en mm frente a in, y los dos entran en la
+   clave—, así que la fila US se alcanza en **tres saltos**: fila SI → `clave_bi` → fila
+   US, igual que en los buscadores. Un material sin homólogo da
+   `SIN EQUIVALENTE EN LA EDICION US` y bloquea; nunca cae a la fila métrica, que daría
+   un número en la unidad equivocada.
+2. **Los rótulos de unidad**, declarados fila a fila en `UNIDADES_212`/`UNIDADES_206` y
+   escritos por un pase (`aplicar_unidades_motor`). Editar cuarenta llamadas a `lab()`
+   habría repartido por toda la función una decisión que así se lee de un golpe.
+3. **Las constantes y los umbrales.** Tres constantes dependen del sistema y **dejan de
+   teclearse**: densidad del acero, factor de conversión de la presión y el divisor del
+   peso. Y siete **umbrales normativos** de longitud (tope de filete, separación de
+   fit-up, espesor de examen, solape, longitud y sobrepaso del sleeve, luz radial) se
+   **leen** del código en sus dos unidades con `leer_umbrales_pcc2()` — PCC-2 los imprime
+   como «40 mm (1.5 in.)» — y el build **aborta** si alguno deja de aparecer: un umbral
+   de aceptación en la unidad equivocada convierte un «NO CUMPLE» en un «CUMPLE». Lo
+   mismo con el App. 501: la ec. (II-5) trae su propio divisor de TNT (`1 488 617 lb`) y
+   la 501-III-1 su propio umbral (`6 000 000 ft-lb`) y distancia (`100 ft`).
+   **Ningún umbral se convierte** (Regla nº 1 y regla 9).
+
+**Los textos de aviso dejaron de citar la cifra.** Un aviso que dice «excede 40 mm» sería
+falso en modo US, y un aviso que miente sobre su propio umbral es peor que ninguno.
+
+**`verificar.py` estrena §6g, que es la única prueba que de verdad vale aquí:** recalcula
+el caso semilla **otra vez** en modo US, con cada entrada convertida desde la que la hoja
+ya tiene en SI, y exige que los once resultados coincidan con el métrico al reconvertirlos
+**y que los siete veredictos sean idénticos** — si el dictamen cambiara con el sistema de
+unidades, el motor estaría diciendo dos cosas distintas del mismo diseño. 18/18 en verde.
+
+La única diferencia que **no** coincide exactamente, y es correcta, son los umbrales: el
+código imprime «40 mm (1.5 in.)» y 1,5 in son 38,1 mm. Esa diferencia es del código, no
+del motor, y por eso se leen las dos cifras en vez de convertir una.
+
+### Tres defectos latentes que la Fase 7 destapó
+
+Los tres venían de la Fase 3 y **ninguno daba error**: los tres devolvían un resultado
+plausible. Están arreglados y cada uno dejó su guardia.
+
+1. **Las columnas ocultas no se movían, pero sus fórmulas apuntaban a las que sí.** Ahí
+   viven las listas de cascada materializadas, y su clave es literalmente
+   `=$D$109&"|"&$D$110&…`. Tras el remapeo quedaron apuntando a filas vacías y **la
+   cascada de material dejó de resolver, en silencio**. No lo vio nadie porque el caso
+   semilla resuelve su material por la celda «Variante», que es precisamente una vía de
+   escape de la cascada: todo lo que se comprobaba pasaba por esa vía. `remapear_filas()`
+   tiene ahora un segundo pase que reescribe solo las **referencias** de esas columnas, y
+   `TestColumnasOcultasApuntanBien` falla si alguna apunta a una fila vacía.
+2. **`remapear_referencias()` corrompía el segundo extremo de un rango de otra hoja.**
+   `DB_B36_19!$A$4:$A$50` → `$A$79`, porque a `$A$50` no le precede el `!` sino un `:`.
+   Ahora los operandos externos se apartan **enteros** antes de tocar nada. `refs_propias()`
+   es la misma función que usan el remapeo y la auditoría: si mirasen conjuntos distintos,
+   la prueba daría confianza falsa justo donde más cara sale.
+3. **`verificar.py` sembraba el material semilla en las celdas equivocadas.** Escribía en
+   `D114/E114`, que tras la Fase 3 es la fila de conformado en frío, y la verificación
+   comparaba un número con un texto — cosa que en Excel da **CUMPLE**. La comprobación
+   seguía en verde comprobando otra cosa. Ahora las celdas se buscan **por rótulo** y
+   aborta si la fila no está; además exige que la temperatura leída sea numérica.
+
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
 datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /

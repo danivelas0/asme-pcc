@@ -425,7 +425,45 @@ alto de fila, que consigue el mismo aislamiento visual sin volver a mover la hoj
 </details>
 
 
-### Fase 7 — Conmutador SI/US (Sección de Material + resto del motor)
+### Fase 7 — Conmutador SI <-> US, de todo el motor OK
+*Alcance decidido por el ingeniero con el problema a la vista: **modo US completo**, no
+solo el bloque de material. La edición US publica el esfuerzo en ksi, y meter un ksi en
+una cadena que opera en MPa/mm da un número equivocado.*
+
+- [x] Selector en la banda de aplicación y código (`D15` en el 212, `D14` en el 206),
+      **por encima** de los datos de entrada. En el 212 no había fila libre: el mapa de la
+      Fase 3 se rehízo para dejarle la 15 (commit de sitio aparte, `1fc5375`).
+- [x] `construir_seccion7_material()` pasa a un `CHOOSE` de **seis ramas** con índice `+3`
+      en US — **un** CHOOSE, no un `IF` por encima de cada uno: eso exigiría entrada
+      matricial (CSE), prohibida por la regla 1 de diseño.
+- [x] La fila US se alcanza en **tres saltos** (fila SI -> `clave_bi` -> fila US): el
+      `material_id` **no coincide** entre ediciones. Sin homólogo ->
+      `SIN EQUIVALENTE EN LA EDICION US` y bloqueo, nunca caída a la fila métrica.
+- [x] Rótulos de unidad de toda la hoja, declarados fila a fila y escritos por un pase.
+- [x] Tres constantes que **dejan de teclearse** (densidad, factor de conversión, divisor
+      del peso) y **siete umbrales normativos leídos del código en sus dos unidades**
+      (`leer_umbrales_pcc2`), con aborto si alguno deja de aparecer. App. 501 igual.
+- [x] Los textos de aviso dejaron de citar la cifra: «excede 40 mm» sería falso en US.
+- [x] **`verificar.py` §6g** recalcula el caso semilla **otra vez en US** con las entradas
+      convertidas desde las SI y exige que los once resultados coincidan al reconvertirlos
+      **y que los siete veredictos sean idénticos**. 18/18.
+- [x] **Checkpoint:** `pytest` = **291**, `verificar.py` = **0 fallos** (§6g incluida).
+
+#### Tres defectos latentes que esta fase destapó
+Los tres venían de la Fase 3, **ninguno daba error** y los tres devolvían un resultado
+plausible. Arreglados, cada uno con su guardia:
+1. **La cascada de material había dejado de resolver, en silencio.** Las columnas ocultas
+   no se movían pero sus fórmulas apuntaban a las filas viejas. No lo vio nadie porque el
+   caso semilla resuelve por la celda «Variante», que es una **vía de escape de la
+   cascada**: todo lo comprobado pasaba por esa vía.
+2. **`remapear_referencias()` corrompía el segundo extremo de un rango de otra hoja**
+   (`DB_B36_19!$A$4:$A$50` -> `$A$79`): a `$A$50` no le precede el `!` sino un `:`.
+3. **`verificar.py` sembraba el material semilla en la fila de conformado en frío**, y la
+   verificación comparaba un número con un texto — que en Excel da **CUMPLE**. La
+   comprobación seguía verde comprobando otra cosa. Ahora busca **por rótulo**.
+
+<details><summary>Plan original de la fase</summary>
+
 - [ ] Agregar celda selector "Sistema de unidades" con `dv_list(ws, celda, '"SI,US"')`
       en la banda "Aplicación y código de construcción" de cada motor (mismo patrón
       que los buscadores).
@@ -451,6 +489,9 @@ alto de fila, que consigue el mismo aislamiento visual sin volver a mover la hoj
 - [ ] `verificar.py`: agregar/extender el bloque que recalcula en Excel real la
       Sección de Material en modo US para al menos un material de control (paralelo a
       §6e/§6f existentes).
+
+</details>
+
 
 ### Fase 8 — Botón de reinicio (limpiar entradas)
 - [ ] Al construir cada motor, recolectar en una lista Python la dirección de cada

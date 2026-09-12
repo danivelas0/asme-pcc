@@ -6041,12 +6041,33 @@ def _mapa_filas_206():
 MAPA_FILAS_212 = _mapa_filas_212()
 MAPA_FILAS_206 = _mapa_filas_206()
 
+# Celda del selector de sistema de unidades de cada motor (Fase 7). Vive en
+# la banda de aplicacion y codigo, por encima de los datos de entrada.
+UNIDAD_212, UNIDAD_206 = "$D$15", "$D$14"
+# Y la CONDICION, aparte de la celda. Confundirlas cuesta caro y en silencio:
+# `IF($D$15, a, b)` es sintaxis valida de Excel —Excel intenta leer "SI" como
+# booleano— y devuelve #VALUE!, que se propaga hacia abajo sin decir de donde
+# vino. Por eso hay dos nombres y no uno.
+ES_SI_212, ES_SI_206 = f'{UNIDAD_212}="SI"', f'{UNIDAD_206}="SI"'
+
+
 # Una referencia de celda de ESTAS hojas: columna A..G y fila de hasta tres
 # digitos. Se exige que no venga precedida de letra, digito, guion bajo ni "!"
 # —eso descarta el nombre de otra hoja (DB_B31_3!$A$4) y los sufijos de un
 # identificador— y que no le siga un digito ni un parentesis de apertura (eso
 # descarta un numero mas largo y un nombre de funcion).
 _REF_MOTOR = re.compile(r'(?<![A-Za-z0-9_!$])(\$?)([A-G])(\$?)(\d{1,3})(?![0-9(])')
+
+# Un operando de OTRA hoja, entero: "DB_B31_3!$A$4" o "DB_B36_19!$A$4:$A$50".
+# Hay que reconocerlo COMPLETO y no solo por el "!": el segundo extremo de un
+# rango no lo lleva delante —en "DB_B36_19!$A$4:$A$50" lo que precede a "$A$50"
+# es un ":"— y sin esto _REF_MOTOR lo tomaba por una celda de la hoja del motor
+# y le movia la fila. Comprobado: convertia ese rango en "$A$4:$A$79" y
+# "MAP_Factores!$A$4:$A$123" en "$A$56". Es corrupcion silenciosa: la formula
+# sigue siendo valida y devuelve otro numero.
+_OPERANDO_EXTERNO = re.compile(
+    r"(?:'[^']+'|[A-Za-z_][A-Za-z0-9_.]*)!\$?[A-Z]{1,3}\$?\d+"
+    r"(?::\$?[A-Z]{1,3}\$?\d+)?")
 
 
 def remapear_referencias(formula, mapa):
@@ -6061,8 +6082,20 @@ def remapear_referencias(formula, mapa):
         return formula
 
     def sub(trozo):
-        return _REF_MOTOR.sub(
-            lambda m: f"{m[1]}{m[2]}{m[3]}{mapa.get(int(m[4]), int(m[4]))}", trozo)
+        # Los operandos de otra hoja se apartan ENTEROS antes de tocar nada y
+        # se reponen despues: asi ni el segundo extremo de uno de sus rangos
+        # puede confundirse con una celda de esta hoja.
+        externos = []
+
+        def guardar(m):
+            externos.append(m.group(0))
+            return f"\x00{len(externos) - 1}\x00"
+
+        limpio = _OPERANDO_EXTERNO.sub(guardar, trozo)
+        limpio = _REF_MOTOR.sub(
+            lambda m: f"{m[1]}{m[2]}{m[3]}{mapa.get(int(m[4]), int(m[4]))}", limpio)
+        return re.sub(r"\x00(\d+)\x00",
+                      lambda m: externos[int(m[1])], limpio)
 
     partes, i, dentro = [], 0, False
     for j, ch in enumerate(formula):
@@ -6073,6 +6106,34 @@ def remapear_referencias(formula, mapa):
             i = j + 1
     partes.append(formula[i:] if dentro else sub(formula[i:]))
     return "".join(partes)
+
+
+def refs_propias(formula):
+    """Las referencias de ESTA hoja que trae una formula, en orden.
+
+    Comparte con `remapear_referencias` las dos exclusiones que importan -lo
+    que va entre comillas y los operandos de otra hoja- porque las dos preguntas
+    son la misma: que trozos de la formula son celdas de este motor. Tenerlo en
+    una sola funcion evita que una auditoria mire un conjunto de referencias y
+    el remapeo mueva otro.
+    """
+    if not isinstance(formula, str) or not formula.startswith("="):
+        return []
+    encontradas, i, dentro = [], 0, False
+    for j, ch in enumerate(formula):
+        if ch == '"':
+            if not dentro:
+                encontradas += _refs_de_trozo(formula[i:j])
+            dentro = not dentro
+            i = j + 1
+    if not dentro:
+        encontradas += _refs_de_trozo(formula[i:])
+    return encontradas
+
+
+def _refs_de_trozo(trozo):
+    limpio = _OPERANDO_EXTERNO.sub(" ", trozo)
+    return [(m[2], int(m[4])) for m in _REF_MOTOR.finditer(limpio)]
 
 
 def remapear_filas(ws, mapa, ncols=None):
@@ -6153,6 +6214,24 @@ def remapear_filas(ws, mapa, ncols=None):
     for r, (alto, nivel, oculta) in dims.items():
         d = ws.row_dimensions[mapa.get(r, r)]
         d.height, d.outline_level, d.hidden = alto, nivel, oculta
+
+    # --- Las columnas ocultas NO se mueven, pero SI apuntan a las que si -----
+    # Ahi viven las listas de cascada materializadas y las auxiliares de
+    # resolucion. Sus filas no son las de la tabla y no deben moverse; pero sus
+    # formulas leen celdas de A..G —la clave de la cascada es
+    # `=$D$109&"|"&$D$110&...`— y esas si se han movido. Sin este segundo pase
+    # quedan apuntando a filas vacias y la CASCADA DEJA DE RESOLVER, en
+    # silencio: el caso semilla no lo delata porque resuelve su material por la
+    # celda 'Variante', que es una via de escape de la propia cascada.
+    #
+    # Solo se reescriben las REFERENCIAS: ninguna celda de estas columnas
+    # cambia de sitio. Las referencias entre columnas ocultas ($W$109) y a otras
+    # hojas (DB_B31_3!$A$4) no se tocan — la primera porque su columna esta
+    # fuera de A..G y la segunda por el guardia del "!".
+    for fila in ws.iter_rows(min_col=ncols + 1):
+        for c in fila:
+            if isinstance(c.value, str) and c.value.startswith("="):
+                c.value = remapear_referencias(c.value, mapa)
     return ws
 
 
@@ -6300,6 +6379,70 @@ def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
     return ws
 
 
+# ---------------------------------------------------------------------------
+# Fase 7 — el motor entero cambia de sistema de unidades
+# ---------------------------------------------------------------------------
+# El conmutador no puede gobernar solo el bloque de material: la edicion US
+# publica el esfuerzo admisible en ksi, y meter un ksi en una cadena que opera
+# en MPa/mm da un numero sencillamente equivocado. O cambia de unidades TODO el
+# motor, o el selector no puede tocar el calculo.
+#
+# La cadena entera es coherente en cualquiera de los dos sistemas, porque las
+# ecuaciones del codigo son dimensionales y no llevan constantes de unidad:
+#   t_req = P·D / (2·(S·E + P·Y))     ksi·in / ksi  -> in
+#   F     = P·Dm/2                    ksi·in        -> kip/in
+#   w_min = F/(E·Sa)                  (kip/in)/ksi  -> in
+#   S_w   = P·Dm/(2T) + 3·P·Dm·e/T²   ksi           -> ksi
+# Lo unico que hay que cambiar es (i) el rotulo de cada magnitud, (ii) las tres
+# constantes que SI dependen del sistema y (iii) de que columna de B36 salen el
+# OD y el espesor. Los valores que teclea el ingeniero NO se convierten: hay que
+# volver a teclearlos, igual que en los cinco buscadores de cascada (regla 9).
+#
+# Los rotulos se declaran en una tabla, fila a fila, y los escribe un pase
+# final. Editar cuarenta llamadas a lab() habria repartido por toda la funcion
+# una decision que se lee de un golpe aqui.
+_U = {"len": ("mm", "in"), "temp": ("°C", "°F"), "pres": ("kg/cm²", "psi"),
+      "esf": ("MPa", "ksi"), "fuerza": ("N/mm", "kip/in"),
+      "dens": ("kg/m³", "lb/in³"), "peso": ("kg", "lb"),
+      "vol": ("m³", "ft³"), "pabs": ("MPa abs", "psia"),
+      "energia": ("J", "ft·lb"), "masa": ("kg", "lb"),
+      "dist": ("m", "ft"), "rscaled": ("m/kg^⅓", "ft/lb^⅓")}
+
+UNIDADES_212 = {
+    21: "len", 22: "len", 26: "temp", 27: "pres", 29: "pres", 30: "len",
+    31: "len", 32: "len", 33: "len", 34: "len", 35: "len", 36: "len",
+    68: "esf", 69: "esf", 70: "esf", 74: "dens", 77: "esf",
+    81: "len", 82: "len", 83: "len", 84: "len", 85: "len",
+    90: "pres", 91: "esf", 92: "fuerza", 93: "len", 94: "len",
+    95: "esf", 96: "esf", 97: "esf",
+    102: "len", 103: "esf", 104: "pres", 107: "len", 108: "len", 109: "peso",
+    # Anexo de pasos del flujo (no se movio, pero si cambia de unidades).
+    144: "fuerza", 145: "fuerza", 146: "fuerza", 147: "fuerza", 148: "fuerza",
+    149: "fuerza", 150: "fuerza", 155: "len", 167: "len", 172: "len",
+    184: "vol", 185: "pabs", 186: "pabs", 188: "rscaled",
+    189: "energia", 190: "masa", 191: "dist",
+}
+UNIDADES_206 = {
+    20: "len", 21: "len", 25: "temp", 26: "pres", 28: "pres", 29: "len",
+    30: "len", 31: "len", 32: "len", 62: "esf", 70: "len", 71: "len",
+    76: "pres", 77: "esf", 78: "len", 79: "len", 80: "len", 86: "len",
+    113: "len", 121: "len", 140: "pres", 141: "pres",
+}
+
+
+def aplicar_unidades_motor(ws, tabla, sel):
+    """Escribe el rotulo de unidad de cada fila como formula del selector."""
+    for fila, clase in tabla.items():
+        si, us = _U[clase]
+        c = ws.cell(fila, 3)
+        if c.value is None:        # fila que no existe en este motor: se avisa
+            ISSUES.append(f"{ws.title}: la fila {fila} de la tabla de unidades "
+                          f"no tiene rotulo de unidad; revise UNIDADES_*.")
+            continue
+        c.value = f'=IF({sel},"{si}","{us}")'
+    return ws
+
+
 def aplicar_leyenda_motor(ws, hasta_fila=None):
     """Pinta la leyenda de edicion sobre A..G de un motor de calculo.
 
@@ -6360,6 +6503,7 @@ def construir_seccion7_material(
     nota_extra_cascada="",
     titulo_banda="2. RESOLUCION DE MATERIAL — BASE DE DATOS ASME",
     banda_rotulo=True, mapa_citas=None,
+    b313c=None, iid1ac=None, iidbc=None, unidad_cell=None,
 ):
     """Bloque de resolucion de material: cascada de 5 niveles + variante, con
     las listas materializadas en columnas ocultas (unica forma portable a
@@ -6378,19 +6522,40 @@ def construir_seccion7_material(
     y, si `incluir_ej_ec`, `ej_ref`/`ec_ref`.
     """
     rb, ri = rangos["B313"], rangos["IID1A"]
-    B, I1, I2 = b313["sheet"], iid1a["sheet"], iidb["sheet"]
+    # Fase 7 — el eje SI <-> US. `bases` son las SEIS hojas de esfuerzo
+    # admisible: las tres metricas y sus tres gemelas en U.S. Customary. El
+    # indice de CHOOSE lleva +3 cuando el selector dice US, asi que "la misma
+    # base en la otra edicion" es sumar tres y nada mas.
+    #
+    # Se hace con UN CHOOSE de seis ramas y no con un IF envolviendo cada
+    # CHOOSE: un IF(cond, rangoA, rangoB) como argumento de MATCH exige entrada
+    # matricial (CSE), que la regla 1 de diseno del libro prohibe. CHOOSE con
+    # indice escalar entrega una REFERENCIA, que INDEX/MATCH consumen tal cual.
+    us_ok = all(x is not None for x in (b313c, iid1ac, iidbc, unidad_cell))
+    bases = [b313, iid1a, iidb] + ([b313c, iid1ac, iidbc] if us_ok else [])
+    SEL = f'{unidad_cell}="SI"' if us_ok else "TRUE"
     IDC, TMAXC = CL["material_id"], CL["Temp. max. / limite"]
+    BIC = CL["clave_bi"]
 
-    def col3(cl_):
-        return (f'CHOOSE({{i}},{B}!${cl_}${R_DATA}:${cl_}${b313["last_row"]},'
-                f'{I1}!${cl_}${R_DATA}:${cl_}${iid1a["last_row"]},'
-                f'{I2}!${cl_}${R_DATA}:${cl_}${iidb["last_row"]})')
-    IDS, TMAX = col3(IDC), col3(TMAXC)
-    NAMES = f'CHOOSE({{i}},"{B}","{I1}","{I2}")'
-    pk = {1: packed_refs(b313), 2: packed_refs(iid1a), 3: packed_refs(iidb)}
-    NPTS = 'CHOOSE({i},' + ",".join(pk[k]["npts"] for k in (1, 2, 3)) + ')'
-    TANC = 'CHOOSE({i},' + ",".join(pk[k]["t_anchor"] for k in (1, 2, 3)) + ')'
-    VANC = 'CHOOSE({i},' + ",".join(pk[k]["v_anchor"] for k in (1, 2, 3)) + ')'
+    def coln(cl_, cuales):
+        """Columna `cl_` de las bases `cuales`, en un CHOOSE de N ramas."""
+        return ('CHOOSE({i},' + ",".join(
+            f'{b["sheet"]}!${cl_}${R_DATA}:${cl_}${b["last_row"]}'
+            for b in cuales) + ')')
+
+    IDS, TMAX = coln(IDC, bases), coln(TMAXC, bases)
+    # La clave bilingue es lo unico que enlaza una fila metrica con su gemela
+    # US: el material_id NO coincide entre ediciones (el tag es "A-1" frente a
+    # "A-1C" y el tamano va en mm frente a in, y los dos entran en la clave).
+    # Por eso la fila US no se busca por material_id sino en tres saltos:
+    # fila SI -> clave bilingue -> fila US, igual que en los buscadores.
+    BI_SI = coln(BIC, bases[:3])
+    BI_US = coln(BIC, bases[3:]) if us_ok else None
+    NAMES = 'CHOOSE({i},' + ",".join(f'"{b["sheet"]}"' for b in bases) + ')'
+    pk = [packed_refs(b) for b in bases]
+    NPTS = 'CHOOSE({i},' + ",".join(p["npts"] for p in pk) + ')'
+    TANC = 'CHOOSE({i},' + ",".join(p["t_anchor"] for p in pk) + ')'
+    VANC = 'CHOOSE({i},' + ",".join(p["v_anchor"] for p in pk) + ')'
     hl = get_column_letter
     M = modo_cell
 
@@ -6463,7 +6628,12 @@ def construir_seccion7_material(
        f"Calculo: repite automaticamente la temperatura de evaluacion de esta "
        f"hoja ({temp_fuente_cell}). No se edita aqui.")
     ws.cell(F + 3, 4).value = f"={temp_fuente_cell}"
-    ws.cell(F + 3, 3).value = "°C"
+    # Los rotulos de unidad del bloque los decide la EDICION que se lee: la
+    # metrica publica °C y MPa, la U.S. Customary °F y ksi. No se convierte
+    # nada (regla 9): cambia de que tabla se lee, y el rotulo lo dice.
+    u_temp = f'=IF({SEL},"°C","°F")' if us_ok else "°C"
+    u_esf = f'=IF({SEL},"MPa","ksi")' if us_ok else "MPa"
+    ws.cell(F + 3, 3).value = u_temp
     niveles = [(F + 4, "0 · Familia de material",
                 f"Entrada: paso 0 de la cascada, para {desc_cols}. Elija la "
                 f"familia de material de la lista desplegable. Habilita la "
@@ -6587,12 +6757,12 @@ def construir_seccion7_material(
     etiquetas = [(F + 10, "material_id resuelto", None), (F + 11, "Base de datos activa", None),
                  (F + 12, "Base ASME aplicada (1/2/3)", None), (F + 13, "Fila localizada en la base", None),
                  (F + 14, "Puntos tabulados de la fila", None),
-                 (F + 15, "T1 — temperatura tabulada inferior", "°C"),
-                 (F + 16, "T2 — temperatura tabulada superior", "°C"),
-                 (F + 17, "S en T1", "MPa"), (F + 18, "S en T2", "MPa"),
-                 (F + 19, "Temperatura maxima admisible", "°C"),
+                 (F + 15, "T1 — temperatura tabulada inferior", u_temp),
+                 (F + 16, "T2 — temperatura tabulada superior", u_temp),
+                 (F + 17, "S en T1", u_esf), (F + 18, "S en T2", u_esf),
+                 (F + 19, "Temperatura maxima admisible", u_temp),
                  (F + 20, "Dictamen de rango", None),
-                 (F + 21, "S(T) resuelto", "MPa")]
+                 (F + 21, "S(T) resuelto", u_esf)]
     for r, t, u in etiquetas:
         lab(r, t, com=com_etiq[r])
         if u:
@@ -6605,10 +6775,33 @@ def construir_seccion7_material(
         ws.cell(F + 10, col2).value = (
             f'=IF(${L}${F + 9}<>"",${L}${F + 9},IF(${ac}${F + 5}=0,"",'
             f'IF({M}=1,INDEX({rb["ID"]},${ac}${F + 5}),INDEX({ri["ID"]},${ac}${F + 5}))))')
-        ws.cell(F + 12, col2).value = f'=IF({M}=1,1,IF(LEFT({L}{F + 10},2)="1A",2,3))'
+        # Indice de base: 1/2/3 segun la base, +3 si el selector dice US. La
+        # base la decide siempre el material_id METRICO (la cascada es unica y
+        # se resuelve contra la edicion SI, igual que en los buscadores).
+        base_i = f'IF({M}=1,1,IF(LEFT({L}{F + 10},2)="1A",2,3))'
+        ws.cell(F + 12, col2).value = (
+            f'={base_i}+IF({SEL},0,3)' if us_ok else f'={base_i}')
         ic = f"{L}{F + 12}"
+        ic_si = f"MOD({ic}-1,3)+1" if us_ok else ic
         ws.cell(F + 11, col2).value = f'=IF({L}{F + 10}="","",{NAMES.format(i=ic)})'
-        ws.cell(F + 13, col2).value = f'=IFERROR(MATCH({L}{F + 10},{IDS.format(i=ic)},0),"")'
+        if us_ok:
+            # fila SI -> clave bilingue -> fila US. Un material sin homologo
+            # deja la fila US vacia, y de ahi en adelante todo el bloque se
+            # comporta como si no hubiera seleccion: n_pts 0, S(T) NA() y el
+            # dictamen lo dice con todas las letras. Nunca se cae a la fila
+            # metrica por defecto, que daria un numero en la unidad equivocada.
+            f_si = f'IFERROR(MATCH({L}{F + 10},{IDS.format(i=ic_si)},0),"")'
+            ws[f"{ac}{F + 6}"] = (
+                f'=IF({f_si}="","",INDEX({BI_SI.format(i=ic_si)},{f_si}))')
+            bi = f"${ac}${F + 6}"
+            ws[f"{ac}{F + 7}"] = (
+                f'=IF({bi}="","",IFERROR(MATCH({bi},'
+                f'{BI_US.format(i=ic_si)},0),""))')
+            ws.cell(F + 13, col2).value = (
+                f'=IF({SEL},IFERROR({f_si},""),${ac}${F + 7})')
+        else:
+            ws.cell(F + 13, col2).value = (
+                f'=IFERROR(MATCH({L}{F + 10},{IDS.format(i=ic)},0),"")')
         FILA = f"{L}{F + 13}"
         ws.cell(F + 14, col2).value = f'=IF({FILA}="","",IFERROR(INDEX({NPTS.format(i=ic)},{FILA}),0))'
         NP = f"{L}{F + 14}"
@@ -6624,12 +6817,17 @@ def construir_seccion7_material(
         ws.cell(F + 17, col2).value = f'=IF({FILA}="","",IFERROR(INDEX({vr},{P1}),""))'
         ws.cell(F + 18, col2).value = f'=IF({FILA}="","",IFERROR(INDEX({vr},{P1}+1),""))'
         ws.cell(F + 19, col2).value = f'=IFERROR(INDEX({TMAX.format(i=ic)},{FILA}),"")'
+        sin_homologo = (
+            f'IF(AND(NOT({SEL}),{FILA}=""),'
+            f'"SIN EQUIVALENTE EN LA EDICION US",' if us_ok else "")
         ws.cell(F + 20, col2).value = (
             f'=IF({L}{F + 10}="","SIN MATERIAL SELECCIONADO",'
+            + sin_homologo +
             f'IF({FILA}="","MATERIAL NO ENCONTRADO",'
             f'IF({L}{F + 17}="","FUERA DE RANGO (sin valor tabulado a esa T)",'
             f'IF(AND(ISNUMBER({L}{F + 19}),$D${F + 3}>{L}{F + 19}),'
-            f'"FUERA DE RANGO (T > Temp. max.)","OK"))))')
+            f'"FUERA DE RANGO (T > Temp. max.)","OK"))))'
+            + (")" if us_ok else ""))
         ws.cell(F + 21, col2).value = (
             f'=IF({L}{F + 20}<>"OK",NA(),'
             f'IF($D${F + 3}<={L}{F + 15},{L}{F + 17},IF(OR({L}{F + 16}="",{L}{F + 18}=""),{L}{F + 17},'
@@ -6725,10 +6923,68 @@ SEED_ART212_COLLAR = 'A-1 | A516 | 70 | Plate, bar, shps., sheet | K02700 | P-1'
 
 # Ruta de los dos apendices del App. 501 en resources/ (reparados en la Fase 0.2
 # del plan del Art. 212: la extraccion habia colapsado la capa de texto).
+_ART_212_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+                 "art_212_fillet_welded_patches/art_212.json")
+_ART_206_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+                 "art_206_full_encirclement_steel/art_206.json")
 _APP_501_II = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
                "app_501_ii/app_501_ii.json")
 _APP_501_III = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
                 "app_501_iii/app_501_iii.json")
+
+
+# Umbrales de LONGITUD que los dos motores comparan contra una entrada. Son
+# normativos, y el codigo los imprime en las DOS unidades —"40 mm (1.5 in.)",
+# "2.5 mm (3/32 in.)"—, asi que en modo US se LEEN, no se convierten (Regla n.1
+# y regla 9). Cada entrada es (articulo, fragmento que lo ancla en el texto).
+# Si el fragmento deja de aparecer, el build aborta: un umbral de aceptacion en
+# la unidad equivocada convierte un "NO CUMPLE" en un "CUMPLE".
+UMBRALES_PCC2 = {
+    "212_filete_max": ("212", "nor 40 mm"),
+    "212_separacion_g": ("212", "a minimum of 1.5 mm"),
+    "212_separacion_max": ("212", "separated by more than 5 mm"),
+    "212_espesor_examen": ("212", "greater than 25 mm"),
+    "212_solape": ("212", "overlap sound base metal by at least 25 mm"),
+    "206_longitud_min": ("206", "at least 100 mm"),
+    "206_sobrepaso": ("206", "extend beyond the defect by at least 50mm"),
+    "206_luz_radial": ("206", "radial gap of up to 2.5 mm"),
+}
+# "1 ∕ 16" y "3 ∕ 32" llegan como fraccion con el signo de division de Unicode.
+_RE_UMBRAL = re.compile(
+    r"([\d.]+)\s*mm\s*\(\s*(?:([\d.]+)|([\d.]+)\s*[∕/]\s*([\d.]+))\s*in\.?\s*\)")
+
+
+def umbral(umbrales, clave, sel):
+    """`IF(es_SI, valor metrico, valor US)` de un umbral leido de resources/."""
+    si, us = umbrales[clave]
+    return f"IF({sel},{si:g},{us:g})"
+
+
+def leer_umbrales_pcc2(resources):
+    """Los umbrales de longitud de PCC-2, en sus dos unidades impresas."""
+    from pathlib import Path as _Path
+    raiz = _Path(resources)
+    textos = {}
+    for art, ruta in (("212", _ART_212_JSON), ("206", _ART_206_JSON)):
+        textos[art] = json.dumps(
+            json.loads((raiz / ruta).read_text(encoding="utf-8")),
+            ensure_ascii=False)
+    fuera = {}
+    for clave, (art, ancla) in UMBRALES_PCC2.items():
+        i = textos[art].find(ancla)
+        if i < 0:
+            raise SystemExit(
+                f"Fase 7: el umbral '{clave}' ya no aparece en el Art. {art} de "
+                f"resources/ (ancla {ancla!r}). No se construye el modo US con "
+                f"un umbral de aceptacion convertido de memoria.")
+        m = _RE_UMBRAL.search(textos[art], i)
+        if not m:
+            raise SystemExit(
+                f"Fase 7: el umbral '{clave}' no imprime su valor en pulgadas "
+                f"junto al metrico; no se puede leer el par (Regla n.1).")
+        us = float(m[2]) if m[2] else float(m[3]) / float(m[4])
+        fuera[clave] = (float(m[1]), us)
+    return fuera
 
 
 def leer_energia_501(resources):
@@ -6794,8 +7050,45 @@ def leer_energia_501(resources):
         val = float(fila[0])
         crit = " / ".join(c for c in (fila[2], fila[3]) if c and c != "...")
         ops.append((f"{val:g} ({crit})" if crit else f"{val:g}", val))
+
+    # --- Los MISMOS coeficientes en U.S. Customary (Fase 7) -----------------
+    # El App. 501 publica las dos ediciones y resources/ las trae enteras, asi
+    # que el modo US del Paso 8 no obliga a convertir nada (regla 9): se lee lo
+    # que imprime el codigo. Si faltara, se aborta igual que con la metrica —
+    # un Paso 8 en US con constantes inventadas no vale nada.
+    #   (II-5): TNT = E / 1,488,617 (lb)
+    #   501-III-1: R = 100 ft para E <= 6 000 000 ft-lb
+    #   Tabla 501-III-1-1, columna 1: Rscaled en ft/lb^(1/3)
+    t_ii5 = _texto_ecuacion(ii, "(II-5)")
+    if not t_ii5:
+        raise SystemExit(
+            "Art.212 Paso 8 (US): falta la ec. (II-5) del App. 501-II en "
+            "resources/. El modo US no se construye con un divisor inventado.")
+    m_us = _re.search(r"E\s*/\s*([\d\s,]+)", t_ii5)
+    if not m_us:
+        raise SystemExit(f"Art.212 Paso 8 (US): divisor TNT ilegible en {t_ii5!r}")
+    tnt_div_us = int(m_us.group(1).replace(" ", "").replace(",", ""))
+
+    m_thr_us = _re.search(r"\(([\d\s,]+)\s*ft-lb\)", ub)
+    m_r_us = _re.search(r"\(([\d.]+)\s*ft\)", ub)
+    if not (m_thr_us and m_r_us):
+        raise SystemExit(f"Art.212 Paso 8 (US): umbral/distancia ilegibles en {ub!r}")
+    blast_thr_us = int(m_thr_us.group(1).replace(" ", "").replace(",", ""))
+    blast_r_us = float(m_r_us.group(1))
+
+    m_def_us = _re.search(r"\(([\d.]+)\s*ft/lb", tabla["regla_por_defecto"])
+    r_def_us = float(m_def_us.group(1)) if m_def_us else float(tabla["filas"][0][1])
+    ops_us = []
+    for fila in tabla["filas"]:
+        val = float(fila[1])
+        crit = " / ".join(c for c in (fila[2], fila[3]) if c and c != "...")
+        ops_us.append((f"{val:g} ({crit})" if crit else f"{val:g}", val))
+
     return {"tnt_div_kg": tnt_div, "blast_thr_J": blast_thr, "blast_R_m": blast_r,
-            "r_scaled_def": r_def, "r_scaled_ops": ops}
+            "r_scaled_def": r_def, "r_scaled_ops": ops,
+            "tnt_div_lb": tnt_div_us, "blast_thr_ftlb": blast_thr_us,
+            "blast_R_ft": blast_r_us, "r_scaled_def_us": r_def_us,
+            "r_scaled_ops_us": ops_us}
 
 
 # --- Notacion de simbolos con subindice real (Fase 9, decision 5) -----------
@@ -6854,7 +7147,8 @@ def _aplicar_subindices(ws, cols=("B",)):
 
 
 def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
-                        energia_501=None):
+                        energia_501=None, b313c=None, iid1ac=None, iidbc=None,
+                        umbrales=None):
     """Motor Art. 212 (parche soldado), 100% en codigo — desanclado del maestro
     Rev0 (Fase 4). Antes vivia heredado + corregido por integrate_motor/
     corregir_art212_fase1; ahora nace con new_sheet como Collar_PCC2_Art206.
@@ -6866,6 +7160,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     DB_B36_10/DB_B36_19 por cascada de listas (reglas 12/14), y sus celdas se
     declaran en DIVERGENCIAS_REEMPLAZADAS, verificadas por
     TestCascadaDimensionalArt212 en vez de por el oracle Rev0."""
+    if umbrales is None:
+        raise SystemExit(
+            "build_parche_art212: faltan los umbrales de longitud de PCC-2 (leer_umbrales_pcc2). "
+            "Un umbral de aceptacion no tiene valor por defecto.")
+    UMBR = umbrales
+
     if MOTOR in wb.sheetnames:        # el maestro aun trae la hoja heredada
         del wb[MOTOR]
     ws = new_sheet(
@@ -6951,7 +7251,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         # Banda literal, sin rotulo(): las del 212 van en mayus/minus mixtas y
         # sin corchetes (el *oracle* Rev0 las trae asi). Ver banda_literal().
         titulo_banda="2.  RESOLUCIÓN DE MATERIAL",
-        banda_rotulo=False, mapa_citas=MAPA_FILAS_212)
+        banda_rotulo=False, mapa_citas=MAPA_FILAS_212,
+        b313c=b313c, iid1ac=iid1ac, iidbc=iidbc, unidad_cell=UNIDAD_212)
 
     # --- Banda IDENTIFICACION (fila 4) + identificacion (filas 5-6) ---------
     # A4 es la banda de seccion, fusionada A4:G4, texto literal del *oracle*
@@ -7192,10 +7493,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
                                      fila_norma=22, fila_nps=18, fila_ced=19)
     idx = casc["idx"]
     clave_key = '$D$18&"|"&$D$19'
-    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm")},'
+    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm", ES_SI_212, "od_in")},'
                 f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
          com20)
-    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm")},'
+    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm", ES_SI_212, "t_in")},'
                 f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
          com21)
 
@@ -7339,7 +7640,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
              "(seccion 4).")
     lab(45, "Densidad del acero", unidad="kg/m³", com=com45)
     ws.cell(45, 2, "ρ").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D45", 7850, com45)
+    calc("D45", f'=IF({ES_SI_212},7850,0.2836)', com45 + " " + "Calculo (Fase 7): la constante depende del SISTEMA DE UNIDADES, no del "
+        "caso, asi que la fija el selector y no se teclea. Dejarla editable "
+        "obligaria a acordarse de cambiarla al conmutar, y olvidarlo daria un "
+        "resultado plausible y equivocado.")
 
     com46 = "Entrada: factor de prueba hidrostatica, B31.3 345.4.2."
     lab(46, "Factor de prueba hidrostática", unidad="—",
@@ -7352,7 +7656,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lab(47, "Conversión de presión", unidad="—",
         ref="1 kg/cm²=0,0980665 MPa", com=com47)
     ws.cell(47, 2, "kg/cm²→MPa").font = Font(name=MONO, size=10, color=TINTA)
-    inp("D47", 0.0980665, com47)
+    calc("D47", f'=IF({ES_SI_212},0.0980665,0.001)', com47 + " " + "Calculo (Fase 7): la constante depende del SISTEMA DE UNIDADES, no del "
+        "caso, asi que la fija el selector y no se teclea. Dejarla editable "
+        "obligaria a acordarse de cambiarla al conmutar, y olvidarlo daria un "
+        "resultado plausible y equivocado.")
 
     com48 = ("Calculo: limite de esfuerzo para la verificacion de "
              "excentricidad (seccion 5), 1,5 veces el esfuerzo admisible "
@@ -7413,7 +7720,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
              "suma si g >= 1.5 mm (212-4c). Con fit-up ajustado (g=0) e = (T+t)/2.")
     lab(55, "Excentricidad de la carga", unidad="mm", ref="e = (T + t)/2", com=com55)
     ws.cell(55, 2, "e").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D55", "=($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2", com55)
+    calc("D55", f'=($D$29+$D$21+IF($D$167>={umbral(UMBR, "212_separacion_g", ES_SI_212)},'
+         f'$D$167,0))/2', com55)
 
     com56 = ("Calculo: radio de conformado de la fibra media, Rf = OD/2 + luz "
              "+ T_parche/2; se usa en la deformacion por conformado (ec. 7).")
@@ -7632,14 +7940,17 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
              "desarrollo menos 3 mm de luz de raiz.")
     lab(79, "Longitud de corte (media carcasa)", unidad="mm",
         ref="menos luz de raíz", com=com79)
-    calc("D79", "=$D$78-3", com79)
+    # Los 3 mm de luz de raiz NO son del codigo: son holgura de fabricacion.
+    # Aun asi son una LONGITUD, y sin conmutar restaban 3 pulgadas en modo US
+    # (se vio en el recalculo: el peso salia un 48 % corto).
+    calc("D79", f'=$D$78-IF({ES_SI_212},3,{3 / 25.4:.4f})', com79)
 
     # B80 no lo declara el *oracle*.
     com80 = ("Calculo: peso estimado del parche/collar (dos mitades), a "
              "partir de la longitud de corte, la altura, el espesor y la "
              "densidad del acero.")
     lab(80, "Peso del parche/collar", unidad="kg", ref="2·L·H·T·ρ", com=com80)
-    calc("D80", "=2*$D$79*$D$30*$D$29*$D$45/1000000000", com80)
+    calc("D80", f'=2*$D$79*$D$30*$D$29*$D$45/IF({ES_SI_212},1000000000,1)', com80)
 
     # --- 5. Verificaciones (filas 82-90) --------------------------------
     # A82: banda de seccion, fusionada A82:G82 (confirmado en "fusionados"
@@ -8006,9 +8317,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
 
     lab(162, "Filete ≤ 40 mm (1.5 in.)", ref="w ≤ 40 mm")
     ws.merge_cells("A162:C162")
-    calc("D162", 40)
+    calc("D162", f'={umbral(UMBR, "212_filete_max", ES_SI_212)}')
     calc("E162", "=$D$32")
-    calc("F162", '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")')
+    calc("F162", '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede el tope de la NOTA 212-3.4")')
 
     com163 = ("Nota (212-3.4b, bloque [61]): alternativamente el borde del filete "
               "puede biselarse para aumentar la garganta efectiva; en ningun caso "
@@ -8098,10 +8409,17 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
               "(212-4c); si g >= 1.5 mm, la excentricidad e ya incluye g (Paso 5). "
               "Si g > 5 mm el fit-up no es admisible.")
     lab(177, "Separación de fit-up", ref="212-4(c) [82]", com=com177)
+    # Los dos umbrales de 212-4c (maximo admisible y el que obliga a incluir g
+    # en la excentricidad) se leen del codigo en las dos unidades. El TEXTO del
+    # aviso deja de citar "5 mm" y "1.5 mm" a secas: en modo US esa cifra seria
+    # falsa, y un aviso que miente sobre su propio umbral es peor que ninguno.
+    g_max = umbral(UMBR, "212_separacion_max", ES_SI_212)
+    g_min = umbral(UMBR, "212_separacion_g", ES_SI_212)
     calc("D177",
-         '=IF($D$167>5,"SEPARACION > 5 mm: fit-up no admisible (212-4c)",'
-         'IF($D$167>=1.5,"g >= 1.5 mm: e incluye g (212-4c) — ver Paso 5",'
-         '"fit-up ajustado (g < 1.5 mm)"))', com177)
+         f'=IF($D$167>{g_max},"SEPARACION sobre el maximo de 212-4c: fit-up no '
+         f'admisible",IF($D$167>={g_min},"g en o sobre el minimo de 212-4c: e '
+         f'incluye g — ver Paso 5","fit-up ajustado (g por debajo del minimo)"))',
+         com177)
     ws.merge_cells("D177:G177")
 
     com178 = ("Aviso: si el parche es > 25 mm de espesor y el filete es menor que "
@@ -8110,8 +8428,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
               "reparacion o FFS (API 579).")
     lab(178, "Examen de bordes (laminaciones)", ref="212-4(a) [80]", com=com178)
     calc("D178",
-         '=IF($D$29>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
-         '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")',
+         f'=IF($D$29>{umbral(UMBR, "212_espesor_examen", ES_SI_212)},'
+         f'"Plancha por encima del espesor de 212-4: examinar bordes de preparacion por MT/PT '
+         '(laminaciones), 212-4a","Plancha por debajo de ese espesor: sin examen de bordes")',
          com178)
     ws.merge_cells("D178:G178")
 
@@ -8145,6 +8464,12 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     blast_r = energia_501["blast_R_m"]
     r_ops = energia_501["r_scaled_ops"]
     r_def = energia_501["r_scaled_def"]
+    # Fase 7: los MISMOS coeficientes en U.S. Customary, leidos de resources/
+    # (el App. 501 publica las dos ediciones). Ninguno se convierte: II-5 trae
+    # su propio divisor de TNT y la 501-III-1 su propio umbral y distancia.
+    tnt_div_us = energia_501["tnt_div_lb"]
+    blast_thr_us = energia_501["blast_thr_ftlb"]
+    blast_r_us = energia_501["blast_R_ft"]
     lista_rscaled = '"' + ",".join(f"{v:g}" for _, v in r_ops) + '"'
 
     banda_literal(181, "PASO 8 · NDE Y PRUEBA DE HERMETICIDAD  "
@@ -8203,13 +8528,16 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
 
     com189 = ("Calculo (solo neumatica): energia almacenada E (J) por la ec. "
               "(II-1) del App. 501-II, general en k: E = [1/(k-1)]·Pat·V·"
-              "[1-(Pa/Pat)^((k-1)/k)]. Pat se pasa a Pa (x1e6). NA en hidrostatica.")
+              "[1-(Pa/Pat)^((k-1)/k)]. Pat se pasa a la unidad de fuerza/area "
+              "del sistema: x1e6 (MPa->Pa) en metrico, x144 (psi->lb/ft²) en "
+              "U.S. Customary — que es justo lo que convierte la ec. (II-1) en "
+              "la (II-4) del codigo: 144/(1,4-1) = 360. NA en hidrostatica.")
     lab(189, "Energía almacenada", unidad="J", ref="App. 501-II ec.(II-1)",
         com=com189)
     ws.cell(189, 2, "E").font = Font(name=MONO, size=10, color=TINTA)
     calc("D189",
-         '=IF($D$183="Neumatica",(1/($D$187-1))*($D$185*1000000)*$D$184*'
-         '(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())', com189)
+         f'=IF($D$183="Neumatica",(1/($D$187-1))*($D$185*IF({ES_SI_212},1000000,144))'
+         f'*$D$184*(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())', com189)
 
     com190 = ("Calculo (solo neumatica): equivalente en TNT (kg) por la ec. "
               "(II-3): TNT = E / " + f"{tnt_div}" + " (leido de resources/, "
@@ -8217,7 +8545,8 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     lab(190, "Equivalente TNT", unidad="kg", ref="App. 501-II ec.(II-3)",
         com=com190)
     ws.cell(190, 2, "TNT").font = Font(name=MONO, size=10, color=TINTA)
-    calc("D190", f'=IF($D$183="Neumatica",$D$189/{tnt_div},NA())', com190)
+    calc("D190", f'=IF($D$183="Neumatica",$D$189/'
+     f'IF({ES_SI_212},{tnt_div},{tnt_div_us}),NA())', com190)
 
     com191 = ("Calculo (solo neumatica): distancia segura minima R (m) por la "
               "501-III-1: R = 30 m si E <= " + f"{blast_thr}" + " J; en otro caso "
@@ -8227,7 +8556,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         com=com191)
     ws.cell(191, 2, "R").font = Font(name=MONO, size=10, color=TINTA)
     calc("D191",
-         f'=IF($D$183="Neumatica",IF($D$189<={blast_thr},{blast_r:g},'
+         f'=IF($D$183="Neumatica",'
+         f'IF($D$189<=IF({ES_SI_212},{blast_thr},{blast_thr_us}),'
+         f'IF({ES_SI_212},{blast_r:g},{blast_r_us:g}),'
          f'$D$188*(2*$D$190)^(1/3)),NA())', com191)
 
     com192 = ("Dictamen del Paso 8: en neumatica, la distancia minima entre el "
@@ -8269,6 +8600,9 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # aqui, con la hoja entera ya escrita (comentarios y subindices incluidos),
     # aplicando UN mapa de filas — ver _mapa_filas_212().
     remapear_filas(ws, MAPA_FILAS_212)
+
+    # Fase 7: rotulos de unidad de todo el motor, con los rangos ya finales.
+    aplicar_unidades_motor(ws, UNIDADES_212, ES_SI_212)
 
     # Fase 5: donde va un comentario y donde no. Se declara por seccion y se
     # reparte lo que ya existe; los rangos son los de DESPUES del remapeo.
@@ -8523,7 +8857,8 @@ TIPO_A = "Type A (no contiene presion)"
 TIPO_B = "Type B (contiene presion)"
 
 
-def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
+def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
+                        b313c=None, iid1ac=None, iidbc=None, umbrales=None):
     """Motor Art. 206 (collar de encierro total, Type A y Type B), 100% en
     codigo — a diferencia de Parche_PCC2_Art212, no hereda nada del maestro
     Rev0. Reutiliza la cascada de material de construir_seccion7_material
@@ -8538,6 +8873,12 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     articulo (206-3.1, 206-3.2, 206-3.4, 206-3.5), citadas de
     resources/ASME PCC/pcc_2/p2_welded_repairs/art_206_full_encirclement_steel.
     """
+    if umbrales is None:
+        raise SystemExit(
+            "build_collar_art206: faltan los umbrales de longitud de PCC-2 (leer_umbrales_pcc2). "
+            "Un umbral de aceptacion no tiene valor por defecto.")
+    UMBR = umbrales
+
     ws = new_sheet(wb, COLLAR_MOTOR,
                    "MOTOR DE CALCULO — COLLAR DE ENCIERRO TOTAL (ASME PCC-2 Art. 206)",
                    "ASME PCC-2 Art. 206 (Full Encirclement Steel Reinforcing Sleeves), "
@@ -8592,7 +8933,8 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
         columnas=(("D", "Sleeve (Art. 206)"),),
         modo_cell="$D$11", temp_fuente_cell="$D$25", incluir_ej_ec=False,
         destino_st="D60 de '3. Parametros de calculo'",
-        mapa_citas=MAPA_FILAS_206)
+        mapa_citas=MAPA_FILAS_206,
+        b313c=b313c, iid1ac=iid1ac, iidbc=iidbc, unidad_cell=UNIDAD_206)
     s_t_sleeve = refs["por_columna"]["D"]["s_t"]
     dictamen_sleeve = refs["por_columna"]["D"]["dictamen"]
 
@@ -8739,10 +9081,10 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
                                      fila_norma=33, fila_nps=18, fila_ced=19)
     idx = casc["idx"]
     clave_key = '$D$18&"|"&$D$19'
-    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm")},'
+    calc("D20", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm", ES_SI_206, "od_in")},'
                 f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
          com20)
-    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm")},'
+    calc("D21", f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm", ES_SI_206, "t_in")},'
                 f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")',
          com21)
 
@@ -8764,7 +9106,10 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
        "Entrada manual: solo se usa si D11=1 (tuberia).")
     inp("D39", 0.4, "Entrada manual: solo se usa si D11=1 (tuberia).")
     lab(40, "kg/cm2 -> MPa")
-    inp("D40", 0.0980665)
+    calc("D40", f'=IF({ES_SI_206},0.0980665,0.001)', "Calculo (Fase 7): la constante depende del SISTEMA DE UNIDADES, no del "
+        "caso, asi que la fija el selector y no se teclea. Dejarla editable "
+        "obligaria a acordarse de cambiarla al conmutar, y olvidarlo daria un "
+        "resultado plausible y equivocado.")
 
     # --- Geometria del sleeve --------------------------------------------
     band(43, "4. GEOMETRIA DEL SLEEVE")
@@ -8832,7 +9177,8 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     lab(61, "Longitud del sleeve", "mm", "206-3.4",
        "Calculo: 206-3.4 — minimo 100 mm y ademas defecto + 2x50 mm de "
        "extension. L_s adoptado (D32) contra ese minimo.")
-    calc("D61", "=MAX(100,$D$30+2*50)")
+    calc("D61", f'=MAX({umbral(UMBR, "206_longitud_min", ES_SI_206)},'
+         f'$D$30+2*{umbral(UMBR, "206_sobrepaso", ES_SI_206)})')
     calc("E61", "=$D$32")
     calc("F61", '=IF(E61>=D61,"CUMPLE","NO CUMPLE")')
     lab(63, "Aviso Type A + defecto circunferencial", None, "206-2.5")
@@ -9019,11 +9365,11 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     com123 = ("Calculo: 206-4.1 — se admite 'no gap', y una luz radial de hasta "
               "2.5 mm (3/32 in.) maximo. G adoptado (D31) contra ese tope; entra "
               "al dictamen global (F94).")
-    lab(123, "Luz radial G <= 2,5 mm", None, "206-4.1 [63]", com=com123)
+    lab(123, "Luz radial G (206-4.1)", None, "206-4.1 [63]", com=com123)
     ws.merge_cells("A123:C123")
-    calc("D123", 2.5)
+    calc("D123", f'={umbral(UMBR, "206_luz_radial", ES_SI_206)}')
     calc("E123", "=$D$31")
-    calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede 2,5 mm (206-4.1)")')
+    calc("F123", '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede la luz maxima (206-4.1)")')
 
     # --- PASO 5 — Presion externa, cavidades y bulging (206-3.6/3.7/3.9/3.10) -
     band(125, "PASO 5 · PRESION EXTERNA, CAVIDADES Y BULGING — 206-3.6/3.7/3.9/3.10")
@@ -9164,6 +9510,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619):
     # Fase 3: la Seccion de Material sube justo detras de la Seccion 1, con el
     # mismo mecanismo que el 212 — ver _mapa_filas_206().
     remapear_filas(ws, MAPA_FILAS_206)
+    aplicar_unidades_motor(ws, UNIDADES_206, ES_SI_206)
     aplicar_reglas_de_comentario(ws, REGLAS_COMENTARIO_206)
 
     # Misma leyenda de color que el Art. 212: es la misma convencion de edicion
@@ -10588,6 +10935,54 @@ DIVERGENCIAS_REEMPLAZADAS.update({
 # cambia de contenido; estas no estaban. Meterlas en REEMPLAZADAS "porque
 # funciona" habria dejado el diccionario diciendo algo falso —que el oracle las
 # declara— y con el tiempo nadie sabria cual es cual.
+# --- Fase 7: el bloque de material gana el eje de EDICION -------------------
+# Todas las celdas de resolucion pasan a un CHOOSE de seis ramas (las tres bases
+# metricas y sus tres gemelas U.S. Customary) y la fila se resuelve en tres
+# saltos via clave bilingue. El valor en modo SI no cambia —lo prueba el
+# recalculo del caso semilla en verificar.py §7 y §6e—, pero la formula si.
+_FASE7_EDICION = (
+    "Fase 7: la celda pasa a leer de la EDICION que marque el selector de "
+    "unidades (D15). El CHOOSE crece de tres ramas a seis y la fila se resuelve "
+    "por clave bilingue, porque el material_id NO coincide entre ediciones. En "
+    "modo SI el valor es el mismo; lo fija TestConmutadorDeUnidades y lo "
+    "recalcula verificar.py.")
+_FASE7_UNIDAD = (
+    "Fase 7: el rotulo de unidad lo decide la edicion que se lee —°C/MPa en la "
+    "metrica, °F/ksi en la U.S. Customary—. No se convierte nada (regla 9): "
+    "cambia de que tabla se lee, y el rotulo lo dice.")
+DIVERGENCIAS_REEMPLAZADAS.update(
+    {("Parche_PCC2_Art212", f"{col}{fila}"): _FASE7_EDICION
+     for col in "DE" for fila in range(49, 59)})
+DIVERGENCIAS_REEMPLAZADAS.update(
+    {("Parche_PCC2_Art212", f"C{fila}"): _FASE7_UNIDAD
+     for fila in (41, 53, 54, 55, 56, 57, 59)})
+
+# Los rotulos de unidad de TODA la hoja pasan a ser formula del selector (el
+# pase aplicar_unidades_motor). El *oracle* los trae como literal metrico.
+DIVERGENCIAS_REEMPLAZADAS.update(
+    {("Parche_PCC2_Art212", f"C{fila}"): _FASE7_UNIDAD
+     for fila in UNIDADES_212})
+
+# Las constantes y umbrales que dependen del SISTEMA, no del caso.
+DIVERGENCIAS_REEMPLAZADAS.update({
+    ("Parche_PCC2_Art212", "D74"): (
+        "Fase 7: la densidad del acero deja de teclearse y la fija el selector "
+        "(7850 kg/m³ / 0,2836 lb/in³). Dejarla editable obligaria a acordarse de "
+        "cambiarla al conmutar, y olvidarlo daria un peso plausible y falso."),
+    ("Parche_PCC2_Art212", "D76"): (
+        "Fase 7: el factor de conversion de la presion de entrada a la unidad de "
+        "calculo tambien lo fija el selector: kg/cm²->MPa en metrico, psi->ksi en "
+        "U.S. Customary."),
+    ("Parche_PCC2_Art212", "D109"): (
+        "Fase 7: el divisor del peso (mm³·kg/m³ -> kg) no existe en U.S. "
+        "Customary: in³·lb/in³ ya da libras. Conmuta entre 1e9 y 1."),
+    ("Parche_PCC2_Art212", "D108"): (
+        "Fase 7: los 3 mm de luz de raiz son una LONGITUD. Sin conmutar restaban "
+        "3 pulgadas en modo US — se vio en el recalculo: el peso salia un 48 % "
+        "corto. No son del codigo (es holgura de fabricacion), asi que aqui si se "
+        "convierte, y se declara."),
+})
+
 CELDAS_NUEVAS_FUERA_DEL_ORACLE = {
     ("Parche_PCC2_Art212", "A15"): (
         "Fase 7: rotulo del selector de sistema de unidades. La banda de "
@@ -10910,15 +11305,22 @@ def _rango_b36(info, clave):
     return f"{info['sheet']}!${L}${R_DATA}:${L}${info['last_row']}"
 
 
-def _choose_b36(idx, b3610, b3619, clave):
+def _choose_b36(idx, b3610, b3619, clave, sel=None, clave_us=None):
     """Selecciona la columna `clave` de la edicion elegida con CHOOSE(indice,...).
 
     CHOOSE con un indice ESCALAR (1 o 2) entrega una REFERENCIA de rango, que
     INDEX/MATCH consumen sin formula matricial — igual que col3() de la Seccion 7.
     Un IF(cond, rangoA, rangoB) como argumento de MATCH exigiria entrada matricial
     (CSE), que la regla 1 de diseno del libro prohibe."""
-    return (f"CHOOSE({idx},{_rango_b36(b3610, clave)},"
-            f"{_rango_b36(b3619, clave)})")
+    if sel is None or clave_us is None:
+        return (f"CHOOSE({idx},{_rango_b36(b3610, clave)},"
+                f"{_rango_b36(b3619, clave)})")
+    # Cuatro ramas: norma (1/2) + 2 si el selector dice US. El indice sigue
+    # siendo ESCALAR, asi que CHOOSE entrega una referencia y no hace falta
+    # entrada matricial (misma razon que arriba).
+    return (f"CHOOSE({idx}+IF({sel},0,2),"
+            f"{_rango_b36(b3610, clave)},{_rango_b36(b3619, clave)},"
+            f"{_rango_b36(b3610, clave_us)},{_rango_b36(b3619, clave_us)})")
 
 
 def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
@@ -11212,9 +11614,15 @@ def main(argv=None):
     # 501, reparado en la Fase 0.2). Regla n.1: no salen de memoria. Aborta si
     # el apendice no esta reparado.
     energia_501 = leer_energia_501(a.resources)
+    # Las tres bases US viajan a los motores igual que a los buscadores: el
+    # conmutador de la Fase 7 lee de ellas, nunca convierte (regla 9/10).
+    umbrales = leer_umbrales_pcc2(a.resources)
     build_parche_art212(wb, b313, iid, iidb, fac, rangos, b3610, b3619,
-                        energia_501=energia_501)
-    build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619)
+                        energia_501=energia_501, umbrales=umbrales,
+                        b313c=b313c, iid1ac=iidc, iidbc=iidbc)
+    build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619,
+                        b313c=b313c, iid1ac=iidc, iidbc=iidbc,
+                        umbrales=umbrales)
     retirar_datos_ref(wb)
 
     counts = {

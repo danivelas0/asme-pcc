@@ -187,6 +187,45 @@ def interp(temps, vals, T, modo="Interpolado"):
     return s1 + (s2 - s1) * (T - t1) / (t2 - t1)
 
 
+def _recalc_en_us(ruta_wb, id_base, id_collar):
+    """El motor Art. 212 recalculado en modo US con las MISMAS magnitudes.
+
+    Cada entrada se convierte desde el valor que la hoja ya trae en SI, no se
+    teclea a mano: asi la comparacion es contra el caso semilla de verdad y no
+    contra unas cifras inventadas que podrian estar mal a la vez que el motor.
+    """
+    MM_IN, PSI_KGCM2 = 25.4, 14.2233433
+    wb = openpyxl.load_workbook(ruta_wb, keep_vba=True)
+    ws = wb["Parche_PCC2_Art212"]
+
+    def fila(rotulo):
+        for r in range(1, 200):
+            if str(ws.cell(r, 1).value or "").strip().startswith(rotulo):
+                return r
+        raise SystemExit(f"§6g: no se encontro la fila '{rotulo}' del Art. 212.")
+
+    # Semilla de material (misma via que §7: la celda 'Variante').
+    ws.cell(fila("5 · Variante"), 4).value = id_base
+    ws.cell(fila("5 · Variante"), 5).value = id_collar
+    ws.cell(fila("Sistema de unidades"), 4).value = "US"
+    # Temperatura: °C -> °F. Presiones: kg/cm² -> psi. Longitudes: mm -> in.
+    r = fila("Temperatura de operación")
+    ws.cell(r, 4).value = ws.cell(r, 4).value * 9 / 5 + 32
+    for rot in ("Presión de operación", "Presión de diseño"):
+        c = ws.cell(fila(rot), 4)
+        c.value = c.value * PSI_KGCM2
+    for rot in ("Espesor del parche", "Altura / dimensión", "Luz radial",
+                "Cateto del filete", "Solape mínimo", "Diámetro del defecto",
+                "Distancia defecto"):
+        c = ws.cell(fila(rot), 4)
+        c.value = c.value / MM_IN
+    tmp = OUTDIR / "qa_us.xlsm"
+    wb.save(tmp)
+    salida = OUTDIR / "qa_us_calc.xlsx"
+    recalcular_con_excel(tmp, salida)
+    return openpyxl.load_workbook(salida, data_only=True)
+
+
 def auditar():
     wb = openpyxl.load_workbook(WB)
     # Copia intacta para la seccion 8: `wb` recibe la hoja _QA en la seccion 6
@@ -1141,16 +1180,39 @@ def auditar():
     # El motor se ENTREGA sin material seleccionado: D109..D114 y E109..E114
     # estan vacias y D115 resuelve a "". Los campos D22/D23 son descripciones
     # de texto libre, no la seleccion de la base. Asi que el caso de regresion
-    # hay que conducirlo: se escribe el material_id en la celda "Variante"
-    # (D114/E114), que el motor respeta por encima de la cascada
-    # (`=IF($D$114<>"",$D$114,...)`). Eso fija la resolucion sin depender de
-    # los cinco niveles de listas desplegables.
+    # hay que conducirlo: se escribe el material_id en la celda "Variante",
+    # que el motor respeta por encima de la cascada. Eso fija la resolucion sin
+    # depender de los cinco niveles de listas desplegables. La celda se busca
+    # POR ROTULO, no por direccion: ver celda_motor().
     motor = wb["Parche_PCC2_Art212"]
     id_base = next(i for i in ib if i.startswith("A-1 | A106 | B"))
     id_collar = next(i for i in ib if i.startswith("A-1 | A516 | 70"))
-    motor["D114"] = id_base
-    motor["E114"] = id_collar
-    T_semilla = motor["D25"].value
+
+    def celda_motor(rotulo, col, *, fila=None):
+        """Localiza una fila del motor POR SU ROTULO, no por su direccion.
+
+        Las direcciones del Art. 212 se han movido dos veces (Fases 3 y 7) y
+        este bloque quedo apuntando a las viejas SIN QUE NADA LO DIJERA: el
+        material semilla se escribia en la fila de conformado en frio y la
+        verificacion comparaba un numero con un texto, cosa que en Excel da
+        CUMPLE. Es decir, la comprobacion seguia en verde comprobando otra cosa.
+        Buscar por rotulo hace imposible ese fallo: si la fila no esta, aborta.
+        """
+        for r in range(1, 200):
+            if str(motor.cell(r, 1).value or "").strip().startswith(rotulo):
+                return motor.cell(r, col)
+        raise SystemExit(
+            f"verificar.py: no se encontro la fila '{rotulo}' en "
+            f"Parche_PCC2_Art212. Si el motor se reordeno, actualice este "
+            f"bloque en vez de dejarlo apuntando a una fila que ya no es.")
+
+    celda_motor("5 · Variante", 4).value = id_base
+    celda_motor("5 · Variante", 5).value = id_collar
+    T_semilla = celda_motor("Temperatura de operación", 4).value
+    if not isinstance(T_semilla, (int, float)):
+        raise SystemExit(
+            f"verificar.py: la temperatura de operacion del caso semilla no es "
+            f"un numero ({T_semilla!r}). El bloque esta leyendo la fila que no es.")
     # Paso 8 (energia neumatica): el motor se entrega en hidrostatica (D183). Se
     # fuerza un caso neumatico en el libro qa (throwaway) para ejercer E/TNT/R en
     # Excel real; no afecta F90 ni las verificaciones de Sa (que no dependen de
@@ -1598,6 +1660,67 @@ def auditar():
             f"{'OK' if ok_rec else 'FALLO'} |")
     log("")
 
+    # ---- 6g. coherencia de unidades del modo US (recalculo Excel) ---------
+    # La Fase 7 hace que el conmutador SI/US gobierne TODO el motor, no solo el
+    # bloque de material: la edicion US publica el esfuerzo en ksi, y meter un
+    # ksi en una cadena que opera en MPa/mm da un numero equivocado.
+    #
+    # Aqui se comprueba lo unico que de verdad lo demuestra: se recalcula el
+    # caso semilla OTRA VEZ, en modo US, con las MISMAS magnitudes fisicas
+    # -cada entrada convertida desde la que ya tiene la hoja en SI- y se exige
+    # que cada resultado coincida con el metrico al reconvertirlo. No se
+    # comparan formulas: se comparan numeros salidos del motor de Excel.
+    #
+    # Lo que NO tiene que coincidir exactamente son los umbrales normativos: el
+    # codigo imprime "40 mm (1.5 in.)" y 1.5 in son 38.1 mm. Esa diferencia es
+    # del codigo, no del motor, y por eso se leen las dos cifras en vez de
+    # convertir una (regla 9). Se declaran aparte.
+    log("## 6g. Modo US: coherencia de unidades (recalculo Excel)")
+    log("")
+    us_bad = 0
+    MM_IN, KSI_MPA = 25.4, 6.894757
+    KIP_NMM = 4448.2216 / 25.4
+    PSI_KGCM2 = 1 / 14.2233433
+    try:
+        us_wb = _recalc_en_us(Path(WB), id_base, id_collar)
+    except Exception as e:          # noqa: BLE001
+        us_wb = None
+        log(f"No se pudo recalcular en modo US: {e}")
+        us_bad += 1
+    if us_wb is not None:
+        u212, s212 = us_wb["Parche_PCC2_Art212"], recalc["Parche_PCC2_Art212"]
+        comprobaciones = [
+            ("Sa gobernante", "D70", KSI_MPA), ("Dm", "D81", MM_IN),
+            ("excentricidad e", "D84", MM_IN), ("F_m", "D92", KIP_NMM),
+            ("w_min", "D93", MM_IN), ("t_req", "D94", MM_IN),
+            ("S_w total", "D97", KSI_MPA), ("L_min", "D102", MM_IN),
+            ("P_max del parche", "D103", KSI_MPA),
+            ("longitud de corte", "D108", MM_IN),
+            ("peso", "D109", 0.45359237),
+        ]
+        log("| Magnitud | SI | US | US reconvertido | Estado |")
+        log("|---|---|---|---|---|")
+        for etiq, celda, factor in comprobaciones:
+            a, b = s212[celda].value, u212[celda].value
+            if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
+                us_bad += 1
+                log(f"| {etiq} | {a} | {b} | — | FALLO (no numerico) |")
+                continue
+            conv = b * factor
+            ok = abs(conv - a) <= max(TOL, abs(a) * 1.5e-3)
+            us_bad += 0 if ok else 1
+            log(f"| {etiq} | {a:.6g} | {b:.6g} | {conv:.6g} | "
+                f"{'OK' if ok else 'FALLO'} |")
+        # Las seis verificaciones y el dictamen tienen que dar LO MISMO: si el
+        # veredicto cambiase con el sistema de unidades, el motor estaria
+        # diciendo dos cosas distintas del mismo diseño.
+        for celda in [f"F{r}" for r in range(113, 119)] + ["F119"]:
+            a, b = s212[celda].value, u212[celda].value
+            ok = a == b
+            us_bad += 0 if ok else 1
+            log(f"| veredicto {celda} | {a} | {b} | — | {'OK' if ok else 'FALLO'} |")
+    log("")
+
     # ---- 8. capa de navegacion -------------------------------------------
     log("## 8. Capa de navegacion (Dashboard y proyecto VBA)")
     log("")
@@ -2011,6 +2134,7 @@ def auditar():
                         ("7. Caso semilla", semilla_bad),
                         ("6e. Pasos del flujo 212 (recalculo Excel)", flujo_bad),
                         ("6f. Pasos del flujo 206 (recalculo Excel)", flujo206_bad),
+                        ("6g. Modo US: coherencia de unidades", us_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),

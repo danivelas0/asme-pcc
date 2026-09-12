@@ -225,8 +225,7 @@ Dictamen global del modulo: **REVISAR** (OK).
 
 Criterios que NO cumplen en el caso semilla (y por eso el dictamen no es APTO):
 
-- **Excentricidad soldadura** (F113): `NO CUMPLE`
-- **Conformado en frio** (F114): `NO CUMPLE`
+- **Excentricidad soldadura** (F114): `NO CUMPLE`
 
 Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da 248.32004565566405 MPa contra un limite 1,5·Sa de 207 MPa. Es el resultado correcto del modelo de presion de dos casos; para volver a APTO hay que cambiar el DISENO (espesor del parche, cateto, material) o la presion de diseno de entrada, no el motor.
 
@@ -261,6 +260,29 @@ Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el es
 | cateto w (Type B) | 9.5 | 9.5 | OK |
 | luz G<=2.5 | CUMPLE | CUMPLE | OK |
 | tipo recomendado | Type A (fuga/axial=No) | Type A (no contiene presion) | OK |
+
+## 6g. Modo US: coherencia de unidades (recalculo Excel)
+
+| Magnitud | SI | US | US reconvertido | Estado |
+|---|---|---|---|---|
+| Sa gobernante | 138 | 20 | 137.895 | OK |
+| Dm | 317.45 | 12.5 | 317.5 | OK |
+| excentricidad e | 7.175 | 0.28248 | 7.175 | OK |
+| F_m | 77.828 | 0.444479 | 77.8403 | OK |
+| w_min | 1.0254 | 0.0404072 | 1.02634 | OK |
+| t_req | 0.574436 | 0.0226363 | 0.574961 | OK |
+| S_w total | 62.08 | 9.00536 | 62.0898 | OK |
+| L_min | 63.495 | 2.5 | 63.5 | OK |
+| P_max del parche | 1.63497 | 0.236915 | 1.63347 | OK |
+| longitud de corte | 522.903 | 20.5898 | 522.981 | OK |
+| peso | 10.9023 | 24.0392 | 10.904 | OK |
+| veredicto F113 | CUMPLE | CUMPLE | — | OK |
+| veredicto F114 | NO CUMPLE | NO CUMPLE | — | OK |
+| veredicto F115 | CUMPLE | CUMPLE | — | OK |
+| veredicto F116 | CUMPLE | CUMPLE | — | OK |
+| veredicto F117 | Refuerzo 360° | Refuerzo 360° | — | OK |
+| veredicto F118 | Migrar (Art.206) | Migrar (Art.206) | — | OK |
+| veredicto F119 | REVISAR | REVISAR | — | OK |
 
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 
@@ -336,6 +358,7 @@ Discrepancias: **0**
 | 7. Caso semilla | 0 |
 | 6e. Pasos del flujo 212 (recalculo Excel) | 0 |
 | 6f. Pasos del flujo 206 (recalculo Excel) | 0 |
+| 6g. Modo US: coherencia de unidades | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |

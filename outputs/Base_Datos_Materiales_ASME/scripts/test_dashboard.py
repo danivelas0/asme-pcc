@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import zipfile
+import pathlib
 from pathlib import Path
 
 import openpyxl
@@ -911,6 +912,14 @@ class TestLintVba:
 # "DB_BPVC_IID!$A$4:$A$1802" (E115, via IID1A) — no son valores inventados,
 # son los que ya se verificaron contra el libro real; aqui solo se reutilizan
 # para que el stub no rompa el unico dato que el test compara.
+# Umbrales de longitud de PCC-2, leidos de resources/ igual que en el build. No
+# se fabrican aqui: una prueba con umbrales inventados comprobaria la forma de
+# la formula pero no el par (metrico, US) que de verdad va a llevar el libro.
+_RES = pathlib.Path(__file__).resolve().parents[3] / "resources"
+UMBRALES_REALES = B.leer_umbrales_pcc2(_RES)
+ENERGIA_REAL = B.leer_energia_501(_RES)
+
+
 def b313_stub():
     """Dict minimo de la base B31.3 (build_b313 real: sheet/last_row/pack_t0/
     pack_v0/npts_col). El nombre de hoja SI importa (tiene que casar con la
@@ -999,16 +1008,16 @@ class TestBuildParcheContraOracle:
         # Stub de los coeficientes del App. 501 (Paso 8) — en el motor real los
         # lee leer_energia_501() de resources/ (Fase 0.2). Aqui son fixtures del
         # test, como b313_stub, con los valores que imprime el codigo.
-        energia = {"tnt_div_kg": 4266920, "blast_thr_J": 8130000, "blast_R_m": 30.0,
-                   "r_scaled_def": 20.0,
-                   "r_scaled_ops": [("20 (Glass windows)", 20.0),
-                                    ("12 (Eardrum rupture / Concrete block panels)", 12.0),
-                                    ("6 (Lung damage / Brick walls)", 6.0),
-                                    ("2 (Fatal)", 2.0)]}
+        # Coeficientes del App. 501 (Paso 8), leidos de resources/ como en el
+        # build. Antes eran un stub escrito a mano con solo la mitad metrica;
+        # con el modo US (Fase 7) eso habria dejado la prueba comprobando unos
+        # coeficientes y el entregable llevando otros.
+        energia = ENERGIA_REAL
         B.build_parche_art212(wb, b313_stub(), iid1a_stub(), iidb_stub(),
                               fac_stub(), rangos_stub(),
                               b36("DB_B36_10"), b36("DB_B36_19"),
-                              energia_501=energia)
+                              energia_501=energia,
+                              umbrales=UMBRALES_REALES)
         return wb["Parche_PCC2_Art212"]
 
     # F90 (DICTAMEN GLOBAL) sale de esta lista: la Fase 1 lo reescribe para
@@ -1141,8 +1150,8 @@ class TestBuildParcheContraOracle:
             '=IF(E161<=D161,"CUMPLE",'
             '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")'), "F161"
         assert ws["F162"].value == (
-            '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")'), "F162"
-        assert ws["D162"].value == 40, "D162"
+            '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede el tope de la NOTA 212-3.4")'), "F162"
+        assert ws["D162"].value == '=IF($D$15="SI",40,1.5)', "D162"
 
     # --- Fase 5: excentricidad literal con separacion g (Paso 5, 212-3.4c) ---
     # e = (T+t+g)/2 con g anadida si g>=1.5 (212-4c [82], g = fit-up del faying
@@ -1154,8 +1163,10 @@ class TestBuildParcheContraOracle:
         ws = self._construir()
         assert str(ws["A165"].value).startswith("PASO 5"), ws["A165"].value
         assert ws["D167"].value == 0, "g default 0 (fit-up ajustado)"
+        # El umbral de 212-4c se lee del codigo en sus dos unidades (Fase 7).
         assert ws["D84"].value == (
-            "=($D$30+$D$22+IF($D$167>=1.5,$D$167,0))/2"), "D55 e con g"
+            '=($D$30+$D$22+IF($D$167>=IF($D$15="SI",1.5,0.0625),'
+            '$D$167,0))/2'), "D84 e con g"
         assert ws["D86"].value == (
             "=IF($D$11=3,NA(),$D$81/(2*$D$30)*(1+6*$D$84/$D$30))"), "D57 C_sw"
         assert ws["D95"].value == (
@@ -1182,13 +1193,19 @@ class TestBuildParcheContraOracle:
     def test_paso7_fabricacion(self):
         ws = self._construir()
         assert str(ws["A175"].value).startswith("PASO 7"), ws["A175"].value
+        # El texto ya no cita "5 mm" ni "1.5 mm" a secas: en modo US esa cifra
+        # seria falsa, y un aviso que miente sobre su propio umbral es peor que
+        # ninguno. Los dos umbrales salen del codigo en sus dos unidades.
         assert ws["D177"].value == (
-            '=IF($D$167>5,"SEPARACION > 5 mm: fit-up no admisible (212-4c)",'
-            'IF($D$167>=1.5,"g >= 1.5 mm: e incluye g (212-4c) — ver Paso 5",'
-            '"fit-up ajustado (g < 1.5 mm)"))'), "D177"
+            '=IF($D$167>IF($D$15="SI",5,0.1875),'
+            '"SEPARACION sobre el maximo de 212-4c: fit-up no admisible",'
+            'IF($D$167>=IF($D$15="SI",1.5,0.0625),'
+            '"g en o sobre el minimo de 212-4c: e incluye g — ver Paso 5",'
+            '"fit-up ajustado (g por debajo del minimo)"))'), "D177"
         assert ws["D178"].value == (
-            '=IF($D$30>25,"T > 25 mm: examinar bordes de preparacion por MT/PT '
-            '(laminaciones), 212-4a","T <= 25 mm: sin examen de bordes por espesor")'), "D178"
+            '=IF($D$30>IF($D$15="SI",25,1),"Plancha por encima del espesor de '
+            '212-4: examinar bordes de preparacion por MT/PT (laminaciones), '
+            '212-4a","Plancha por debajo de ese espesor: sin examen de bordes")'), "D178"
         assert "40 mm" in str(ws["D179"].value), ws["D179"].value
 
     # --- Fase 8: NDE y prueba de hermeticidad (Paso 8, 212-5/6 + App.501) ----
@@ -1199,14 +1216,19 @@ class TestBuildParcheContraOracle:
         assert str(ws["A181"].value).startswith("PASO 8"), ws["A181"].value
         assert ws["D183"].value == "Hidrostatica", "default hidrostatica"
         assert ws["D188"].value == 20.0, "Rscaled default 20"
+        # Fase 7: los coeficientes del App. 501 conmutan de EDICION. Ninguno se
+        # convierte: la (II-5) trae su propio divisor de TNT y la 501-III-1 su
+        # propio umbral y distancia, y los dos estan en resources/.
         assert ws["D189"].value == (
-            '=IF($D$183="Neumatica",(1/($D$187-1))*($D$185*1000000)*$D$184*'
+            '=IF($D$183="Neumatica",(1/($D$187-1))*'
+            '($D$185*IF($D$15="SI",1000000,144))*$D$184*'
             '(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())'), "D189 E"
         assert ws["D190"].value == (
-            '=IF($D$183="Neumatica",$D$189/4266920,NA())'), "D190 TNT"
+            '=IF($D$183="Neumatica",$D$189/'
+            'IF($D$15="SI",4266920,1488617),NA())'), "D190 TNT"
         assert ws["D191"].value == (
-            '=IF($D$183="Neumatica",IF($D$189<=8130000,30,'
-            '$D$188*(2*$D$190)^(1/3)),NA())'), "D191 R"
+            '=IF($D$183="Neumatica",IF($D$189<=IF($D$15="SI",8130000,6000000),'
+            'IF($D$15="SI",30,100),$D$188*(2*$D$190)^(1/3)),NA())'), "D191 R"
         # Selectores como lista.
         origen = {}
         for dv in ws.data_validations.dataValidation:
@@ -1499,6 +1521,41 @@ class TestBuildParcheContraOracle:
         # La presion de prueba hidrostatica sale de la misma presion de diseno.
         # D75 es el factor de prueba hidrostatica tras la Fase 7 (era D46).
         assert "$D$75*$D$29" in str(ws["B128"].value), ws["B128"].value
+
+
+class TestColumnasOcultasApuntanBien:
+    """Las columnas ocultas NO se mueven con el remapeo, pero SI apuntan a las
+    que si. Ahi viven las listas de cascada materializadas y las auxiliares de
+    resolucion, y su clave es literalmente `=$D$42&"|"&$D$43&...`.
+
+    Esta prueba existe porque el fallo ya ocurrio: la Fase 3 movio la tabla y
+    dejo esas formulas apuntando a las filas de antes. La cascada dejo de
+    resolver **en silencio**, y ni `pytest` ni `verificar.py` lo vieron — porque
+    el caso semilla resuelve su material por la celda 'Variante', que es
+    precisamente una via de escape de la cascada. Todo lo que se comprobaba
+    pasaba por esa via, asi que la via rota no la ejercia nadie.
+    """
+
+    @pytest.mark.parametrize("hoja", ["Parche_PCC2_Art212", "Collar_PCC2_Art206"])
+    def test_ninguna_oculta_apunta_a_una_fila_vacia(self, wb, hoja):
+        ws = wb[hoja]
+        # Filas de la tabla que tienen contenido real en A..G.
+        con_contenido = {r for r in range(1, ws.max_row + 1)
+                         if any(ws.cell(r, c).value is not None
+                                for c in range(1, B.MOTOR_NCOLS + 1))}
+        rotas = []
+        for fila in ws.iter_rows(min_col=B.MOTOR_NCOLS + 1):
+            for c in fila:
+                if not (isinstance(c.value, str) and c.value.startswith("=")):
+                    continue
+                # Se usa la MISMA funcion que alimenta al remapeo, no una
+                # regex propia: si la auditoria mirase un conjunto de
+                # referencias y el remapeo moviese otro, esta prueba daria una
+                # confianza falsa justo donde mas cara sale.
+                for col, destino in B.refs_propias(c.value):
+                    if destino not in con_contenido:
+                        rotas.append((c.coordinate, f"{col}{destino}"))
+        assert rotas == [], f"{hoja}: refs a filas vacias {rotas[:12]}"
 
 
 class TestSemaforoDeAceptacion:
@@ -1806,7 +1863,8 @@ class TestBuildCollarArt206:
                              "n_nps": 5, "max_ced": 5}
         B.build_collar_art206(wb, b313_stub(), iid1a_stub(), iidb_stub(),
                               fac_stub(), rangos_stub(),
-                              b36("DB_B36_10"), b36("DB_B36_19"))
+                              b36("DB_B36_10"), b36("DB_B36_19"),
+                              umbrales=UMBRALES_REALES)
         return wb["Collar_PCC2_Art206"]
 
     # --- Fase 1: seleccion guiada de tipo (Paso 1, 206-1 / 206-2) ------------
@@ -1858,7 +1916,7 @@ class TestBuildCollarArt206:
         ws = self._construir()
         assert "PASO 3" in str(ws["A116"].value), ws["A116"].value
         # F61 (longitud) ya existe y es correcto; el Paso 3 lo traza + nota 50 mm.
-        assert ws["D86"].value == "=MAX(100,$D$30+2*50)", "D61 L_s,min"
+        assert ws["D86"].value == '=MAX(IF($D$14="SI",100,4),$D$30+2*IF($D$14="SI",50,2))', "D61 L_s,min"
         assert "50" in str(ws["D117"].value), ws["D117"].value
 
     # --- Fase 4: cateto del filete y luz radial (Paso 4, 206-3.5 / 206-4.1) --
@@ -1870,10 +1928,10 @@ class TestBuildCollarArt206:
             f'=IF($D$22="{B.TIPO_B}",IF($D$29<=1.4*$D$21,$D$29+$D$31,'
             f'1.4*$D$21+$D$31),"No aplica - Type A (206-1.1.1)")'), "D121 cateto"
         # Verificacion de luz G <= 2.5 mm y su cableado a F69.
-        assert ws["D123"].value == 2.5, "D123 req"
+        assert ws["D123"].value == '=IF($D$14="SI",2.5,0.09375)', "D123 req"
         assert ws["E123"].value == "=$D$31", "E123 adoptado"
         assert ws["F123"].value == (
-            '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede 2,5 mm (206-4.1)")'), "F123"
+            '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede la luz maxima (206-4.1)")'), "F123"
         assert "F123" in str(ws["F94"].value), "F69 debe incluir F123"
 
     # --- Fase 5: presion externa, cavidades y bulging (206-3.6/7/9/10) ------
