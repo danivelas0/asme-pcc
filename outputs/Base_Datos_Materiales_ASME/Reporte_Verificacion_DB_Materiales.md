@@ -367,6 +367,12 @@ Una fila AMBIGUA no es un fallo: es una fila que no se pudo repartir en columnas
 - B36.19M: 114 filas x 15 columnas auditadas.
 Discrepancias: **0**
 
+## 12. Motores declarados (maquinaria, no ingenieria)
+
+Registro vacio (`motores.MOTORES_DECLARADOS == ()`): ningun motor declarado que recorrer todavia.
+
+**0 motores declarados, 0 fallos.**
+
 ## Resultado
 
 | Seccion | Fallos |
@@ -387,5 +393,6 @@ Discrepancias: **0**
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |
 | 11. Bases dimensionales B36 | 0 |
+| 12. Motores declarados (chasis) | 0 |
 
 **Total de fallos: 0.**
