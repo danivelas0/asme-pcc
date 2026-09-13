@@ -10,7 +10,9 @@ No importa build_db_materiales: el builder importa este modulo, no al reves.
 """
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 from typing import NamedTuple
 
 # Tipos de fila. Gobiernan el estilo, si la celda es editable y si entra en el
@@ -112,3 +114,38 @@ def sustituir_nombres(formula, direcciones):
         return direcciones[clave]
 
     return _RE_NOMBRE.sub(_uno, formula)
+
+
+def comprobar_procedencia(motor, resources):
+    """Tabla de trazabilidad del motor. Aborta si algo no se puede rastrear.
+
+    Un numero que nadie puede rastrear no se construye: es la Regla n.1 hecha
+    mecanismo. Se comprueba ademas que el bloque citado EXISTE en el JSON, el
+    mismo guardia que la s.9 de verificar.py hace con MAP_Grupo.
+    """
+    resources = Path(resources)
+    cache, tabla = {}, []
+    for seccion in motor.secciones:
+        for f in seccion.filas:
+            if f.tipo != FORMULA:
+                continue
+            if f.cita is None:
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} es un "
+                    f"calculo sin procedencia. Un numero que nadie puede "
+                    f"rastrear no se construye (Regla n.1).")
+            ruta = resources / motor.fuente
+            if ruta not in cache:
+                if not ruta.exists():
+                    raise SystemExit(
+                        f"motor_declarado: no existe {ruta}. La fuente del motor "
+                        f"tiene que estar en resources/.")
+                cache[ruta] = json.loads(ruta.read_text(encoding="utf-8"))
+            bloques = cache[ruta].get("blocks", [])
+            if not 0 <= f.cita.bloque < len(bloques):
+                raise SystemExit(
+                    f"motor_declarado: {f.clave!r} cita el bloque "
+                    f"{f.cita.bloque} de {f.cita.archivo}, que tiene "
+                    f"{len(bloques)} bloques.")
+            tabla.append((f.clave, f.cita.clausula, f.cita.archivo, f.cita.bloque))
+    return tabla
