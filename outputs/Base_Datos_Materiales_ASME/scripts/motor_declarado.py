@@ -148,8 +148,11 @@ _RE_NOMBRE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
 def _titulo_paso(paso):
     """Rotulo de banda de un Paso, con el mismo patron que ya usan los anexos
-    escritos a mano del 212 y el 206: "PASO N . TITULO -- clausula"."""
-    return f"PASO {paso.numero} . {paso.titulo}  --  {paso.clausula}"
+    escritos a mano del 212 y el 206: "PASO N . TITULO - clausula". Los
+    separadores son los mismos caracteres que esos dos anexos (punto medio y
+    raya, no tilde: la regla de texto sin tildes del libro es sobre vocales
+    acentuadas y enies, no sobre estos separadores)."""
+    return f"PASO {paso.numero} · {paso.titulo} — {paso.clausula}"
 
 
 def _bloques(motor):

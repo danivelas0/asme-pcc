@@ -49,6 +49,65 @@ def test_una_fila_de_calculo_sin_cita_aborta(tmp_path):
         M.comprobar_procedencia(motor, tmp_path)
 
 
+def _motor_sin_formulas():
+    """Solo una entrada, sin ninguna Fila de tipo FORMULA -y sin pasos-, para
+    las pruebas de comprobar_procedencia() que no tienen que abortar: sin una
+    FORMULA que citar, la funcion no toca ningun JSON de resources/ y por eso
+    estas pruebas no necesitan crear uno en tmp_path."""
+    return M.Motor(
+        articulo="999",
+        hoja="Prueba_PCC2_Art999",
+        titulo="MOTOR DE PRUEBA",
+        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        secciones=(
+            M.Seccion("1. DATOS DE ENTRADA", filas=(
+                M.Fila("P", "Presion de diseno", tipo=M.ENTRADA, ejemplo=20),
+            )),
+        ),
+    )
+
+
+def test_una_fila_de_calculo_sin_cita_en_un_paso_aborta(tmp_path):
+    """Simetrica de test_una_fila_de_calculo_sin_cita_aborta, pero con el
+    calculo sin procedencia dentro de un Paso en vez de una Seccion.
+
+    Ronda de arreglo 1 (Hallazgo 1) de la Tarea 6: comprobar_procedencia() se
+    amplio para recorrer tambien motor.pasos -via _bloques()-, pero esa
+    ampliacion no tenia ninguna prueba que la ejerciera. Sin esta prueba, una
+    refactorizacion futura podia dejar de mirar motor.pasos aqui y nada lo
+    notaria: es justo el guardia que sostiene la Regla n.1 en el anexo del
+    flujo, donde un paso puede calcular algo tan normativo como cualquier
+    fila de seccion."""
+    motor = _motor_sin_formulas()._replace(pasos=(
+        M.Paso(1, "PASO SIN PROCEDENCIA", "999-1", filas=(
+            M.Fila("x", "Sin procedencia", tipo=M.FORMULA, formula="=1+1"),
+        )),
+    ))
+    with pytest.raises(SystemExit, match="sin procedencia"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_un_motor_sin_pasos_no_aborta_por_procedencia(tmp_path):
+    """La otra direccion del Hallazgo 1: un motor sin anexo de pasos
+    (motor.pasos == (), el valor por defecto) no le pide procedencia a nada
+    que no exista -_bloques() no aporta ningun bloque extra- y
+    comprobar_procedencia() no aborta."""
+    assert M.comprobar_procedencia(_motor_sin_formulas(), tmp_path) == []
+
+
+def test_un_paso_con_solo_entradas_no_aborta_por_procedencia(tmp_path):
+    """Y la otra mitad de esa misma direccion: un Paso cuyas filas son todas
+    ENTRADA -se teclean, no se calculan- tampoco le exige cita a nada. El
+    guardia de comprobar_procedencia() solo mira las filas de tipo FORMULA,
+    dentro de una Seccion o de un Paso por igual."""
+    motor = _motor_sin_formulas()._replace(pasos=(
+        M.Paso(1, "PASO SIN CALCULO", "999-1", filas=(
+            M.Fila("q", "Se teclea, no se calcula", tipo=M.ENTRADA, ejemplo=5),
+        )),
+    ))
+    assert M.comprobar_procedencia(motor, tmp_path) == []
+
+
 def test_una_cita_a_un_bloque_que_no_existe_aborta(tmp_path):
     import json
     d = tmp_path / "ASME PCC" / "pcc_2" / "p2_welded_repairs" / "art_999"
@@ -221,8 +280,8 @@ def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve_
     # Fila 5: banda de la seccion. Fila 6: "P". Fila 7: banda del Paso 1.
     # Fila 8: "elegible". Fila 9: banda del Paso 2. Fila 10: "carga".
     assert dirs == {"P": "$D$6", "elegible": "$D$8", "carga": "$D$10"}
-    assert ws["A7"].value == "PASO 1 . ELEGIBILIDAD  --  999-1"
-    assert ws["A9"].value == "PASO 2 . CARGAS  --  999-2"
+    assert ws["A7"].value == "PASO 1 · ELEGIBILIDAD — 999-1"
+    assert ws["A9"].value == "PASO 2 · CARGAS — 999-2"
 
     esperado = {"P": 20, "elegible": "=$D$6*0", "carga": "=$D$6+$D$8"}
     for clave, valor in esperado.items():
