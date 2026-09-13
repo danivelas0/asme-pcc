@@ -7632,15 +7632,26 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
             raise SystemExit(
                 f"Art.212: el material_id sembrado ({etiqueta}) no existe en "
                 f"DB_B31_3: {mid!r} (Regla n.1).")
+    # El caso precargado siembra la CASCADA ENTERA, no solo el atajo. Al plegar
+    # la fila de Variante (F9 del 2026-09-13) la hoja quedaba mostrando un
+    # esfuerzo admisible de 138 MPa con los cinco niveles en blanco: el numero
+    # que gobierna el calculo salia de un sitio que no se veia. Ahora el ejemplo
+    # ensena de que material sale, que es justo lo que el ingeniero va a mirar
+    # primero. Los cinco valores NO se teclean aqui: se leen de la fila que la
+    # base tiene para ese material_id (Regla n.1), asi que no pueden desviarse
+    # de lo que las listas desplegables ofrecen.
+    sembrar_cascada(ws, db, SEED_ART212_BASE, "D", 105)
+    sembrar_cascada(ws, db, SEED_ART212_COLLAR, "E", 105)
     ws["D114"] = SEED_ART212_BASE
     ws["E114"] = SEED_ART212_COLLAR
     _nota(ws["D114"], "Entrada (Variante): sembrada con el material_id del metal base "
-                     "del caso precargado (A106 Gr.B). Es la via de escape de la "
-                     "cascada; cambiela por el material de su caso o vacie y use la "
-                     "cascada (pasos 0-4).")
+                     "del caso precargado (A106 Gr.B), coherente con los cinco "
+                     "niveles de arriba. Sirve para elegir entre filas que comparten "
+                     "los cinco niveles y para pegar un material_id localizado en un "
+                     "buscador; vaciela y manda la cascada.")
     _nota(ws["E114"], "Entrada (Variante): sembrada con el material_id del collar/"
-                     "parche del caso precargado (A516 Gr.70). Cambiela por el "
-                     "material de su caso o vacie y use la cascada (pasos 0-4).")
+                     "parche del caso precargado (A516 Gr.70), coherente con los "
+                     "cinco niveles de arriba. Vaciela y manda la cascada.")
 
     # --- Banda APLICACION Y CODIGO (fila 8) + encabezado (fila 9) -----------
     # El *oracle* trae, antes de su rango 10-14, esta banda (A8, fusionada
@@ -8915,6 +8926,11 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 9: atajo a las especificaciones tecnicas, que dejaron esta hoja.
     build_botones_documentos(ws, espec=ESPEC_212, instr=INSTR_212)
 
+    # F9 del 2026-09-13: dos decimales en toda magnitud. Va DESPUES del
+    # remapeo y de los rotulos de unidad, porque la regla la decide la
+    # unidad que la fila publica al final.
+    aplicar_dos_decimales(ws, SEMAFORO_212)
+
     # F9 del 2026-09-13: el hueco que dejo la Fase 9 entre el dictamen global y
     # el anexo se oculta. Ver ocultar_filas_en_blanco: el anexo NO se mueve.
     ocultar_filas_en_blanco(ws, FILA_DICTAMEN_212 + 1, FILA_ANEXO_FLUJO_212 + 1)
@@ -9228,6 +9244,17 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
         b313c=b313c, iid1ac=iid1ac, iidbc=iidbc, unidad_cell=UNIDAD_206)
     s_t_sleeve = refs["por_columna"]["D"]["s_t"]
     dictamen_sleeve = refs["por_columna"]["D"]["dictamen"]
+
+    # El caso precargado del 206 traia dimensiones y presiones pero NINGUN
+    # material, asi que la hoja se entregaba con el dictamen en «ELIJA MATERIAL»
+    # y sin un solo esfuerzo resuelto: el ejemplo no llegaba a ensenar nada. Se
+    # siembra el mismo A516 Gr.70 que el 212 usa para su plancha —un sleeve es
+    # plancha rolada, y las dos hojas comparten el caso de la misma linea—, por
+    # la cascada y no por el atajo (F9 del 2026-09-13). Cambiarlo es cambiar los
+    # cinco desplegables.
+    db206 = wb["DB_B31_3"]
+    sembrar_cascada(ws, db206, SEED_ART212_COLLAR, "D", 75)
+    ws["D84"] = SEED_ART212_COLLAR
 
     # --- Identificacion ------------------------------------------------
     ws.cell(4, 1, rotulo("IDENTIFICACION"))
@@ -9876,6 +9903,11 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 9: el 206 no tenia especificaciones tecnicas; ahora las tiene, en
     # pestana propia y construidas desde cero contra resources/.
     build_botones_documentos(ws, espec=ESPEC_206, instr=INSTR_206)
+
+    # F9 del 2026-09-13: dos decimales en toda magnitud. Va DESPUES del
+    # remapeo y de los rotulos de unidad, porque la regla la decide la
+    # unidad que la fila publica al final.
+    aplicar_dos_decimales(ws, SEMAFORO_206)
 
     # Mismo hueco y mismo tratamiento que en el 212.
     ocultar_filas_en_blanco(ws, FILA_DICTAMEN_206 + 1, FILA_ANEXO_FLUJO_206 - 1)
@@ -10707,6 +10739,87 @@ def anclar_comentarios(ruta, wb):
                   f"(openpyxl no escribe <x:Anchor> y Excel los abria en la "
                   f"esquina de la hoja).")
     return n_anclados
+
+
+# Columnas de la base de materiales que alimentan los cinco niveles de la
+# cascada, en el orden en que se eligen. Se leen de la propia base y no se
+# teclean: un valor que no este LETRA POR LETRA en la lista desplegable dejaria
+# la cascada sin resolver, que es como quedo el caso precargado hasta el F9.
+COLS_CASCADA_DB = (9, 10, 11, 12, 13)   # Familia · Composicion · Forma · Spec · Grado
+
+
+def sembrar_cascada(ws, db, material_id, letra, fila_base):
+    """Rellena los cinco niveles de la cascada con los de `material_id`.
+
+    `db` es la hoja de la base (DB_B31_3) y `fila_base` la fila donde
+    `construir_seccion7_material` escribio el bloque (los niveles 0..4 van en
+    fila_base+4 .. fila_base+8, antes del remapeo).
+    """
+    for r in range(R_DATA, db.max_row + 1):
+        if db.cell(r, 1).value == material_id:
+            break
+    else:
+        raise SystemExit(
+            f"sembrar_cascada: el material_id {material_id!r} no esta en "
+            f"{db.title}. El caso precargado no puede sembrar lo que la base no "
+            f"tiene (Regla n.1).")
+    for i, col in enumerate(COLS_CASCADA_DB):
+        ws[f"{letra}{fila_base + 4 + i}"] = db.cell(r, col).value
+    return r
+
+
+# Rotulos de unidad que NO son una magnitud fisica: la fila lleva un numero,
+# pero es un indice, un modo o un factor sin dimension, y ahi dos decimales
+# sobran ("MODO 1,00").
+# El porcentaje y el factor («×») SI son magnitudes: 2.38948626 % y 3.334406603
+# se leen igual de mal que un esfuerzo. Lo que queda fuera es lo DISCRETO —un
+# modo, un indice— donde dos decimales no significan nada.
+SIN_MAGNITUD = ("—", "-", "adimensional", "")
+FORMATO_2_DEC = "0.00"
+
+
+def aplicar_dos_decimales(ws, semaforo=(), ncols=None):
+    """Dos decimales en toda celda de valor cuya fila declare una magnitud.
+
+    El motor mostraba `77.82802606` y `0.4903325` junto a `20`: catorce cifras
+    significativas donde el dato de entrada tiene dos, que es leer ruido (F9 del
+    2026-09-13). Se fija el FORMATO, nunca el valor: el numero que hay debajo
+    sigue entero y los calculos aguas abajo no cambian ni un digito.
+
+    La regla es la unidad de la fila, no el tipo de la celda: si la fila publica
+    mm, MPa, kg/cm², N/mm o °C, su valor es una magnitud y va a dos decimales; si
+    publica «—» o «adimensional» —un modo, un indice, un factor— se queda como
+    esta. Un formato numerico no afecta al texto, asi que las celdas de veredicto
+    de esas mismas columnas no se ven tocadas.
+    """
+    ncols = ncols or MOTOR_NCOLS
+    n = 0
+    # Las tablas de verificacion no declaran unidad -sus columnas son Requerido,
+    # Adoptado y Resultado- y ahi el numero es tan magnitud como en el resto. Se
+    # reconocen por la celda de veredicto que ya declara el semaforo.
+    filas_verif = {int(c[1:]) for c in semaforo}
+    for fila in range(1, _fin_tabla_motor(ws) + 1):
+        if fila in filas_verif:
+            for col in COLS_VALOR_MOTOR:
+                c = ws.cell(fila, col)
+                if not isinstance(c, MergedCell) and c.value is not None:
+                    c.number_format = FORMATO_2_DEC
+                    n += 1
+        u = ws.cell(fila, 3).value
+        if isinstance(u, str) and u.startswith("="):
+            # Tras la Fase 7 el rotulo es la formula del selector; la unidad SI
+            # es el primer literal.
+            m = re.search(r'"([^"]*)"', u)
+            u = m.group(1) if m else ""
+        if not isinstance(u, str) or u.strip().lower() in SIN_MAGNITUD:
+            continue
+        for col in COLS_VALOR_MOTOR:
+            c = ws.cell(fila, col)
+            if isinstance(c, MergedCell) or c.value is None:
+                continue
+            c.number_format = FORMATO_2_DEC
+            n += 1
+    return n
 
 
 def ocultar_filas_en_blanco(ws, desde, hasta, ncols=None):

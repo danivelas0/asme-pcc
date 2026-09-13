@@ -989,6 +989,26 @@ def iidb_stub():
             "pack_t0": 40, "pack_v0": 60, "npts_col": 31}
 
 
+def _sembrar_columnas_de_cascada(db):
+    """Rellena en el stub de DB_B31_3 las cinco columnas que lee el caso
+    precargado (familia, composicion, forma, spec y grado).
+
+    El caso precargado siembra la CASCADA, no solo el atajo (F9 del
+    2026-09-13), y para eso lee esas cinco columnas de la fila del material.
+    Los valores son los del libro real: se derivan del propio material_id, que
+    ya los trae separados por «|», para que el stub no invente una composicion
+    que la base no tenga.
+    """
+    import build_db_materiales as B
+    for fila, mid in ((B.R_DATA, B.SEED_ART212_BASE),
+                      (B.R_DATA + 1, B.SEED_ART212_COLLAR)):
+        _tag, spec, grado, forma, *_ = [t.strip() for t in mid.split("|")]
+        for col, valor in zip(B.COLS_CASCADA_DB,
+                              ("Acero al carbono", "Carbon steel", forma, spec,
+                               grado)):
+            db.cell(fila, col, valor)
+
+
 def fac_stub():
     """Idem para MAP_Factores (build_map_factores real). D128 (en ANCLAS_T2)
     es el VALOR de entrada por defecto del lookup de Ej ('A106 | Seamless
@@ -1047,6 +1067,7 @@ class TestBuildParcheContraOracle:
         db = wb["DB_B31_3"]
         db.cell(B.R_DATA, 1, B.SEED_ART212_BASE)
         db.cell(B.R_DATA + 1, 1, B.SEED_ART212_COLLAR)
+        _sembrar_columnas_de_cascada(db)
         # Stubs de las dos bases dimensionales (Tareas 7-8): solo hacen falta el
         # nombre de hoja y los conteos que dimensionan las listas de la cascada.
         b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
@@ -1950,6 +1971,10 @@ class TestBuildCollarArt206:
         for n in ("DB_B31_3", "Datos_Ref", "MAP_Factores", "DB_BPVC_IID",
                   "DB_BPVC_IID_B", "DB_B36_10", "DB_B36_19"):
             wb.create_sheet(n)
+        db = wb["DB_B31_3"]
+        db.cell(B.R_DATA, 1, B.SEED_ART212_BASE)
+        db.cell(B.R_DATA + 1, 1, B.SEED_ART212_COLLAR)
+        _sembrar_columnas_de_cascada(db)
         b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
                              "n_nps": 5, "max_ced": 5}
         B.build_collar_art206(wb, b313_stub(), iid1a_stub(), iidb_stub(),
@@ -2491,6 +2516,91 @@ class TestVarianteNoPisaLaCascada:
             for r in (variante, dictamen):
                 assert ws.row_dimensions[r].hidden, f"{hoja}!{r} deberia ir oculta"
                 assert ws.row_dimensions[r].outline_level == 1, f"{hoja}!{r}"
+
+
+class TestElCasoPrecargadoEnsenaSuMaterial:
+    """El ejemplo tiene que decir DE QUE MATERIAL sale su esfuerzo admisible.
+
+    Al plegar la fila de Variante, la hoja quedaba mostrando 138 MPa con los
+    cinco niveles de la cascada en blanco: el numero que gobierna el calculo
+    salia de un sitio que no se veia.
+    """
+
+    # (hoja, fila del nivel 0, columnas de material, fila de la variante)
+    CASOS = [("Parche_PCC2_Art212", 42, ("D", "E"), 47),
+             ("Collar_PCC2_Art206", 39, ("D",), 44)]
+
+    @pytest.mark.parametrize("hoja,nivel0,cols,variante", CASOS)
+    def test_los_cinco_niveles_vienen_rellenos(self, wb, hoja, nivel0, cols, variante):
+        ws = wb[hoja]
+        for col in cols:
+            vacios = [f"{col}{nivel0 + i}" for i in range(5)
+                      if not str(ws[f"{col}{nivel0 + i}"].value or "").strip()]
+            assert vacios == [], f"{hoja}: cascada sin sembrar en {vacios}"
+
+    @pytest.mark.parametrize("hoja,nivel0,cols,variante", CASOS)
+    def test_la_cascada_sembrada_concuerda_con_la_variante(self, wb, hoja, nivel0,
+                                                           cols, variante):
+        """Los cinco niveles y el material_id del atajo tienen que ser el MISMO
+        material, o el ejemplo ensenaria un material y calcularia con otro."""
+        db = wb["DB_B31_3"]
+        filas = {db.cell(r, 1).value: r for r in range(4, db.max_row + 1)}
+        ws = wb[hoja]
+        for col in cols:
+            mid = ws[f"{col}{variante}"].value
+            assert mid in filas, f"{hoja}!{col}{variante}: {mid!r} no esta en la base"
+            r = filas[mid]
+            for i, c_db in enumerate(B.COLS_CASCADA_DB):
+                esperado = db.cell(r, c_db).value
+                real = ws[f"{col}{nivel0 + i}"].value
+                assert real == esperado, \
+                    f"{hoja}!{col}{nivel0 + i}: {real!r} != {esperado!r}"
+
+
+class TestDosDecimales:
+    """Catorce cifras significativas donde el dato de entrada tiene dos es leer
+    ruido. Se fija el FORMATO, nunca el valor: el numero de debajo sigue entero."""
+
+    CASOS = [("Parche_PCC2_Art212", B.SEMAFORO_212),
+             ("Collar_PCC2_Art206", B.SEMAFORO_206)]
+
+    @pytest.mark.parametrize("hoja,semaforo", CASOS)
+    def test_toda_magnitud_lleva_dos_decimales(self, wb, hoja, semaforo):
+        ws = wb[hoja]
+        filas_verif = {int(c[1:]) for c in semaforo}
+        malas = []
+        for fila in range(1, ws.max_row + 1):
+            u = ws.cell(fila, 3).value
+            if isinstance(u, str) and u.startswith("="):
+                m = re.search(r'"([^"]*)"', u)
+                u = m.group(1) if m else ""
+            magnitud = (isinstance(u, str)
+                        and u.strip().lower() not in B.SIN_MAGNITUD)
+            if not (magnitud or fila in filas_verif):
+                continue
+            for col in B.COLS_VALOR_MOTOR:
+                c = ws.cell(fila, col)
+                if isinstance(c, openpyxl.cell.cell.MergedCell) or c.value is None:
+                    continue
+                if c.number_format != B.FORMATO_2_DEC:
+                    malas.append(f"{c.coordinate} ({c.number_format})")
+        assert malas == [], f"{hoja}: magnitudes sin dos decimales: {malas[:8]}"
+
+    @pytest.mark.parametrize("hoja,semaforo", CASOS)
+    def test_lo_discreto_NO_se_toca(self, wb, hoja, semaforo):
+        """Un modo o un indice con dos decimales («MODO 1,00») no informa: dice
+        que hay una precision que no existe."""
+        ws = wb[hoja]
+        for fila in range(1, ws.max_row + 1):
+            if str(ws.cell(fila, 3).value or "").strip() not in ("—", "-"):
+                continue
+            if fila in {int(c[1:]) for c in semaforo}:
+                continue
+            for col in B.COLS_VALOR_MOTOR:
+                c = ws.cell(fila, col)
+                if isinstance(c, openpyxl.cell.cell.MergedCell):
+                    continue
+                assert c.number_format != B.FORMATO_2_DEC, c.coordinate
 
 
 class TestSinHuecoAntesDelAnexo:

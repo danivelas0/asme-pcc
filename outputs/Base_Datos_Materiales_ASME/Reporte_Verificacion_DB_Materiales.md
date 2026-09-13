@@ -303,7 +303,7 @@ Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el es
 | Collar_PCC2_Art206!F123 | CUMPLE | 4AF626 | 4AF626 | OK |
 | Collar_PCC2_Art206!F85 | CUMPLE | 4AF626 | 4AF626 | OK |
 | Collar_PCC2_Art206!F86 | CUMPLE | 4AF626 | 4AF626 | OK |
-| Collar_PCC2_Art206!F94 (dictamen) | REVISAR — MATERIAL FUE | E61919 (letra F4F4F0) | E61919 | OK |
+| Collar_PCC2_Art206!F94 (dictamen) | APTO | 4AF626 (letra 050505) | 4AF626 | OK |
 
 La letra del dictamen se compara contra su propio relleno: un dxf que aplique la fuente y no el relleno deja texto del mismo color que el fondo, que es justo como quedo el 206 antes de esta comprobacion.
 
