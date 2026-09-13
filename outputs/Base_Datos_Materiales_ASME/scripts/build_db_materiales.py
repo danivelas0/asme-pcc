@@ -10014,11 +10014,19 @@ def _helpers_del_libro(ws):
                 name=MONO, size=9, color=GRIS)
         if comentario:
             # Solo en la columna de VALOR (regla del proyecto, F9 del
-            # 2026-09-13): esta linea es la unica garantia de esa regla en
-            # esta ruta. build_motor_declarado() NO llama a
-            # aplicar_reglas_de_comentario (ese barrido es de los motores
-            # escritos a mano, 212/206); si esta funcion escribiera en otra
-            # columna, nada mas en esta ruta lo corregiria.
+            # 2026-09-13): esta linea escribe el comentario en
+            # COLS_VALOR_MOTOR[0] (columna D). Corregido 2026-09-13 (Ronda de
+            # arreglo 1 de la skill motor_pcc2, Hallazgo 1): este comentario
+            # decia que build_motor_declarado() NO llama a
+            # aplicar_reglas_de_comentario -quedo obsoleto 13 minutos despues
+            # de escribirse, cuando esa llamada se anadio en 3418418-. SI la
+            # llama (ver mas abajo, tras construir_seccion7_material). Pero
+            # con una sola columna de valor por fila -motor.casos no genera
+            # una columna por caso, ver el chasis mas abajo- esa pasada no
+            # tiene nada que redistribuir: solo confirma que D conserva su
+            # comentario y limpia cualquier otra columna que no deba tenerlo.
+            # La garantia real de esta regla, para un motor DECLARADO, sigue
+            # siendo esta linea.
             _nota(w.cell(fila, COLS_VALOR_MOTOR[0]), comentario)
 
     def entrada(w, celda, valor):

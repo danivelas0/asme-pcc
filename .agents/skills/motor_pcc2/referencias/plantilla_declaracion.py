@@ -139,9 +139,13 @@ FILAS_CALCULO = MD.Seccion("3. CALCULO DEL CATETO DE FILETE (206-3.5)", filas=(
             magnitud="len", tipo=MD.FORMULA,
             formula="=IF({Ts}<=1.4*{Tp},{w_delgado},{w_grueso})",
             cita=_cita(43, "206-3.5"),
-            comentario="La eleccion entre (a) y (b) es la propia frase de "
-            "206-3.5 ('...shall be as follows: (a)... (b)...'), bloque 43 -- "
-            "no una tercera ecuacion."),
+            comentario="La eleccion no es una tercera ecuacion: es la propia "
+            "estructura de 206-3.5. El bloque 43 imprime solo la frase que "
+            "introduce la eleccion ('...shall be as follows:'); las dos "
+            "condiciones que la resuelven -- (a) Ts<=1.4 Tp, (b) Ts>1.4 Tp -- "
+            "estan en los bloques 44 y 45, no en el 43 (corregido: Ronda de "
+            "arreglo 1, Hallazgo 3 -- la cita al 43 es valida, pero no hay "
+            "que darle a entender que el (a)/(b) vive ahi)."),
     MD.Fila("chk_cateto", "Verificacion: cateto adoptado >= requerido",
             tipo=MD.FORMULA,
             formula='=IF({w_adoptado}>={w_requerido},"CUMPLE","NO CUMPLE")',
@@ -278,6 +282,33 @@ MATERIAL_EJEMPLO = MD.Material(
 
 # ---------------------------------------------------------------------------
 # 7. El Motor completo.
+#
+#    LIMITE #4 VERIFICADO CONTRA EL CODIGO (Ronda de arreglo 1, Hallazgo 2) --
+#    `casos=` ABAJO NO HACE LO QUE PARECE. El diseno lo describe como "1 o 2
+#    columnas de caso" (Operacion / Diseno, el patron heredado del 212 y del
+#    206 escritos a mano, donde Operacion vive en D y Diseno en E). El chasis
+#    NO reproduce eso: `emitir_tabla()` fija la columna de valor UNA SOLA VEZ,
+#    fuera del bucle de filas (`col = chr(ord("A") + COL_PRIMER_CASO - 1)` en
+#    motor_declarado.py), y escribe TODA fila en esa unica columna (D). En
+#    todo el repositorio, `motor.casos` se lee en un solo sitio
+#    (`_reglas_de_comentario_de()`, build_db_materiales.py:10061) y solo para
+#    acotar en cuantas columnas se ADMITE un comentario -no para generar
+#    ninguna columna de valor nueva-. Comprobado ejecutando `emitir_tabla()`
+#    sobre este mismo `MOTOR_206_EJEMPLO` con `casos=("Operacion","Diseno")`:
+#    las 23 filas de la hoja resultante tienen su valor en D: la columna E
+#    queda vacia en las 23.
+#
+#    Esto NO es un defecto a arreglar aqui: es una decision del chasis
+#    -`resolver_direcciones()` devuelve UNA direccion por clave, y de eso
+#    dependen `sustituir_nombres()`, las pruebas del chasis y el semaforo de
+#    la §12-, pero declarar `casos=("Operacion","Diseno")` como si el motor
+#    fuera a evaluar las dos presiones en columnas separadas -el patron que
+#    cualquiera que conozca el 212/206 esperaria- es enganoso: no pasa nada
+#    de eso. Un articulo que de verdad necesite dos columnas de caso hoy
+#    tiene que declarar dos Fila independientes por caso (p. ej. "P_oper" y
+#    "P_diseno", cada una con su propia clave) y decidir a mano en que
+#    columna de la hoja quiere verlas -otra extension del chasis que todavia
+#    no existe-, en vez de confiar en que `casos=` la resuelva.
 # ---------------------------------------------------------------------------
 MOTOR_206_EJEMPLO = MD.Motor(
     articulo="206",
@@ -289,7 +320,7 @@ MOTOR_206_EJEMPLO = MD.Motor(
     alcance="NO USAR: el motor real es Collar_PCC2_Art206, escrito a mano.",
     clausulas_espec="206-3.4 · 206-3.5 · 206-4.1",
     aplicacion=True,
-    casos=("Operacion", "Diseno"),
+    casos=("Operacion", "Diseno"),   # ver LIMITE #4 arriba: NO crea la columna E
     secciones=(FILAS_APLICACION, FILAS_ENTRADA, FILAS_CALCULO, FILAS_VEREDICTO),
     material=MATERIAL_EJEMPLO,
     verificaciones=VERIFICACIONES,

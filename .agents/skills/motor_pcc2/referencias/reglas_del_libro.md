@@ -50,9 +50,14 @@ de `build_motor_declarado()`, antes de escribir una sola celda, y de nuevo desde
 *Fuente: `CLAUDE.md` del repo, sección "Reglas de diseño del libro — no romper".*
 
 1. **Cero funciones de matriz dinámica.** Nada de `FILTER`, `SORT`, `UNIQUE`,
-   `XLOOKUP`, `VSTACK`, `_xlfn`. Solo `INDEX`, `MATCH`, `OFFSET`, `COUNTIF`. Un texto
-   no se guarda como fórmula: un `="texto…"` de más de 255 caracteres lo parte Excel en
-   `_xlfn._LONGTEXT(...)` al reguardar (`normalizar_textos_como_formula`).
+   `XLOOKUP`, `VSTACK`, `_xlfn`. Solo `INDEX`, `MATCH`, `OFFSET`, `COUNTIF`.
+   **Enmienda Rev. 3:** el entregable es `.xlsm` y ya **no abre en Google Sheets** —
+   la capa de navegación es VBA. Lo que se pierde es solo la navegación; la
+   restricción sobre las fórmulas se mantiene entera: todo el cálculo sigue
+   teniendo que ser portable, y `verificar.py` sigue fallando si aparece una matriz
+   dinámica. Corolario: un texto no se guarda como fórmula: un `="texto…"` de más
+   de 255 caracteres lo parte Excel en `_xlfn._LONGTEXT(...)` al reguardar
+   (`normalizar_textos_como_formula`).
 2. **Validación de datos: solo rango literal o lista de ítems.** Nunca una fórmula
    (`OFFSET`, `INDIRECT`) como origen. Las listas dependientes se materializan en
    columnas ocultas.
@@ -165,9 +170,14 @@ El comentario de una fila va **solo** en su columna de VALOR (D, E, F — F publ
 veredicto y cuenta como valor), nunca repetido también en la columna de rótulo. Los
 botones (H..J) conservan el suyo aparte. En el chasis declarativo, esto lo garantiza
 `_helpers_del_libro.rotulo()` en la ruta de `build_motor_declarado`: escribe el
-comentario en `COLS_VALOR_MOTOR[0]` y en ningún otro sitio — es la única garantía de
-esta regla en esa ruta, porque `build_motor_declarado()` **no** llama a
-`aplicar_reglas_de_comentario` (ese barrido es de los motores escritos a mano).
+comentario en `COLS_VALOR_MOTOR[0]` (columna D) y en ningún otro sitio.
+`build_motor_declarado()` **sí** llama después a `aplicar_reglas_de_comentario`
+(`build_db_materiales.py:10183`, con `_reglas_de_comentario_de(motor)`) — pero para
+un motor DECLARADO esa pasada es, en la práctica, un no-op de confirmación: solo
+existe una columna de valor por fila (ver el cuarto límite, más abajo:
+`motor.casos` no genera una columna por caso), así que no hay una segunda columna
+donde redistribuir el comentario. La garantía real de esta regla, hoy, sigue siendo
+la línea de `rotulo()` — no el barrido posterior.
 
 El comentario se **dimensiona con su texto y se ancla a su celda** (ver siguiente
 regla); 90 px fijos cortaban 102 de 811 comentarios reales.
