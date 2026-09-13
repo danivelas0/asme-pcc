@@ -2904,17 +2904,26 @@ class TestMotoresDeclarados:
 
     def test_el_comentario_de_cada_fila_cae_en_columna_de_valor(self, wb):
         """Regla del proyecto: 'el comentario vive solo en la columna de
-        VALOR'. Con el registro vacio esta prueba pasa en vacio -es
-        deliberado (2026-09-13)-: empieza a morder en cuanto entre el primer
-        motor real, y es la unica red que lo comprueba desde el propio
-        registro declarado en vez de desde una hoja ya construida."""
-        from motores import MOTORES_DECLARADOS
-        for m in MOTORES_DECLARADOS:
+        VALOR'. Se comprueba sobre la HOJA CONSTRUIDA -no solo sobre la
+        direccion que declara el motor-: comprobar solo `direccion_de` es
+        una tautologia, porque `resolver_direcciones` siempre coloca el
+        valor en COL_PRIMER_CASO (4), que coincide con COLS_VALOR_MOTOR[0]
+        (tambien 4) para CUALQUIER motor. Si `_helpers_del_libro.rotulo()`
+        se rompiera y escribiera el comentario en la columna A, esa
+        comparacion seguiria en verde. Aqui se relee `ws` y se exige el
+        comentario donde de verdad tiene que estar (columna de valor) y
+        que NO este donde no debe (columna de rotulo).
+        Con el registro vacio esta prueba pasa en vacio -es deliberado
+        (2026-09-13)-: empieza a morder en cuanto entre el primer motor
+        real."""
+        for m, ws in self._hojas(wb):
             for seccion in m.secciones:
                 for f in seccion.filas:
                     if not f.comentario:
                         continue
                     celda = B.direccion_de(m, f.clave)
-                    col = openpyxl.utils.column_index_from_string(
-                        re.match(r"\$?([A-Z]+)\$?", celda).group(1))
-                    assert col in B.COLS_VALOR_MOTOR, f"{m.hoja}!{celda}"
+                    fila = int(re.search(r"\d+", celda).group())
+                    valor = ws.cell(fila, B.COLS_VALOR_MOTOR[0])
+                    rotulo = ws.cell(fila, 1)
+                    assert valor.comment is not None, f"{m.hoja}!{valor.coordinate}"
+                    assert rotulo.comment is None, f"{m.hoja}!{rotulo.coordinate}"

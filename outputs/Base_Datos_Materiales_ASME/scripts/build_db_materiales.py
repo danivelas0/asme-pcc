@@ -10005,8 +10005,12 @@ def _helpers_del_libro(ws):
             w.cell(fila, MOTOR_NCOLS, referencia).font = Font(
                 name=MONO, size=9, color=GRIS)
         if comentario:
-            # Solo en la columna de VALOR (F9 del 2026-09-13); el barrido final
-            # de aplicar_reglas_de_comentario lo confirma.
+            # Solo en la columna de VALOR (regla del proyecto, F9 del
+            # 2026-09-13): esta linea es la unica garantia de esa regla en
+            # esta ruta. build_motor_declarado() NO llama a
+            # aplicar_reglas_de_comentario (ese barrido es de los motores
+            # escritos a mano, 212/206); si esta funcion escribiera en otra
+            # columna, nada mas en esta ruta lo corregiria.
             _nota(w.cell(fila, COLS_VALOR_MOTOR[0]), comentario)
 
     def entrada(w, celda, valor):
