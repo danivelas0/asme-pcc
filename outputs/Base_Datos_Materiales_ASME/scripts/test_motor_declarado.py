@@ -59,3 +59,56 @@ def test_una_cita_a_un_bloque_que_no_existe_aborta(tmp_path):
     motor = _motor_minimo()   # su cita apunta al bloque 12, que no existe
     with pytest.raises(SystemExit, match="bloque 12"):
         M.comprobar_procedencia(motor, tmp_path)
+
+
+def _helpers_de_prueba():
+    from openpyxl.styles import Protection
+
+    def banda(ws, fila, texto):
+        ws.cell(fila, 1, texto)
+
+    def rotulo(ws, fila, texto, simbolo, unidad, referencia="", comentario=""):
+        ws.cell(fila, 1, texto)
+        if referencia:
+            ws.cell(fila, 7, referencia)
+
+    def entrada(ws, celda, valor):
+        ws[celda] = valor
+        ws[celda].protection = Protection(locked=False)
+
+    def calculo(ws, celda, formula):
+        ws[celda] = formula
+
+    return M.Helpers(banda=banda, rotulo=rotulo, entrada=entrada, calculo=calculo)
+
+
+def test_la_hoja_sale_con_las_bandas_y_las_filas_en_orden():
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    res = M.emitir_tabla(ws, _motor_minimo(), _helpers_de_prueba())
+    assert ws["A5"].value == "1. DATOS DE ENTRADA"
+    assert ws["A6"].value == "Presion de diseno"
+    assert ws["D6"].value == 20                 # el ejemplo del caso precargado
+    assert ws["A7"].value == "El doble"
+    assert ws["D7"].value == "=$D$6*2"          # la formula, ya con direcciones
+    assert res["ultima_fila"] == 7
+
+
+def test_la_clausula_llega_a_la_columna_de_referencia():
+    """La procedencia no se queda en la tabla de trazabilidad: el ingeniero
+    tiene que ver de que clausula sale el numero SIN salir de la fila."""
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    M.emitir_tabla(ws, _motor_minimo(), _helpers_de_prueba())
+    assert ws["G6"].value == "999-3.2"
+
+
+def test_la_entrada_nace_desbloqueada_y_el_calculo_no():
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    M.emitir_tabla(ws, _motor_minimo(), _helpers_de_prueba())
+    assert ws["D6"].protection.locked is False   # entrada
+    assert ws["D7"].protection.locked is not False

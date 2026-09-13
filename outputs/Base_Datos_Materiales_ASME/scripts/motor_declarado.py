@@ -83,6 +83,20 @@ class Motor(NamedTuple):
     especificaciones: tuple = () # ((grupo, (Especificacion, ...)), ...)
 
 
+class Helpers(NamedTuple):
+    """Las cuatro funciones de estilo que el chasis NO define.
+
+    El chasis no importa build_db_materiales -seria una dependencia circular y
+    ademas lo ataria a este libro-: recibe los helpers y los llama. Asi las
+    pruebas del chasis corren sin el sistema visual, y el libro real le pasa los
+    suyos, que son los mismos que usan los motores escritos a mano.
+    """
+    banda: object
+    rotulo: object
+    entrada: object
+    calculo: object
+
+
 _RE_NOMBRE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
 
@@ -149,3 +163,31 @@ def comprobar_procedencia(motor, resources):
                     f"{len(bloques)} bloques.")
             tabla.append((f.clave, f.cita.clausula, f.cita.archivo, f.cita.bloque))
     return tabla
+
+
+def emitir_tabla(ws, motor, helpers):
+    """Escribe el motor completo a una hoja de Excel.
+
+    Produce: dict con 'direcciones' (clave -> $col$fila) y 'ultima_fila' (int).
+
+    La procedencia llega a la HOJA, no solo a la tabla de trazabilidad: la
+    clausula a la columna de referencia y la explicacion al comentario de la
+    celda de valor. Son las otras dos de las tres formas que pide el diseno.
+    """
+    dirs = resolver_direcciones(motor)
+    col = chr(ord("A") + COL_PRIMER_CASO - 1)
+    fila = FILA_PRIMERA_BANDA
+    for seccion in motor.secciones:
+        helpers.banda(ws, fila, seccion.titulo)
+        fila += 1
+        for f in seccion.filas:
+            helpers.rotulo(ws, fila, f.rotulo, f.simbolo, f.magnitud,
+                           referencia=f.cita.clausula if f.cita else "",
+                           comentario=f.comentario)
+            celda = f"{col}{fila}"
+            if f.tipo == FORMULA:
+                helpers.calculo(ws, celda, sustituir_nombres(f.formula, dirs))
+            else:
+                helpers.entrada(ws, celda, f.ejemplo)
+            fila += 1
+    return {"direcciones": dirs, "ultima_fila": fila - 1}
