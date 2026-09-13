@@ -382,10 +382,42 @@ def add_name(wb, name, ref):
 AUTOR_NOTA = "ASME PCC — Motor de calculo"
 
 
-def _nota(cell, texto, ancho=260, alto=90):
+# Caja del comentario. El ancho es fijo —una columna de texto estrecha se lee
+# mejor que una ancha— y el ALTO sale del largo del texto: con los 90 px fijos de
+# antes, los comentarios largos salian cortados (102 de los 811 del libro pasan
+# de las seis lineas que cabian), y un comentario cortado a media frase es peor
+# que ninguno. Medido sobre la fuente por defecto del globo (Tahoma 9): ~46
+# caracteres por linea a 320 px, ~15 px por linea.
+NOTA_ANCHO = 320
+NOTA_CAR_LINEA = 42      # medido en Excel: la caja sale a 232 pt, no a los 320 px pedidos
+NOTA_ALTO_LINEA = 15
+
+
+def _clonar_nota(nota):
+    """Copia un comentario CON SU TAMANO.
+
+    `Comment(texto, autor)` a secas se lleva el texto y deja la caja en el
+    144x79 por defecto de openpyxl. Como los comentarios se clonan dos veces
+    -al remapear filas y al repartirlos por seccion-, ese descuido deshacia el
+    alto calculado en `_nota` y devolvia el texto cortado que el ingeniero vio
+    en el F9 del 2026-09-13.
+    """
+    copia = Comment(nota.text, nota.author)
+    copia.width, copia.height = nota.width, nota.height
+    return copia
+
+
+def _nota(cell, texto, ancho=NOTA_ANCHO, alto=None):
     """Adjunta un comentario de Excel (el que se ve al pasar el mouse, no texto
-    de celda) explicando que calcula la celda o que hay que ingresar en ella."""
+    de celda) explicando que calcula la celda o que hay que ingresar en ella.
+
+    El alto se calcula del texto salvo que el llamador imponga uno.
+    """
     c = Comment(texto, AUTOR_NOTA)
+    if alto is None:
+        lineas = sum(max(1, -(-len(p) // NOTA_CAR_LINEA))
+                     for p in str(texto).split("\n"))
+        alto = NOTA_ALTO_LINEA * lineas + 14
     c.width, c.height = ancho, alto
     cell.comment = c
 
@@ -3689,9 +3721,28 @@ CAJA_TECLEO = Border(*[Side("medium", color=ROJO)] * 4)
 # Semaforo de cascada completa/incompleta (formato condicional sobre el
 # indicador de seleccion, ver build_buscador/finish_buscador). Bloque macizo con
 # tinta encima: el color lo pone el relleno, nunca el texto.
-SEL_OK_FILL = PatternFill("solid", fgColor=VERDE)
+def relleno_dxf(color):
+    """Relleno para un formato CONDICIONAL (dxf), no para una celda.
+
+    NO es lo mismo que `PatternFill("solid", fgColor=...)`, y la diferencia
+    costo el semaforo entero: en un formato diferencial Excel pinta el relleno
+    con **bgColor**, no con fgColor. Con solo fgColor, la regla SI dispara —se
+    veia porque el color de la FUENTE del dxf si cambiaba— pero el relleno se
+    quedaba como estuviera la celda. Resultado: las verificaciones salian grises
+    en vez de verdes o rojas, y el dictamen global quedaba con letra clara sobre
+    fondo claro (el 206, ilegible: tinta sobre tinta).
+
+    Se escriben los DOS colores iguales a proposito: asi el relleno es el mismo
+    lo interprete Excel por fgColor o por bgColor, y no hay que acertar cual.
+    Lo comprueba `verificar.py` leyendo `DisplayFormat` en Excel real, que es la
+    unica forma de saber que pinta: openpyxl solo dice que la regla esta escrita.
+    """
+    return PatternFill("solid", fgColor=color, bgColor=color)
+
+
+SEL_OK_FILL = relleno_dxf(VERDE)
 SEL_OK_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
-SEL_BAD_FILL = PatternFill("solid", fgColor=AMBAR)
+SEL_BAD_FILL = relleno_dxf(AMBAR)
 SEL_BAD_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
 
 # Semaforo de ACEPTACION de los dos motores de calculo (Fase 6). Mismo mecanismo
@@ -3706,18 +3757,18 @@ SEL_BAD_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
 # con el mismo significado que tiene en todo el libro: bloqueado. Va en formato
 # condicional (dxf), no como estilo de celda, asi que el guardia
 # test_el_aviso_de_macros_es_el_unico_relleno_rojo sigue valiendo tal cual.
-CUMPLE_OK_FILL = PatternFill("solid", fgColor=VERDE)
+CUMPLE_OK_FILL = relleno_dxf(VERDE)
 CUMPLE_OK_FONT = Font(name=MONO, size=10, bold=True, color=TINTA)
-CUMPLE_BAD_FILL = PatternFill("solid", fgColor=ROJO)
+CUMPLE_BAD_FILL = relleno_dxf(ROJO)
 CUMPLE_BAD_FONT = Font(name=MONO, size=10, bold=True, color=PAPEL)
 # El dictamen global va en macrotipografia: es la frase que se lee primero.
 DICTAMEN_OK_FONT = Font(name=MACRO, size=16, color=TINTA)
 DICTAMEN_BAD_FONT = Font(name=MACRO, size=16, color=PAPEL)
-DICTAMEN_ESPERA_FILL = PatternFill("solid", fgColor=AMBAR)
+DICTAMEN_ESPERA_FILL = relleno_dxf(AMBAR)
 DICTAMEN_ESPERA_FONT = Font(name=MACRO, size=16, color=TINTA)
 
 
-def semaforo_resultado(ws, rango, celda, favorables):
+def semaforo_resultado(ws, rango, celda, favorables, avisos=()):
     """Verde si la celda de Resultado dice algo favorable; rojo si no.
 
     `favorables` son los textos que cuentan como aceptacion. No siempre es
@@ -3732,10 +3783,24 @@ def semaforo_resultado(ws, rango, celda, favorables):
     lo imprevisto en blanco, indistinguible de "aun no calculado".
     """
     ok = "OR(" + ",".join(f'{celda}="{t}"' for t in favorables) + ")"
+    # Un aviso no es un fallo. El Paso 1 del 212 distingue el bloqueo -PROHIBIDO,
+    # NO ELEGIBLE, FUERA DE ALCANCE- del aviso de entalla (REVISAR, T < 0), que
+    # deja seguir; pintarlos igual diria que el diseno esta detenido cuando no lo
+    # esta. Se compara por PREFIJO porque esos textos llevan la cita del codigo
+    # detras.
+    avisos = avisos or ()
+    cond_aviso = ("OR(" + ",".join(f'LEFT({celda},{len(t)})="{t}"' for t in avisos)
+                  + ")") if avisos else None
     ws.conditional_formatting.add(
         rango, FormulaRule(formula=[ok], fill=CUMPLE_OK_FILL, font=CUMPLE_OK_FONT))
+    if cond_aviso:
+        ws.conditional_formatting.add(
+            rango, FormulaRule(formula=[cond_aviso],
+                               fill=DICTAMEN_ESPERA_FILL, font=CUMPLE_OK_FONT))
+    malo = f'AND({celda}<>"",NOT({ok})'
+    malo += f',NOT({cond_aviso}))' if cond_aviso else ")"
     ws.conditional_formatting.add(
-        rango, FormulaRule(formula=[f'AND({celda}<>"",NOT({ok}))'],
+        rango, FormulaRule(formula=[malo],
                            fill=CUMPLE_BAD_FILL, font=CUMPLE_BAD_FONT))
 
 
@@ -5920,6 +5985,10 @@ MOTOR = "Parche_PCC2_Art212"
 # por-paso de TestBuildParcheContraOracle, no el oracle: los tests de paridad
 # (validaciones y fusionados) lo excluyen de la comparacion contra el oracle.
 FILA_ANEXO_FLUJO_212 = 132
+# Primera fila del ANEXO DE PASOS DEL FLUJO del Art. 206. Existe por la misma
+# razon que la del 212: marcar donde acaba la hoja anclada y empieza lo que es
+# nuevo por diseno.
+FILA_ANEXO_FLUJO_206 = 101
 
 # Ancho de la tabla de los dos motores: columnas A..G (ver autosize() de cada
 # uno). La leyenda y su pase se mueven dentro de esa banda y no mas alla, que es
@@ -5962,7 +6031,9 @@ def build_leyenda_motor(ws):
     g = ws["G3"]
     g.value = "Leyenda de color de celda"
     g.font = SRC_F
-    _nota(g, LEYENDA_MOTOR_NOTA)
+    # Sin comentario: G es la columna de notas, no una de valor, y el comentario
+    # vive en las tres muestras (F9 del 2026-09-13: nada de globos fuera de las
+    # columnas de valor).
     return ws
 
 
@@ -6136,13 +6207,23 @@ def _mapa_filas_212():
         m[r] = r + 1            # 16..35 -> 17..36
     for r in range(105, 132):   # RESOLUCION DE MATERIAL (27 filas) sube
         m[r] = r - 67           # 105..131 -> 38..64
-    for r in range(37, 102):    # parametros, geometria, cargas, resultados,
-        m[r] = r + 29           # verificaciones, especificaciones y aviso
+    for r in range(37, 101):    # parametros, geometria, cargas, resultados y
+        m[r] = r + 29           # verificaciones
+    # El aviso de responsabilidad (fila 101) se va al FINAL de la hoja, detras
+    # del anexo: quedaba en medio del hueco que dejo la Fase 9 al sacar las
+    # especificaciones tecnicas, entre la banda y el PASO 1, y ahi no lo lee
+    # nadie. Es una fila de texto sin formula y sin ninguna referencia que la
+    # apunte, asi que mudarla no toca la cadena de calculo.
+    m[101] = 195
     # La fila 36 (separadora) y las 102-104 (las tres en blanco que separaban el
     # aviso del bloque de material) se absorben: el hueco sigue existiendo, en
     # la 37 y en las 131-133.
     for r in range(132, 401):   # ANEXO DE PASOS DEL FLUJO: NO se mueve
         m[r] = r
+    # La 195 es el destino del aviso, asi que su origen -vacio: el anexo termina
+    # en la 193- se aparta. Dos filas que aterrizan en la misma no dan error:
+    # dan una que pisa a la otra, y cual gana depende del orden del recorrido.
+    m[195] = 500     # fuera del rango de identidad (132..400): sin colision
     return m
 
 
@@ -6318,7 +6399,7 @@ def remapear_filas(ws, mapa, ncols=None):
         if comentario is not None:
             # Un Comment no se puede reasignar a otra celda (openpyxl lo ancla
             # a la suya al asignarlo): se clona.
-            nc.comment = Comment(comentario.text, comentario.author)
+            nc.comment = _clonar_nota(comentario)
         if enlace is not None:
             nc.hyperlink = enlace
 
@@ -6390,33 +6471,40 @@ def _remapear_rango(rango, mapa):
 # `fuente` es de donde se copia si falta. En VERIFICACIONES la fuente es la
 # columna de Resultado, no la de Requerido: el texto que describe la fila entera
 # es "CUMPLE si ...", no "valor minimo exigido".
+# F9 del 2026-09-13: el comentario vive SOLO en la columna de VALOR. Antes la
+# Fase 5 lo repetia ademas en la columna de parametro (A) en cinco secciones, y
+# el resultado era el mismo texto dos veces en la misma fila: dos globos que
+# dicen lo mismo son ruido, y el de la izquierda tapa el dato mientras se lee.
+# La columna de Resultado (F) SI es columna de valor —publica el veredicto—, asi
+# que conserva el suyo.
 REGLAS_COMENTARIO_212 = (
     (5, 6, "D", "D"),          # Identificacion
     (10, 14, "D", "D"),        # Aplicacion y codigo de construccion
     (19, 36, "D", "D"),        # 1. Datos de entrada
     (40, 62, "DE", "D"),       # 2. Resolucion de material
-    (64, 64, "A", "A"),        # nota fija de la cascada
     (68, 77, "D", "D"),        # 3. Parametros de calculo
     (81, 86, "D", "D"),        # 4. Geometria y propiedades derivadas
-    (90, 98, "ADE", "D"),      # 5. Calculo de cargas y soldadura
-    (102, 109, "AD", "D"),     # 6. Resultados del diseno
-    (113, 118, "ADEF", "F"),   # 7. Verificaciones
-    (119, 119, "AF", "F"),     # Dictamen global
-    (122, 128, "B", "B"),      # 8. Especificaciones tecnicas
-    (130, 130, "A", "A"),      # aviso de responsabilidad
+    (90, 98, "DE", "D"),       # 5. Calculo de cargas y soldadura
+    (102, 109, "D", "D"),      # 6. Resultados del diseno
+    (113, 118, "DEF", "F"),    # 7. Verificaciones
+    (119, 119, "F", "F"),      # Dictamen global
 )
 REGLAS_COMENTARIO_206 = (
     (5, 6, "D", "D"),
     (10, 13, "D", "D"),
     (18, 33, "D", "D"),
     (37, 56, "D", "D"),        # 2. Resolucion de material (una sola columna)
-    (58, 58, "A", "A"),
     (62, 65, "D", "D"),        # 3. Parametros de calculo
     (70, 71, "D", "D"),        # 4. Geometria del sleeve
-    (76, 80, "ADE", "D"),      # 5. Calculo de espesor requerido
-    (85, 91, "ADEF", "F"),     # 6. Verificaciones y avisos
-    (94, 94, "AF", "F"),       # Dictamen global
+    (76, 80, "DE", "D"),       # 5. Calculo de espesor requerido
+    (85, 91, "DEF", "F"),      # 6. Verificaciones y avisos
+    (94, 94, "F", "F"),        # Dictamen global
 )
+
+# Las columnas de VALOR de un motor. Fuera de ellas no queda ni un comentario, y
+# eso incluye el anexo de pasos del flujo, que no entra en las reglas de arriba
+# (sus filas son nuevas por diseno y no estan ancladas al oracle).
+COLS_VALOR_MOTOR = (4, 5, 6)
 
 
 def aplicar_reglas_de_comentario(ws, reglas):
@@ -6448,7 +6536,20 @@ def aplicar_reglas_de_comentario(ws, reglas):
                 if col not in obligadas or celda.value is None:
                     celda.comment = None
                 elif celda.comment is None:
-                    celda.comment = Comment(base.text, base.author)
+                    celda.comment = _clonar_nota(base)
+
+    # Barrido final: fuera de las columnas de valor no queda ningun comentario,
+    # en NINGUNA fila de A..G. Las reglas de arriba solo cubren las secciones
+    # declaradas; el anexo de pasos del flujo llega aqui con el comentario que
+    # `lab()` deja en la columna de parametro, y es el que el ingeniero vio
+    # repetido. Se barre solo A..G: los botones viven en H..J y conservan el
+    # suyo, que es lo unico que explica que hace el boton.
+    for fila in ws.iter_rows(max_row=_fin_tabla_motor(ws), max_col=MOTOR_NCOLS):
+        for celda in fila:
+            if (celda.column not in COLS_VALOR_MOTOR
+                    and not isinstance(celda, MergedCell)
+                    and celda.comment is not None):
+                celda.comment = None
     return ws
 
 
@@ -6460,17 +6561,40 @@ def aplicar_reglas_de_comentario(ws, reglas):
 # no son un pasa/no pasa sino una RUTA de reparacion, y ahi lo verde es la rama
 # que deja seguir con el parche. Se declaran fila a fila, leidos de la propia
 # formula del motor, para no suponer que toda celda de resultado dice "CUMPLE".
-SEMAFORO_212 = {113: ("CUMPLE",), 114: ("CUMPLE",), 115: ("CUMPLE",),
-                116: ("CUMPLE",), 117: ("Parche local",), 118: ("OK — parche",),
-                161: ("CUMPLE",), 162: ("CUMPLE",)}
-SEMAFORO_206 = {85: ("CUMPLE",), 86: ("CUMPLE",), 123: ("CUMPLE",)}
+# Toda celda que publique un VEREDICTO lleva semaforo, sin excepcion (F9 del
+# 2026-09-13). Se declara por DIRECCION y no por fila: el veredicto no siempre
+# vive en la columna de Resultado — el «¿S_w <= 1,5·Sa?» de la tabla de cargas lo
+# publica cada caso en su propia columna (D y E), y el dictamen de elegibilidad
+# del Paso 1 en la columna de valor. Un veredicto sin color se lee como un dato
+# mas; con el semaforo se ve sin leerse.
+#
+# `_sem(ok, aviso)`: lo favorable en verde, el aviso en ambar y TODO lo demas en
+# rojo por complemento.
+def _sem(ok, aviso=()):
+    return (ok, aviso)
+
+
+SEMAFORO_212 = {
+    "F113": _sem(("CUMPLE",)), "F114": _sem(("CUMPLE",)),
+    "F115": _sem(("CUMPLE",)), "F116": _sem(("CUMPLE",)),
+    "F117": _sem(("Parche local",)), "F118": _sem(("OK — parche",)),
+    "F161": _sem(("CUMPLE",)), "F162": _sem(("CUMPLE",)),
+    # Tabla de cargas: un veredicto por caso de presion, en su columna.
+    "D98": _sem(("CUMPLE",)), "E98": _sem(("CUMPLE",)),
+    # Paso 1: ELEGIBLE es verde; el aviso de entalla (REVISAR, T < 0) NO bloquea
+    # y va en ambar; PROHIBIDO / NO ELEGIBLE / FUERA DE ALCANCE, en rojo.
+    "D140": _sem(("ELEGIBLE",), ("REVISAR",)),
+}
+SEMAFORO_206 = {"F85": _sem(("CUMPLE",)), "F86": _sem(("CUMPLE",)),
+                "F123": _sem(("CUMPLE",))}
 FILA_DICTAMEN_212, FILA_DICTAMEN_206 = 119, 94
 
 
 def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
     """Semaforo en las celdas de Resultado y bloque propio para el dictamen."""
-    for fila, favorables in semaforo.items():
-        semaforo_resultado(ws, f"F{fila}:F{fila}", f"$F${fila}", favorables)
+    for celda, (favorables, avisos) in semaforo.items():
+        semaforo_resultado(ws, f"{celda}:{celda}",
+                           "$" + celda[0] + "$" + celda[1:], favorables, avisos)
 
     # --- Dictamen global: bloque propio, no una fila mas de la tabla --------
     # Es la frase que se lee primero y la que se firma. Va en macrotipografia a
@@ -6891,9 +7015,32 @@ def construir_seccion7_material(
         col2 = ord(letra) - 64
         L = hl(col2)
         ac = aux[letra]
+        # La celda «Variante» YA NO PISA a la cascada, y ese era un defecto real
+        # (F9 del 2026-09-13): el caso precargado la trae sembrada, asi que el
+        # ingeniero cambiaba familia -> composicion -> forma -> spec -> grado y el
+        # S(T) resuelto no se movia, porque seguia mandando el material sembrado.
+        #
+        # Precedencia nueva, en este orden:
+        #   1. La cascada NO resuelve (aun no se ha elegido, o la combinacion no
+        #      existe): manda la Variante si trae algo. Es la via para PEGAR un
+        #      material_id localizado en un buscador, y la que siembra el caso
+        #      precargado.
+        #   2. La cascada SI resuelve: la Variante solo cuenta si PERTENECE a esa
+        #      seleccion —se compara su clave de cinco niveles contra la clave
+        #      actual—; si no, se usa la fila que la cascada encontro.
+        # La fila no se elimina: sin ella, los cinco niveles no identifican un
+        # material unico (43 % de las filas del B31.3, 65 % de la Tabla 1A y 84 %
+        # de la 1B/3 comparten los cinco), y el motor tendria que elegir a ciegas
+        # entre admisibles distintos. Va plegada, no borrada.
+        v = f'${L}${F + 9}'
+        casc = (f'IF({M}=1,INDEX({rb["ID"]},${ac}${F + 5}),'
+                f'INDEX({ri["ID"]},${ac}${F + 5}))')
+        clave_v = (f'IFERROR(IF({M}=1,'
+                   f'INDEX({rb["K4"]},MATCH({v},{rb["ID"]},0)),'
+                   f'INDEX({ri["K4"]},MATCH({v},{ri["ID"]},0))),"")')
         ws.cell(F + 10, col2).value = (
-            f'=IF(${L}${F + 9}<>"",${L}${F + 9},IF(${ac}${F + 5}=0,"",'
-            f'IF({M}=1,INDEX({rb["ID"]},${ac}${F + 5}),INDEX({ri["ID"]},${ac}${F + 5}))))')
+            f'=IF(${ac}${F + 5}=0,{v},'
+            f'IF(AND({v}<>"",{clave_v}=${ac}${F + 4}),{v},{casc}))')
         # Indice de base: 1/2/3 segun la base, +3 si el selector dice US. La
         # base la decide siempre el material_id METRICO (la cascada es unica y
         # se resuelve contra la edicion SI, igual que en los buscadores).
@@ -6962,6 +7109,18 @@ def construir_seccion7_material(
             "s_t": f"${L}${F + 21}", "tmax": f"${L}${F + 19}",
         }
 
+    # Con el «Dictamen de rango» plegado (F9 del 2026-09-13), la fila de S(T)
+    # resuelto se queda sola a la vista y un #N/A no diria por que. La columna de
+    # notas de ESA fila publica el motivo, tomado del mismo dictamen: asi el
+    # estado que bloquea sigue leyendose sin desplegar nada.
+    estados = " & ".join(
+        f'IF({d["dictamen"]}="OK","","  ·  {etiqueta}: "&{d["dictamen"]})'
+        for (letra, etiqueta), d in zip(columnas, por_columna.values()))
+    motivo = ws.cell(F + 21, MOTOR_NCOLS)
+    motivo.value = (f'=IF(LEN({estados})=0,"S(T) leido de la base ASME por la '
+                    f'cascada","BLOQUEADO"&{estados})')
+    motivo.font = SRC_F
+
     resultado = {"fila_banda": F, "fila_modo_s": F + 2, "fila_temp": F + 3,
                  "por_columna": por_columna}
 
@@ -7020,7 +7179,15 @@ def construir_seccion7_material(
     # no se pliega aunque la decision 4 del plan lo listara: es lo que BLOQUEA
     # el calculo, y una condicion de bloqueo escondida detras de un "+" es una
     # condicion que nadie ve.
-    for r in range(F + 10, F + 20):
+    # F9 del 2026-09-13: la Variante (F+9) y el Dictamen de rango (F+20) entran
+    # tambien en el grupo. El ingeniero pidio ocultarlas, y esta es la forma de
+    # ocultarlas SIN perderlas: el "+" del margen las trae de vuelta cuando hace
+    # falta —la Variante, para elegir entre dos filas que comparten los cinco
+    # niveles o para pegar un material_id; el dictamen, para ver por que un S(T)
+    # salio bloqueado—. El estado de bloqueo no se esconde: el propio S(T)
+    # resuelto lo dice (#N/A y el texto del dictamen a su lado en la columna de
+    # notas), que es la fila que queda a la vista.
+    for r in range(F + 9, F + 21):
         dim = ws.row_dimensions[r]
         dim.outline_level = 1
         dim.hidden = True
@@ -7654,15 +7821,20 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # la maxima admisible dejaba dos columnas compitiendo por gobernar el t_req,
     # que es exactamente la ambiguedad que un motor de calculo no debe tener.
     # Las celdas de la fila 27 quedan en DIVERGENCIAS_DECLARADAS.
-    com28 = ("Entrada: presion de diseno, en kg/cm² — la MAXIMA ADMISIBLE "
-             "(rating), no un valor tipico intermedio. Es la que gobierna el "
-             "espesor requerido y el esfuerzo de soldadura: 212-3.2 define una "
-             "unica P = 'internal design pressure' para las ec. (1)/(2), y "
-             "206-3.3 la nombra 'maximum allowable design pressure'. Es el caso "
-             "'Diseno' de la seccion 3 y se compara contra la presion maxima "
-             "admisible del parche en la verificacion de la seccion 5 (fila 117).")
-    lab(28, "Presión de diseño (máxima admisible / rating)", unidad="kg/cm²",
-        ref="Rating / máx. admisible", com=com28)
+    # La PRESION DE DISENO del componente, que es la que teclea el ingeniero y a
+    # menudo cae ENTRE la de operacion y el rating: no es el rating (F9 del
+    # 2026-09-13). 212-3.2 la nombra «internal design pressure» y es la unica P
+    # que entra en las ec. (1)/(2); el rating, si se quiere evaluar, se teclea
+    # aqui como presion de diseno y el motor lo calcula igual.
+    com28 = ("Entrada: presion de diseno del componente, en kg/cm². Es la que "
+             "gobierna el espesor requerido y el esfuerzo de soldadura — 212-3.2 "
+             "define una unica P = 'internal design pressure' para las ec. (1) y "
+             "(2)—, y a menudo esta ENTRE la presion de operacion y el rating. Es "
+             "el caso 'Diseno' de la seccion 3, y se compara contra la presion "
+             "maxima admisible que resiste el parche en la verificacion de la "
+             "seccion 5 (fila 117).")
+    lab(28, "Presión de diseño", unidad="kg/cm²",
+        ref="212-3.2 · internal design pressure", com=com28)
     ws.cell(28, 2, "P_dis").font = Font(name=MONO, size=10, color=TINTA)
     inp("D28", 20, com28)
 
@@ -8164,8 +8336,15 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # porque ya no es una seccion de esta hoja. Las siete filas de contenido
     # quedan VACIAS y declaradas en DIVERGENCIAS_DECLARADAS, sus fusionados
     # incluidos.
-    banda_literal(92, "ESPECIFICACIONES TÉCNICAS  //  EN SU PROPIA PESTAÑA — "
-                      "BOTÓN ARRIBA A LA DERECHA")
+    # F9 del 2026-09-13: la banda pierde el texto que anunciaba la pestana -el
+    # boton esta arriba a la derecha y se ve- y pasa a rotular lo que de verdad
+    # viene debajo. NO se rotula «Especificaciones tecnicas», y es deliberado:
+    # de los ocho pasos, solo el 7 (fabricacion, 212-4) y el 8 (examen y prueba,
+    # 212-5/6) son especificaciones; los seis primeros son comprobaciones de
+    # diseno -elegibilidad, cargas, proximidad, topes de filete, excentricidad y
+    # conformado en frio-. Rotularlos a todos como especificaciones diria que el
+    # bloque es lo que no es.
+    banda_literal(92, "8.  PASOS DEL FLUJO DE LA REPARACIÓN")
 
     # --- Aviso fijo (fila 101) -----------------------------------------------
     # Mismo estilo que los avisos fijos del Art. 206 (nota206/nota206b, mas
@@ -8736,6 +8915,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 9: atajo a las especificaciones tecnicas, que dejaron esta hoja.
     build_botones_documentos(ws, espec=ESPEC_212, instr=INSTR_212)
 
+    # F9 del 2026-09-13: el hueco que dejo la Fase 9 entre el dictamen global y
+    # el anexo se oculta. Ver ocultar_filas_en_blanco: el anexo NO se mueve.
+    ocultar_filas_en_blanco(ws, FILA_DICTAMEN_212 + 1, FILA_ANEXO_FLUJO_212 + 1)
+
     # Fase 11: el area de impresion es A..G, no el area de uso (que llega a las
     # columnas ocultas). Se descubrio al exportar la hoja para revisarla.
     preparar_impresion(ws, MOTOR_NCOLS)
@@ -9173,11 +9356,19 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # La REFERENCIA de la columna G va corta: el parrafo entero se salia del
     # ancho de la columna y se cortaba al imprimir. La explicacion completa vive
     # en el comentario de D28, que es donde la regla de la Fase 5 la pide.
-    lab(28, "Presion de diseno (maxima admisible / rating)", "kg/cm2",
-       "206-3.3 · maximum allowable design pressure")
+    # Igual que en el 212: lo que se teclea es la PRESION DE DISENO, que suele
+    # caer entre la de operacion y el rating. Aqui hay un matiz del codigo que no
+    # se puede silenciar: 206-3.3 dimensiona el Type B contra «the maximum
+    # allowable design pressure», asi que si usted teclea una presion de diseno
+    # por debajo del rating, el espesor que sale es menor que el que pide ese
+    # parrafo. El comentario lo dice; la decision es del ingeniero.
+    lab(28, "Presion de diseno", "kg/cm2", "206-3.3 · design pressure")
     inp("D28", 20,
-        "Entrada: 206-3.3 la llama 'maximum allowable design pressure'. Es la que "
-        "gobierna el t_req de Type B, no un valor tipico intermedio.")
+        "Entrada: presion de diseno del componente, en kg/cm2. Gobierna el t_req "
+        "de Type B y a menudo esta ENTRE la presion de operacion y el rating. "
+        "Aviso del codigo: 206-3.3 exige dimensionar el Type B para 'the maximum "
+        "allowable design pressure'; si la presion que teclea aqui es menor que "
+        "el rating, el espesor resultante es menor que el que pide ese parrafo.")
     com29_206 = ("Entrada: espesor nominal que usted adopta para el collar (T_s "
                  "de las Figs. 206-3.5-1/-2). La verificacion lo compara contra el "
                  "T_s,min gobernante; tambien decide el cateto del filete de "
@@ -9685,6 +9876,9 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # Fase 9: el 206 no tenia especificaciones tecnicas; ahora las tiene, en
     # pestana propia y construidas desde cero contra resources/.
     build_botones_documentos(ws, espec=ESPEC_206, instr=INSTR_206)
+
+    # Mismo hueco y mismo tratamiento que en el 212.
+    ocultar_filas_en_blanco(ws, FILA_DICTAMEN_206 + 1, FILA_ANEXO_FLUJO_206 - 1)
 
     preparar_impresion(ws, MOTOR_NCOLS)
 
@@ -10363,6 +10557,181 @@ def _guia_de_celdas(ws):
     return [(b, filas) for b, filas in secciones if filas]
 
 
+def _px_col(ws, col):
+    """Ancho en pixeles de una columna, como lo calcula Excel."""
+    dim = ws.column_dimensions.get(get_column_letter(col))
+    ancho = (dim.width if dim is not None and dim.width else None)
+    if ancho is None:
+        ancho = ws.sheet_format.defaultColWidth or 8.43
+    return max(1, int(round(ancho * 7 + 5)))
+
+
+def _px_fila(ws, fila):
+    """Alto en pixeles de una fila."""
+    dim = ws.row_dimensions.get(fila)
+    alto = (dim.height if dim is not None and dim.height else None)
+    if alto is None:
+        alto = ws.sheet_format.defaultRowHeight or 15
+    return max(1, int(round(alto * 4 / 3)))
+
+
+def _ancla_comentario(ws, fila, col, ancho_px, alto_px):
+    """Los ocho numeros del `<x:Anchor>` de un comentario, en pixeles.
+
+    Excel coloca el globo de un comentario con ese elemento: columna y fila de
+    la esquina superior izquierda, el desplazamiento dentro de esa celda, y lo
+    mismo para la inferior derecha. La caja arranca en la celda de la DERECHA de
+    la comentada, que es donde Excel la pone por defecto y donde no tapa el dato
+    que explica.
+
+    `fila` y `col` son 1-based (los de openpyxl).
+    """
+    c1, x1, r1, y1 = col + 1, 15, fila - 1, 2
+    c2, resto = c1, ancho_px + x1
+    while resto > _px_col(ws, c2):
+        resto -= _px_col(ws, c2)
+        c2 += 1
+    x2 = resto
+    r2, resto = r1, alto_px + y1
+    while resto > _px_fila(ws, r2 + 1):
+        resto -= _px_fila(ws, r2 + 1)
+        r2 += 1
+    y2 = resto
+    return (c1 - 1, x1, r1, y1, c2 - 1, x2, r2, y2)
+
+
+def anclar_comentarios(ruta, wb):
+    """Da a cada comentario del libro su `<x:Anchor>`, reescribiendo el VML.
+
+    openpyxl NO escribe ese elemento: su forma VML lleva solo
+    `position:absolute; margin-left:59.25pt; margin-top:1.5pt`, y sin ancla
+    Excel mide ese margen desde la esquina de la HOJA. El efecto, que el
+    ingeniero vio en el F9 del 2026-09-13, es que al editar una nota de la fila
+    140 el cuadro aparece arriba del todo, a kilometros de su celda.
+
+    Se corrige DESPUES de guardar, sobre el archivo: el VML es una parte mas del
+    paquete y aqui se le inyecta el ancla calculada con la geometria real de la
+    hoja (anchos de columna y altos de fila), que es justo lo que openpyxl no
+    puede saber desde la forma.
+    """
+    import re as _re
+    import shutil
+    import zipfile
+    import xml.etree.ElementTree as ET
+
+    # Se parsea el VML de verdad y no se toca con expresiones regulares: openpyxl
+    # lo serializa con prefijos GENERICOS (`ns0:shape`, `ns1:Row`), no con los
+    # `v:`/`x:` del ejemplo de Microsoft, asi que buscar la cadena literal no
+    # encuentra nada. Los espacios de nombres, en cambio, son fijos.
+    NS_V = "urn:schemas-microsoft-com:vml"
+    NS_X = "urn:schemas-microsoft-com:office:excel"
+    ET.register_namespace("v", NS_V)
+    ET.register_namespace("o", "urn:schemas-microsoft-com:office:office")
+    ET.register_namespace("x", NS_X)
+
+    ruta = Path(ruta)
+    RELS = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+    hoja_de_vml = {}
+    with zipfile.ZipFile(ruta) as z:
+        nombres = z.namelist()
+        contenido = {n: z.read(n) for n in nombres}
+
+    # nombre de hoja -> parte sheetN.xml, por el libro y sus relaciones (no por
+    # el numero del archivo: openpyxl no garantiza que sheet3.xml sea la tercera
+    # hoja del libro).
+    libro = ET.fromstring(contenido["xl/workbook.xml"])
+    rid_de_hoja = {}
+    for e in libro.iter():
+        if e.tag.endswith("}sheet") and e.get("name"):
+            rid_de_hoja[e.get("name")] = e.get(
+                "{http://schemas.openxmlformats.org/officeDocument/2006/"
+                "relationships}id")
+    destino = {r.get("Id"): r.get("Target")
+               for r in ET.fromstring(contenido["xl/_rels/workbook.xml.rels"])}
+    for titulo, rid in rid_de_hoja.items():
+        tgt = destino.get(rid, "")
+        parte = "xl/" + tgt.lstrip("/").replace("xl/", "", 1)
+        carpeta, archivo = parte.rsplit("/", 1)
+        rels = f"{carpeta}/_rels/{archivo}.rels"
+        if rels not in contenido:
+            continue
+        for r in ET.fromstring(contenido[rels]):
+            t = r.get("Target", "")
+            if t.endswith(".vml"):
+                hoja_de_vml["xl/drawings/" + t.rsplit("/", 1)[-1]] = titulo
+
+    n_anclados = 0
+    for parte, titulo in hoja_de_vml.items():
+        if parte not in contenido:
+            continue
+        ws = wb[titulo]
+        raiz = ET.fromstring(contenido[parte])
+        tocado = False
+        for forma in raiz.iter(f"{{{NS_V}}}shape"):
+            datos = forma.find(f"{{{NS_X}}}ClientData")
+            if datos is None or datos.get("ObjectType") != "Note":
+                continue
+            if datos.find(f"{{{NS_X}}}Anchor") is not None:
+                continue
+            f = datos.find(f"{{{NS_X}}}Row")
+            c = datos.find(f"{{{NS_X}}}Column")
+            est = _re.search(r"width:(\d+)px;height:(\d+)px", forma.get("style", ""))
+            if f is None or c is None or est is None:
+                continue
+            ancla = _ancla_comentario(ws, int(f.text) + 1, int(c.text) + 1,
+                                      int(est.group(1)), int(est.group(2)))
+            el = ET.Element(f"{{{NS_X}}}Anchor")
+            el.text = ", ".join(str(v) for v in ancla)
+            # Va detras de SizeWithCells, que es donde lo coloca Excel.
+            pos = list(datos).index(datos.find(f"{{{NS_X}}}SizeWithCells")) + 1 \
+                if datos.find(f"{{{NS_X}}}SizeWithCells") is not None else 0
+            datos.insert(pos, el)
+            n_anclados += 1
+            tocado = True
+        if tocado:
+            contenido[parte] = ET.tostring(raiz, encoding="utf-8")
+
+    if not n_anclados:
+        raise SystemExit(
+            "anclar_comentarios: no se anclo ni un comentario. O el paquete dejo "
+            "de traer VML de comentarios, o openpyxl cambio como los escribe: en "
+            "los dos casos las notas volverian a abrirse en la esquina de la hoja "
+            "y hay que revisarlo, no seguir.")
+
+    tmp = ruta.with_suffix(ruta.suffix + ".tmp")
+    with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
+        for nombre, datos in contenido.items():
+            z.writestr(nombre, datos)
+    shutil.move(str(tmp), str(ruta))
+    ISSUES.append(f"Comentarios anclados a su celda: {n_anclados} "
+                  f"(openpyxl no escribe <x:Anchor> y Excel los abria en la "
+                  f"esquina de la hoja).")
+    return n_anclados
+
+
+def ocultar_filas_en_blanco(ws, desde, hasta, ncols=None):
+    """Oculta las filas sin contenido de A..ncols entre `desde` y `hasta`.
+
+    El hueco entre el dictamen global y el anexo de pasos del flujo lo dejo la
+    Fase 9 al sacar las especificaciones tecnicas a su pestana: doce filas en
+    blanco que se leen como un error de construccion (F9 del 2026-09-13).
+
+    Se OCULTAN, no se eliminan, y esa es la decision: el anexo no se mueve. Sus
+    direcciones son las que recalcula `verificar.py` §6e/§6f contra las ecuaciones
+    del codigo y las que fijan las anclas por-paso de las pruebas; correrlas doce
+    filas para ganar doce filas en blanco seria mover la cadena de calculo
+    verificada por una cuestion de aspecto. Ocultar da el mismo resultado a la
+    vista y no toca una sola referencia.
+    """
+    ncols = ncols or MOTOR_NCOLS
+    n = 0
+    for fila in range(desde, hasta + 1):
+        if all(ws.cell(fila, c).value is None for c in range(1, ncols + 1)):
+            ws.row_dimensions[fila].hidden = True
+            n += 1
+    return n
+
+
 def preparar_impresion(ws, ncols, hasta_fila=None):
     """Area de impresion y ajuste a lo ancho de una hoja de motor o documento.
 
@@ -10986,9 +11355,15 @@ def _hoja_final(titulo, l1, l2, destino, grupo=""):
     return Nodo(titulo=titulo, lineas=(l1, l2), destino=destino, grupo=grupo)
 
 
-def _marcador(titulo, l1, l2):
-    """Tarjeta marcador: documento que existe en la norma y no en este libro."""
-    return Nodo(titulo=titulo, lineas=(l1, l2), cargado=False)
+def _marcador(titulo, l1):
+    """Tarjeta marcador: documento que existe en la norma y no en este libro.
+
+    Sin segunda linea a proposito: la barra de la tarjeta ya dice NO CARGADO EN
+    ESTE LIBRO, y repetirlo con un «Sin extraccion en resources/» era decir dos
+    veces lo mismo. Ninguna tarjeta del arbol muestra texto de ESTADO (F9 del
+    2026-09-13): dicen que es cada documento, no que hay cargado.
+    """
+    return Nodo(titulo=titulo, lineas=(l1,), cargado=False)
 
 
 # Sub-bandas de la hoja SEC. II. Es el unico nivel que agrupa, porque sus
@@ -10999,7 +11374,6 @@ def _marcador(titulo, l1, l2):
 G_ABC = "PARTES A, B y C · volcado integro, una fila por fila impresa"
 G_TRV = "TRANSVERSAL A LAS PARTES"
 
-SIN_EXTRAER = "Sin extraccion en resources/"
 
 # Rotulos de las tres bandas del Dashboard. El tipo de artefacto se decide
 # ANTES que la norma: es la primera pregunta de quien abre el libro.
@@ -11034,8 +11408,7 @@ def _rama_bpvc(pre, tipo, sub_secii, lineas_secii, hijos_secii, nota=""):
                 titulo="BPVC · BOILER AND PRESSURE VESSEL CODE",
                 corto="BPVC",
                 subtitulo=f"{tipo} · ASME BPVC · elija la seccion",
-                lineas=("Seccion II materiales · Seccion VIII diseno",
-                        "Solo la Seccion II esta cargada"),
+                lineas=("Seccion II materiales · Seccion VIII diseno"),
                 hoja=f"NAV_{pre}_BPVC",
                 banda="SECCIONES DEL BPVC",
                 hijos=(
@@ -11049,7 +11422,7 @@ def _rama_bpvc(pre, tipo, sub_secii, lineas_secii, hijos_secii, nota=""):
                         hijos=hijos_secii,
                         nota=nota),
                     _marcador("SEC. VIII DIV. 1 · RECIPIENTES A PRESION",
-                              "Reglas de diseno por formula", SIN_EXTRAER),
+                              "Reglas de diseno por formula"),
                 )),
         ))
 
@@ -11067,8 +11440,7 @@ ARBOL = Nodo(
             corto="ASME · CALCULO",
             subtitulo=f"{T_CAL} · American Society of Mechanical Engineers · "
                       f"elija la disciplina",
-            lineas=("Motores que dimensionan una reparacion",
-                    "Hoy solo la familia Post Construction (PCC)"),
+            lineas=("Motores que dimensionan una reparacion"),
             hoja="NAV_CAL_ASME",
             grupo=B_CALCULO,
             banda="DISCIPLINAS CON MOTOR DE CALCULO",
@@ -11087,8 +11459,7 @@ ARBOL = Nodo(
                             titulo="PCC · POST CONSTRUCTION CODE",
                             corto="PCC",
                             subtitulo=f"{T_CAL} · Familia ASME PCC · elija el documento",
-                            lineas=("PCC-1 pernos · PCC-2 reparacion · PCC-3 riesgo",
-                                    "Solo PCC-2 esta cargado"),
+                            lineas=("PCC-1 pernos · PCC-2 reparacion · PCC-3 riesgo"),
                             hoja="NAV_CAL_PCC",
                             banda="DOCUMENTOS DE LA FAMILIA PCC",
                             hijos=(
@@ -11097,8 +11468,7 @@ ARBOL = Nodo(
                                     corto="PCC-2",
                                     subtitulo=f"{T_CAL} · ASME PCC-2 · articulos "
                                               f"cargados en el libro",
-                                    lineas=("Metodos de reparacion por articulo",
-                                            "Art. 212 y Art. 206 cargados"),
+                                    lineas=("Metodos de reparacion por articulo"),
                                     hoja="NAV_CAL_PCC2",
                                     banda="ARTICULOS CARGADOS",
                                     hijos=(
@@ -11170,13 +11540,12 @@ ARBOL = Nodo(
                                             )),
                                         _marcador(
                                             "RESTO DE ARTICULOS DE PCC-2",
-                                            "Manguitos, envolventes, obturaciones",
-                                            SIN_EXTRAER),
+                                            "Manguitos, envolventes, obturaciones"),
                                     )),
                                 _marcador("PCC-1 · APRIETE DE UNIONES BRIDADAS",
-                                          "Montaje y apriete de pernos", SIN_EXTRAER),
+                                          "Montaje y apriete de pernos"),
                                 _marcador("PCC-3 · INSPECCION BASADA EN RIESGO",
-                                          "Planificacion de inspeccion", SIN_EXTRAER),
+                                          "Planificacion de inspeccion"),
                             )),
                     )),
             )),
@@ -11206,8 +11575,7 @@ ARBOL = Nodo(
                             titulo="B31 · CODIGO DE TUBERIA A PRESION",
                             corto="B31",
                             subtitulo=f"{T_BUS} · ASME B31 · elija la seccion",
-                            lineas=("Una seccion por servicio de tuberia",
-                                    "Solo B31.3 esta cargado"),
+                            lineas=("Una seccion por servicio de tuberia"),
                             hoja="NAV_BUS_B31",
                             banda="SECCIONES DEL B31",
                             hijos=(
@@ -11252,18 +11620,16 @@ ARBOL = Nodo(
                                         # no se carga es la hoja.
                                         _marcador(
                                             "B31.3 · APENDICE B (B-2 a B-6)",
-                                            "Presiones admisibles y listados de spec.",
-                                            "Concreto, vidrio borosilicato y PEX-AL-PEX"),
+                                            "Presiones admisibles: concreto, vidrio "
+                                            "borosilicato y PEX-AL-PEX"),
                                     )),
                                 _marcador("B31.1 · B31.4 · B31.5",
-                                          "Potencia, hidrocarburos liquidos, refrigeracion",
-                                          SIN_EXTRAER),
+                                          "Potencia, hidrocarburos liquidos, refrigeracion"),
                                 _marcador("B31.8 · B31.9 · B31.12",
-                                          "Gas, servicios de edificio e hidrogeno",
-                                          SIN_EXTRAER),
+                                          "Gas, servicios de edificio e hidrogeno"),
                             )),
                         _marcador("B16 · BRIDAS, ACCESORIOS Y VALVULAS",
-                                  "B16.5, B16.9, B16.34 y familia", SIN_EXTRAER),
+                                  "B16.5, B16.9, B16.34 y familia"),
                     )),
                 _rama_bpvc(
                     "BUS", T_BUS,
@@ -11343,12 +11709,10 @@ ARBOL = Nodo(
                                     "Restringen lo que dice la tabla",
                                     "DB_SecII_Notas", grupo=G_TRV),
                         _hoja_final("SEC. II · QUIMICA",
-                                    "Composicion normalizada por elemento",
-                                    "Solo tablas de encabezado resuelto",
+                                    "Composicion normalizada por elemento", "",
                                     "DB_SecII_Quimica", grupo=G_TRV),
                         _hoja_final("SEC. II · TRACCION",
-                                    "Rm, Re, alargamiento y dureza",
-                                    "Solo tablas de encabezado resuelto",
+                                    "Rm, Re, alargamiento y dureza", "",
                                     "DB_SecII_Traccion", grupo=G_TRV),
                     ),
                     nota="El 45,8 % de las filas llega marcada AMBIGUA: conserva su "
@@ -12254,6 +12618,24 @@ DIVERGENCIAS_DECLARADAS.update({
     for r in range(93, 100) for col in ("A", "B")
 })
 DIVERGENCIAS_REEMPLAZADAS.update({
+    ("Parche_PCC2_Art212", c): (
+        "F9 del 2026-09-13: la celda «Variante» dejo de PISAR a la cascada. El "
+        "caso precargado la trae sembrada, asi que el ingeniero cambiaba familia "
+        "-> composicion -> forma -> spec -> grado y el S(T) resuelto no se movia. "
+        "Ahora la Variante solo manda si la cascada no resuelve (pegar un "
+        "material_id a mano) o si PERTENECE a la seleccion actual. Lo fija "
+        "TestVarianteNoPisaLaCascada, no el oracle Rev0.")
+    for c in ("D48", "E48")
+})
+DIVERGENCIAS_DECLARADAS.update({
+    ("Parche_PCC2_Art212", "A130"): (
+        "F9 del 2026-09-13: el aviso de responsabilidad se va al final de la hoja "
+        "(fila 195, detras del anexo). Quedaba en medio del hueco que dejo la "
+        "Fase 9 al sacar las especificaciones tecnicas -entre la banda y el "
+        "PASO 1-, donde no lo lee nadie. Es texto sin formula y sin ninguna "
+        "referencia que lo apunte."),
+})
+DIVERGENCIAS_REEMPLAZADAS.update({
     ("Parche_PCC2_Art212", "A3"): (
         "Fase 9: el boton de retorno dice '<<< VOLVER A ART. 212' en vez de "
         "'<<< VOLVER A PCC-2'. No es un cambio de texto: el articulo paso de ser "
@@ -12942,6 +13324,11 @@ def main(argv=None):
     # libro completo, incluidas las hojas que hubiese traido el maestro.
     estados = aplicar_visibilidad(wb)
     wb.save(a.out)
+
+    # Despues de guardar, sobre el propio paquete: el ancla de cada comentario.
+    # No se puede hacer antes porque openpyxl no expone la forma VML hasta que la
+    # escribe (ver anclar_comentarios).
+    anclar_comentarios(a.out, wb)
 
     # Por omision acompana al reporte de verificacion en la carpeta del proyecto,
     # no al libro: es documentacion de respaldo, no un entregable suelto.

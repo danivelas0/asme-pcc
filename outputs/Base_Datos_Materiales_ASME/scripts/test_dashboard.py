@@ -550,8 +550,11 @@ class TestSistemaVisual:
         seguridad y se lee de un vistazo. Verde y ambar solo viven en el formato
         condicional del indicador de seleccion.
 
-        El color de un formato diferencial se lee de `fgColor`: en un dxf
-        openpyxl deja `bgColor` en negro y no es el que pinta.
+        El color de un formato diferencial se escribe en los DOS —fgColor y
+        bgColor— desde el F9 del 2026-09-13: Excel pinta el relleno de un dxf
+        con bgColor, y con solo fgColor la regla disparaba sin pintar nada. Ver
+        `relleno_dxf` en el builder y la §6h de verificar.py, que es la que lo
+        demuestra preguntandole a Excel que color pinta.
         """
         ws = wb["Buscar_B31_3"]
         reglas = [r for rango in ws.conditional_formatting
@@ -1089,10 +1092,14 @@ class TestBuildParcheContraOracle:
                  "D68", "D69", "D73", "D47", "E47", "D61")
 
     def test_anclas_de_la_tarea_2(self):
+        """Usa `_ancla`, no una comparacion a ciegas: una celda declarada como
+        reemplazada sale de la igualdad contra el oracle y se exige no vacia —si
+        no, declarar una divergencia obligaria a borrar la celda de esta lista y
+        con ella su cobertura."""
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_T2:
-            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
 
     # --- Fase 1: compuerta de elegibilidad (Paso 1, 212-1/212-2) -------------
     # Bloque nuevo en el anexo de pasos del flujo (filas 134+), fuera del rango
@@ -1534,9 +1541,13 @@ class TestBuildParcheContraOracle:
         for celda in ("A28", "B28", "C28", "D28", "G28"):
             assert ws[celda].value is None, f"{celda} deberia estar vacia"
 
-    def test_la_presion_de_diseno_es_la_maxima_admisible(self):
+    def test_la_presion_de_diseno_es_la_del_diseno(self):
         ws = self._construir()
-        assert ws["A29"].value == "Presión de diseño (máxima admisible / rating)"
+        # F9 del 2026-09-13: la fila pide la PRESION DE DISENO, que a menudo cae
+        # entre la de operacion y el rating. No se rotula «maxima admisible /
+        # rating» porque eso decia que hay que teclear el rating, y no es asi:
+        # 212-3.2 habla de «internal design pressure».
+        assert ws["A29"].value == "Presión de diseño"
         assert _plano(ws["B29"].value) == "Pdis", ws["B29"].value
         assert ws["D29"].value == 20
         # encabezado() del 212 escribe el rotulo LITERAL (no pasa por .upper():
@@ -1637,10 +1648,10 @@ class TestSemaforoDeAceptacion:
         se enteraria — la celda saldria roja siempre, que parece un resultado.
         """
         ws = wb[hoja]
-        for fila, favorables in tabla.items():
-            formula = str(ws.cell(fila, 6).value)
+        for celda, (favorables, _avisos) in tabla.items():
+            formula = str(ws[celda].value)
             for texto in favorables:
-                assert f'"{texto}"' in formula, f"{hoja}!F{fila}: {texto!r}"
+                assert f'"{texto}"' in formula, f"{hoja}!{celda}: {texto!r}"
 
     @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
     def test_cada_resultado_tiene_sus_dos_reglas(self, wb, hoja, tabla, fila_dict):
@@ -1651,9 +1662,11 @@ class TestSemaforoDeAceptacion:
                 if r.dxf is not None and r.dxf.fill is not None:
                     por_rango.setdefault(str(rango.sqref), []).append(
                         _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)))
-        for fila in tabla:
-            colores = por_rango.get(f"F{fila}")
-            assert colores == [B.VERDE, B.ROJO], f"{hoja}!F{fila}: {colores}"
+        for celda, (_ok, avisos) in tabla.items():
+            colores = por_rango.get(celda)
+            esperado = ([B.VERDE, B.AMBAR, B.ROJO] if avisos
+                        else [B.VERDE, B.ROJO])
+            assert colores == esperado, f"{hoja}!{celda}: {colores}"
 
     @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
     def test_el_rojo_se_pinta_por_COMPLEMENTO(self, wb, hoja, tabla, fila_dict):
@@ -1663,7 +1676,7 @@ class TestSemaforoDeAceptacion:
         indistinguible de 'aun no calculado'."""
         ws = wb[hoja]
         for rango in ws.conditional_formatting:
-            if not str(rango.sqref).startswith("F"):
+            if str(rango.sqref) not in tabla:
                 continue
             for r in rango.rules:
                 if (r.dxf is not None and r.dxf.fill is not None
@@ -1798,12 +1811,17 @@ class TestDiagnosticoPlegable:
     empujan fuera de la pantalla lo que el ingeniero vino a ver.
     """
 
-    # (hoja, primera y ultima fila del grupo, fila del dictamen, fila del S(T))
-    BLOQUES = [("Parche_PCC2_Art212", 48, 57, 58, 59),
-               ("Collar_PCC2_Art206", 45, 54, 55, 56)]
+    # (hoja, primera y ultima fila del grupo, fila del S(T))
+    #
+    # F9 del 2026-09-13: el grupo crece por los dos extremos. Entran la Variante
+    # (la fila de arriba) y el Dictamen de rango (la de abajo), que el ingeniero
+    # pidio ocultar. El bloqueo NO se esconde por eso: la fila de S(T) resuelto,
+    # que queda a la vista, publica el motivo en su columna de notas.
+    BLOQUES = [("Parche_PCC2_Art212", 47, 58, 59),
+               ("Collar_PCC2_Art206", 44, 55, 56)]
 
-    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
-    def test_el_rastro_va_agrupado_y_plegado(self, wb, hoja, ini, fin, f_dict, f_st):
+    @pytest.mark.parametrize("hoja,ini,fin,f_st", BLOQUES)
+    def test_el_rastro_va_agrupado_y_plegado(self, wb, hoja, ini, fin, f_st):
         ws = wb[hoja]
         for r in range(ini, fin + 1):
             dim = ws.row_dimensions[r]
@@ -1811,25 +1829,34 @@ class TestDiagnosticoPlegable:
             assert dim.hidden, f"{hoja}!{r} deberia nacer plegada"
         assert ws.sheet_properties.outlinePr.summaryBelow is True, hoja
 
-    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
-    def test_el_dictamen_y_el_resultado_NO_se_pliegan(self, wb, hoja, ini, fin,
-                                                      f_dict, f_st):
-        """El dictamen de rango es lo que BLOQUEA el calculo. Una condicion de
-        bloqueo escondida detras de un '+' es una condicion que nadie ve."""
+    @pytest.mark.parametrize("hoja,ini,fin,f_st", BLOQUES)
+    def test_el_resultado_NO_se_pliega_y_dice_por_que(self, wb, hoja, ini, fin, f_st):
+        """El S(T) resuelto es la fila que queda a la vista, y con el Dictamen de
+        rango plegado tiene que decir ella por que esta o no bloqueado: un #N/A
+        sin motivo es una condicion de bloqueo que nadie ve."""
         ws = wb[hoja]
-        assert str(ws.cell(f_dict, 1).value) == "Dictamen de rango", hoja
         assert str(ws.cell(f_st, 1).value) == "S(T) resuelto", hoja
-        for r in (f_dict, f_st):
-            dim = ws.row_dimensions[r]
-            assert not dim.hidden, f"{hoja}!{r} no puede nacer plegada"
-            assert not dim.outline_level, f"{hoja}!{r} no entra en el grupo"
+        dim = ws.row_dimensions[f_st]
+        assert not dim.hidden, f"{hoja}!{f_st} no puede nacer plegada"
+        assert not dim.outline_level, f"{hoja}!{f_st} no entra en el grupo"
+        motivo = str(ws.cell(f_st, B.MOTOR_NCOLS).value or "")
+        assert motivo.startswith("="), f"{hoja}: el S(T) no publica su motivo"
+        assert "BLOQUEADO" in motivo, hoja
 
-    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
-    def test_nada_del_rastro_se_perdio(self, wb, hoja, ini, fin, f_dict, f_st):
-        """Plegar no es borrar: las once filas conservan su rotulo y su valor."""
+    @pytest.mark.parametrize("hoja,ini,fin,f_st", BLOQUES)
+    def test_nada_del_rastro_se_perdio(self, wb, hoja, ini, fin, f_st):
+        """Plegar no es borrar: las filas conservan su rotulo y su valor.
+
+        La primera del grupo es la «Variante», que es una ENTRADA y nace vacia
+        salvo que el caso precargado la siembre (el 212 si, el 206 no): de ella
+        se exige que siga siendo editable, no que traiga un valor.
+        """
         ws = wb[hoja]
         for r in range(ini, fin + 1):
             assert ws.cell(r, 1).value, f"{hoja}!A{r} sin rotulo"
+            if r == ini:
+                assert ws.cell(r, 4).protection.locked is False,                     f"{hoja}!D{r} deberia seguir siendo editable"
+                continue
             assert ws.cell(r, 4).value is not None, f"{hoja}!D{r} sin contenido"
 
     def test_la_nota_de_cascada_no_se_repite_cinco_veces(self, wb):
@@ -1861,11 +1888,12 @@ class TestNumeracionDeSecciones:
         (88, "5.  CÁLCULO DE CARGAS Y SOLDADURA"),
         (100, "6.  RESULTADOS DEL DISEÑO"),
         (111, "7.  VERIFICACIONES"),
-        # La Fase 9 saco las especificaciones tecnicas a Espec_PCC2_Art212, y con
-        # ellas el numeral: ya no son una seccion de esta hoja. La fila se queda
-        # como LETRERO, y eso es lo que se fija aqui — si alguien la borrase, la
-        # seccion 8 desapareceria sin dejar rastro de adonde se fue.
-        (121, "ESPECIFICACIONES TÉCNICAS"),
+        # La Fase 9 saco las especificaciones tecnicas a Espec_PCC2_Art212. La
+        # banda que quedaba anunciandolo se reconvierte (F9 del 2026-09-13) en el
+        # rotulo de lo que de verdad viene debajo: los ocho pasos del flujo. No
+        # se rotula «Especificaciones tecnicas» porque seis de los ocho pasos son
+        # comprobaciones de diseno, no especificaciones.
+        (121, "8.  PASOS DEL FLUJO DE LA REPARACIÓN"),
     )
     ORDEN_206 = (
         (16, "1. DATOS DE ENTRADA"),
@@ -2256,6 +2284,231 @@ class TestEspecificacionesTecnicas:
                          and c.protection.locked is False]
             assert editables, f"{hoja}: ninguna especificacion es editable"
             assert hoja not in HOJAS_CON_AMARILLO
+
+
+# ---------------------------------------------------------------------------
+# F9 del 2026-09-13 — lo que el ingeniero corrigio mirando el libro
+# ---------------------------------------------------------------------------
+class TestTarjetasSinTextoDeEstado:
+    """Ninguna tarjeta del arbol dice que esta cargado y que no.
+
+    Quien abre el libro quiere elegir adonde ir, no auditar el estado de la
+    extraccion; y lo que no esta cargado ya lo dice su tarjeta marcador, gris y
+    con la barra NO CARGADO EN ESTE LIBRO. Repetirlo en una linea de detalle es
+    decir dos veces lo mismo.
+    """
+
+    ESTADO = re.compile(r"cargad|^\s*Solo\b|Sin extraccion|^\s*Hoy solo", re.I)
+
+    def test_ninguna_linea_de_tarjeta_declara_estado(self):
+        malas = [(n.titulo, l) for n in B._preorden(B.ARBOL)
+                 for l in n.lineas if l and self.ESTADO.search(str(l))]
+        assert malas == [], malas
+
+    # Los textos concretos que se retiraron. La barra «NO CARGADO EN ESTE LIBRO»
+    # de la tarjeta marcador NO entra: esa es la senal que sustituye a la linea
+    # de estado, no una de ellas.
+    RETIRADOS = ("Sin extraccion en resources/", "esta cargado", "esta cargada",
+                 "Art. 212 y Art. 206 cargados", "Hoy solo la familia",
+                 "Solo tablas de encabezado resuelto")
+
+    def test_ninguno_de_esos_textos_quedo_impreso(self, wb):
+        """El reverso: que no queden en el libro construido, por si una tarjeta
+        se escribiera fuera del arbol."""
+        malas = []
+        for hoja in B.HOJAS_NAV:
+            for fila in wb[hoja].iter_rows(max_col=B.DASH_NCOLS):
+                for c in fila:
+                    if not isinstance(c.value, str):
+                        continue
+                    for t in self.RETIRADOS:
+                        if t in c.value:
+                            malas.append(f"{hoja}!{c.coordinate}: {t}")
+        assert malas == [], malas
+
+
+class TestTodoVeredictoLlevaSemaforo:
+    """Toda celda que publique un veredicto lleva formato condicional, siempre.
+
+    Un veredicto sin color se lee como un dato mas y obliga a leer la palabra;
+    con el semaforo se ve sin leerse, que es lo que se quiere de una informacion
+    de seguridad. La prueba busca las celdas por lo que DICE su formula, no por
+    una lista escrita a mano: asi una verificacion nueva que nadie anadio a
+    SEMAFORO_* falla aqui en vez de salir en gris.
+    """
+
+    VEREDICTO = re.compile(r'"(CUMPLE|NO CUMPLE|ELEGIBLE|NO ELEGIBLE|PROHIBIDO'
+                           r'|APTO|FUERA DE ALCANCE)')
+    CASOS = [("Parche_PCC2_Art212", B.SEMAFORO_212, B.FILA_DICTAMEN_212),
+             ("Collar_PCC2_Art206", B.SEMAFORO_206, B.FILA_DICTAMEN_206)]
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_ninguna_celda_de_veredicto_se_queda_sin_regla(self, wb, hoja, tabla,
+                                                           fila_dict):
+        ws = wb[hoja]
+        con_regla = set()
+        for rango in ws.conditional_formatting:
+            for r in str(rango.sqref).split():
+                cr = openpyxl.worksheet.cell_range.CellRange(r)
+                for f in range(cr.min_row, cr.max_row + 1):
+                    for c in range(cr.min_col, cr.max_col + 1):
+                        con_regla.add((f, c))
+        sin_regla = []
+        for fila in ws.iter_rows(max_col=B.MOTOR_NCOLS):
+            for c in fila:
+                if not (isinstance(c.value, str) and c.value.startswith("=")):
+                    continue
+                if not self.VEREDICTO.search(c.value):
+                    continue
+                if (c.row, c.column) not in con_regla:
+                    sin_regla.append(f"{c.coordinate} ({ws.cell(c.row, 1).value})")
+        assert sin_regla == [], f"{hoja}: veredictos sin semaforo: {sin_regla}"
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_relleno_condicional_lleva_los_dos_colores(self, wb, hoja, tabla,
+                                                          fila_dict):
+        """En un formato diferencial Excel pinta con bgColor, no con fgColor.
+        Con solo fgColor la regla disparaba —el color de la FUENTE si cambiaba—
+        pero el relleno no se pintaba: las verificaciones salian grises y el
+        dictamen del 206 quedaba tinta sobre tinta. Se escriben los dos."""
+        ws = wb[hoja]
+        for rango in ws.conditional_formatting:
+            for r in rango.rules:
+                if r.dxf is None or r.dxf.fill is None:
+                    continue
+                fg = _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None))
+                bg = _rgb6(getattr(r.dxf.fill.bgColor, "rgb", None))
+                assert fg == bg, f"{hoja}!{rango.sqref}: fg={fg} bg={bg}"
+
+
+class TestComentariosSoloEnColumnaDeValor:
+    MOTORES = ("Parche_PCC2_Art212", "Collar_PCC2_Art206")
+
+    def test_ninguna_columna_que_no_sea_de_valor_lleva_comentario(self, wb):
+        """El mismo texto en la columna de parametro y en la de valor son dos
+        globos que dicen lo mismo, y el de la izquierda tapa el dato mientras se
+        lee. El veredicto (columna F) SI es un valor y conserva el suyo."""
+        for hoja in self.MOTORES:
+            ws = wb[hoja]
+            fuera = [c.coordinate for fila in ws.iter_rows(max_col=B.MOTOR_NCOLS)
+                     for c in fila
+                     if c.comment is not None
+                     and c.column not in B.COLS_VALOR_MOTOR]
+            assert fuera == [], f"{hoja}: comentarios fuera de la columna de valor: {fuera}"
+
+    def test_ningun_comentario_se_quedo_con_la_caja_por_defecto(self):
+        """Un comentario cortado a media frase es peor que ninguno.
+
+        El alto sale del largo del texto (`_nota`), y los dos pases que CLONAN
+        comentarios —el remapeo de filas y el reparto por seccion— tienen que
+        conservarlo: `Comment(texto, autor)` a secas lo perdia y devolvia la caja
+        al 144x79 por defecto de openpyxl, que es de donde salia el texto
+        cortado. Se mira en el VML del archivo y no con openpyxl, porque su
+        lector NO restituye el tamano: lo devuelve todo con el valor por defecto.
+        """
+        if not RUTA.exists():
+            pytest.skip("no existe el libro construido")
+        import xml.etree.ElementTree as ET
+        NS_V = "urn:schemas-microsoft-com:vml"
+        NS_X = "urn:schemas-microsoft-com:office:excel"
+        por_defecto, total, altos = 0, 0, set()
+        with zipfile.ZipFile(RUTA) as z:
+            for parte in [n for n in z.namelist() if n.endswith(".vml")]:
+                raiz = ET.fromstring(z.read(parte))
+                for forma in raiz.iter(f"{{{NS_V}}}shape"):
+                    datos = forma.find(f"{{{NS_X}}}ClientData")
+                    if datos is None or datos.get("ObjectType") != "Note":
+                        continue
+                    total += 1
+                    # Los comentarios que trae el maestro los escribio Excel y
+                    # miden en PUNTOS, con propiedades propias (mso-wrap-style);
+                    # los que escribe openpyxl miden en pixeles. Se admiten los
+                    # dos: lo que se persigue es la caja por defecto, no la
+                    # unidad.
+                    est = re.search(r"width:([\d.]+)(px|pt);\s*height:([\d.]+)(px|pt)",
+                                    forma.get("style", ""))
+                    assert est, forma.get("style")
+                    ancho = float(est.group(1)) * (1 if est.group(2) == "px" else 4 / 3)
+                    alto = float(est.group(3)) * (1 if est.group(4) == "px" else 4 / 3)
+                    altos.add(round(alto))
+                    if (round(ancho), round(alto)) == (144, 79):
+                        por_defecto += 1
+        assert total > 500, f"solo {total} comentarios en el paquete"
+        assert por_defecto == 0, f"{por_defecto} comentarios con la caja por defecto"
+        assert len(altos) > 5, f"todos los comentarios miden lo mismo: {altos}"
+
+    def test_todo_comentario_del_libro_esta_anclado_a_su_celda(self):
+        """openpyxl NO escribe el `<x:Anchor>` del VML, y sin el Excel abre la
+        nota en la esquina de la HOJA: editar la de la fila 140 sacaba el cuadro
+        arriba del todo. `anclar_comentarios` lo inyecta despues de guardar."""
+        if not RUTA.exists():
+            pytest.skip("no existe el libro construido")
+        NS_V = "urn:schemas-microsoft-com:vml"
+        NS_X = "urn:schemas-microsoft-com:office:excel"
+        import xml.etree.ElementTree as ET
+        sin_ancla = 0
+        with zipfile.ZipFile(RUTA) as z:
+            vml = [n for n in z.namelist() if n.endswith(".vml")]
+            assert vml, "el paquete no trae VML de comentarios"
+            for parte in vml:
+                raiz = ET.fromstring(z.read(parte))
+                for forma in raiz.iter(f"{{{NS_V}}}shape"):
+                    datos = forma.find(f"{{{NS_X}}}ClientData")
+                    if datos is None or datos.get("ObjectType") != "Note":
+                        continue
+                    if datos.find(f"{{{NS_X}}}Anchor") is None:
+                        sin_ancla += 1
+        assert sin_ancla == 0, f"{sin_ancla} comentarios sin ancla"
+
+
+class TestVarianteNoPisaLaCascada:
+    """El defecto que el ingeniero encontro en el F9: elegia familia ->
+    composicion -> forma -> spec -> grado y el S(T) resuelto no se movia, porque
+    la celda «Variante» que siembra el caso precargado seguia mandando.
+    """
+
+    def test_la_variante_solo_manda_si_pertenece_a_la_seleccion(self, wb):
+        for hoja, celda in (("Parche_PCC2_Art212", "D48"),
+                            ("Collar_PCC2_Art206", "D45")):
+            f = str(wb[hoja][celda].value)
+            assert f.startswith("=IF("), f"{hoja}!{celda}: {f[:40]}"
+            # La forma vieja empezaba comparando la Variante con "" y devolviendola
+            # sin mas condicion. La nueva exige que su clave de cinco niveles sea
+            # la de la seleccion actual.
+            assert "MATCH(" in f and "),$" in f, f"{hoja}!{celda}"
+            assert not f.startswith('=IF($D$47<>""'), f"{hoja}!{celda}: sigue pisando"
+
+    def test_las_dos_filas_pedidas_van_ocultas_pero_siguen(self, wb):
+        """«Dejalas pero ocultalas»: van dentro del grupo plegable, no borradas.
+        Sin la Variante, los cinco niveles no identifican un material unico —el
+        43 % de las filas del B31.3 comparten los cinco— y el motor tendria que
+        elegir a ciegas entre admisibles distintos."""
+        for hoja, variante, dictamen in (("Parche_PCC2_Art212", 47, 58),
+                                         ("Collar_PCC2_Art206", 44, 55)):
+            ws = wb[hoja]
+            assert "Variante" in str(ws.cell(variante, 1).value), hoja
+            assert str(ws.cell(dictamen, 1).value) == "Dictamen de rango", hoja
+            for r in (variante, dictamen):
+                assert ws.row_dimensions[r].hidden, f"{hoja}!{r} deberia ir oculta"
+                assert ws.row_dimensions[r].outline_level == 1, f"{hoja}!{r}"
+
+
+class TestSinHuecoAntesDelAnexo:
+    def test_las_filas_en_blanco_del_hueco_van_ocultas(self, wb):
+        """La Fase 9 dejo doce filas en blanco entre el dictamen global y el
+        anexo. Se ocultan, no se eliminan: mover el anexo cambiaria las
+        direcciones que recalcula verificar.py §6e/§6f contra las ecuaciones del
+        codigo, y eso por una cuestion de aspecto no se hace."""
+        for hoja, desde, hasta in (("Parche_PCC2_Art212", B.FILA_DICTAMEN_212 + 1,
+                                    B.FILA_ANEXO_FLUJO_212 + 1),
+                                   ("Collar_PCC2_Art206", B.FILA_DICTAMEN_206 + 1,
+                                    B.FILA_ANEXO_FLUJO_206 - 1)):
+            ws = wb[hoja]
+            visibles = [r for r in range(desde, hasta + 1)
+                        if all(ws.cell(r, c).value is None
+                               for c in range(1, B.MOTOR_NCOLS + 1))
+                        and not ws.row_dimensions[r].hidden]
+            assert visibles == [], f"{hoja}: filas en blanco a la vista: {visibles}"
 
 
 # ---------------------------------------------------------------------------

@@ -1126,6 +1126,75 @@ sobra de aire primero y **cortando la última línea** después—. El alto de u
 fusionada no lo ajusta Excel: hay que calcularlo, y en una celda de fórmula se mide lo que
 se **verá** (los literales entre comillas), no el fuente.
 
+### El F9 del ingeniero (2026-09-13) — ocho correcciones, y una que no pintaba
+
+**El formato condicional NUNCA había pintado el relleno, en todo el libro.** Las reglas
+estaban bien escritas y **sí disparaban** —se veía porque el color de la *fuente* del dxf
+cambiaba—, pero el relleno se quedaba como estuviera la celda: las verificaciones salían
+grises en vez de verdes o rojas, y el dictamen global del 206 quedaba **tinta sobre
+tinta**, ilegible. La causa: **en un formato diferencial Excel pinta con `bgColor`, no con
+`fgColor`**, y `PatternFill("solid", fgColor=…)` solo escribe el primero. `relleno_dxf()`
+escribe los **dos** colores iguales, así que da igual cuál interprete Excel. Afectaba
+también al semáforo de selección de los cinco buscadores.
+
+**Ninguna prueba de openpyxl podía verlo**: la regla *está* escrita, y eso es todo lo que
+openpyxl sabe. Lo único que lo demuestra es preguntarle a Excel qué color pinta, que es lo
+que hace la **§6h nueva de `verificar.py`** leyendo `DisplayFormat` celda a celda —y
+comparando además la letra del dictamen contra su propio relleno, porque un dxf que aplique
+la fuente y no el relleno deja texto del color del fondo—. En el mismo sitio se descubrió
+que **`us_bad` no estaba sumado al total**: la §6g imprimía sus fallos y el script devolvía
+0 igual, que es la única forma de que un guardia sea peor que no tenerlo.
+
+Las otras siete:
+
+1. **Toda celda de resultado lleva semáforo, siempre.** `SEMAFORO_*` pasa a declararse por
+   **dirección** y no por fila: el veredicto no siempre vive en la columna de Resultado —el
+   «¿S_w ≤ 1,5·Sa?» lo publica cada caso de presión en su columna, y el dictamen de
+   elegibilidad del Paso 1 en la de valor—. Tres estados donde hacen falta: el aviso de
+   entalla (`REVISAR`, T < 0) **no bloquea** y va en ámbar, no en rojo.
+   `TestTodoVeredictoLlevaSemaforo` busca las celdas por lo que dice su **fórmula**, así que
+   una verificación nueva que nadie añada a la tabla falla ahí en vez de salir en gris.
+2. **Las tarjetas del árbol no dicen qué está cargado.** Fuera «Art. 212 y Art. 206
+   cargados», «Solo PCC-2 está cargado», «Sin extracción en resources/» y compañía: lo que
+   no está cargado ya lo dice su tarjeta marcador, gris y con la barra `NO CARGADO EN ESTE
+   LIBRO`. `_marcador()` pierde su segunda línea.
+3. **El comentario vive solo en la columna de VALOR** (D, E y F; F publica el veredicto y
+   es valor). La Fase 5 lo repetía además en la columna de parámetro en cinco secciones —el
+   mismo texto dos veces en la misma fila—, y el anexo de pasos ni siquiera entraba en esas
+   reglas. Un barrido final lo garantiza en toda la banda A..G; los botones viven en H..J y
+   conservan el suyo.
+4. **El comentario se dimensiona con su texto y se ancla a su celda.** Los 90 px fijos
+   cortaban 102 de los 811 comentarios. Y openpyxl **no escribe el `<x:Anchor>` del VML**:
+   sin él Excel mide el `margin-left` desde la esquina de la *hoja*, así que editar la nota
+   de la fila 140 abría el cuadro arriba del todo. `anclar_comentarios()` lo inyecta después
+   de guardar, calculado con la geometría real de la hoja. Dos pases que **clonan**
+   comentarios perdían el tamaño (`Comment(texto, autor)` lo devuelve al 144×79 por
+   defecto): `_clonar_nota()` lo conserva.
+5. **La segunda presión es la PRESIÓN DE DISEÑO, no el rating.** A menudo cae *entre* la de
+   operación y el rating, y 212-3.2 la nombra «internal design pressure». El 206 conserva en
+   su comentario el matiz que no se puede silenciar: 206-3.3 exige dimensionar el Type B
+   para «the maximum allowable design pressure», así que una presión de diseño por debajo
+   del rating da un espesor menor que el de ese párrafo.
+6. **La celda «Variante» dejó de pisar a la cascada.** Era un defecto real: el caso
+   precargado la trae sembrada, así que el ingeniero cambiaba familia → composición → forma
+   → spec → grado y el S(T) resuelto **no se movía**. Ahora manda solo si la cascada no
+   resuelve (pegar un `material_id` a mano) o si **pertenece** a la selección actual, que se
+   comprueba contra su propia clave de cinco niveles. La fila **no se elimina**: sin ella los
+   cinco niveles no identifican un material único —**43 %** de las filas del B31.3, **65 %**
+   de la Tabla 1A y **84 %** de la 1B/3 comparten los cinco, hasta 110 filas con la misma
+   clave en SB-209— y el motor elegiría a ciegas entre admisibles distintos. Va **plegada**
+   junto con el `Dictamen de rango`, y la fila de S(T) resuelto, que queda a la vista,
+   publica el motivo del bloqueo en su columna de notas.
+7. **El hueco anterior al anexo se oculta, no se cierra moviendo filas.** Las doce filas en
+   blanco que dejó la Fase 9 se ocultan (`ocultar_filas_en_blanco`) y el aviso de
+   responsabilidad se va al final de la hoja. **El anexo no se mueve**: sus direcciones son
+   las que recalcula `verificar.py` §6e/§6f contra las ecuaciones del código, y correrlas
+   doce filas por una cuestión de aspecto es mover la cadena verificada. La banda que
+   quedaba anunciando la pestaña pasa a rotular lo que de verdad sigue —`8. PASOS DEL FLUJO
+   DE LA REPARACIÓN`— y **no** «Especificaciones técnicas»: de los ocho pasos, solo el 7
+   (fabricación, 212-4) y el 8 (examen y prueba, 212-5/6) lo son; los seis primeros son
+   comprobaciones de diseño.
+
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de
 datos viene ya del maestro Rev0. El esfuerzo admisible lo dan `DB_B31_3` /

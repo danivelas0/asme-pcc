@@ -284,6 +284,29 @@ Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el es
 | veredicto F118 | Migrar (Art.206) | Migrar (Art.206) | — | OK |
 | veredicto F119 | REVISAR | REVISAR | — | OK |
 
+## 6h. El semaforo pinta de verdad (DisplayFormat en Excel)
+
+| Celda | Valor | Relleno efectivo | Esperado | Estado |
+|---|---|---|---|---|
+| Parche_PCC2_Art212!D140 | ELEGIBLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!D98 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!E98 | NO CUMPLE | E61919 | E61919 | OK |
+| Parche_PCC2_Art212!F113 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!F114 | NO CUMPLE | E61919 | E61919 | OK |
+| Parche_PCC2_Art212!F115 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!F116 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!F117 | Refuerzo 360° | E61919 | E61919 | OK |
+| Parche_PCC2_Art212!F118 | Migrar (Art.206) | E61919 | E61919 | OK |
+| Parche_PCC2_Art212!F161 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!F162 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Parche_PCC2_Art212!F119 (dictamen) | REVISAR | E61919 (letra F4F4F0) | E61919 | OK |
+| Collar_PCC2_Art206!F123 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Collar_PCC2_Art206!F85 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Collar_PCC2_Art206!F86 | CUMPLE | 4AF626 | 4AF626 | OK |
+| Collar_PCC2_Art206!F94 (dictamen) | REVISAR — MATERIAL FUE | E61919 (letra F4F4F0) | E61919 | OK |
+
+La letra del dictamen se compara contra su propio relleno: un dxf que aplique la fuente y no el relleno deja texto del mismo color que el fondo, que es justo como quedo el 206 antes de esta comprobacion.
+
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 
 | Comprobacion | Detalle | Estado |
@@ -359,6 +382,7 @@ Discrepancias: **0**
 | 6e. Pasos del flujo 212 (recalculo Excel) | 0 |
 | 6f. Pasos del flujo 206 (recalculo Excel) | 0 |
 | 6g. Modo US: coherencia de unidades | 0 |
+| 6h. El semaforo pinta (DisplayFormat) | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |

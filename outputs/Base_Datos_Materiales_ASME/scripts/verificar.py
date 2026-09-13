@@ -1721,6 +1721,96 @@ def auditar():
             log(f"| veredicto {celda} | {a} | {b} | — | {'OK' if ok else 'FALLO'} |")
     log("")
 
+    # ---- 6h. el semaforo PINTA de verdad (DisplayFormat en Excel) --------
+    # La comprobacion que faltaba, y que costo el hallazgo mas caro del F9 del
+    # 2026-09-13: las reglas de formato condicional estaban bien escritas, se
+    # disparaban -el color de la FUENTE del dxf si cambiaba- y aun asi el
+    # RELLENO no se pintaba. En un formato diferencial Excel pinta con bgColor,
+    # no con fgColor, y openpyxl solo escribia fgColor. Las verificaciones
+    # salian grises en vez de verdes o rojas, y el dictamen global del 206
+    # quedaba tinta sobre tinta: ilegible.
+    #
+    # Ninguna prueba de openpyxl podia verlo: la regla ESTA escrita, y eso es
+    # todo lo que openpyxl sabe. Lo unico que lo demuestra es preguntarle a
+    # Excel que color pinta de verdad, que es lo que hace DisplayFormat.
+    log("## 6h. El semaforo pinta de verdad (DisplayFormat en Excel)")
+    log("")
+    sem_bad = 0
+    try:
+        import win32com.client
+        _ex = win32com.client.DispatchEx("Excel.Application")
+        _ex.Visible = False
+        _ex.DisplayAlerts = False
+        _ex.EnableEvents = False
+        _ex.AutomationSecurity = 3          # no correr macros al abrir
+        _pid = None
+        try:
+            _pid = _pid_de(_ex)
+        except Exception:                   # noqa: BLE001
+            pass
+        _libro = None
+        try:
+            _libro = _ex.Workbooks.Open(str(Path(WB).resolve()), ReadOnly=True,
+                                        UpdateLinks=0)
+            _ex.CalculateFullRebuild()
+
+            def _rgb(n):
+                n = int(n)
+                return f"{n & 255:02X}{(n >> 8) & 255:02X}{(n >> 16) & 255:02X}"
+
+            log("| Celda | Valor | Relleno efectivo | Esperado | Estado |")
+            log("|---|---|---|---|---|")
+            for hoja, tabla in (("Parche_PCC2_Art212", B.SEMAFORO_212),
+                                ("Collar_PCC2_Art206", B.SEMAFORO_206)):
+                hws = _libro.Worksheets(hoja)
+                hws.Visible = -1
+                for celda, (favorables, avisos) in sorted(tabla.items()):
+                    r = hws.Range(celda)
+                    texto = str(r.Text).strip()
+                    if texto in favorables:
+                        esperado = B.VERDE
+                    elif any(texto.startswith(a) for a in avisos):
+                        esperado = B.AMBAR
+                    elif texto:
+                        esperado = B.ROJO
+                    else:
+                        continue
+                    real = _rgb(r.DisplayFormat.Interior.Color)
+                    ok = real == esperado
+                    sem_bad += 0 if ok else 1
+                    log(f"| {hoja}!{celda} | {texto[:22]} | {real} | {esperado} "
+                        f"| {'OK' if ok else 'FALLO'} |")
+                # El dictamen global, que es la frase que se firma.
+                fdict = (B.FILA_DICTAMEN_212 if hoja.startswith("Parche")
+                         else B.FILA_DICTAMEN_206)
+                r = hws.Range(f"F{fdict}")
+                texto = str(r.Text).strip()
+                esperado = (B.VERDE if texto == "APTO"
+                            else B.AMBAR if texto.startswith("ELIJA MATERIAL")
+                            else B.ROJO)
+                real = _rgb(r.DisplayFormat.Interior.Color)
+                letra = _rgb(r.DisplayFormat.Font.Color)
+                ok = real == esperado and letra != real
+                sem_bad += 0 if ok else 1
+                log(f"| {hoja}!F{fdict} (dictamen) | {texto[:22]} | {real} "
+                    f"(letra {letra}) | {esperado} | {'OK' if ok else 'FALLO'} |")
+        finally:
+            for accion in (lambda: _libro.Close(SaveChanges=False)
+                           if _libro is not None else None, _ex.Quit):
+                try:
+                    accion()
+                except Exception as e:      # noqa: BLE001
+                    print(f"  aviso al cerrar Excel: {e}", file=sys.stderr)
+            _matar(_pid)
+    except Exception as e:                  # noqa: BLE001
+        log(f"No se pudo comprobar el formato efectivo: {e}")
+        sem_bad += 1
+    log("")
+    log("La letra del dictamen se compara contra su propio relleno: un dxf que "
+        "aplique la fuente y no el relleno deja texto del mismo color que el "
+        "fondo, que es justo como quedo el 206 antes de esta comprobacion.")
+    log("")
+
     # ---- 8. capa de navegacion -------------------------------------------
     log("## 8. Capa de navegacion (Dashboard y proyecto VBA)")
     log("")
@@ -2118,9 +2208,13 @@ def auditar():
     log("")
 
     # ---- cierre -----------------------------------------------------------
+    # us_bad NO estaba en esta suma: la §6g imprimia sus fallos en la tabla y el
+    # script seguia devolviendo 0, que es la unica forma de que un guardia sea
+    # peor que no tenerlo —parece que vigila—. Se corrige junto con la §6h nueva.
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + flujo_bad
-             + flujo206_bad + nav_bad + map_bad + sec_bad + b36_bad)
+             + flujo206_bad + us_bad + sem_bad + nav_bad + map_bad + sec_bad
+             + b36_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -2135,6 +2229,7 @@ def auditar():
                         ("6e. Pasos del flujo 212 (recalculo Excel)", flujo_bad),
                         ("6f. Pasos del flujo 206 (recalculo Excel)", flujo206_bad),
                         ("6g. Modo US: coherencia de unidades", us_bad),
+                        ("6h. El semaforo pinta (DisplayFormat)", sem_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),
