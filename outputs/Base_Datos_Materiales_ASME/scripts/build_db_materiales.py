@@ -7202,6 +7202,14 @@ def construir_seccion7_material(
     else:
         nota_row = F + 23
 
+    # Tarea 5 de la skill motor_pcc2: el chasis declarado necesita saber donde
+    # termina este bloque para seguir escribiendo debajo (su propia seccion de
+    # parametros de calculo). `nota_row` no existe todavia cuando se arma el
+    # literal `resultado = {...}` de mas arriba -se calcula aqui mismo, en el
+    # if/else de Ej/Ec-, asi que la clave se anade despues, en cuanto el valor
+    # existe. Puramente aditivo: ninguna celda de los motores 212/206 cambia.
+    resultado["ultima_fila"] = nota_row
+
     nota_cascada = ws.cell(nota_row, 1, "La cascada filtra la base ASME por familia, "
                     "composicion nominal, forma de producto, especificacion y "
                     "tipo/grado. Si un material no aparece, localicelo en el "
@@ -10030,6 +10038,44 @@ def direccion_de(motor, clave):
     return MD.resolver_direcciones(motor)[clave]
 
 
+# Tarea 5 de la skill motor_pcc2: las tres tablas que alimentan las unidades,
+# los comentarios y el semaforo se DERIVAN de la declaracion del motor -nunca
+# se escriben a mano-, con la misma `resolver_direcciones` que ya usa
+# `emitir_tabla` para escribir cada celda. Es la unica forma de que las dos
+# lecturas del arbol (la que escribe y la que pinta) no puedan divergir.
+def _unidades_de(motor):
+    """fila -> clase de magnitud, para aplicar_unidades_motor."""
+    dirs = MD.resolver_direcciones(motor)
+    return {int(dirs[f.clave].split("$")[-1]): f.magnitud
+            for s in motor.secciones for f in s.filas if f.magnitud}
+
+
+def _reglas_de_comentario_de(motor):
+    """Una regla por seccion, siempre a las columnas de VALOR (F9 2026-09-13)."""
+    dirs = MD.resolver_direcciones(motor)
+    reglas, cols = [], "".join(chr(ord("A") + c - 1) for c in COLS_VALOR_MOTOR)
+    for s in motor.secciones:
+        if not s.filas:
+            continue
+        filas = [int(dirs[f.clave].split("$")[-1]) for f in s.filas]
+        reglas.append((min(filas), max(filas), cols[:len(motor.casos)], "D"))
+    return tuple(reglas)
+
+
+def _semaforo_de(motor):
+    """celda -> (favorables, avisos), con _sem, para aplicar_semaforo_motor.
+
+    `v.clave` tiene que nombrar una fila que el motor YA declaro en alguna de
+    sus secciones -es la fila que publica el veredicto-; si no, `dirs[v.clave]`
+    revienta con el mismo KeyError que protege `sustituir_nombres` en las
+    formulas: una `Verificacion` que cita una clave inexistente es un error de
+    declaracion, no un caso a tolerar en silencio.
+    """
+    dirs = MD.resolver_direcciones(motor)
+    return {dirs[v.clave].replace("$", ""): _sem(v.favorables, v.avisos)
+            for v in motor.verificaciones}
+
+
 def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
                           b3610, b3619, *, b313c, iid1ac, iidbc, umbrales,
                           resources):
@@ -10042,6 +10088,65 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     ws.merge_cells(f"A1:{get_column_letter(MOTOR_NCOLS)}1")
     ws.merge_cells(f"A2:{get_column_letter(MOTOR_NCOLS)}2")
     res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws))
+    dirs = res["direcciones"]      # la MISMA resolucion que uso emitir_tabla
+
+    def _reservada(clave, pase):
+        """Direccion de una clave de CLAVES_RESERVADAS, o un SystemExit claro.
+
+        Decision de la Tarea 5: `unidad`/`modo`/`temperatura`/`dictamen` solo
+        existen si el motor las declara como fila. Sin este guardia, un motor
+        que se olvida de declarar `unidad` -y por tanto no puede llevar el
+        conmutador SI/US que exige la regla 10 del proyecto- revienta con un
+        KeyError opaco en pleno pase de unidades; con el, dice exactamente que
+        clave falta y que pase la necesitaba.
+        """
+        if clave not in dirs:
+            raise SystemExit(
+                f"build_motor_declarado: {motor.hoja} no declara la fila "
+                f"reservada {clave!r} (ver CLAVES_RESERVADAS en "
+                f"motor_declarado.py), y la necesita {pase}.")
+        return dirs[clave]
+
+    # El conmutador SI/US es obligatorio en TODO motor (regla 10): se resuelve
+    # una sola vez y se reutiliza dentro y fuera de la seccion de material.
+    unidad_cell = _reservada("unidad", "el conmutador SI/US de todo motor")
+    es_si = f'{unidad_cell}="SI"'
+
+    if motor.material is not None:
+        modo_cell = (_reservada("modo", "el selector de codigo de la seccion "
+                                "de resolucion de material")
+                     if motor.aplicacion else "$D$11")
+        refs = construir_seccion7_material(
+            ws, res["ultima_fila"] + 2, b313, iid1a, iidb, fac_info, rangos,
+            columnas=motor.material.columnas,
+            modo_cell=modo_cell,
+            temp_fuente_cell=_reservada(
+                "temperatura", "la seccion de resolucion de material"),
+            incluir_ej_ec=motor.material.incluir_ej_ec,
+            destino_st="la seccion de parametros de calculo",
+            mapa_citas={},                  # el chasis no remapea filas
+            b313c=b313c, iid1ac=iid1ac, iidbc=iidbc,
+            unidad_cell=unidad_cell)
+        if motor.material.semilla:
+            sembrar_cascada(ws, wb["DB_B31_3"], motor.material.semilla,
+                            motor.material.columnas[0][0],
+                            res["ultima_fila"] + 2)
+        # Decision de la Tarea 5: build_manifiesto_cascada lee
+        # motor.material.columnas, asi que tiene que vivir DENTRO de este
+        # guardia. Fuera de el reventaria con un AttributeError en cuanto un
+        # motor sin material (una tarea posterior declara justamente uno, sin
+        # ecuaciones ni cascada) pasara por aqui.
+        build_manifiesto_cascada(ws, motor.material.columnas, refs["fila_banda"],
+                                 {}, unidad_cell)
+
+    aplicar_unidades_motor(ws, _unidades_de(motor), es_si)
+    aplicar_reglas_de_comentario(ws, _reglas_de_comentario_de(motor))
+    semaforo = _semaforo_de(motor)
+    fila_dictamen = int(_reservada(
+        "dictamen", "el bloque de dictamen global").split("$")[-1])
+    aplicar_semaforo_motor(ws, semaforo, fila_dictamen)
+    aplicar_dos_decimales(ws, semaforo)
+
     build_leyenda_motor(ws)
     aplicar_leyenda_motor(ws)
     build_reinicio_motor(ws)

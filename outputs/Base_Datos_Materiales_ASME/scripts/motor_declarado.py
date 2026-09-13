@@ -58,6 +58,30 @@ class Seccion(NamedTuple):
     filas: tuple = ()
 
 
+class Material(NamedTuple):
+    """La seccion de resolucion de material, que es siempre la misma."""
+    columnas: tuple = (("D", "Metal base"),)
+    incluir_ej_ec: bool = False
+    semilla: str = ""        # material_id del caso precargado, o ""
+
+
+class Verificacion(NamedTuple):
+    clave: str
+    rotulo: str
+    requerido: str           # formula con {nombres}
+    adoptado: str            # formula con {nombres}
+    criterio: str            # el texto de la columna G: "t >= t_req"
+    favorables: tuple = ("CUMPLE",)
+    avisos: tuple = ()
+    cita: Cita | None = None
+
+
+class Dictamen(NamedTuple):
+    """Como se compone el veredicto global."""
+    compuertas: tuple = ()   # claves de filas cuyo texto bloquea
+    verificaciones: tuple = ()   # claves que entran al AND
+
+
 class Motor(NamedTuple):
     """Un motor de calculo entero, declarado.
 

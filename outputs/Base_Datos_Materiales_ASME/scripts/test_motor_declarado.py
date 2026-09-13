@@ -112,3 +112,63 @@ def test_la_entrada_nace_desbloqueada_y_el_calculo_no():
     M.emitir_tabla(ws, _motor_minimo(), _helpers_de_prueba())
     assert ws["D6"].protection.locked is False   # entrada
     assert ws["D7"].protection.locked is not False
+
+
+def _motor_dos_secciones():
+    """Dos secciones con varias filas cada una -no una sola, como en
+    `_motor_minimo`-, para blindar que `resolver_direcciones()` y
+    `emitir_tabla()` recorren el MISMO arbol. Hoy coinciden por casualidad:
+    ninguna prueba anterior lo comprueba con mas de una seccion, que es
+    exactamente el patron de "dos fuentes de verdad" que este proyecto marca
+    como peligroso en otras partes (ver la capa de navegacion en el CLAUDE.md
+    del repo)."""
+    cita = M.Cita("art_999.json", bloque=12, clausula="999-3.2")
+    return M.Motor(
+        articulo="999",
+        hoja="Prueba_PCC2_Art999",
+        titulo="MOTOR DE PRUEBA",
+        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        secciones=(
+            M.Seccion("1. DATOS DE ENTRADA", filas=(
+                M.Fila("P", "Presion", tipo=M.ENTRADA, ejemplo=20),
+                M.Fila("D", "Diametro", tipo=M.ENTRADA, ejemplo=300),
+                M.Fila("dosP", "El doble de P", tipo=M.FORMULA,
+                       formula="={P}*2", cita=cita),
+            )),
+            M.Seccion("2. RESULTADOS", filas=(
+                M.Fila("suma", "P + D", tipo=M.FORMULA,
+                       formula="={P}+{D}", cita=cita),
+                M.Fila("otra", "suma + P", tipo=M.FORMULA,
+                       formula="={suma}+{P}", cita=cita),
+            )),
+        ),
+    )
+
+
+def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve():
+    """Con dos secciones y varias filas: la direccion que `emitir_tabla` USA
+    para escribir cada fila tiene que ser exactamente la que
+    `resolver_direcciones` DEVUELVE para esa clave -incluida una formula de la
+    segunda seccion que cita una clave de la primera-. Sin esta prueba, las
+    dos funciones podian divergir en cuanto un motor real tuviera mas de una
+    seccion y nadie lo notaria hasta ver un #REF! en una celda."""
+    import openpyxl
+    motor = _motor_dos_secciones()
+    dirs = M.resolver_direcciones(motor)                      # fuente nº 1
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    M.emitir_tabla(ws, motor, _helpers_de_prueba())            # fuente nº 2
+
+    # Las direcciones en si: la segunda seccion sigue contando filas donde la
+    # primera las dejo, y no reinicia en su propia banda.
+    assert dirs == {"P": "$D$6", "D": "$D$7", "dosP": "$D$8",
+                    "suma": "$D$10", "otra": "$D$11"}
+
+    esperado = {"P": 20, "D": 300, "dosP": "=$D$6*2",
+                "suma": "=$D$6+$D$7", "otra": "=$D$10+$D$6"}
+    for clave, valor in esperado.items():
+        direccion = dirs[clave]
+        assert ws[direccion].value == valor, (
+            f"{clave}: resolver_direcciones dice {direccion}, pero ese no es "
+            f"el valor que emitir_tabla escribio ahi")
