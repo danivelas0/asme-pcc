@@ -11894,6 +11894,36 @@ def _rama_bpvc(pre, tipo, sub_secii, lineas_secii, hijos_secii, nota=""):
         ))
 
 
+def _nodo_de_articulo(motor):
+    """El nodo de un articulo DECLARADO: mismo patron que los del 212 y el 206
+    escritos a mano -un NIVEL con sus tres documentos-, pero derivado de
+    MOTORES_DECLARADOS en vez de tecleado. Con el registro vacio esta funcion
+    no se llama nunca; en cuanto se declare un motor, su tarjeta aparece aqui
+    sin tocar el arbol a mano.
+
+    Nada de texto de ESTADO en `lineas` (regla del F9 del 2026-09-13): la
+    segunda linea describe el documento ("Motor, especificaciones e
+    instrucciones"), igual que en los dos nodos manuales, nunca que este
+    cargado.
+    """
+    return Nodo(
+        titulo=f"ART. {motor.articulo} · {motor.corto}",
+        corto=f"ART. {motor.articulo}",
+        subtitulo=f"{T_CAL} · ASME PCC-2 Art. {motor.articulo}",
+        lineas=(motor.descripcion, "Motor, especificaciones e instrucciones"),
+        hoja=f"NAV_CAL_ART{motor.articulo}",
+        banda="DOCUMENTOS DE ESTE ARTICULO",
+        hijos=(
+            _hoja_final("MOTOR DE CALCULO", motor.descripcion, motor.alcance,
+                        motor.hoja),
+            _hoja_final("ESPECIFICACIONES TECNICAS", "Fabricacion, examen y prueba",
+                        motor.clausulas_espec, f"Espec_PCC2_Art{motor.articulo}"),
+            _hoja_final("INSTRUCCIONES DE USO", "Que se rellena y que calcula cada celda",
+                        "Guia celda a celda del motor",
+                        f"Instruc_PCC2_Art{motor.articulo}"),
+        ))
+
+
 ARBOL = Nodo(
     titulo="MOTOR DE CALCULO ASME PCC          Rev. 4",
     corto="DASHBOARD",
@@ -12005,6 +12035,13 @@ ARBOL = Nodo(
                                                     "Guia celda a celda del motor",
                                                     INSTR_206),
                                             )),
+                                        # Tarea 7 de la skill motor_pcc2: un
+                                        # nodo por cada motor DECLARADO, detras
+                                        # de los dos escritos a mano. Con
+                                        # MOTORES_DECLARADOS vacio esto no
+                                        # añade nada y el arbol sale identico.
+                                        *[_nodo_de_articulo(m)
+                                          for m in MOTORES_DECLARADOS],
                                         _marcador(
                                             "RESTO DE ARTICULOS DE PCC-2",
                                             "Manguitos, envolventes, obturaciones"),
