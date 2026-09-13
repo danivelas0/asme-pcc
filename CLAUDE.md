@@ -91,6 +91,20 @@ fuente**, no entregable: ahí vive el builder y sus pruebas.
 
 Ante una duda de alcance, pregunta antes de producir.
 
+### Todo plan se guarda en `outputs/plans/` y no se ejecuta solo
+
+**Todo plan de implementación —lo produzca el modo plan de Claude Code o cualquier
+otro flujo— se guarda en `outputs/plans/`, nunca en una ruta fuera del repositorio**
+(como `~/.claude/plans/`) ni en ningún otro directorio del proyecto. Nombre de
+archivo en snake_case, sin excepción (regla 7 del CLAUDE.md global).
+
+**Guardar un plan ahí no es una orden de ejecutarlo.** Por defecto, todo plan queda
+a la espera de una orden explícita del ingeniero, exactamente como ya hacía la
+marca «NO EJECUTAR sin orden explícita del ingeniero» para casos puntuales —esa
+postura pasa a ser la de **cualquier** plan, marcado o no. Una instrucción genérica
+del tipo «ejecuta los planes pendientes» no basta para arrancar un plan nuevo: hay
+que preguntar o esperar la orden puntual sobre ese plan.
+
 ---
 
 ### `pdf_pages` no usa la misma base en todas las extracciones
