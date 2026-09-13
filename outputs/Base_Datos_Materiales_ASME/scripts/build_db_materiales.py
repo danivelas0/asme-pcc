@@ -9971,6 +9971,82 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws.protection.sheet = True
 
 
+# Tarea 4 de la skill motor_pcc2: el chasis declarativo (motor_declarado.py)
+# entra al builder. El registro de motores (motores/__init__.py) nace VACIO,
+# asi que este bloque todavia no construye ninguna hoja nueva: es la bisagra
+# que enchufa el mecanismo sin tocar el 212 ni el 206, que siguen escritos a
+# mano arriba y son lo unico verificado celda a celda contra su oracle.
+import motor_declarado as MD
+from motores import MOTORES_DECLARADOS
+
+
+def _helpers_del_libro(ws):
+    """Los helpers de estilo del libro, para el chasis.
+
+    Son los MISMOS gestos que usan los dos motores escritos a mano: banda de
+    tinta con franja roja, rotulo en mono, campo con linea inferior. El chasis
+    no los conoce; se los pasamos.
+    """
+    def banda(w, fila, texto):
+        w.merge_cells(start_row=fila, start_column=1, end_row=fila,
+                      end_column=MOTOR_NCOLS)
+        c = w.cell(fila, 1, texto)
+        c.font, c.fill = Font(name=MACRO, size=11, color=PAPEL), BAND_FILL
+        for j in range(1, MOTOR_NCOLS + 1):
+            w.cell(fila, j).fill = BAND_FILL
+        franja(w, fila, 1, MOTOR_NCOLS)
+
+    def rotulo(w, fila, texto, simbolo, magnitud, referencia="", comentario=""):
+        c = w.cell(fila, 1, texto)
+        c.font = Font(name=MONO, size=10, color=TINTA)
+        if simbolo:
+            w.cell(fila, 2, simbolo).font = Font(name=MONO, size=10, color=TINTA)
+        if referencia:
+            w.cell(fila, MOTOR_NCOLS, referencia).font = Font(
+                name=MONO, size=9, color=GRIS)
+        if comentario:
+            # Solo en la columna de VALOR (F9 del 2026-09-13); el barrido final
+            # de aplicar_reglas_de_comentario lo confirma.
+            _nota(w.cell(fila, COLS_VALOR_MOTOR[0]), comentario)
+
+    def entrada(w, celda, valor):
+        c = w[celda]
+        c.value = "" if valor is None else valor
+        c.font, c.fill, c.border = IN_F, MOTOR_IN_FILL, CAJA_CAMPO
+        c.protection = Protection(locked=False)
+
+    def calculo(w, celda, formula):
+        w[celda].value = formula
+
+    return MD.Helpers(banda=banda, rotulo=rotulo, entrada=entrada, calculo=calculo)
+
+
+def direccion_de(motor, clave):
+    """Direccion de una fila declarada. La usan las pruebas y verificar.py."""
+    return MD.resolver_direcciones(motor)[clave]
+
+
+def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
+                          b3610, b3619, *, b313c, iid1ac, iidbc, umbrales,
+                          resources):
+    """Construye la hoja de un motor DECLARADO y le aplica los pases del libro."""
+    MD.comprobar_procedencia(motor, resources)      # Regla n.1: antes de nada
+    if motor.hoja in wb.sheetnames:
+        del wb[motor.hoja]
+    ws = new_sheet(wb, motor.hoja, motor.titulo, f"Fuente: resources/{motor.fuente}")
+    autosize(ws, {"A": 50, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
+    ws.merge_cells(f"A1:{get_column_letter(MOTOR_NCOLS)}1")
+    ws.merge_cells(f"A2:{get_column_letter(MOTOR_NCOLS)}2")
+    res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws))
+    build_leyenda_motor(ws)
+    aplicar_leyenda_motor(ws)
+    build_reinicio_motor(ws)
+    preparar_impresion(ws, MOTOR_NCOLS)
+    ws.protection.password = "0000"
+    ws.protection.sheet = True
+    return ws
+
+
 def retirar_datos_ref(wb):
     """Borra la hoja heredada Datos_Ref, que el maestro Rev0 aun trae.
 
@@ -13393,6 +13469,15 @@ def main(argv=None):
     build_collar_art206(wb, b313, iid, iidb, fac, rangos, b3610, b3619,
                         b313c=b313c, iid1ac=iidc, iidbc=iidbc,
                         umbrales=umbrales)
+    # Tarea 4 de la skill motor_pcc2: los motores DECLARADOS (chasis). Con
+    # MOTORES_DECLARADOS vacio este bucle no itera ninguna vez y el libro sale
+    # identico -es la red que protege al 212 y al 206 mientras se enchufa el
+    # mecanismo-.
+    for motor in MOTORES_DECLARADOS:
+        build_motor_declarado(wb, motor, b313, iid, iidb, fac, rangos,
+                              b3610, b3619, b313c=b313c, iid1ac=iidc,
+                              iidbc=iidbc, umbrales=umbrales,
+                              resources=a.resources)
     # Fase 9: las especificaciones tecnicas de cada articulo, en pestana propia.
     # Van DESPUES de sus motores: leen celdas suyas y la hoja tiene que existir.
     build_especificaciones_art212(wb)

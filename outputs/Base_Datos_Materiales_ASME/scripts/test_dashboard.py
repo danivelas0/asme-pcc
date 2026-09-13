@@ -2876,3 +2876,45 @@ class TestReinicioDeEntradas:
         for nombre in self.MOTORES:
             for d in self._manifiesto(wb[nombre]):
                 assert not d.startswith("="), f"{nombre}: {d}"
+
+
+class TestMotoresDeclarados:
+    """Todo motor declarado cumple lo mismo que los dos escritos a mano."""
+
+    def _hojas(self, wb):
+        from motores import MOTORES_DECLARADOS
+        return [(m, wb[m.hoja]) for m in MOTORES_DECLARADOS if m.hoja in wb.sheetnames]
+
+    def test_todos_estan_en_el_libro_y_en_la_navegacion(self, wb):
+        from motores import MOTORES_DECLARADOS
+        for m in MOTORES_DECLARADOS:
+            assert m.hoja in wb.sheetnames, m.hoja
+            assert m.hoja in B.NAVEGABLES, m.hoja
+
+    def test_cada_entrada_es_editable_y_entra_en_el_reinicio(self, wb):
+        for m, ws in self._hojas(wb):
+            man = set(TestReinicioDeEntradas()._manifiesto(ws))
+            for seccion in m.secciones:
+                for f in seccion.filas:
+                    if f.tipo == "formula":
+                        continue
+                    celda = B.direccion_de(m, f.clave)
+                    assert ws[celda].protection.locked is False, f"{m.hoja}!{celda}"
+                    assert celda.replace("$", "") in man, f"{m.hoja}!{celda}"
+
+    def test_el_comentario_de_cada_fila_cae_en_columna_de_valor(self, wb):
+        """Regla del proyecto: 'el comentario vive solo en la columna de
+        VALOR'. Con el registro vacio esta prueba pasa en vacio -es
+        deliberado (2026-09-13)-: empieza a morder en cuanto entre el primer
+        motor real, y es la unica red que lo comprueba desde el propio
+        registro declarado en vez de desde una hoja ya construida."""
+        from motores import MOTORES_DECLARADOS
+        for m in MOTORES_DECLARADOS:
+            for seccion in m.secciones:
+                for f in seccion.filas:
+                    if not f.comentario:
+                        continue
+                    celda = B.direccion_de(m, f.clave)
+                    col = openpyxl.utils.column_index_from_string(
+                        re.match(r"\$?([A-Z]+)\$?", celda).group(1))
+                    assert col in B.COLS_VALOR_MOTOR, f"{m.hoja}!{celda}"
