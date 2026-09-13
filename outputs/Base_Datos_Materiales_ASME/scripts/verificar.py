@@ -40,6 +40,7 @@ from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_db_materiales as B   # tabla de navegacion: DASH, NAVEGABLES, COL_CLAVE_BASE
+import motor_declarado as MD      # §12: comprobar_procedencia() del chasis declarativo
 import secii_tablas as secii      # §10: se reconstruye desde resources/, no se cree al libro
 from db_lib import Resources, num, temp_to_number, txt
 
@@ -2207,14 +2208,155 @@ def auditar():
     log(f"Discrepancias: **{b36_bad}**")
     log("")
 
+    # ---- 12. motores declarados (maquinaria, no ingenieria) ---------------
+    # La skill motor_pcc2 declara un motor en vez de escribirlo celda a celda
+    # (motor_declarado.py). Esta seccion NO recalcula ninguna formula de
+    # ingenieria -eso es tarea de quien declare cada articulo y de su propia
+    # comprobacion de regresion, como la §7 hace para el 212- sino que la
+    # MAQUINARIA del chasis hizo lo que dijo que haria: el caso semilla
+    # recalcula sin errores de Excel, toda cita normativa existe de verdad en
+    # resources/, todo veredicto pinta el color que promete y el dictamen
+    # global no se contradice con sus propias verificaciones.
+    #
+    # Hoy `motores.MOTORES_DECLARADOS == ()` (el registro sigue vacio al
+    # cerrar esta tarea): el bucle no itera y dec_bad queda en 0. Es el
+    # resultado correcto de una seccion que "empieza a morder" en una tarea
+    # posterior, no un hueco de esta -equivale a la §9/§10 el dia que
+    # resources/ no tuviera ninguna fila que auditar.
+    log("## 12. Motores declarados (maquinaria, no ingenieria)")
+    log("")
+    dec_bad = 0
+    if not B.MOTORES_DECLARADOS:
+        log("Registro vacio (`motores.MOTORES_DECLARADOS == ()`): ningun motor "
+            "declarado que recorrer todavia.")
+        log("")
+    else:
+        # Se abre un Excel real, con el mismo patron de la §6h, y por el mismo
+        # motivo: la comprobacion 1 necesita el VALOR CALCULADO de cada celda
+        # -un error de Excel se lee como el texto "#N/A", "#REF!", "#VALUE!"...-
+        # y no la formula sin evaluar. El brief de la Tarea 8 proponia leerlo
+        # de `wb0` (openpyxl); no sirve: `wb0 = openpyxl.load_workbook(WB)` no
+        # lleva `data_only=True`, asi que una celda de formula devuelve el
+        # texto "=..." (nunca empieza por "#"), y el .xlsm entregable no trae
+        # valores en cache porque el builder lo escribe con openpyxl y nunca
+        # lo recalcula al guardar -con data_only=True el mismo openpyxl daria
+        # `None`-. En ningun caso "#" aparece por una formula rota: solo Excel
+        # sabe si de verdad da error, y eso es lo que aqui se le pregunta
+        # (Decision 3 del brief de la Tarea 8, documentada en el informe).
+        import win32com.client
+        _ex = win32com.client.DispatchEx("Excel.Application")
+        _ex.Visible = False
+        _ex.DisplayAlerts = False
+        _ex.EnableEvents = False
+        _ex.AutomationSecurity = 3          # no correr macros al abrir
+        _pid = None
+        try:
+            _pid = _pid_de(_ex)
+        except Exception:                   # noqa: BLE001
+            pass
+        _libro = None
+        try:
+            _libro = _ex.Workbooks.Open(str(Path(WB).resolve()), ReadOnly=True,
+                                        UpdateLinks=0)
+            _ex.CalculateFullRebuild()
+
+            def _rgb_dec(n):
+                n = int(n)
+                return f"{n & 255:02X}{(n >> 8) & 255:02X}{(n >> 16) & 255:02X}"
+
+            log("| Motor!Celda | Detalle | Estado |")
+            log("|---|---|---|")
+            for motor in B.MOTORES_DECLARADOS:
+                hws = _libro.Worksheets(motor.hoja)
+                hws.Visible = -1
+
+                # 1. El caso semilla recalcula sin errores de Excel. El limite
+                # de fila sale de `wb0` -el mismo libro que ya se cargo para la
+                # §8/§9, sin recalcular-: basta con saber DONDE llega la tabla
+                # (una celda con formula sigue teniendo `.value` no vacio
+                # aunque no este evaluada), no con QUE calcula.
+                fin = wb0[motor.hoja].max_row
+                rango = hws.Range(hws.Cells(1, 1), hws.Cells(fin, B.MOTOR_NCOLS))
+                for i, fila_v in enumerate(rango.Value2, start=1):
+                    for j, v in enumerate(fila_v, start=1):
+                        if isinstance(v, str) and v.startswith("#"):
+                            dec_bad += 1
+                            coord = f"{get_column_letter(j)}{i}"
+                            log(f"| {motor.hoja}!{coord} | {v} | FALLO |")
+
+                # 2. Toda cita normativa existe en el JSON que dice. No cuenta
+                # fallos: ABORTA el proceso entero, igual que ya hace para
+                # quien construye el libro -es la Regla n.1 hecha guardia, no
+                # algo que se cuenta y se sigue de largo.
+                MD.comprobar_procedencia(motor, RES)
+
+                # 3. Todo veredicto PINTA. Mismo recorrido que la §6h -la unica
+                # forma de saber si un formato condicional de verdad pinta es
+                # preguntarle a Excel, nunca a openpyxl-. Si `motor.verificaciones`
+                # esta vacio (Decision 1 de la Tarea 8: un articulo de
+                # procedimiento sin ecuaciones), `_semaforo_de` devuelve un
+                # diccionario vacio y este bucle no itera: no hay veredicto que
+                # pueda dejar de pintar.
+                for celda, (favorables, avisos) in B._semaforo_de(motor).items():
+                    r = hws.Range(celda)
+                    texto = str(r.Text).strip()
+                    if texto in favorables:
+                        esperado = B.VERDE
+                    elif any(texto.startswith(a) for a in avisos):
+                        esperado = B.AMBAR
+                    elif texto:
+                        esperado = B.ROJO
+                    else:
+                        continue
+                    real = _rgb_dec(r.DisplayFormat.Interior.Color)
+                    if real != esperado:
+                        dec_bad += 1
+                        log(f"| {motor.hoja}!{celda} | {texto[:22]} -> {real} "
+                            f"(esperado {esperado}) | FALLO |")
+
+                # 4. El dictamen no contradice a sus propias verificaciones, la
+                # misma logica que la §7 aplica al 212: no se compara contra un
+                # literal fijo, sino contra lo que implican los criterios que
+                # el propio AND consulta. Decision 1 de la Tarea 8 (el brief no
+                # podia saberla): un articulo de procedimiento puede declarar
+                # `dictamen=None` -sin ecuaciones, sin AND que componer- y ahi
+                # no hay nada que contradecir: se salta, no es un hueco.
+                if motor.dictamen is not None:
+                    veredictos = [
+                        str(hws.Range(B.direccion_de(motor, c).replace("$", ""))
+                            .Text).strip()
+                        for c in motor.dictamen.verificaciones]
+                    implica_apto = all(v == "CUMPLE" for v in veredictos)
+                    dictado = str(hws.Range(
+                        B.direccion_de(motor, "dictamen").replace("$", "")).Text
+                                  ).strip()
+                    if implica_apto != (dictado == "APTO"):
+                        dec_bad += 1
+                        log(f"| {motor.hoja} dictamen | {dictado} | contradice "
+                            f"a {veredictos} | FALLO |")
+        finally:
+            for accion in (lambda: _libro.Close(SaveChanges=False)
+                           if _libro is not None else None, _ex.Quit):
+                try:
+                    accion()
+                except Exception as e:      # noqa: BLE001
+                    print(f"  aviso al cerrar Excel: {e}", file=sys.stderr)
+            _matar(_pid)
+        log("")
+    log(f"**{len(B.MOTORES_DECLARADOS)} motores declarados, {dec_bad} fallos.**")
+    log("")
+
     # ---- cierre -----------------------------------------------------------
     # us_bad NO estaba en esta suma: la §6g imprimia sus fallos en la tabla y el
     # script seguia devolviendo 0, que es la unica forma de que un guardia sea
     # peor que no tenerlo —parece que vigila—. Se corrige junto con la §6h nueva.
+    # dec_bad (§12) se suma aqui por el mismo motivo que ya obligo a corregir
+    # us_bad: una seccion que imprime sus fallos y no entra al total es un
+    # guardia que parece vigilar y no vigila nada.
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
              + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + flujo_bad
              + flujo206_bad + us_bad + sem_bad + nav_bad + map_bad + sec_bad
-             + b36_bad)
+             + b36_bad + dec_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -2233,7 +2375,8 @@ def auditar():
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),
-                        ("11. Bases dimensionales B36", b36_bad)]:
+                        ("11. Bases dimensionales B36", b36_bad),
+                        ("12. Motores declarados (chasis)", dec_bad)]:
         log(f"| {etiqueta} | {v} |")
     log("")
     log(f"**Total de fallos: {total}.**")
