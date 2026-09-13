@@ -263,6 +263,62 @@ def _todos(nodo):
         yield from _todos(h)
 
 
+class TestNodoDeArticuloDerivado:
+    """Prueba directa de `_nodo_de_articulo` (Tarea 7, ronda de arreglo 1).
+
+    Con `MOTORES_DECLARADOS` vacio, las 358 pruebas que pasan sin esta clase
+    solo demuestran que una lista vacia no cambia el arbol: no ejercitan lo
+    que la funcion produce cuando SI corre. Es la misma clase de hueco que
+    los tres defectos latentes que destapo la Fase 7 -mecanismos derivados
+    que parecian correctos porque el caso de prueba vigente no los tocaba-,
+    y aqui no hace falta poblar el registro para cerrarlo: la funcion es pura
+    y determinista, no toca Excel ni `resources/`.
+    """
+
+    def _motor_de_mentira(self):
+        # articulo="999" no existe en PCC-2: es a proposito, para que no se
+        # pueda confundir con el 212 o el 206 si algun dia se declaran de
+        # verdad. `fuente` no se usa aqui -solo la lee comprobar_procedencia,
+        # que esta prueba no ejercita- asi que no necesita existir en disco.
+        return B.MD.Motor(
+            articulo="999",
+            hoja="Motor_PCC2_Art999",
+            titulo="ARTICULO DE PRUEBA",
+            fuente="ASME PCC/pcc_2/articulo_999.json",
+            corto="ARTICULO DE PRUEBA",
+            descripcion="Descripcion del articulo de prueba",
+            alcance="Alcance del articulo de prueba",
+            clausulas_espec="999-1 - 999-2",
+        )
+
+    def test_la_hoja_del_nodo_es_nav_cal_mas_el_articulo(self):
+        nodo = B._nodo_de_articulo(self._motor_de_mentira())
+        assert nodo.hoja == "NAV_CAL_ART999"
+
+    def test_los_tres_hijos_apuntan_en_orden_a_motor_espec_e_instrucciones(self):
+        motor = self._motor_de_mentira()
+        nodo = B._nodo_de_articulo(motor)
+        # El ORDEN importa tanto como el destino: es el mismo preorden que
+        # _preorden() usa para derivar NAVEGABLES, y del que depende la
+        # sincronia con HojasNavegables() del VBA (punto 4 del encargo).
+        destinos = [h.destino for h in nodo.hijos]
+        assert destinos == [motor.hoja, "Espec_PCC2_Art999", "Instruc_PCC2_Art999"]
+
+    def test_ninguna_linea_de_la_tarjeta_lleva_texto_de_estado(self):
+        """Regla del F9 (2026-09-13): la tarjeta dice que ES el documento, no
+        si esta cargado. Se compara contra la CLASE de frase que la regla
+        prohibe -insensible a mayusculas-, no contra una cadena concreta:
+        lo que se prohibe es la idea de "esto esta activo/cargado", con
+        cualquier capitalizacion."""
+        prohibidas = ("cargado", "no cargado", "activo", "disponible")
+        nodo = B._nodo_de_articulo(self._motor_de_mentira())
+        for linea in nodo.lineas:
+            bajo = linea.lower()
+            for mala in prohibidas:
+                assert mala not in bajo, (
+                    f"{linea!r} contiene texto de estado prohibido ({mala!r})")
+
+
 # ---------------------------------------------------------------------------
 # Tabla B-1 del Apendice B: motor propio, y todas sus filas alcanzables
 # ---------------------------------------------------------------------------
