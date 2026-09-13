@@ -172,3 +172,61 @@ def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve(
         assert ws[direccion].value == valor, (
             f"{clave}: resolver_direcciones dice {direccion}, pero ese no es "
             f"el valor que emitir_tabla escribio ahi")
+
+
+def _motor_con_pasos():
+    """Una seccion normal seguida del anexo de pasos: dos Paso, cada uno con
+    sus propias filas -incluida una formula que cita una clave de la seccion
+    y otra que cita una clave de un paso anterior-, para blindar que
+    resolver_direcciones() y emitir_tabla() tambien coinciden cuando el
+    arbol incluye motor.pasos (Tarea 6 de la skill motor_pcc2)."""
+    cita = M.Cita("art_999.json", bloque=12, clausula="999-3.2")
+    return M.Motor(
+        articulo="999",
+        hoja="Prueba_PCC2_Art999",
+        titulo="MOTOR DE PRUEBA",
+        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        secciones=(
+            M.Seccion("1. DATOS DE ENTRADA", filas=(
+                M.Fila("P", "Presion", tipo=M.ENTRADA, ejemplo=20),
+            )),
+        ),
+        pasos=(
+            M.Paso(1, "ELEGIBILIDAD", "999-1", filas=(
+                M.Fila("elegible", "Compuerta", tipo=M.FORMULA,
+                       formula="={P}*0", cita=cita),
+            )),
+            M.Paso(2, "CARGAS", "999-2", filas=(
+                M.Fila("carga", "Carga total", tipo=M.FORMULA,
+                       formula="={P}+{elegible}", cita=cita),
+            )),
+        ),
+    )
+
+
+def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve_con_pasos():
+    """Mismo blindaje que la prueba anterior, pero con motor.pasos: el anexo
+    de pasos tiene que salir DETRAS de la ultima seccion, con una banda por
+    paso, y las direcciones que asigna resolver_direcciones() tienen que ser
+    las mismas donde emitir_tabla() escribio de verdad -incluida la formula
+    del Paso 2 que cita una clave declarada en el Paso 1."""
+    import openpyxl
+    motor = _motor_con_pasos()
+    dirs = M.resolver_direcciones(motor)                       # fuente n.1
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    M.emitir_tabla(ws, motor, _helpers_de_prueba())             # fuente n.2
+
+    # Fila 5: banda de la seccion. Fila 6: "P". Fila 7: banda del Paso 1.
+    # Fila 8: "elegible". Fila 9: banda del Paso 2. Fila 10: "carga".
+    assert dirs == {"P": "$D$6", "elegible": "$D$8", "carga": "$D$10"}
+    assert ws["A7"].value == "PASO 1 . ELEGIBILIDAD  --  999-1"
+    assert ws["A9"].value == "PASO 2 . CARGAS  --  999-2"
+
+    esperado = {"P": 20, "elegible": "=$D$6*0", "carga": "=$D$6+$D$8"}
+    for clave, valor in esperado.items():
+        direccion = dirs[clave]
+        assert ws[direccion].value == valor, (
+            f"{clave}: resolver_direcciones dice {direccion}, pero ese no es "
+            f"el valor que emitir_tabla escribio ahi")

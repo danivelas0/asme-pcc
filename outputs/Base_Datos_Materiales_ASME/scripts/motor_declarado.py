@@ -58,6 +58,28 @@ class Seccion(NamedTuple):
     filas: tuple = ()
 
 
+class Paso(NamedTuple):
+    """Un bloque del anexo del flujo: el recorrido de la reparacion.
+
+    Misma forma que una Seccion -titulo de banda + filas nombradas- pero
+    aparte, porque el anexo de pasos no es una entrada mas del calculo: es la
+    conduccion del procedimiento completo (Tarea 6 de la skill motor_pcc2).
+    """
+    numero: int
+    titulo: str
+    clausula: str
+    filas: tuple = ()
+
+
+class Especificacion(NamedTuple):
+    """Una fila de la pestana de especificaciones tecnicas del articulo."""
+    concepto: str
+    texto: str               # texto fijo, o formula con {nombres}
+    clausula: str
+    editable: bool = False
+    cita: Cita | None = None
+
+
 class Material(NamedTuple):
     """La seccion de resolucion de material, que es siempre la misma."""
     columnas: tuple = (("D", "Metal base"),)
@@ -124,13 +146,43 @@ class Helpers(NamedTuple):
 _RE_NOMBRE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
 
+def _titulo_paso(paso):
+    """Rotulo de banda de un Paso, con el mismo patron que ya usan los anexos
+    escritos a mano del 212 y el 206: "PASO N . TITULO -- clausula"."""
+    return f"PASO {paso.numero} . {paso.titulo}  --  {paso.clausula}"
+
+
+def _bloques(motor):
+    """(titulo_de_banda, filas) de cada bloque del motor, en el orden en que
+    se lee la hoja: primero las Secciones y despues los Pasos del anexo del
+    flujo.
+
+    Una Seccion y un Paso son la MISMA FORMA para lo que necesitan
+    resolver_direcciones(), emitir_tabla() y comprobar_procedencia(): un
+    titulo de banda y una tupla de filas nombradas. Centralizar el recorrido
+    aqui -en vez de que cada una de esas tres funciones repita su propio
+    `for seccion in motor.secciones` y ahora tambien su propio
+    `for paso in motor.pasos`- es lo que garantiza que no puedan divergir: es
+    exactamente la clase de "dos fuentes de verdad" que
+    test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve
+    existe para impedir, aplicada ahora a un tercer consumidor del mismo
+    arbol. Un motor sin pasos (`motor.pasos == ()`, el valor por defecto) no
+    aporta ningun bloque aqui: la ausencia de anexo es el caso normal, no un
+    error.
+    """
+    for seccion in motor.secciones:
+        yield seccion.titulo, seccion.filas
+    for paso in motor.pasos:
+        yield _titulo_paso(paso), paso.filas
+
+
 def resolver_direcciones(motor):
     """clave -> direccion absoluta, asignando las filas en orden de lectura."""
     dirs, fila = {}, FILA_PRIMERA_BANDA
     col = chr(ord("A") + COL_PRIMER_CASO - 1)
-    for seccion in motor.secciones:
-        fila += 1                        # la banda de la seccion
-        for f in seccion.filas:
+    for _titulo, filas in _bloques(motor):
+        fila += 1                        # la banda del bloque (seccion o paso)
+        for f in filas:
             dirs[f.clave] = f"${col}${fila}"
             fila += 1
     return dirs
@@ -163,8 +215,8 @@ def comprobar_procedencia(motor, resources):
     """
     resources = Path(resources)
     cache, tabla = {}, []
-    for seccion in motor.secciones:
-        for f in seccion.filas:
+    for _titulo, filas in _bloques(motor):
+        for f in filas:
             if f.tipo != FORMULA:
                 continue
             if f.cita is None:
@@ -201,10 +253,14 @@ def emitir_tabla(ws, motor, helpers):
     dirs = resolver_direcciones(motor)
     col = chr(ord("A") + COL_PRIMER_CASO - 1)
     fila = FILA_PRIMERA_BANDA
-    for seccion in motor.secciones:
-        helpers.banda(ws, fila, seccion.titulo)
+    # Recorre el mismo arbol que resolver_direcciones() -via _bloques()-, asi
+    # que el anexo de pasos (si el motor declara alguno) sale detras de la
+    # ultima Seccion, con su propia banda, sin que esta funcion tenga que
+    # saber nada de Paso mas alla de que tambien es (titulo, filas).
+    for titulo, filas in _bloques(motor):
+        helpers.banda(ws, fila, titulo)
         fila += 1
-        for f in seccion.filas:
+        for f in filas:
             helpers.rotulo(ws, fila, f.rotulo, f.simbolo, f.magnitud,
                            referencia=f.cita.clausula if f.cita else "",
                            comentario=f.comentario)

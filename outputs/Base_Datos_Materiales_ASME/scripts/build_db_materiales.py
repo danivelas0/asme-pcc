@@ -10092,6 +10092,30 @@ def _semaforo_de(motor):
     return semaforo
 
 
+def _fila_dictamen(motor):
+    """Numero de fila (int) del dictamen global del motor.
+
+    Ninguna tarea anterior del plan la definio, y la Tarea 6 la necesita para
+    citar el dictamen dentro de las instrucciones de uso (`_prosa_de`). Se
+    deriva de `MD.resolver_direcciones(motor)` -nunca se escribe a mano-, la
+    misma fuente que ya usa `build_motor_declarado` para el pase del
+    semaforo, asi que las dos lecturas no pueden divergir.
+
+    Guardia SIMETRICA a `_reservada()` (usada dentro de `build_motor_declarado`)
+    y al SystemExit de `_semaforo_de()`: un motor que no declare la fila
+    reservada "dictamen" lo dice con un mensaje legible, no con el KeyError
+    crudo de indexar el diccionario de direcciones a ciegas.
+    """
+    dirs = MD.resolver_direcciones(motor)
+    if "dictamen" not in dirs:
+        raise SystemExit(
+            f"build_motor_declarado: {motor.hoja} no declara la fila "
+            f"reservada 'dictamen' (ver CLAVES_RESERVADAS en "
+            f"motor_declarado.py), y la necesita el bloque de dictamen "
+            f"global.")
+    return int(dirs["dictamen"].split("$")[-1])
+
+
 def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
                           b3610, b3619, *, b313c, iid1ac, iidbc, umbrales,
                           resources):
@@ -10158,8 +10182,7 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     aplicar_unidades_motor(ws, _unidades_de(motor), es_si)
     aplicar_reglas_de_comentario(ws, _reglas_de_comentario_de(motor))
     semaforo = _semaforo_de(motor)
-    fila_dictamen = int(_reservada(
-        "dictamen", "el bloque de dictamen global").split("$")[-1])
+    fila_dictamen = _fila_dictamen(motor)
     aplicar_semaforo_motor(ws, semaforo, fila_dictamen)
     aplicar_dos_decimales(ws, semaforo)
 
@@ -10170,6 +10193,83 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     ws.protection.password = "0000"
     ws.protection.sheet = True
     return ws
+
+
+# ---------------------------------------------------------------------------
+# Tarea 6 de la skill motor_pcc2 -- las dos pestanas de un motor DECLARADO
+# ---------------------------------------------------------------------------
+# build_especificaciones() y build_instrucciones_motor() son de la Fase 9/10
+# (escritas para el 212 y el 206 a mano) y NO se tocan aqui: build_parche_art212
+# y build_collar_art206 son lo unico verificado celda a celda contra un oracle,
+# y siguen siendo quienes las llaman para esos dos articulos. Lo que anade esta
+# tarea es COMO se arma el argumento de esas dos funciones para un motor
+# DECLARADO -desde motor.especificaciones y motor.secciones-, nunca escrito a
+# mano articulo por articulo.
+def _prosa_de(motor):
+    """La parte de las instrucciones que el motor no puede decir de si mismo,
+    armada desde la propia declaracion. El resto -leyenda de color, conmutador
+    de unidades, semaforo y boton de reinicio- es identico en todo motor y lo
+    trae `_prosa_comun()`, que ya existe (Fase 10) y no se toca."""
+    propia = (
+        ("QUE HACE ESTE MOTOR  //  ASME PCC-2 Art. " + motor.articulo, (
+            ("Para que sirve", motor.descripcion),
+            ("Codigo y alcance", motor.alcance),
+            ("De donde sale cada numero",
+             f"Todo valor normativo de esta hoja sale de resources/{motor.fuente}, "
+             f"y cada celda de calculo cita su clausula en la columna de notas."),
+            ("El orden en que se rellena",
+             " -> ".join(s.titulo for s in motor.secciones)),
+        )),
+    )
+    # _prosa_comun() espera la celda del selector SIN el prefijo "$" -asi la
+    # pasan ya build_instrucciones_art212/206 ("D15", no "$D$15")-, y
+    # direccion_de() devuelve siempre la forma absoluta que usa el resto del
+    # chasis: se despoja aqui, no dentro de _prosa_comun(), que no se toca.
+    return propia + _prosa_comun(motor.hoja,
+                                 direccion_de(motor, "unidad").replace("$", ""),
+                                 _fila_dictamen(motor))
+
+
+def build_documentos_declarados(wb, motor):
+    """Las dos pestanas del articulo -especificaciones tecnicas e
+    instrucciones de uso-, derivadas de la declaracion del motor.
+
+    Decision de la Tarea 6: un articulo de PROCEDIMIENTO puro -sin ecuaciones,
+    que una tarea posterior declara con `motor.especificaciones` vacio- no
+    tiene ninguna fila que transcribir en la pestana de especificaciones. La
+    ausencia es el caso normal, no un error, igual que `build_motor_declarado`
+    ya no revienta con un motor sin material (Tarea 5): la pestana se OMITE en
+    vez de construirse vacia, y con ella se omite el boton que la abriria -un
+    boton a una hoja que no existe seria un enlace roto, y
+    `build_botones_documentos` ya sabe saltarse un destino en None.
+
+    La pestana de instrucciones, en cambio, se construye SIEMPRE: es la guia
+    derivada celda a celda de la hoja del motor (via `_guia_de_celdas`, dentro
+    de `build_instrucciones_motor`), y esa guia tiene sentido exista o no una
+    especificacion tecnica propia del articulo.
+    """
+    nombre_espec = f"Espec_PCC2_Art{motor.articulo}"
+    nombre_instr = f"Instruc_PCC2_Art{motor.articulo}"
+
+    espec = None
+    if motor.especificaciones:
+        bloques = tuple(
+            (grupo, tuple((e.concepto, e.texto, e.clausula) +
+                          (("EDITABLE",) if e.editable else ())
+                          for e in specs))
+            for grupo, specs in motor.especificaciones)
+        build_especificaciones(wb, nombre_espec, motor.hoja,
+                               f"ESPECIFICACIONES TECNICAS -- {motor.titulo}",
+                               f"Fuente: resources/{motor.fuente}", bloques)
+        espec = nombre_espec
+
+    build_instrucciones_motor(wb, nombre_instr, motor.hoja,
+                              f"INSTRUCCIONES DE USO -- {motor.titulo}",
+                              "Que hace el motor y que se rellena en cada seccion.",
+                              _prosa_de(motor))
+
+    build_botones_documentos(wb[motor.hoja], espec=espec, instr=nombre_instr)
+    return espec, nombre_instr
 
 
 def retirar_datos_ref(wb):
@@ -13603,6 +13703,12 @@ def main(argv=None):
                               b3610, b3619, b313c=b313c, iid1ac=iidc,
                               iidbc=iidbc, umbrales=umbrales,
                               resources=a.resources)
+        # Tarea 6 de la skill motor_pcc2: las dos pestanas del articulo,
+        # derivadas de la declaracion. Va DESPUES de build_motor_declarado: lee
+        # celdas de la hoja del motor (build_instrucciones_motor) y la hoja
+        # tiene que existir ya. Con MOTORES_DECLARADOS vacio esto no se llama
+        # ni una vez -misma red de proteccion que el bucle de arriba.
+        build_documentos_declarados(wb, motor)
     # Fase 9: las especificaciones tecnicas de cada articulo, en pestana propia.
     # Van DESPUES de sus motores: leen celdas suyas y la hoja tiene que existir.
     build_especificaciones_art212(wb)
