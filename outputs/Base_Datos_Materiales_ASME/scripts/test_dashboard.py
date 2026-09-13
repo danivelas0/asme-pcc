@@ -860,6 +860,29 @@ class TestSincroniaPythonVba:
         m = re.search(r'PREFIJO_RESET\s+As\s+String\s*=\s*"([^"]+)"', src)
         assert m and m.group(1) == B.PREFIJO_RESET
 
+    def test_mismo_manifiesto_de_cascada(self, fuente_vba):
+        """El VBA no lleva ninguna direccion de la cascada -lee la cadena que la
+        hoja publica- pero si lleva DONDE esta y COMO se reconoce."""
+        src = fuente_vba["mod_nav.vba"]
+        m = re.search(r"COL_MANIFIESTO_CASCADA\s+As\s+Long\s*=\s*(\d+)", src)
+        assert m and int(m.group(1)) == B.COL_MANIFIESTO_CASCADA
+        m = re.search(r'SENTINEL_CASCADA\s+As\s+String\s*=\s*"([^"]+)"', src)
+        assert m and m.group(1) == B.SENTINEL_CASCADA
+
+    def test_el_flujo_de_la_cascada_se_gobierna_por_evento(self, fuente_vba):
+        """Ninguna formula puede VACIAR una celda de entrada, asi que las dos
+        reglas del flujo -bloqueo hacia arriba y reinicio hacia abajo- y el
+        reinicio por cambio de unidades viven en el evento de cambio."""
+        codigo = "\n".join(
+            l for f in ("this_workbook.vba", "mod_nav.vba")
+            for l in fuente_vba[f].splitlines() if not l.lstrip().startswith("'"))
+        assert "Workbook_SheetChange" in codigo
+        assert "ProcesarCascada" in codigo
+        assert "ReiniciarPorCambioDeUnidades" in codigo
+        # Al limpiar hay que apagar los eventos, o cada ClearContents vuelve a
+        # entrar por el mismo evento.
+        assert codigo.count("Application.EnableEvents = False") >= 3
+
     def test_el_reinicio_se_despacha_por_el_prefijo(self, fuente_vba):
         """El evento de hipervinculo tiene que distinguir las dos clases de
         clave. Sin esta rama, un clic en REINICIAR ENTRADAS llamaria a IrAHoja
@@ -2555,6 +2578,50 @@ class TestElCasoPrecargadoEnsenaSuMaterial:
                 real = ws[f"{col}{nivel0 + i}"].value
                 assert real == esperado, \
                     f"{hoja}!{col}{nivel0 + i}: {real!r} != {esperado!r}"
+
+
+class TestManifiestoDeCascada:
+    """La hoja publica su cadena de cascada; el VBA no sabe ninguna direccion."""
+
+    CASOS = [("Parche_PCC2_Art212", 42, ("D", "E"), "D15"),
+             ("Collar_PCC2_Art206", 39, ("D",), "D14")]
+
+    def _manifiesto(self, ws):
+        col = B.COL_MANIFIESTO_CASCADA
+        assert ws.cell(1, col).value == B.SENTINEL_CASCADA, ws.title
+        unidad = ws.cell(2, col).value
+        cadenas, r = [], 3
+        while ws.cell(r, col).value:
+            cadenas.append(str(ws.cell(r, col).value).split("|"))
+            r += 1
+        return unidad, cadenas
+
+    @pytest.mark.parametrize("hoja,nivel0,cols,unidad", CASOS)
+    def test_la_cadena_es_la_cascada_en_orden(self, wb, hoja, nivel0, cols, unidad):
+        """El ORDEN es lo que define que esta arriba y que abajo: si se
+        desordenara, el reinicio limpiaria el nivel equivocado."""
+        ws = wb[hoja]
+        u, cadenas = self._manifiesto(ws)
+        assert u == unidad, f"{hoja}: selector de unidades {u!r}"
+        assert len(cadenas) == len(cols), f"{hoja}: {cadenas}"
+        for col, cadena in zip(cols, cadenas):
+            assert cadena == [f"{col}{nivel0 + i}" for i in range(6)], cadena
+
+    @pytest.mark.parametrize("hoja,nivel0,cols,unidad", CASOS)
+    def test_toda_celda_de_la_cadena_es_editable(self, wb, hoja, nivel0, cols, unidad):
+        """Lo que el VBA va a vaciar tiene que ser una celda de entrada: si una
+        fuera de formula, el reinicio borraria un calculo."""
+        ws = wb[hoja]
+        _u, cadenas = self._manifiesto(ws)
+        for cadena in cadenas:
+            for celda in cadena:
+                assert ws[celda].protection.locked is False, f"{hoja}!{celda}"
+
+    @pytest.mark.parametrize("hoja,nivel0,cols,unidad", CASOS)
+    def test_la_columna_va_oculta(self, wb, hoja, nivel0, cols, unidad):
+        from openpyxl.utils import get_column_letter as L
+        assert wb[hoja].column_dimensions[
+            L(B.COL_MANIFIESTO_CASCADA)].hidden, hoja
 
 
 class TestDosDecimales:

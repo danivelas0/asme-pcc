@@ -560,6 +560,7 @@ comprueba (`TestSincroniaPythonVba`). Al tocar una, tocar la otra:
 |---|---|---|
 | Hojas navegables (43, **en preorden**) | `NAVEGABLES` | `HojasNavegables()` |
 | Manifiesto de reinicio: columna, centinela y prefijo | `COL_MANIFIESTO_RESET` · `SENTINEL_RESET` · `PREFIJO_RESET` | `COL_MANIFIESTO` · `SENTINEL_RESET` · `PREFIJO_RESET` |
+| Manifiesto de cascada: columna y centinela | `COL_MANIFIESTO_CASCADA` · `SENTINEL_CASCADA` | `COL_MANIFIESTO_CASCADA` · `SENTINEL_CASCADA` |
 | Columna base de claves | `COL_CLAVE_BASE = 66` | `COL_CLAVE_BASE` |
 | Celda del aviso | `FILA_AVISO = 4` | `CELDA_AVISO = "A4"` |
 | Texto y color del aviso | `build_dashboard` + `AVISO_ROJO_*` | `TXT_INACTIVAS` · `TXT_ACTIVAS` y sus `RGB(...)` |
@@ -847,9 +848,21 @@ reparado. `verificar.py` estrena **§6e (212)** y **§6f (206)**, que recalculan
 fórmulas nuevas en Excel real. La **Fase 9 (subíndices reales, cosmética) ya se ejecutó**
 (`fba1417`) y con ella el **oracle del 212 se actualizó** para las 20 celdas de símbolo de
 la col. B (sin re-baseline por valores; §7 sigue APTO). Tras la Fase 9: `pytest` = 254 y
-`verificar.py` = 0 fallos (§6e/§6f incl.). **Único pendiente:** F9 de sign-off del ingeniero
-—revisión visual del `.xlsm` en Excel real— para los dos motores. Planes:
-`outputs/plans/plan_rediseno_motor_art212_flujo_completo.md` y `…_art206_…md`.
+`verificar.py` = 0 fallos (§6e/§6f incl.). Planes, ya cerrados:
+`outputs/plans/registro/plan_rediseno_motor_art212_flujo_completo.md` y `…_art206_…md`.
+
+### No hay procedimiento de firma: mejora continua (2026-09-13)
+
+**Este libro es una herramienta personal y no lleva sign-off.** Nada de hojas de firma,
+tags de aprobación ni planes bloqueados esperando el visto bueno del ingeniero: se
+trabaja en **flujo continuo de mejora (Kaizen)** —se entrega, se usa, aparece algo, se
+corrige, se vuelve a entregar—. Un plan cuyo único pendiente sea «la revisión del
+ingeniero en Excel» está **cerrado** y va a `outputs/plans/registro/`.
+
+Lo que sustituye a la firma es lo que se puede correr y ya existe: `pytest`,
+`verificar.py` (16 secciones contra `resources/`, con recálculo en Excel real) y la
+revisión visual exportando la hoja a PDF. Una puerta de aprobación formal en una
+herramienta de un solo usuario no protege nada y sí frena el ciclo.
 
 **Los dos motores evalúan DOS presiones, no tres (Fase 2, 2026-09-12).** Antes había
 `Operación` / `Diseño típico` / `Envolvente` en las columnas D/E/F. Ese caso intermedio
@@ -1194,6 +1207,42 @@ Las otras siete:
    DE LA REPARACIÓN`— y **no** «Especificaciones técnicas»: de los ocho pasos, solo el 7
    (fabricación, 212-4) y el 8 (examen y prueba, 212-5/6) lo son; los seis primeros son
    comprobaciones de diseño.
+
+### La cascada de material fluye de arriba hacia abajo, y solo hacia abajo
+
+**Tres reglas que ninguna fórmula de Excel puede cumplir**, porque ninguna fórmula puede
+**vaciar** una celda de entrada. Van en el evento de cambio del libro
+(`Workbook_SheetChange` → `ProcesarCascada` / `ReiniciarPorCambioDeUnidades`):
+
+1. **Un nivel está bloqueado mientras el de arriba esté vacío.** No se elige Tipo/Grado
+   sin haber elegido antes familia → composición → forma → especificación. Si se intenta,
+   la celda se deshace y se dice qué falta.
+2. **Al cambiar un nivel, todo lo que cuelga de él se reinicia** —los niveles de abajo, la
+   variante, y con ellos el S(T) resuelto—. Sin esto la hoja se queda mostrando el
+   esfuerzo admisible del material anterior bajo una selección nueva, que es la peor clase
+   de error: uno que parece un resultado.
+3. **Cambiar el sistema de unidades reinicia la hoja entera.** Los campos de entrada no
+   son equivalentes entre sistemas —una presión en kg/cm² no es la misma cifra en psi— y
+   el libro nunca convierte un valor (regla 9), así que lo único honesto es volver a
+   empezar el procedimiento. Se pide confirmación y, si se dice que no, el selector vuelve
+   al sistema anterior.
+
+**El VBA no lleva ninguna dirección**: cada motor publica su **cadena de cascada** en una
+columna oculta (la 101), con el selector de unidades en la fila 2 y una cadena por columna
+de material —las seis celdas, en orden— de la 3 en adelante. Ese **orden** es lo que
+define qué está arriba y qué abajo. Misma razón que el manifiesto de reinicio: dos copias
+de la misma lista divergen el día que alguien añade un nivel.
+
+**Toda rutina que apague los eventos vuelve por una etiqueta que los enciende.** Si una
+muriese con `EnableEvents = False`, las reglas dejarían de aplicarse el resto de la sesión
+y **nada** lo avisaría: la hoja seguiría aceptando un Tipo/Grado sin familia. Y
+`LimpiarEntradas` los apaga mientras limpia, o cada `ClearContents` volvería a entrar por
+el mismo evento.
+
+Comprobado **en Excel con las macros vivas** (`probar_cascada.py`): cambiar la familia del
+caso precargado vacía los cinco niveles de abajo y la variante, y el S(T) pasa de 138,00
+a `#N/A`. El bloqueo hacia arriba y el cambio de unidades abren un `MsgBox` —que es lo
+correcto para una persona— y por eso no se ejercen por automatización.
 
 **`Datos_Ref` se retiró del libro (Tarea 10, 2026-09-11).** Con ella
 `HOJAS_HEREDADAS` queda en una sola hoja, `("Instrucciones",)`: ninguna hoja de

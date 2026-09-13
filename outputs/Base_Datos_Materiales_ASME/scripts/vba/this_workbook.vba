@@ -63,6 +63,29 @@ Salir:
 End Sub
 
 
+' Gobierna el orden de la seleccion de material y el cambio de unidades.
+'
+' Toda la logica vive en modNav; aqui solo se decide cual de las dos cosas es.
+' Se ignora la escritura de mas de una celda a la vez (pegar un rango): reiniciar
+' media hoja por un pegado no es lo que nadie espera, y el usuario que pega sabe
+' lo que hace.
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    On Error GoTo Salir
+
+    If Target.Cells.Count > 1 Then Exit Sub
+
+    If StrComp(Target.Address(False, False), CeldaDeUnidades(Sh), _
+               vbTextCompare) = 0 Then
+        ReiniciarPorCambioDeUnidades Sh, Target
+        Exit Sub
+    End If
+
+    ProcesarCascada Sh, Target
+
+Salir:
+End Sub
+
+
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     ' Se limpia ANTES de escribir a disco, de modo que el archivo guardado
     ' nunca conserve una hoja de trabajo destapada.

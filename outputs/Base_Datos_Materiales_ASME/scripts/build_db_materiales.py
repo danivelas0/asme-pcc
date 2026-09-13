@@ -6140,6 +6140,52 @@ def build_reinicio_motor(ws):
     return entradas
 
 
+# ---------------------------------------------------------------------------
+# El flujo de la cascada es de arriba hacia abajo, y solo hacia abajo
+# ---------------------------------------------------------------------------
+# Dos reglas que pidio el ingeniero (2026-09-13) y que una formula de Excel NO
+# puede cumplir, porque ninguna formula puede VACIAR una celda de entrada:
+#
+#   1. Un nivel esta bloqueado mientras el de arriba este vacio. No se elige
+#      Tipo/Grado sin haber elegido antes familia, composicion, forma y
+#      especificacion.
+#   2. Al cambiar un nivel, TODO lo que cuelga de el se reinicia -los niveles de
+#      abajo, la variante y con ellos el S(T) resuelto-. Si no, la hoja se queda
+#      mostrando el esfuerzo del material anterior bajo una seleccion nueva, que
+#      es la peor clase de error: uno que parece un resultado.
+#
+#   3. Y al cambiar el SISTEMA DE UNIDADES se reinicia la hoja entera: los
+#      campos de entrada no son equivalentes entre sistemas -una presion en
+#      kg/cm² no es la misma cifra en psi- y lo unico honesto es volver a
+#      empezar el procedimiento.
+#
+# El VBA no sabe ninguna direccion: la hoja publica su cadena de cascada en una
+# columna oculta, igual que el manifiesto de reinicio (misma razon: dos copias
+# de la misma lista divergen el dia que alguien anade un nivel).
+COL_MANIFIESTO_CASCADA = 101     # DEBE coincidir con el VBA.
+SENTINEL_CASCADA = "CASCADA_MANIFIESTO"
+
+
+def build_manifiesto_cascada(ws, columnas, fila_base, mapa, celda_unidad):
+    """Publica, en columna oculta, la cadena de cascada y el selector de unidades.
+
+    Fila 1: centinela. Fila 2: la celda del selector de sistema de unidades.
+    Fila 3 en adelante: una cadena por columna de material, con sus seis celdas
+    -los cinco niveles y la variante- separadas por «|» y EN ORDEN, que es lo
+    que define que es «arriba» y que es «abajo».
+    """
+    col = COL_MANIFIESTO_CASCADA
+    c = ws.cell(1, col, SENTINEL_CASCADA)
+    c.font = DATA_F
+    ws.cell(2, col, celda_unidad.replace("$", "")).font = DATA_F
+    for k, (letra, _etiqueta) in enumerate(columnas):
+        cadena = "|".join(f"{letra}{mapa.get(fila_base + 4 + i, fila_base + 4 + i)}"
+                          for i in range(6))
+        ws.cell(3 + k, col, cadena).font = DATA_F
+    ws.column_dimensions[get_column_letter(col)].hidden = True
+    return ws
+
+
 def build_botones_documentos(ws, espec=None, instr=None):
     """Atajos del motor a sus documentos (Fases 9 y 10).
 
@@ -8931,6 +8977,10 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # unidad que la fila publica al final.
     aplicar_dos_decimales(ws, SEMAFORO_212)
 
+    # La cadena de la cascada, para que el VBA sepa que cuelga de que.
+    build_manifiesto_cascada(ws, (("D", "Metal base"), ("E", "Collar")),
+                             105, MAPA_FILAS_212, UNIDAD_212)
+
     # F9 del 2026-09-13: el hueco que dejo la Fase 9 entre el dictamen global y
     # el anexo se oculta. Ver ocultar_filas_en_blanco: el anexo NO se mueve.
     ocultar_filas_en_blanco(ws, FILA_DICTAMEN_212 + 1, FILA_ANEXO_FLUJO_212 + 1)
@@ -9908,6 +9958,9 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # remapeo y de los rotulos de unidad, porque la regla la decide la
     # unidad que la fila publica al final.
     aplicar_dos_decimales(ws, SEMAFORO_206)
+
+    build_manifiesto_cascada(ws, (("D", "Sleeve"),), 75, MAPA_FILAS_206,
+                             UNIDAD_206)
 
     # Mismo hueco y mismo tratamiento que en el 212.
     ocultar_filas_en_blanco(ws, FILA_DICTAMEN_206 + 1, FILA_ANEXO_FLUJO_206 - 1)

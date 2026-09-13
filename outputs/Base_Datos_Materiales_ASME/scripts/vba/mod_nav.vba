@@ -73,6 +73,17 @@ Public Const SENTINEL_RESET As String = "RESET_MANIFIESTO"
 ' (Excel no admite ":" en el nombre de una hoja).
 Public Const PREFIJO_RESET As String = "RESET:"
 
+' Columna oculta donde cada motor publica su CADENA DE CASCADA: el centinela en
+' la fila 1, la celda del selector de sistema de unidades en la 2, y de la 3 en
+' adelante una cadena por columna de material con sus seis celdas -los cinco
+' niveles y la variante- separadas por "|" y EN ORDEN. Ese orden es el que
+' define que esta "arriba" y que "abajo".
+'
+' DEBE coincidir con COL_MANIFIESTO_CASCADA y SENTINEL_CASCADA de
+' build_db_materiales.py.
+Public Const COL_MANIFIESTO_CASCADA As Long = 101
+Public Const SENTINEL_CASCADA As String = "CASCADA_MANIFIESTO"
+
 ' ---- fin de las declaraciones de modulo ----------------------------------
 ' VBA exige que TODA declaracion de nivel de modulo (Const, Dim, Type, Declare)
 ' preceda a la primera rutina. Una constante colocada mas abajo no da error en
@@ -271,6 +282,7 @@ End Sub
 ' legal bajo proteccion. Si alguna direccion del manifiesto apuntase a una celda
 ' bloqueada, el On Error la salta y se cuenta como no borrada.
 Public Sub LimpiarEntradas(ByVal hoja As String)
+    On Error GoTo Fin
     Dim ws As Object
     Dim fila As Long
     Dim direccion As String
@@ -304,6 +316,10 @@ Public Sub LimpiarEntradas(ByVal hoja As String)
               vbExclamation + vbYesNo + vbDefaultButton2, _
               "Reiniciar entradas") <> vbYes Then Exit Sub
 
+    ' Los eventos se apagan mientras se limpia: cada ClearContents sobre una
+    ' celda de la cascada dispararia Workbook_SheetChange y ProcesarCascada se
+    ' pondria a avisar de que falta completar el nivel de arriba.
+    Application.EnableEvents = False
     Application.ScreenUpdating = False
     fila = 2
     Do While Len(Trim$(CStr(ws.Cells(fila, COL_MANIFIESTO).Value))) > 0
@@ -319,7 +335,9 @@ Public Sub LimpiarEntradas(ByVal hoja As String)
         On Error GoTo 0
         fila = fila + 1
     Loop
+Fin:
     Application.ScreenUpdating = True
+    Application.EnableEvents = True
 
     If omitidas > 0 Then
         MsgBox "Se vaciaron " & borradas & " celdas de entrada; " & omitidas & _
@@ -328,6 +346,135 @@ Public Sub LimpiarEntradas(ByVal hoja As String)
                vbExclamation, "Motor de Calculo ASME PCC"
     End If
 End Sub
+
+
+' ---------------------------------------------------------------------------
+' El flujo de la cascada de material: de arriba hacia abajo, y solo hacia abajo
+' ---------------------------------------------------------------------------
+' Dos reglas que ninguna formula de Excel puede cumplir, porque ninguna formula
+' puede VACIAR una celda de entrada:
+'
+'   1. Un nivel esta bloqueado mientras el de arriba este vacio: no se elige
+'      Tipo/Grado sin haber elegido familia, composicion, forma y especificacion.
+'   2. Al cambiar un nivel, todo lo que cuelga de el se reinicia. Si no, la hoja
+'      se queda mostrando el esfuerzo admisible del material anterior bajo una
+'      seleccion nueva -la peor clase de error: uno que parece un resultado-.
+'
+' Esta rutina no lleva ninguna direccion: lee la cadena del manifiesto que la
+' propia hoja publica.
+Public Sub ProcesarCascada(ByVal hoja As Object, ByVal celda As Range)
+    ' Todo camino que apague los eventos vuelve por Fin. Si una de estas rutinas
+    ' muriese con EnableEvents = False, las reglas del flujo dejarian de
+    ' aplicarse durante el resto de la sesion y NADA lo avisaria: la hoja
+    ' seguiria aceptando un Tipo/Grado sin familia y no reiniciaria nada.
+    On Error GoTo Fin
+    Dim fila As Long
+    Dim cadena As Variant
+    Dim i As Long, j As Long
+    Dim dir_ As String
+
+    If StrComp(Trim$(CStr(hoja.Cells(1, COL_MANIFIESTO_CASCADA).Value)), _
+               SENTINEL_CASCADA, vbTextCompare) <> 0 Then Exit Sub
+
+    dir_ = celda.Address(False, False)          ' "D42", sin los "$"
+    fila = 3
+    Do While Len(Trim$(CStr(hoja.Cells(fila, COL_MANIFIESTO_CASCADA).Value))) > 0
+        cadena = Split(Trim$(CStr(hoja.Cells(fila, COL_MANIFIESTO_CASCADA).Value)), "|")
+        For i = LBound(cadena) To UBound(cadena)
+            If StrComp(CStr(cadena(i)), dir_, vbTextCompare) = 0 Then
+                ' 1. Bloqueo: si algun nivel de ARRIBA esta vacio, este no se
+                ' puede elegir todavia. Se deshace la escritura y se dice por que.
+                For j = LBound(cadena) To i - 1
+                    If Len(Trim$(CStr(hoja.Range(CStr(cadena(j))).Value))) = 0 Then
+                        Application.EnableEvents = False
+                        celda.ClearContents
+                        Application.EnableEvents = True
+                        MsgBox "La seleccion de material va de arriba hacia abajo: " & _
+                               "familia > composicion > forma > especificacion > " & _
+                               "tipo/grado." & vbCrLf & vbCrLf & _
+                               "Complete antes la celda " & CStr(cadena(j)) & ".", _
+                               vbInformation, "Motor de Calculo ASME PCC"
+                        Exit Sub
+                    End If
+                Next j
+                ' 2. Reinicio de todo lo que cuelga: los niveles de abajo y la
+                ' variante. El S(T) se reinicia solo, porque depende de ellos.
+                Application.EnableEvents = False
+                For j = i + 1 To UBound(cadena)
+                    hoja.Range(CStr(cadena(j))).ClearContents
+                Next j
+                Application.EnableEvents = True
+                Exit Sub
+            End If
+        Next i
+        fila = fila + 1
+    Loop
+Fin:
+    Application.EnableEvents = True
+End Sub
+
+
+' Cambiar de sistema de unidades reinicia la hoja entera.
+'
+' Los campos de entrada NO son equivalentes entre sistemas: una presion en
+' kg/cm2 no es la misma cifra en psi, ni un espesor en mm lo es en pulgadas. El
+' libro nunca convierte un valor (regla 9), asi que lo unico honesto es volver a
+' empezar el procedimiento con las cifras del sistema nuevo.
+'
+' Se pide confirmacion y, si el usuario dice que no, el selector vuelve al
+' sistema anterior: son dos opciones, asi que "el anterior" es la otra.
+Public Sub ReiniciarPorCambioDeUnidades(ByVal hoja As Object, ByVal celda As Range)
+    On Error GoTo Fin
+    Dim fila As Long
+    Dim direccion As String
+    Dim propia As String
+    Dim nuevo As String
+
+    nuevo = Trim$(CStr(celda.Value))
+    propia = celda.Address(False, False)
+
+    If MsgBox("Cambiar el sistema de unidades a " & nuevo & " REINICIA todas las " & _
+              "entradas de esta hoja." & vbCrLf & vbCrLf & _
+              "Los campos no son equivalentes entre sistemas -una presion en " & _
+              "kg/cm2 no es la misma cifra en psi-, y este libro nunca convierte " & _
+              "un valor: hay que teclearlos de nuevo." & vbCrLf & vbCrLf & _
+              "Continuar?", vbExclamation + vbYesNo + vbDefaultButton2, _
+              "Cambio de sistema de unidades") <> vbYes Then
+        Application.EnableEvents = False
+        celda.Value = IIf(StrComp(nuevo, "SI", vbTextCompare) = 0, "US", "SI")
+        Application.EnableEvents = True
+        Exit Sub
+    End If
+
+    If StrComp(Trim$(CStr(hoja.Cells(1, COL_MANIFIESTO).Value)), _
+               SENTINEL_RESET, vbTextCompare) <> 0 Then Exit Sub
+
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    fila = 2
+    Do While Len(Trim$(CStr(hoja.Cells(fila, COL_MANIFIESTO).Value))) > 0
+        direccion = Trim$(CStr(hoja.Cells(fila, COL_MANIFIESTO).Value))
+        ' El propio selector NO se limpia: es lo que el usuario acaba de elegir.
+        If StrComp(direccion, propia, vbTextCompare) <> 0 Then
+            On Error Resume Next
+            hoja.Range(direccion).ClearContents
+            On Error GoTo 0
+        End If
+        fila = fila + 1
+    Loop
+Fin:
+    Application.ScreenUpdating = True
+    Application.EnableEvents = True
+End Sub
+
+
+' Celda del selector de sistema de unidades de esta hoja, o "" si no publica una.
+Public Function CeldaDeUnidades(ByVal hoja As Object) As String
+    If StrComp(Trim$(CStr(hoja.Cells(1, COL_MANIFIESTO_CASCADA).Value)), _
+               SENTINEL_CASCADA, vbTextCompare) = 0 Then
+        CeldaDeUnidades = Trim$(CStr(hoja.Cells(2, COL_MANIFIESTO_CASCADA).Value))
+    End If
+End Function
 
 
 Public Sub MarcarMacrosActivas()
