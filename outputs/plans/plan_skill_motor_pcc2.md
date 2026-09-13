@@ -1114,6 +1114,30 @@ está mal escrito y hay que arreglarlo **aquí**, no en el artículo.
 
 ---
 
+## Qué encontró la autorrevisión del plan
+
+Antes de darlo por bueno se revisó contra el diseño —cobertura, marcadores de posición y
+consistencia de tipos— y salieron **cinco fallos del propio plan**. Se dejan escritos
+porque son la clase de fallo que un plan esconde bien:
+
+1. **`Motor` se definía con cinco campos** en la Tarea 1 y las Tareas 5-7 usaban campos
+   que no existían (`material`, `especificaciones`, `corto`…). Un campo que aparece a
+   mitad de plan es un campo que dos tareas escriben distinto. Ahora se define completo
+   desde el principio.
+2. **Tres funciones derivadas se citaban sin definirse** (`_unidades_de`, `_semaforo_de`,
+   `_reglas_de_comentario_de`). Eran justo las que hacen que las tablas del motor salgan
+   de la declaración en vez de escribirse a mano: sin su cuerpo, el plan pedía magia.
+3. **`_prosa_de` igual**, en la Tarea 6.
+4. **La sección 12 de `verificar.py` dejaba dos comprobaciones como comentario**
+   (`# 3. Todo veredicto pinta`, `# 4. El dictamen no contradice…`). Un plan con un
+   comentario donde va el código no es un plan: es una nota. Y esas dos son precisamente
+   las que este libro aprendió a no dar por supuestas.
+5. **La procedencia llegaba a la tabla de trazabilidad pero no a la hoja.** El diseño pide
+   las tres formas —columna de referencia, comentario y tabla— y solo estaba la tercera.
+
+Y un hueco de cobertura: ninguna tarea comprobaba el criterio de aceptación nº 4, que un
+artículo **sin ecuaciones** produzca un motor útil. Es la **Tarea 11**.
+
 ## Notas de riesgo
 
 - **La Tarea 4 es la bisagra.** Mientras `MOTORES_DECLARADOS` esté vacío, el libro tiene

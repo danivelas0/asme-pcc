@@ -109,3 +109,15 @@ protección de rama clásica exigen GitHub Pro. Solo son gratis en repos **públ
    (Pro / público / asumir riesgo) al ingeniero. No se hizo la prueba de force-push
    rechazado porque no había regla que lo rechazara: verificar lo que existe, no
    teatralizar una verificación vacía.
+
+## Un mensaje de commit con comillas invertidas pierde palabras (2026-09-13)
+
+`git commit -m "... \`Motor\` ..."` en bash ejecuta lo que va entre comillas
+invertidas y deja el hueco: el mensaje del commit `3ea8125` perdio cinco
+identificadores y nadie lo vio hasta releerlo. Un commit ya empujado a `main` no
+se arregla —reescribir la historia compartida no se hace, y el hook de pre-push
+lo impide—, asi que la informacion hubo que recuperarla en el documento.
+
+**Regla:** todo mensaje de commit con codigo dentro va por heredoc citado
+(`git commit -F - <<'EOF'`), nunca con `-m` y comillas dobles. El apostrofe del
+`<<'EOF'` es lo que apaga la sustitucion.
