@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  72 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  78 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -221,18 +221,79 @@ Temperatura de evaluacion: **25 °C** · metal base `A-1 | A106 | B | Pipe & tub
 | Sa metal base (A106 Gr.B) | 138 | 138 | OK | OK |
 | Sa gobernante | 138 | 138 | — | OK |
 
-Dictamen global del modulo: **APTO** (OK).
+Dictamen global del modulo: **REVISAR** (OK).
+
+Criterios que NO cumplen en el caso semilla (y por eso el dictamen no es APTO):
+
+- **Excentricidad soldadura** (F114): `NO CUMPLE`
+
+Con la presion de diseno del caso semilla en su rating (D28 = 20 kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da 248.32004565566405 MPa contra un limite 1,5·Sa de 207 MPa. Es el resultado correcto del modelo de presion de dos casos; para volver a APTO hay que cambiar el DISENO (espesor del parche, cateto, material) o la presion de diseno de entrada, no el motor.
+
+## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)
+
+| Magnitud | Caso | Referencia Python | Hoja | Estado |
+|---|---|---|---|---|
+| e (excentricidad) | — | 7.175 | 7.175 | OK |
+| %Elong conformado | — | 2.389486260454002 | 2.389486260454002 | OK |
+| F_CP | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| F_LP | Operacion | 38.91401303125 | 38.91401303125 | OK |
+| F_C | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| F_L | Operacion | 38.91401303125 | 38.91401303125 | OK |
+| F_max | Operacion | 77.8280260625 | 77.8280260625 | OK |
+| w_min | Operacion | 1.0254021879117259 | 1.0254021879117259 | OK |
+| S_w | Operacion | 62.08001141391601 | 62.08001141391601 | OK |
+| F_CP | Diseno | 311.31210425 | 311.31210425 | OK |
+| F_LP | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_C | Diseno | 311.31210425 | 311.31210425 | OK |
+| F_L | Diseno | 155.656052125 | 155.656052125 | OK |
+| F_max | Diseno | 311.31210425 | 311.31210425 | OK |
+| w_min | Diseno | 4.1016087516469035 | 4.1016087516469035 | OK |
+| S_w | Diseno | 248.32004565566405 | 248.32004565566405 | OK |
+| E (neumatica) | — | 840055853.1289042 | 840055853.1289042 | OK |
+| TNT (neumatica) | — | 196.87640104077514 | 196.87640104077514 | OK |
+| R (neumatica) | — | 146.5900686172443 | 146.59006861724427 | OK |
+
+## 6f. Pasos del flujo 206 recalculados en Excel (Type B forzado)
+
+| Magnitud | Referencia Python | Hoja | Estado |
+|---|---|---|---|
+| cateto w (Type B) | 9.5 | 9.5 | OK |
+| luz G<=2.5 | CUMPLE | CUMPLE | OK |
+| tipo recomendado | Type A (fuga/axial=No) | Type A (no contiene presion) | OK |
+
+## 6g. Modo US: coherencia de unidades (recalculo Excel)
+
+| Magnitud | SI | US | US reconvertido | Estado |
+|---|---|---|---|---|
+| Sa gobernante | 138 | 20 | 137.895 | OK |
+| Dm | 317.45 | 12.5 | 317.5 | OK |
+| excentricidad e | 7.175 | 0.28248 | 7.175 | OK |
+| F_m | 77.828 | 0.444479 | 77.8403 | OK |
+| w_min | 1.0254 | 0.0404072 | 1.02634 | OK |
+| t_req | 0.574436 | 0.0226363 | 0.574961 | OK |
+| S_w total | 62.08 | 9.00536 | 62.0898 | OK |
+| L_min | 63.495 | 2.5 | 63.5 | OK |
+| P_max del parche | 1.63497 | 0.236915 | 1.63347 | OK |
+| longitud de corte | 522.903 | 20.5898 | 522.981 | OK |
+| peso | 10.9023 | 24.0392 | 10.904 | OK |
+| veredicto F113 | CUMPLE | CUMPLE | — | OK |
+| veredicto F114 | NO CUMPLE | NO CUMPLE | — | OK |
+| veredicto F115 | CUMPLE | CUMPLE | — | OK |
+| veredicto F116 | CUMPLE | CUMPLE | — | OK |
+| veredicto F117 | Refuerzo 360° | Refuerzo 360° | — | OK |
+| veredicto F118 | Migrar (Art.206) | Migrar (Art.206) | — | OK |
+| veredicto F119 | REVISAR | REVISAR | — | OK |
 
 ## 8. Capa de navegacion (Dashboard y proyecto VBA)
 
 | Comprobacion | Detalle | Estado |
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
-| Las 37 hojas navegables estan hidden | 37 hojas | OK |
+| Las 43 hojas navegables estan hidden | 43 hojas | OK |
 | El resto esta veryHidden | 34 hojas | OK |
 | Ninguna base que alimente un motor es alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
-| Los botones del arbol cubren las 37 hojas navegables | 38 destinos distintos en 16 hojas | OK |
+| Los botones del arbol cubren las 43 hojas navegables | 44 destinos distintos en 18 hojas | OK |
 | Cada hoja navegable vuelve a SU PADRE, no a la raiz |  | OK |
 | Toda hoja navegable se alcanza desde el Dashboard | huerfanas: ninguna | OK |
 
@@ -295,6 +356,9 @@ Discrepancias: **0**
 | 5b. Guardia listas fijas en motor (regla 12/14) | 0 |
 | 6. Interpolacion recalculada | 0 |
 | 7. Caso semilla | 0 |
+| 6e. Pasos del flujo 212 (recalculo Excel) | 0 |
+| 6f. Pasos del flujo 206 (recalculo Excel) | 0 |
+| 6g. Modo US: coherencia de unidades | 0 |
 | 8. Capa de navegacion | 0 |
 | 9. Mapeo de grupos | 0 |
 | 10. Seccion II A/B/C | 0 |

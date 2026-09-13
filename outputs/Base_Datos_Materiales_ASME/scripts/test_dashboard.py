@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import zipfile
+import pathlib
 from pathlib import Path
 
 import openpyxl
@@ -397,8 +398,15 @@ class TestPortabilidadDelDashboard:
 # falso positivo de auditar styles.xml entero -que conserva entradas heredadas
 # del maestro que ya no referencia ninguna celda-.
 PALETA = {B.PAPEL, B.PAPEL_2, B.TINTA, B.TINTA_2, B.ROJO, B.GRIS, B.GRIS_2,
-          B.VERDE, B.AMBAR, B.AMBAR_TXT}
+          B.VERDE, B.AMBAR, B.AMBAR_TXT, B.AMARILLO}
 FUENTES_DEL_SISTEMA = {B.MONO, B.MACRO}
+
+# El AMARILLO entra en la paleta del libro pero NO es de uso libre: marca la
+# celda editable y solo existe en los dos motores de calculo (leyenda impresa en
+# la fila 3 de cada uno). La lista blanca de arriba se resuelve por indice de
+# estilo y no sabe de que hoja viene cada uno, asi que el alcance lo fija una
+# prueba aparte, por nombre de hoja —mismo patron que el rojo del aviso—.
+HOJAS_CON_AMARILLO = {"Parche_PCC2_Art212", "Collar_PCC2_Art206"}
 
 
 def _rgb6(v):
@@ -483,6 +491,60 @@ class TestSistemaVisual:
                  and _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.ROJO]
         assert rojas == [(B.DASH, f"A{B.FILA_AVISO}")]
 
+    def test_el_amarillo_solo_vive_en_los_dos_motores_de_calculo(self, wb):
+        """El amarillo significa «aqui escribe usted». Fuera de un motor de
+        calculo no hay nada que escribir, y si apareciera en un buscador o en
+        una hoja de datos dejaria de significar eso.
+
+        Se recorre con el mismo ancho acotado que el guardia del rojo: el
+        amarillo solo puede nacer en la banda A..G de un motor.
+        """
+        hojas = {ws.title
+                 for ws in wb.worksheets
+                 for row in ws.iter_rows(max_col=B.DASH_NCOLS)
+                 for c in row
+                 if c.fill is not None and c.fill.patternType
+                 and _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.AMARILLO}
+        assert hojas <= HOJAS_CON_AMARILLO, sorted(hojas - HOJAS_CON_AMARILLO)
+
+    def test_los_dos_motores_llevan_su_leyenda_de_color(self, wb):
+        """La leyenda tiene que estar impresa en la hoja: un color que hay que
+        adivinar no es una convencion, es un acertijo. Y cada muestra lleva el
+        relleno que de verdad describe."""
+        esperado = {celda: _rgb6(relleno.fgColor.rgb)
+                    for celda, _, relleno in B.LEYENDA_MOTOR}
+        for nombre in HOJAS_CON_AMARILLO:
+            ws = wb[nombre]
+            for celda, rgb in esperado.items():
+                c = ws[celda]
+                assert c.value, f"{nombre}!{celda} sin texto de leyenda"
+                assert _rgb6(getattr(c.fill.fgColor, "rgb", None)) == rgb, \
+                    f"{nombre}!{celda}"
+
+    def test_toda_celda_editable_de_un_motor_va_en_amarillo(self, wb):
+        """El reverso de la leyenda, y lo que la hace verdad: no basta con que
+        lo amarillo sea editable —hay que comprobar que TODO lo editable esta
+        amarillo—, o el ingeniero encontraria celdas que acepta Excel y que la
+        hoja no anuncia. El boton de volver se entrega desbloqueado a proposito
+        (ver reponer_botones_de_retorno) y se excluye por su hipervinculo.
+        """
+        for nombre in HOJAS_CON_AMARILLO:
+            ws = wb[nombre]
+            # La cola de un rango fusionado no se comprueba: no tiene contenido
+            # propio y Excel pinta todo el rango con el formato de la celda
+            # ancla (la trampa que ya documenta franja() en el builder). Ademas
+            # openpyxl le arrastra la proteccion del ancla pero no su relleno,
+            # asi que mirarla daria un falso positivo en cada boton.
+            fuera = [c.coordinate
+                     for row in ws.iter_rows(max_col=B.MOTOR_NCOLS)
+                     for c in row
+                     if not isinstance(c, openpyxl.cell.cell.MergedCell)
+                     and c.hyperlink is None
+                     and c.protection is not None
+                     and c.protection.locked is False
+                     and _rgb6(getattr(c.fill.fgColor, "rgb", None)) != B.AMARILLO]
+            assert fuera == [], f"{nombre}: editables sin amarillo: {fuera}"
+
     def test_el_semaforo_conserva_sus_tres_estados(self, wb):
         """Retonados, no eliminados: el estado de la consulta es informacion de
         seguridad y se lee de un vistazo. Verde y ambar solo viven en el formato
@@ -523,6 +585,42 @@ def cargar_oracle_parche():
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def _plano(v):
+    """Texto VISIBLE de una celda para comparar contra el oracle. La Fase 9
+    convierte los simbolos 'base_sub' de la columna B en CellRichText con
+    subindice real; el texto visible es la concatenacion de los runs SIN el '_'
+    (p.ej. 'Fm'). Se compara asi (no reconstruyendo el '_') porque el round-trip
+    del .xlsm no conserva el vertAlign de los runs; el oracle guarda ya la forma
+    visible de esas celdas (ver actualizar_oracle_subindices en el commit). Una
+    celda normal (str/num) se devuelve tal cual."""
+    from openpyxl.cell.rich_text import CellRichText
+    return str(v) if isinstance(v, CellRichText) else v
+
+
+def _asserta_sin_guion_bajo(ws):
+    """Decision 5: ningun simbolo VISIBLE de la columna B (la de simbolos) lleva
+    un guion bajo — los subindices son reales (CellRichText). La columna A es
+    prosa/rotulos (y de la Seccion 7 trae guiones bajos que no son subindices:
+    rutas, tags '[MODO_S]'), asi que no se recorre. Un str con '_' en B es un
+    simbolo sin convertir (fallo); un CellRichText no debe renderizar '_'."""
+    from openpyxl.cell.rich_text import CellRichText
+    hubo_rich = False
+    for cell in ws["B"]:
+        v = cell.value
+        if isinstance(v, CellRichText):
+            visible = str(v)
+            assert "_" not in visible, f"{cell.coordinate}: {visible!r} lleva '_'"
+            if len(list(v)) > 1:
+                hubo_rich = True
+        elif isinstance(v, str):
+            # La columna B tambien aloja formulas (specs) y textos largos cuyo
+            # '_' no es un subindice; se excluyen igual que en el converter.
+            if v.startswith("=") or len(v) > 12:
+                continue
+            assert "_" not in v, f"{cell.coordinate}: simbolo sin convertir {v!r}"
+    assert hubo_rich, "no se encontro ningun simbolo con subindice real"
+
+
 class TestParidadHojaParche:
     HOJA = "Parche_PCC2_Art212"
 
@@ -531,6 +629,14 @@ class TestParidadHojaParche:
         # tener contenido) a la vez: seria una contradiccion silenciosa.
         comunes = set(B.DIVERGENCIAS_DECLARADAS) & set(B.DIVERGENCIAS_REEMPLAZADAS)
         assert not comunes, comunes
+        # Y la tercera clase (celdas que el oracle nunca tuvo) no puede solaparse
+        # con ninguna de las dos: una celda o estaba en el oracle o no estaba.
+        del_oracle = set(B.DIVERGENCIAS_DECLARADAS) | set(B.DIVERGENCIAS_REEMPLAZADAS)
+        assert not (del_oracle & set(B.CELDAS_NUEVAS_FUERA_DEL_ORACLE))
+        oracle = cargar_oracle_parche()
+        for hoja, celda in B.CELDAS_NUEVAS_FUERA_DEL_ORACLE:
+            assert celda not in oracle["formulas"], f"{celda} SI esta en el oracle"
+
 
     def test_todas_las_formulas_y_literales(self, wb):
         oracle = cargar_oracle_parche()
@@ -550,7 +656,7 @@ class TestParidadHojaParche:
                 # exige NO vacia — si quedo vacia, es una retirada disfrazada.
                 assert ws[celda].value is not None, f"{celda}: {reempl}"
                 continue
-            assert ws[celda].value == esperado, celda
+            assert _plano(ws[celda].value) == esperado, celda
 
     def test_toda_divergencia_declara_motivo(self):
         for d in (B.DIVERGENCIAS_DECLARADAS, B.DIVERGENCIAS_REEMPLAZADAS):
@@ -577,10 +683,19 @@ class TestParidadHojaParche:
         def todas_divergentes(sqref, tablas):
             return all(any((self.HOJA, c) in t for t in tablas) for c in coords(sqref))
 
+        def en_anexo(sqref):
+            # Una validacion del ANEXO DE PASOS DEL FLUJO (filas >= FILA_ANEXO)
+            # es nueva por diseno: el oracle Rev0 solo cubre 1-129 y estas las
+            # fijan las anclas por-paso (test_paso*). Se excluyen de la paridad.
+            rng = openpyxl.worksheet.cell_range.CellRange(sqref)
+            return rng.min_row >= B.FILA_ANEXO_FLUJO_212
+
         reales = sorted(
             ({"sqref": str(dv.sqref), "formula1": dv.formula1}
              for dv in ws.data_validations.dataValidation
-             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,))),
+             if not todas_divergentes(str(dv.sqref), (B.DIVERGENCIAS_REEMPLAZADAS,
+                                                      B.CELDAS_NUEVAS_FUERA_DEL_ORACLE))
+             and not en_anexo(str(dv.sqref))),
             key=lambda d: d["sqref"])
         esperadas = [
             v for v in oracle["validaciones"]
@@ -591,7 +706,31 @@ class TestParidadHojaParche:
     def test_rangos_fusionados(self, wb):
         oracle = cargar_oracle_parche()
         ws = wb[self.HOJA]
-        assert sorted(str(r) for r in ws.merged_cells.ranges) == oracle["fusionados"]
+        # Los merges del anexo de pasos del flujo (bandas de las filas >=
+        # FILA_ANEXO) son nuevos por diseno y salen de la paridad contra el
+        # oracle Rev0 (que solo cubre 1-129).
+        #
+        # Tambien salen los que caen ENTERAMENTE a la derecha de G: el oracle
+        # captura la tabla del motor, que es A..G (los 968 valores que compara el
+        # recalculo y las columnas que pinta aplicar_leyenda_motor). Lo que vive
+        # mas a la derecha es mobiliario de la hoja —hoy el boton de reinicio de
+        # la Fase 8, en H3:J3— y no hay nada con que compararlo: exigir que el
+        # oracle Rev0 lo declare seria pedirle que declare algo que nunca vio.
+        reales = sorted(
+            str(r) for r in ws.merged_cells.ranges
+            if openpyxl.worksheet.cell_range.CellRange(str(r)).min_row
+            < B.FILA_ANEXO_FLUJO_212
+            and openpyxl.worksheet.cell_range.CellRange(str(r)).min_col
+            <= B.MOTOR_NCOLS)
+        # Una celda RETIRADA se lleva su fusionado. Las siete filas de
+        # especificaciones tecnicas (Fase 9) estaban fusionadas B:G y ya no
+        # existen: exigir su merge seria exigir la fusion de una fila vacia.
+        # Se filtra por el ANCLA del rango, que es la celda que se declaro.
+        esperados = [
+            f for f in oracle["fusionados"]
+            if (self.HOJA, f.split(":")[0].replace("$", ""))
+            not in B.DIVERGENCIAS_DECLARADAS]
+        assert reales == esperados
 
 
 # ---------------------------------------------------------------------------
@@ -612,7 +751,7 @@ class TestCascadaDimensionalArt212:
             for rng in dv.sqref.ranges:
                 origen[str(rng)] = str(dv.formula1 or "")
         # D22 = norma, D18 = NPS, D19 = cedula (la norma no corre las filas 18-21).
-        for celda in ("D18", "D19", "D22"):
+        for celda in ("D19", "D20", "D23"):
             f1 = origen.get(celda, "")
             assert f1.startswith("="), f"{celda}: origen {f1!r}, se esperaba un rango"
             assert not f1.startswith('"'), f"{celda}: sigue siendo una lista fija"
@@ -625,7 +764,7 @@ class TestCascadaDimensionalArt212:
 
     def test_od_y_espesor_leen_de_las_dos_ediciones(self, wb):
         ws = wb[self.HOJA]
-        for celda in ("D20", "D21"):
+        for celda in ("D21", "D22"):
             f = str(ws[celda].value or "")
             assert "DB_B36_10" in f and "DB_B36_19" in f, f"{celda}: {f!r}"
             assert "Datos_Ref" not in f, f"{celda}: aun lee de Datos_Ref"
@@ -701,6 +840,32 @@ class TestSincroniaPythonVba:
                       fuente_vba["mod_nav.vba"])
         assert m, "no se encontro TXT_INACTIVAS en mod_nav.vba"
         assert wb[B.DASH].cell(B.FILA_AVISO, 1).value == m.group(1)
+
+    def test_mismo_manifiesto_de_reinicio(self, fuente_vba):
+        """Columna, centinela y prefijo del boton de reinicio (Fase 8).
+
+        El VBA no lleva ninguna direccion de celda —las lee del manifiesto— pero
+        si lleva DONDE esta el manifiesto y COMO se reconoce. Si esas tres cosas
+        divergen del builder, el boton no encuentra la lista y no limpia nada, o
+        peor: la encuentra a medias.
+        """
+        src = fuente_vba["mod_nav.vba"]
+        m = re.search(r"COL_MANIFIESTO\s+As\s+Long\s*=\s*(\d+)", src)
+        assert m and int(m.group(1)) == B.COL_MANIFIESTO_RESET
+        m = re.search(r'SENTINEL_RESET\s+As\s+String\s*=\s*"([^"]+)"', src)
+        assert m and m.group(1) == B.SENTINEL_RESET
+        m = re.search(r'PREFIJO_RESET\s+As\s+String\s*=\s*"([^"]+)"', src)
+        assert m and m.group(1) == B.PREFIJO_RESET
+
+    def test_el_reinicio_se_despacha_por_el_prefijo(self, fuente_vba):
+        """El evento de hipervinculo tiene que distinguir las dos clases de
+        clave. Sin esta rama, un clic en REINICIAR ENTRADAS llamaria a IrAHoja
+        con "RESET:Parche_PCC2_Art212" y solo saldria un aviso de hoja
+        inexistente."""
+        src = fuente_vba["this_workbook.vba"]
+        codigo = "\n".join(l for l in src.splitlines()
+                           if not l.lstrip().startswith("'"))
+        assert "PREFIJO_RESET" in codigo and "LimpiarEntradas" in codigo
 
     def test_misma_hoja_de_inicio(self, fuente_vba):
         assert re.search(rf'HOJA_INICIO\s+As\s+String\s*=\s*"{B.DASH}"',
@@ -790,6 +955,14 @@ class TestLintVba:
 # "DB_BPVC_IID!$A$4:$A$1802" (E115, via IID1A) — no son valores inventados,
 # son los que ya se verificaron contra el libro real; aqui solo se reutilizan
 # para que el stub no rompa el unico dato que el test compara.
+# Umbrales de longitud de PCC-2, leidos de resources/ igual que en el build. No
+# se fabrican aqui: una prueba con umbrales inventados comprobaria la forma de
+# la formula pero no el par (metrico, US) que de verdad va a llevar el libro.
+_RES = pathlib.Path(__file__).resolve().parents[3] / "resources"
+UMBRALES_REALES = B.leer_umbrales_pcc2(_RES)
+ENERGIA_REAL = B.leer_energia_501(_RES)
+
+
 def b313_stub():
     """Dict minimo de la base B31.3 (build_b313 real: sheet/last_row/pack_t0/
     pack_v0/npts_col). El nombre de hoja SI importa (tiene que casar con la
@@ -875,19 +1048,241 @@ class TestBuildParcheContraOracle:
         # nombre de hoja y los conteos que dimensionan las listas de la cascada.
         b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
                              "n_nps": 5, "max_ced": 5}
+        # Stub de los coeficientes del App. 501 (Paso 8) — en el motor real los
+        # lee leer_energia_501() de resources/ (Fase 0.2). Aqui son fixtures del
+        # test, como b313_stub, con los valores que imprime el codigo.
+        # Coeficientes del App. 501 (Paso 8), leidos de resources/ como en el
+        # build. Antes eran un stub escrito a mano con solo la mitad metrica;
+        # con el modo US (Fase 7) eso habria dejado la prueba comprobando unos
+        # coeficientes y el entregable llevando otros.
+        energia = ENERGIA_REAL
         B.build_parche_art212(wb, b313_stub(), iid1a_stub(), iidb_stub(),
                               fac_stub(), rangos_stub(),
-                              b36("DB_B36_10"), b36("DB_B36_19"))
+                              b36("DB_B36_10"), b36("DB_B36_19"),
+                              energia_501=energia,
+                              umbrales=UMBRALES_REALES)
         return wb["Parche_PCC2_Art212"]
 
-    ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D115", "E115", "D126", "E126",
-                 "D39", "D40", "D44", "F90", "D114", "E114", "D128")
+    # F90 (DICTAMEN GLOBAL) sale de esta lista: la Fase 1 lo reescribe para
+    # anteponer la compuerta de elegibilidad (Paso 1). Su forma nueva la fija
+    # test_paso1_elegibilidad y su divergencia frente al oracle Rev0 se declara
+    # en DIVERGENCIAS_REEMPLAZADAS.
+    # Una celda anclada que ademas esta DECLARADA como divergencia no se
+    # compara contra el oracle: se exige lo que su clase promete (vacia si esta
+    # retirada, no vacia si esta reemplazada). Antes estas listas se limitaban a
+    # comparar, asi que declarar una divergencia obligaba a BORRAR la celda de
+    # la lista — y con ella su cobertura. Asi la celda sigue vigilada y en un
+    # solo sitio se dice por que difiere.
+    def _ancla(self, ws, oracle, celda):
+        clave = (self.HOJA if hasattr(self, "HOJA") else "Parche_PCC2_Art212", celda)
+        motivo = B.DIVERGENCIAS_DECLARADAS.get(clave)
+        if motivo:
+            assert ws[celda].value is None, f"{celda}: {motivo}"
+            return
+        reempl = B.DIVERGENCIAS_REEMPLAZADAS.get(clave)
+        if reempl:
+            assert ws[celda].value is not None, f"{celda}: {reempl}"
+            return
+        assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
+
+    ANCLAS_T2 = ("A1", "A2", "D5", "D6", "D48", "E48", "D59", "E59",
+                 "D68", "D69", "D73", "D47", "E47", "D61")
 
     def test_anclas_de_la_tarea_2(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_T2:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
+
+    # --- Fase 1: compuerta de elegibilidad (Paso 1, 212-1/212-2) -------------
+    # Bloque nuevo en el anexo de pasos del flujo (filas 134+), fuera del rango
+    # 1-129 del oracle: se fija por cadena aqui (Regla n.1: trazado a Art. 212 y
+    # al flujo aprobado del ingeniero), no contra el oracle Rev0.
+    # F90 evoluciona por fases; esta es su forma vigente. Fase 1 antepuso la
+    # compuerta de elegibilidad; Fase 4 anadio los dos topes de filete (F161,
+    # F162) al AND de las verificaciones.
+    F90_CON_ELEGIBILIDAD = (
+        '=IF(OR(LEFT($D$140,9)="PROHIBIDO",LEFT($D$140,11)="NO ELEGIBLE",'
+        'LEFT($D$140,16)="FUERA DE ALCANCE"),$D$140,'
+        'IF(OR($D$58="SIN MATERIAL SELECCIONADO",'
+        '$E$58="SIN MATERIAL SELECCIONADO"),"ELIJA MATERIAL (Seccion 2)",'
+        'IF(OR($D$58<>"OK",$E$58<>"OK"),"REVISAR — MATERIAL FUERA DE RANGO",'
+        'IF(AND(F113="CUMPLE",F114="CUMPLE",F115="CUMPLE",F116="CUMPLE",'
+        'F161="CUMPLE",F162="CUMPLE"),'
+        '"APTO","REVISAR"))))')
+    D140_DICTAMEN_ELEGIBILIDAD = (
+        '=IF($D$138="Letal / extrema peligrosidad",'
+        '"PROHIBIDO — servicio letal: usar Art. 201 o reemplazo de seccion '
+        '(flujo 212 · 212-2a remite a Part 1)",'
+        'IF($D$137="No","NO ELEGIBLE — dano no caracterizable (212-2c)",'
+        'IF($D$139="Si — activa/no analizada",'
+        '"NO ELEGIBLE — grieta activa o no analizada (212-2c)",'
+        'IF($D$26>345,"FUERA DE ALCANCE — T > 345 (evaluar creep/fatiga 212-1e)",'
+        'IF($D$26<0,"REVISAR — T < 0 (evaluar tenacidad a la entalla 212-1e)",'
+        '"ELEGIBLE")))))')
+
+    def test_paso1_elegibilidad(self):
+        ws = self._construir()
+        # Banda del bloque nuevo.
+        assert str(ws["A134"].value).startswith("PASO 1"), ws["A134"].value
+        # Cuatro entradas categoricas sembradas con el caso precargado.
+        assert ws["D136"].value == "Adelgazamiento local"
+        assert ws["D137"].value == "Si"
+        assert ws["D138"].value == "General"
+        assert ws["D139"].value == "No"
+        # Dictamen de elegibilidad y F90 con la compuerta antepuesta.
+        assert ws["D140"].value == self.D140_DICTAMEN_ELEGIBILIDAD, "D140"
+        assert ws["F119"].value == self.F90_CON_ELEGIBILIDAD, "F119"
+        # Las cuatro entradas llevan validacion de lista (no se teclean libres).
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        for celda, contiene in (("D136", "Adelgazamiento"), ("D137", "Si,No"),
+                                ("D138", "Letal"), ("D139", "arrestada")):
+            assert celda in origen, f"{celda} sin validacion"
+            assert contiene in origen[celda], f"{celda}: {origen[celda]!r}"
+
+    # --- Fase 2: cargas de presion y externas combinadas (Paso 2, 212-3.2) ---
+    # ec.(1) F_CP=P*Dm/2 [29], ec.(2) F_LP=P*Dm/4 [33/Fase 0.1], F_C=F_CP+F_CO
+    # [37], F_L=F_LP+F_LO [39], F_max=MAX(F_C,F_L); esfera/cabezal (D11=3) ->
+    # hand-off 212-3.2(c) [44], F_max=NA(). Bloque nuevo del anexo (filas 142+),
+    # pura adicion: no toca ninguna celda del oracle.
+    def test_paso2_cargas(self):
+        ws = self._construir()
+        assert str(ws["A142"].value).startswith("PASO 2"), ws["A142"].value
+        # Entradas de cargas externas (un valor cada una, aplican a los 2 casos).
+        assert ws["D144"].value == 0
+        assert ws["D145"].value == 0
+        # Fuerzas de presion por caso (Operacion D / Diseno E). La Fase 2 retiro
+        # la tercera columna: ver TestModeloDePresionDosCasos.
+        assert ws["D146"].value == "=D91*$D$81/2", "F_CP Op"
+        assert ws["E146"].value == "=E91*$D$81/2", "F_CP Dis"
+        assert ws["D147"].value == "=D91*$D$81/4", "F_LP Op"
+        # Totales y gobernante.
+        assert ws["D148"].value == "=D146+$D$144", "F_C Op"
+        assert ws["D149"].value == "=D147+$D$145", "F_L Op"
+        assert ws["D150"].value == "=IF($D$11=3,NA(),MAX(D148,D149))", "F_max Op"
+        assert ws["E150"].value == "=IF($D$11=3,NA(),MAX(E148,E149))", "F_max Dis"
+
+    # --- Fase 3: proximidad a discontinuidades (Paso 3, 212-3.3) -------------
+    # L_min = 2*sqrt(Rm*t) (ec.3, ya en D73). Nuevo: 3C distancia a parches
+    # adyacentes [51] y nota de esquinas redondeadas (R_min=75 mm, del flujo).
+    def test_paso3_discontinuidad(self):
+        ws = self._construir()
+        assert str(ws["A153"].value).startswith("PASO 3"), ws["A153"].value
+        assert ws["D156"].value == (
+            '=IF($D$155="","No aplica (sin parche adyacente)",'
+            'IF($D$155>=$D$102,"OK","< L_min — reubicar (212-3.3)"))'), "D156"
+        # La nota de esquinas cita el 75 mm (recomendacion del flujo).
+        assert "75" in str(ws["D157"].value), ws["D157"].value
+
+    # --- Fase 4: filete perimetral con topes (Paso 4, 212-3.4) ---------------
+    # w_min pasa a F_max (ec.4, E=0.55, bloques [57],[59]); topes NOTA [60]:
+    # w <= min(T,t) y w <= 40 mm; ambos entran al AND de F90.
+    def test_paso4_filete(self):
+        ws = self._construir()
+        # w_min (D64:E64) recablea a F_max (D150:E150), no F_m (D63). La
+        # columna F se retiro en la Fase 2 (modelo de presion de dos casos).
+        assert ws["D93"].value == "=D150/($D$71*$D$70)", "D93"
+        # Bloque de topes.
+        assert str(ws["A159"].value).startswith("PASO 4"), ws["A159"].value
+        assert ws["D161"].value == "=MIN($D$30,$D$22)", "D161 req"
+        assert ws["E161"].value == "=$D$33", "E161 adoptado"
+        assert ws["F161"].value == (
+            '=IF(E161<=D161,"CUMPLE",'
+            '"NO CUMPLE — excede espesor menor (NOTA 212-3.4)")'), "F161"
+        assert ws["F162"].value == (
+            '=IF(E162<=D162,"CUMPLE","NO CUMPLE — excede el tope de la NOTA 212-3.4")'), "F162"
+        assert ws["D162"].value == '=IF($D$15="SI",40,1.5)', "D162"
+
+    # --- Fase 5: excentricidad literal con separacion g (Paso 5, 212-3.4c) ---
+    # e = (T+t+g)/2 con g anadida si g>=1.5 (212-4c [82], g = fit-up del faying
+    # edge, entrada nueva D167, distinta de la luz radial D31). S_w literal de
+    # la ec.(5) [65,67]: P*Dm/(2T) + 3*P*Dm*e/T^2, NA en esfera (D11=3). Para
+    # cilindro sin g el valor no cambia (el S_w anterior con kf=0.5 ya era la
+    # ec.5); el cambio real es esfera->NA y el mecanismo de g.
+    def test_paso5_excentricidad(self):
+        ws = self._construir()
+        assert str(ws["A165"].value).startswith("PASO 5"), ws["A165"].value
+        assert ws["D167"].value == 0, "g default 0 (fit-up ajustado)"
+        # El umbral de 212-4c se lee del codigo en sus dos unidades (Fase 7).
+        assert ws["D84"].value == (
+            '=($D$30+$D$22+IF($D$167>=IF($D$15="SI",1.5,0.0625),'
+            '$D$167,0))/2'), "D84 e con g"
+        assert ws["D86"].value == (
+            "=IF($D$11=3,NA(),$D$81/(2*$D$30)*(1+6*$D$84/$D$30))"), "D57 C_sw"
+        assert ws["D95"].value == (
+            "=IF($D$11=3,NA(),D91*$D$81/(2*$D$30))"), "D66 membrana"
+        assert ws["D96"].value == (
+            "=IF($D$11=3,NA(),3*D91*$D$81*$D$84/$D$30^2)"), "D67 flexion"
+        assert ws["E96"].value == (
+            "=IF($D$11=3,NA(),3*E91*$D$81*$D$84/$D$30^2)"), "E67 flexion Dis"
+
+    # --- Fase 6: conformado en frio simple/doble (Paso 6, 212-3.5) -----------
+    # %Elong = coef*T/Rf*(1-Rf/Ro), coef=75 doble (esfera/cabezal, ec.6 [71]) o
+    # 50 simple (cilindro, ec.7 [75]); Ro=infinito (plano) -> factor=1 [73].
+    def test_paso6_conformado(self):
+        ws = self._construir()
+        assert str(ws["A170"].value).startswith("PASO 6"), ws["A170"].value
+        assert ws["D172"].value == "", "Ro default blanco (plano)"
+        assert ws["D106"].value == (
+            '=IF($D$11=3,75,50)*$D$30/$D$85*IF($D$172="",1,1-$D$85/$D$172)'), "D106"
+
+    # --- Fase 7: fabricacion (Paso 7, 212-4) — avisos ------------------------
+    # Aviso de separacion (g>5 no admisible, g>=1.5 -> e incluye g, 212-4c),
+    # aviso MT/PT si T_parche>25 mm (212-4a), y notas de fabricacion (secuencia,
+    # prep 40 mm, corte termico, venteo). Aditivo: no toca oracle ni F90.
+    def test_paso7_fabricacion(self):
+        ws = self._construir()
+        assert str(ws["A175"].value).startswith("PASO 7"), ws["A175"].value
+        # El texto ya no cita "5 mm" ni "1.5 mm" a secas: en modo US esa cifra
+        # seria falsa, y un aviso que miente sobre su propio umbral es peor que
+        # ninguno. Los dos umbrales salen del codigo en sus dos unidades.
+        assert ws["D177"].value == (
+            '=IF($D$167>IF($D$15="SI",5,0.1875),'
+            '"SEPARACION sobre el maximo de 212-4c: fit-up no admisible",'
+            'IF($D$167>=IF($D$15="SI",1.5,0.0625),'
+            '"g en o sobre el minimo de 212-4c: e incluye g — ver Paso 5",'
+            '"fit-up ajustado (g por debajo del minimo)"))'), "D177"
+        assert ws["D178"].value == (
+            '=IF($D$30>IF($D$15="SI",25,1),"Plancha por encima del espesor de '
+            '212-4: examinar bordes de preparacion por MT/PT (laminaciones), '
+            '212-4a","Plancha por debajo de ese espesor: sin examen de bordes")'), "D178"
+        assert "40 mm" in str(ws["D179"].value), ws["D179"].value
+
+    # --- Fase 8: NDE y prueba de hermeticidad (Paso 8, 212-5/6 + App.501) ----
+    # Selector hidro/neumatica; en neumatica E (II-1 general en k), TNT (II-3),
+    # R (III-1). Constantes leidas de resources/ (Fase 0.2, aqui via stub).
+    def test_paso8_prueba(self):
+        ws = self._construir()
+        assert str(ws["A181"].value).startswith("PASO 8"), ws["A181"].value
+        assert ws["D183"].value == "Hidrostatica", "default hidrostatica"
+        assert ws["D188"].value == 20.0, "Rscaled default 20"
+        # Fase 7: los coeficientes del App. 501 conmutan de EDICION. Ninguno se
+        # convierte: la (II-5) trae su propio divisor de TNT y la 501-III-1 su
+        # propio umbral y distancia, y los dos estan en resources/.
+        assert ws["D189"].value == (
+            '=IF($D$183="Neumatica",(1/($D$187-1))*'
+            '($D$185*IF($D$15="SI",1000000,144))*$D$184*'
+            '(1-($D$186/$D$185)^(($D$187-1)/$D$187)),NA())'), "D189 E"
+        assert ws["D190"].value == (
+            '=IF($D$183="Neumatica",$D$189/'
+            'IF($D$15="SI",4266920,1488617),NA())'), "D190 TNT"
+        assert ws["D191"].value == (
+            '=IF($D$183="Neumatica",IF($D$189<=IF($D$15="SI",8130000,6000000),'
+            'IF($D$15="SI",30,100),$D$188*(2*$D$190)^(1/3)),NA())'), "D191 R"
+        # Selectores como lista.
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        assert "Neumatica" in origen.get("D183", ""), origen.get("D183")
+        assert origen.get("D188", "") == '"20,12,6,2"', origen.get("D188")
+
+    # --- Fase 9: simbolos con subindice real (decision 5) -------------------
+    def test_simbolos_sin_guion_bajo(self):
+        _asserta_sin_guion_bajo(self._construir())
 
     # Aplicacion y codigo de construccion (filas 10-14). Cubre TODAS las
     # celdas que el oracle declara en ese rango: A/B/C/D/G de las cinco filas
@@ -904,7 +1299,7 @@ class TestBuildParcheContraOracle:
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_3:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
 
     # Seccion 1, datos de entrada (filas 16-35). Incluye la banda A16 (texto
     # NUEVO que reemplaza TEXTOS_HEREDADOS, pero identico al que el *oracle*
@@ -914,26 +1309,31 @@ class TestBuildParcheContraOracle:
     # (B18-B35 y C18-C35 incluidas, no solo D18-D35 + A16 + G22/G23) — mismo
     # criterio de exhaustividad que ANCLAS_SECCION_3.
     ANCLAS_SECCION_4 = (
-        "A16",
-        "A17", "B17", "C17", "D17", "G17",
+        "A17",
         "A18", "B18", "C18", "D18", "G18",
         "A19", "B19", "C19", "D19", "G19",
         "A20", "B20", "C20", "D20", "G20",
         "A21", "B21", "C21", "D21", "G21",
         "A22", "B22", "C22", "D22", "G22",
         "A23", "B23", "C23", "D23", "G23",
-        "A24", "B24", "C24", "D24",
-        "A25", "B25", "C25", "D25", "G25",
+        "A24", "B24", "C24", "D24", "G24",
+        "A25", "B25", "C25", "D25",
         "A26", "B26", "C26", "D26", "G26",
         "A27", "B27", "C27", "D27", "G27",
-        "A28", "B28", "C28", "D28", "G28",
-        "A29", "B29", "C29", "D29", "G29",
+        # Fase 2: la fila 27 ("Presion de diseno tipica") se RETIRO entera y
+        # A28/B28/G28 se reescriben ("Presion de diseno (maxima admisible /
+        # rating)", simbolo P_dis). Salen del ancla contra el oracle: las
+        # primeras estan en DIVERGENCIAS_DECLARADAS y las segundas en
+        # DIVERGENCIAS_REEMPLAZADAS. Su forma nueva la fija
+        # TestModeloDePresionDosCasos. C28/D28 (unidad y valor) no cambian.
+        "C29", "D29",
         "A30", "B30", "C30", "D30", "G30",
         "A31", "B31", "C31", "D31", "G31",
         "A32", "B32", "C32", "D32", "G32",
         "A33", "B33", "C33", "D33", "G33",
         "A34", "B34", "C34", "D34", "G34",
         "A35", "B35", "C35", "D35", "G35",
+        "A36", "B36", "C36", "D36", "G36",
     )
 
     def test_seccion_4(self):
@@ -950,7 +1350,7 @@ class TestBuildParcheContraOracle:
             if ("Parche_PCC2_Art212", celda) in B.DIVERGENCIAS_REEMPLAZADAS:
                 assert ws[celda].value is not None, celda
                 continue
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            assert _plano(ws[celda].value) == oracle["formulas"][celda], celda
 
     # Seccion 2, esfuerzos admisibles y factores (filas 39-48). Incluye la
     # banda A37 (fusionada A37:G37, "PARAMETROS DE CALCULO (constantes -
@@ -964,25 +1364,25 @@ class TestBuildParcheContraOracle:
     # para que esta seccion quede completa por si sola — redundante pero
     # correcto.
     ANCLAS_SECCION_5 = (
-        "A37",
-        "A38", "B38", "C38", "D38", "G38",
-        "A39", "B39", "C39", "D39", "G39",
-        "A40", "B40", "C40", "D40", "G40",
-        "A41", "B41", "C41", "D41", "G41",
-        "A42", "B42", "C42", "D42", "G42",
-        "A43", "B43", "C43", "D43", "G43",
-        "A44", "B44", "C44", "D44", "G44",
-        "A45", "B45", "C45", "D45",
-        "A46", "B46", "C46", "D46", "G46",
-        "A47", "B47", "C47", "D47", "G47",
-        "A48", "B48", "C48", "D48", "G48",
+        "A66",
+        "A67", "B67", "C67", "D67", "G67",
+        "A68", "B68", "C68", "D68", "G68",
+        "A69", "B69", "C69", "D69", "G69",
+        "A70", "B70", "C70", "D70", "G70",
+        "A71", "B71", "C71", "D71", "G71",
+        "A72", "B72", "C72", "D72", "G72",
+        "A73", "B73", "C73", "D73", "G73",
+        "A74", "B74", "C74", "D74",
+        "A75", "B75", "C75", "D75", "G75",
+        "A76", "B76", "C76", "D76", "G76",
+        "A77", "B77", "C77", "D77", "G77",
     )
 
     def test_seccion_5(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_5:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
 
     # Geometria y propiedades derivadas (filas 52-57). Incluye la banda A50
     # (fusionada A50:G50, "2.  GEOMETRIA Y PROPIEDADES DERIVADAS", con el
@@ -995,21 +1395,24 @@ class TestBuildParcheContraOracle:
     # exhaustividad que ANCLAS_SECCION_3/4/5. El *oracle* no declara ninguna
     # validacion de datos en este rango.
     ANCLAS_SECCION_6 = (
-        "A50",
-        "A51", "B51", "C51", "D51", "G51",
-        "A52", "B52", "C52", "D52", "G52",
-        "A53", "B53", "C53", "D53", "G53",
-        "A54", "B54", "C54", "D54", "G54",
-        "A55", "B55", "C55", "D55", "G55",
-        "A56", "B56", "C56", "D56", "G56",
-        "A57", "B57", "C57", "D57", "G57",
+        "A79",
+        "A80", "B80", "C80", "D80", "G80",
+        "A81", "B81", "C81", "D81", "G81",
+        "A82", "B82", "C82", "D82", "G82",
+        "A83", "B83", "C83", "D83", "G83",
+        # D55 (e) y D57 (C_sw) salen del oracle: la Fase 5 les anade la
+        # separacion g y las pasa a la forma literal de cilindro con NA en
+        # esfera. Su forma nueva la fija test_paso5_excentricidad.
+        "A84", "B84", "C84", "G84",
+        "A85", "B85", "C85", "D85", "G85",
+        "A86", "B86", "C86", "G86",
     )
 
     def test_seccion_6(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_6:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
 
     # Seccion 3, calculo de cargas y soldadura (filas 61-69), mas Seccion 4,
     # resultados del diseno (filas 73-80). Nombrado distinto de
@@ -1028,34 +1431,48 @@ class TestBuildParcheContraOracle:
     # no traen B). La fila 58 y la fila 70 no aparecen en el *oracle* (ni
     # formula, ni fusionado, ni validacion): quedan vacias, sin ancla.
     ANCLAS_FILAS_61_80 = (
-        "A59",
-        "A60", "B60", "C60", "D60", "E60", "F60", "G60",
-        "A61", "B61", "C61", "D61", "E61", "F61", "G61",
-        "A62", "B62", "C62", "D62", "E62", "F62", "G62",
-        "A63", "B63", "C63", "D63", "E63", "F63", "G63",
-        "A64", "B64", "C64", "D64", "E64", "F64", "G64",
-        "A65", "B65", "C65", "D65", "E65", "F65", "G65",
-        "A66", "B66", "C66", "D66", "E66", "F66", "G66",
-        "A67", "B67", "C67", "D67", "E67", "F67", "G67",
-        "A68", "B68", "C68", "D68", "E68", "F68", "G68",
-        "A69", "C69", "D69", "E69", "F69", "G69",
-        "A71",
-        "A72", "B72", "C72", "D72", "G72",
-        "A73", "B73", "C73", "D73", "G73",
-        "A74", "B74", "C74", "D74", "G74",
-        "A75", "B75", "C75", "D75",
-        "A76", "C76", "D76", "G76",
-        "A77", "C77", "D77", "G77",
-        "A78", "B78", "C78", "D78", "G78",
-        "A79", "C79", "D79", "G79",
-        "A80", "C80", "D80", "G80",
+        "A88",
+        # Fase 2: la columna F (caso "Envolvente") se RETIRO de las filas 60-69
+        # y E60/E61 cambian de contenido (E pasa a ser "Diseno" leyendo D28).
+        # Las tres salen del ancla contra el oracle: F* esta en
+        # DIVERGENCIAS_DECLARADAS y E60/E61 en DIVERGENCIAS_REEMPLAZADAS, y su
+        # forma nueva la fija TestModeloDePresionDosCasos.
+        "A89", "B89", "C89", "D89", "G89",
+        "A90", "B90", "C90", "D90", "G90",
+        "A91", "B91", "C91", "D91", "E91", "G91",
+        "A92", "B92", "C92", "D92", "E92", "G92",
+        # D64/E64 (w_min) salen del oracle: la Fase 4 los recablea a F_max
+        # (D150) en vez de F_m (D63). Su forma nueva la fija test_paso4_filete y
+        # su divergencia se declara en DIVERGENCIAS_REEMPLAZADAS. A/B/C/G64
+        # (rotulo, simbolo, unidad, referencia) siguen anclados al oracle.
+        "A93", "B93", "C93", "G93",
+        "A94", "B94", "C94", "D94", "E94", "G94",
+        # D66/D67 (componentes membrana y flexion de S_w) salen del oracle: la
+        # Fase 5 los pasa a la forma literal de la ec.(5) (P*Dm directa, no via
+        # F_m) con NA en esfera. D68 = D66+D67 no cambia de formula (propaga NA).
+        "A95", "B95", "C95", "G95",
+        "A96", "B96", "C96", "G96",
+        "A97", "B97", "C97", "D97", "E97", "G97",
+        "A98", "C98", "D98", "E98", "G98",
+        "A100",
+        "A101", "B101", "C101", "D101", "G101",
+        "A102", "B102", "C102", "D102", "G102",
+        "A103", "B103", "C103", "D103", "G103",
+        "A104", "B104", "C104", "D104",
+        "A105", "C105", "D105", "G105",
+        # D77 (%Elong) sale del oracle: la Fase 6 le anade la rama simple/doble
+        # (coef 50/75) y el factor (1-Rf/Ro). Lo fija test_paso6_conformado.
+        "A106", "C106", "G106",
+        "A107", "B107", "C107", "D107", "G107",
+        "A108", "C108", "D108", "G108",
+        "A109", "C109", "D109", "G109",
     )
 
     def test_filas_61_80(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_FILAS_61_80:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
 
     # Cubre la Seccion 5 (verificaciones, filas 82-90), la Seccion 6
     # (especificaciones tecnicas, filas 93-99), el aviso fijo (fila 101) y
@@ -1065,38 +1482,567 @@ class TestBuildParcheContraOracle:
     # Incluye tambien la banda A82 y el encabezado de fila 83 (preceden el
     # rango 84-90 y titulan esta seccion, no una anterior) y la banda A92
     # (precede el rango 93-99; esta seccion no tiene fila de encabezado
-    # propia — el *oracle* no la declara). F90 ya lo cubre
-    # test_anclas_de_la_tarea_2; se repite aqui para que la seccion quede
-    # completa por si sola.
+    # propia — el *oracle* no la declara). F90 NO se ancla contra el oracle:
+    # la Fase 1 lo reescribio (compuerta de elegibilidad) y lo fija
+    # test_paso1_elegibilidad; aqui solo se comprueba su rotulo A90.
     ANCLAS_SECCION_8 = (
         "A4", "A5", "D5", "G5", "A6", "D6", "G6",
         "A8",
         "A9", "B9", "C9", "D9", "G9",
-        "A82",
-        "A83", "D83", "E83", "F83", "G83",
-        "A84", "D84", "E84", "F84", "G84",
-        "A85", "D85", "E85", "F85", "G85",
-        "A86", "D86", "E86", "F86", "G86",
-        "A87", "D87", "E87", "F87", "G87",
-        "A88", "D88", "E88", "F88", "G88",
-        "A89", "D89", "E89", "F89", "G89",
-        "A90", "F90",
-        "A92",
-        "A93", "B93",
-        "A94", "B94",
-        "A95", "B95",
-        "A96", "B96",
-        "A97", "B97",
-        "A98", "B98",
-        "A99", "B99",
-        "A101",
+        "A111",
+        "A112", "D112", "E112", "F112", "G112",
+        # Fase 2: D84 (MAX sobre dos casos) y G84 (rotulo "diseno") salen
+        # del ancla; su forma la fija TestModeloDePresionDosCasos.
+        "A113", "E113", "F113",
+        "A114", "D114", "E114", "F114", "G114",
+        "A115", "D115", "E115", "F115", "G115",
+        # Fase 2: A87/D87 pasan del caso "envolvente" al caso "diseno".
+        "E116", "F116", "G116",
+        "A117", "D117", "E117", "F117", "G117",
+        # Fase 2: E89 lee D28 (diseno maxima admisible) en vez de D27.
+        "A118", "D118", "F118", "G118",
+        "A119",
+        "A121",
+        "A122", "B122",
+        "A123", "B123",
+        "A124", "B124",
+        "A125", "B125",
+        "A126", "B126",
+        "A127", "B127",
+        # Fase 2: B99 calcula la presion de prueba sobre D28 (diseno
+        # maxima admisible) en vez de D27, retirada. Lo fija
+        # TestModeloDePresionDosCasos.
+        "A128",
+        "A130",
     )
 
     def test_seccion_8(self):
         oracle = cargar_oracle_parche()
         ws = self._construir()
         for celda in self.ANCLAS_SECCION_8:
-            assert ws[celda].value == oracle["formulas"][celda], celda
+            self._ancla(ws, oracle, celda)
+
+    # --- Fase 2: el modelo de presion pasa de tres casos a dos --------------
+    # Lo que el oracle Rev0 ya no cubre. 212-3.2 define una UNICA
+    # P = "internal design pressure" para las ec. (1)/(2) y 206-3.3 la nombra
+    # "maximum allowable design pressure": el "diseno tipico" intermedio no lo
+    # publica ningun codigo y competia con la maxima admisible por gobernar el
+    # t_req. Se retira la fila 27 y la columna F de la tabla de cargas; el caso
+    # que sobrevive es el MAS conservador, ahora en la columna E.
+    def test_la_fila_del_diseno_tipico_esta_retirada(self):
+        ws = self._construir()
+        for celda in ("A28", "B28", "C28", "D28", "G28"):
+            assert ws[celda].value is None, f"{celda} deberia estar vacia"
+
+    def test_la_presion_de_diseno_es_la_maxima_admisible(self):
+        ws = self._construir()
+        assert ws["A29"].value == "Presión de diseño (máxima admisible / rating)"
+        assert _plano(ws["B29"].value) == "Pdis", ws["B29"].value
+        assert ws["D29"].value == 20
+        # encabezado() del 212 escribe el rotulo LITERAL (no pasa por .upper():
+        # el oracle Rev0 trae mayus/minus mixtas en esta tabla).
+        assert ws["E89"].value == "Diseño", ws["E89"].value
+        assert ws["E90"].value == "=$D$29", ws["E90"].value
+
+    def test_la_columna_envolvente_esta_retirada(self):
+        """La tabla de cargas (60-69) y el Paso 2 (143-150) quedan en DOS
+        columnas de valor. Si quedara una celda suelta en F, la hoja mostraria
+        una tercera columna a medio calcular."""
+        ws = self._construir()
+        for fila in list(range(60, 70)) + list(range(143, 151)):
+            assert ws[f"F{fila}"].value is None, f"F{fila}: {ws[f'F{fila}'].value}"
+
+    def test_las_verificaciones_leen_el_caso_de_diseno(self):
+        """El t_req y el filete gobernantes se toman del caso de diseno (E),
+        que es la presion maxima admisible. Antes se tomaban de la columna
+        'Envolvente' (F), que era ese mismo concepto con otro nombre: el valor
+        no cambia, pero la hoja ya no declara un rango que no existe."""
+        ws = self._construir()
+        assert ws["D113"].value == "=MAX(D93:E93)", ws["D113"].value
+        assert ws["D116"].value == "=E94", ws["D116"].value
+        assert ws["E118"].value == "=$D$29", ws["E118"].value
+        # La presion de prueba hidrostatica sale de la misma presion de diseno.
+        # D75 es el factor de prueba hidrostatica tras la Fase 7 (era D46). La
+        # Fase 9 se llevo esa fila a Espec_PCC2_Art212, asi que se comprueba
+        # donde vive ahora: la formula sigue leyendo las dos celdas del motor.
+        assert ws["B128"].value is None, ws["B128"].value
+        espec = [f for _, f, _ in self._filas_espec_212()
+                 if isinstance(f, str) and "$D$75" in f]
+        assert espec and all(
+            f"{B.MOTOR}!$D$75*{B.MOTOR}!$D$29" in f for f in espec), espec
+
+    @staticmethod
+    def _filas_espec_212():
+        """Las filas de Espec_PCC2_Art212 tal como las declara el builder."""
+        import openpyxl as _op
+        wb = _op.Workbook()
+        B.build_especificaciones_art212(wb)
+        ws = wb[B.ESPEC_212]
+        return [(ws.cell(r, 1).value, ws.cell(r, 2).value, ws.cell(r, 7).value)
+                for r in range(1, ws.max_row + 1)]
+
+
+class TestColumnasOcultasApuntanBien:
+    """Las columnas ocultas NO se mueven con el remapeo, pero SI apuntan a las
+    que si. Ahi viven las listas de cascada materializadas y las auxiliares de
+    resolucion, y su clave es literalmente `=$D$42&"|"&$D$43&...`.
+
+    Esta prueba existe porque el fallo ya ocurrio: la Fase 3 movio la tabla y
+    dejo esas formulas apuntando a las filas de antes. La cascada dejo de
+    resolver **en silencio**, y ni `pytest` ni `verificar.py` lo vieron — porque
+    el caso semilla resuelve su material por la celda 'Variante', que es
+    precisamente una via de escape de la cascada. Todo lo que se comprobaba
+    pasaba por esa via, asi que la via rota no la ejercia nadie.
+    """
+
+    @pytest.mark.parametrize("hoja", ["Parche_PCC2_Art212", "Collar_PCC2_Art206"])
+    def test_ninguna_oculta_apunta_a_una_fila_vacia(self, wb, hoja):
+        ws = wb[hoja]
+        # Filas de la tabla que tienen contenido real en A..G.
+        con_contenido = {r for r in range(1, ws.max_row + 1)
+                         if any(ws.cell(r, c).value is not None
+                                for c in range(1, B.MOTOR_NCOLS + 1))}
+        rotas = []
+        for fila in ws.iter_rows(min_col=B.MOTOR_NCOLS + 1):
+            for c in fila:
+                if not (isinstance(c.value, str) and c.value.startswith("=")):
+                    continue
+                # Se usa la MISMA funcion que alimenta al remapeo, no una
+                # regex propia: si la auditoria mirase un conjunto de
+                # referencias y el remapeo moviese otro, esta prueba daria una
+                # confianza falsa justo donde mas cara sale.
+                for col, destino in B.refs_propias(c.value):
+                    if destino not in con_contenido:
+                        rotas.append((c.coordinate, f"{col}{destino}"))
+        assert rotas == [], f"{hoja}: refs a filas vacias {rotas[:12]}"
+
+
+class TestSemaforoDeAceptacion:
+    """Fase 6: verde/rojo en la columna de Resultado y dictamen global en bloque.
+
+    En un motor de calculo el criterio de aceptacion es informacion de
+    seguridad: la diferencia entre cumple y no cumple tiene que leerse sin
+    leerse. El rojo aparece aqui como relleno por primera vez fuera del aviso de
+    macros, con el mismo significado que tiene en todo el libro: bloqueado.
+    """
+
+    CASOS = [("Parche_PCC2_Art212", B.SEMAFORO_212, B.FILA_DICTAMEN_212),
+             ("Collar_PCC2_Art206", B.SEMAFORO_206, B.FILA_DICTAMEN_206)]
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_texto_favorable_existe_en_la_formula(self, wb, hoja, tabla, fila_dict):
+        """El fallo silencioso mas probable de esta fase: que el texto que la
+        regla considera favorable no sea LETRA POR LETRA el que escribe la
+        formula. Una raya larga distinta basta para que no case nunca, y nadie
+        se enteraria — la celda saldria roja siempre, que parece un resultado.
+        """
+        ws = wb[hoja]
+        for fila, favorables in tabla.items():
+            formula = str(ws.cell(fila, 6).value)
+            for texto in favorables:
+                assert f'"{texto}"' in formula, f"{hoja}!F{fila}: {texto!r}"
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_cada_resultado_tiene_sus_dos_reglas(self, wb, hoja, tabla, fila_dict):
+        ws = wb[hoja]
+        por_rango = {}
+        for rango in ws.conditional_formatting:
+            for r in rango.rules:
+                if r.dxf is not None and r.dxf.fill is not None:
+                    por_rango.setdefault(str(rango.sqref), []).append(
+                        _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)))
+        for fila in tabla:
+            colores = por_rango.get(f"F{fila}")
+            assert colores == [B.VERDE, B.ROJO], f"{hoja}!F{fila}: {colores}"
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_rojo_se_pinta_por_COMPLEMENTO(self, wb, hoja, tabla, fila_dict):
+        """La regla roja es 'no es ninguno de los favorables', no una lista de
+        textos malos. Asi un #N/A o un texto que nadie previo sale en ROJO, que
+        es el lado seguro; enumerar lo malo dejaria lo imprevisto en blanco,
+        indistinguible de 'aun no calculado'."""
+        ws = wb[hoja]
+        for rango in ws.conditional_formatting:
+            if not str(rango.sqref).startswith("F"):
+                continue
+            for r in rango.rules:
+                if (r.dxf is not None and r.dxf.fill is not None
+                        and _rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)) == B.ROJO):
+                    assert "NOT(" in str(r.formula[0]), str(rango.sqref)
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_el_dictamen_global_es_un_bloque_propio(self, wb, hoja, tabla, fila_dict):
+        ws = wb[hoja]
+        assert "DICTAMEN GLOBAL" in str(ws.cell(fila_dict, 1).value), hoja
+        # Banda de tinta a todo el ancho, en macrotipografia grande. La cola de
+        # un rango fusionado se salta: Excel pinta todo el rango con el relleno
+        # de la celda ANCLA, y openpyxl ni siquiera deja asignarselo (lo mismo
+        # pasa en las demas bandas del libro — ver franja() en el builder, que
+        # recorre el rango justamente porque el BORDE si necesita ponerse celda
+        # a celda y el relleno no).
+        for col in range(1, B.MOTOR_NCOLS + 1):
+            c = ws.cell(fila_dict, col)
+            if isinstance(c, openpyxl.cell.cell.MergedCell):
+                assert c.border.top.style == "thick", c.coordinate
+                continue
+            assert _rgb6(getattr(c.fill.fgColor, "rgb", None)) == B.TINTA, c.coordinate
+        # La franja roja de arriba separa el dictamen de la tabla: es el limite
+        # duro entre dos zonas, dibujado y no insinuado.
+        assert ws.cell(fila_dict, 1).border.top.style == "thick", hoja
+        assert ws.cell(fila_dict, 1).font.name == B.MACRO
+        assert ws.cell(fila_dict, 1).font.size >= 16
+        assert ws.row_dimensions[fila_dict].height >= 20
+
+    @pytest.mark.parametrize("hoja,tabla,fila_dict", CASOS)
+    def test_elija_material_va_en_ambar_no_en_rojo(self, wb, hoja, tabla, fila_dict):
+        """Falta una entrada, no falla una verificacion. Pintarlo de rojo
+        confundiria 'aun no has elegido' con 'no cumple'."""
+        ws = wb[hoja]
+        rango = f"A{fila_dict}:G{fila_dict}"
+        reglas = [r for rg in ws.conditional_formatting if str(rg.sqref) == rango
+                  for r in rg.rules if r.dxf is not None and r.dxf.fill is not None]
+        colores = {_rgb6(getattr(r.dxf.fill.fgColor, "rgb", None)): str(r.formula[0])
+                   for r in reglas}
+        assert set(colores) == {B.VERDE, B.AMBAR, B.ROJO}, f"{hoja}: {set(colores)}"
+        assert "ELIJA MATERIAL" in colores[B.AMBAR], hoja
+        assert "APTO" in colores[B.VERDE], hoja
+
+
+class TestReglasDeComentario:
+    """Fase 5: donde va un comentario y donde no.
+
+    Antes casi toda fila llevaba el MISMO texto en el rotulo y en la celda de
+    valor. Duplicar no informa: el ingeniero pasa el raton por la celda que esta
+    mirando y un globo repetido solo tapa la hoja.
+    """
+
+    CASOS = [("Parche_PCC2_Art212", B.REGLAS_COMENTARIO_212),
+             ("Collar_PCC2_Art206", B.REGLAS_COMENTARIO_206)]
+
+    @pytest.mark.parametrize("hoja,reglas", CASOS)
+    def test_ninguna_columna_lleva_comentario_de_mas(self, wb, hoja, reglas):
+        ws = wb[hoja]
+        sobran = []
+        for ini, fin, cols, _fuente in reglas:
+            permitidas = {ord(c) - 64 for c in cols}
+            for fila in range(ini, fin + 1):
+                for col in range(1, B.MOTOR_NCOLS + 1):
+                    c = ws.cell(fila, col)
+                    if c.comment is not None and col not in permitidas:
+                        sobran.append(c.coordinate)
+        assert sobran == [], f"{hoja}: {sobran}"
+
+    @pytest.mark.parametrize("hoja,reglas", CASOS)
+    def test_las_columnas_obligadas_lo_llevan(self, wb, hoja, reglas):
+        """Y solo se exige donde hay algo escrito: una seccion de una sola
+        columna de valor (el 206) usa la misma regla que una de dos (el 212)
+        sin fabricar globos sobre celdas vacias."""
+        ws = wb[hoja]
+        faltan = []
+        for ini, fin, cols, _fuente in reglas:
+            for fila in range(ini, fin + 1):
+                if not any(ws.cell(fila, c).comment is not None
+                           for c in range(1, B.MOTOR_NCOLS + 1)):
+                    continue        # fila sin explicacion: no se inventa una
+                for letra in cols:
+                    c = ws.cell(fila, ord(letra) - 64)
+                    if c.value is not None and c.comment is None:
+                        faltan.append(c.coordinate)
+        assert faltan == [], f"{hoja}: {faltan}"
+
+    def test_las_verificaciones_explican_tambien_el_resultado(self, wb):
+        """La columna de Resultado es la que se lee para decidir, asi que lleva
+        comentario propio.
+
+        No se exige que diga "CUMPLE": dos de las seis verificaciones del 212 no
+        resuelven en CUMPLE/NO CUMPLE sino en una RUTA ("Refuerzo 360" frente a
+        "Parche local"; "OK - parche" frente a "Migrar (Art.206)"). Lo que si se
+        exige es que el globo del Resultado NO sea el mismo que el del Requerido:
+        si lo fuera, la columna que decide estaria explicada con el texto de otra.
+        """
+        for hoja, filas in (("Parche_PCC2_Art212", range(113, 119)),
+                            ("Collar_PCC2_Art206", range(85, 87))):
+            ws = wb[hoja]
+            for fila in filas:
+                res, req = ws.cell(fila, 6), ws.cell(fila, 4)
+                assert res.comment is not None, f"{hoja}!F{fila}"
+                if req.comment is not None and hoja == "Parche_PCC2_Art212":
+                    assert res.comment.text != req.comment.text, f"{hoja}!F{fila}"
+
+    def test_ninguna_banda_lleva_parentesis_explicativo(self, wb):
+        """Fase 5: fuera el parentesis aclaratorio de las bandas de seccion. La
+        cita al codigo se conserva —es normativa— pero fuera del parentesis, que
+        en el resto de la hoja significa 'aclaracion prescindible'."""
+        for hoja in ("Parche_PCC2_Art212", "Collar_PCC2_Art206"):
+            ws = wb[hoja]
+            con_parentesis = []
+            # Desde la fila 3: A1/A2 son el TITULO y el subtitulo de la hoja,
+            # y su parentesis es la cita del articulo del codigo — lo que esta
+            # fase conserva a proposito, no un aclaratorio.
+            for fila in range(3, ws.max_row + 1):
+                c = ws.cell(fila, 1)
+                # Una banda de seccion se reconoce por su relleno de tinta.
+                if (c.fill is None or not c.fill.patternType
+                        or _rgb6(getattr(c.fill.fgColor, "rgb", None)) != B.TINTA):
+                    continue
+                if isinstance(c.value, str) and "(" in c.value:
+                    con_parentesis.append((c.coordinate, c.value))
+            assert con_parentesis == [], f"{hoja}: {con_parentesis}"
+
+
+class TestDiagnosticoPlegable:
+    """Fase 4: el rastro de la resolucion de material va plegado por defecto.
+
+    Once filas de trazabilidad entre la cascada y el resultado. No se borran
+    —Regla n.1: son lo que permite auditar de donde sale el S(T)— pero abiertas
+    empujan fuera de la pantalla lo que el ingeniero vino a ver.
+    """
+
+    # (hoja, primera y ultima fila del grupo, fila del dictamen, fila del S(T))
+    BLOQUES = [("Parche_PCC2_Art212", 48, 57, 58, 59),
+               ("Collar_PCC2_Art206", 45, 54, 55, 56)]
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_el_rastro_va_agrupado_y_plegado(self, wb, hoja, ini, fin, f_dict, f_st):
+        ws = wb[hoja]
+        for r in range(ini, fin + 1):
+            dim = ws.row_dimensions[r]
+            assert dim.outline_level == 1, f"{hoja}!{r} sin agrupar"
+            assert dim.hidden, f"{hoja}!{r} deberia nacer plegada"
+        assert ws.sheet_properties.outlinePr.summaryBelow is True, hoja
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_el_dictamen_y_el_resultado_NO_se_pliegan(self, wb, hoja, ini, fin,
+                                                      f_dict, f_st):
+        """El dictamen de rango es lo que BLOQUEA el calculo. Una condicion de
+        bloqueo escondida detras de un '+' es una condicion que nadie ve."""
+        ws = wb[hoja]
+        assert str(ws.cell(f_dict, 1).value) == "Dictamen de rango", hoja
+        assert str(ws.cell(f_st, 1).value) == "S(T) resuelto", hoja
+        for r in (f_dict, f_st):
+            dim = ws.row_dimensions[r]
+            assert not dim.hidden, f"{hoja}!{r} no puede nacer plegada"
+            assert not dim.outline_level, f"{hoja}!{r} no entra en el grupo"
+
+    @pytest.mark.parametrize("hoja,ini,fin,f_dict,f_st", BLOQUES)
+    def test_nada_del_rastro_se_perdio(self, wb, hoja, ini, fin, f_dict, f_st):
+        """Plegar no es borrar: las once filas conservan su rotulo y su valor."""
+        ws = wb[hoja]
+        for r in range(ini, fin + 1):
+            assert ws.cell(r, 1).value, f"{hoja}!A{r} sin rotulo"
+            assert ws.cell(r, 4).value is not None, f"{hoja}!D{r} sin contenido"
+
+    def test_la_nota_de_cascada_no_se_repite_cinco_veces(self, wb):
+        """Decia 'Lista desplegable en cascada' en los cinco niveles. Repetir
+        la misma frase cinco veces no informa: la vuelve ruido."""
+        for hoja, ini in (("Parche_PCC2_Art212", 42), ("Collar_PCC2_Art206", 39)):
+            ws = wb[hoja]
+            notas = [str(ws.cell(r, 7).value or "") for r in range(ini, ini + 6)]
+            assert notas[0], f"{hoja}: el nivel 0 tiene que explicar la cascada"
+            assert all(not n for n in notas[1:]), f"{hoja}: {notas}"
+
+
+class TestNumeracionDeSecciones:
+    """Fase 3: la Seccion de Material sube justo detras de los datos de entrada.
+
+    Es lo unico que el *oracle* no puede vigilar —se traslado con el mismo mapa,
+    asi que casa igual de bien en el orden viejo que en el nuevo—, y es
+    precisamente lo que el ingeniero pidio: leer la hoja en el orden en que se
+    rellena. Se fija por el ORDEN de aparicion de las bandas, no solo por su
+    texto: una hoja que las numerase bien pero las dejara descolocadas pasaria
+    una prueba de texto y seguiria siendo la hoja vieja.
+    """
+
+    ORDEN_212 = (
+        (17, "1.  DATOS DE ENTRADA"),
+        (38, "2.  RESOLUCIÓN DE MATERIAL"),
+        (66, "3.  PARÁMETROS DE CÁLCULO"),
+        (79, "4.  GEOMETRÍA Y PROPIEDADES DERIVADAS"),
+        (88, "5.  CÁLCULO DE CARGAS Y SOLDADURA"),
+        (100, "6.  RESULTADOS DEL DISEÑO"),
+        (111, "7.  VERIFICACIONES"),
+        # La Fase 9 saco las especificaciones tecnicas a Espec_PCC2_Art212, y con
+        # ellas el numeral: ya no son una seccion de esta hoja. La fila se queda
+        # como LETRERO, y eso es lo que se fija aqui — si alguien la borrase, la
+        # seccion 8 desapareceria sin dejar rastro de adonde se fue.
+        (121, "ESPECIFICACIONES TÉCNICAS"),
+    )
+    ORDEN_206 = (
+        (16, "1. DATOS DE ENTRADA"),
+        (35, "2. RESOLUCION DE MATERIAL"),
+        (60, "3. PARAMETROS DE CALCULO"),
+        (68, "4. GEOMETRIA DEL SLEEVE"),
+        (74, "5. CALCULO DE ESPESOR REQUERIDO"),
+        (83, "6. VERIFICACIONES Y AVISOS"),
+    )
+
+    @pytest.mark.parametrize("hoja,orden", [("Parche_PCC2_Art212", ORDEN_212),
+                                            ("Collar_PCC2_Art206", ORDEN_206)])
+    def test_las_bandas_van_numeradas_y_en_orden(self, wb, hoja, orden):
+        ws = wb[hoja]
+        for fila, prefijo in orden:
+            texto = str(ws.cell(fila, 1).value or "")
+            # El 206 escribe sus bandas con rotulo(): "[ MAYUSCULAS // ... ]".
+            assert prefijo.upper() in texto.upper(), f"{hoja}!A{fila}: {texto!r}"
+        filas = [f for f, _ in orden]
+        assert filas == sorted(filas), "las bandas no van en orden creciente"
+
+    def test_el_material_va_pegado_a_los_datos_de_entrada(self, wb):
+        """Una sola fila en blanco entre la Seccion 1 y la de Material: si se
+        colara un bloque en medio, dejaria de leerse de un tiron."""
+        for hoja, fin_seccion1, banda_material in (("Parche_PCC2_Art212", 36, 38),
+                                                   ("Collar_PCC2_Art206", 33, 35)):
+            ws = wb[hoja]
+            hueco = ws.cell(banda_material - 1, 1).value
+            assert hueco is None, f"{hoja}!A{banda_material - 1}: {hueco!r}"
+            assert ws.cell(fin_seccion1, 1).value is not None, hoja
+
+    def test_ninguna_banda_conserva_el_numeral_viejo(self, wb):
+        """La Seccion de Material era la '7' y estaba al final. Si ese rotulo
+        sobreviviera en cualquier celda, la hoja se contradiria a si misma."""
+        for hoja in ("Parche_PCC2_Art212", "Collar_PCC2_Art206"):
+            ws = wb[hoja]
+            malas = [c.coordinate for fila in ws.iter_rows(max_col=B.MOTOR_NCOLS)
+                     for c in fila
+                     if isinstance(c.value, str)
+                     and ("7. RESOLUCION" in c.value.upper()
+                          or "SECCION 7" in c.value.upper())]
+            assert malas == [], f"{hoja}: {malas}"
+
+
+class TestBuildCollarArt206:
+    """Construye Collar_PCC2_Art206 en un wb de usar y tirar y fija por cadena
+    las formulas nuevas de los pasos del flujo (el 206 no tiene oracle: se
+    verifica por verificar.py §1-5 book-wide + §6f). Cada test_paso* traza a
+    resources/ (Regla n.1) y al flujo aprobado del ingeniero."""
+
+    def _construir(self):
+        import build_db_materiales as B
+        wb = openpyxl.Workbook()
+        for n in ("DB_B31_3", "Datos_Ref", "MAP_Factores", "DB_BPVC_IID",
+                  "DB_BPVC_IID_B", "DB_B36_10", "DB_B36_19"):
+            wb.create_sheet(n)
+        b36 = lambda sheet: {"sheet": sheet, "last_row": B.R_DATA + 9,
+                             "n_nps": 5, "max_ced": 5}
+        B.build_collar_art206(wb, b313_stub(), iid1a_stub(), iidb_stub(),
+                              fac_stub(), rangos_stub(),
+                              b36("DB_B36_10"), b36("DB_B36_19"),
+                              umbrales=UMBRALES_REALES)
+        return wb["Collar_PCC2_Art206"]
+
+    # --- Fase 1: seleccion guiada de tipo (Paso 1, 206-1 / 206-2) ------------
+    def test_paso1_seleccion_tipo(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert str(ws["A101"].value).find("PASO 1") >= 0, ws["A101"].value
+        assert ws["D103"].value == "No"  # fuga
+        assert ws["D104"].value == "No"  # axial / tasa no clara
+        assert ws["D105"].value == (
+            f'=IF(OR($D$103="Si",$D$104="Si"),"{B.TIPO_B}","{B.TIPO_A}")'), "D105"
+        assert ws["D106"].value == (
+            '=IF($D$22<>$D$105,"AVISO: el tipo elegido (D22) difiere del '
+            'recomendado por 206-1.1 (fuga/axial) — confirmar","")'), "D106"
+        # Avisos de 206-2.
+        assert ws["D107"].value == (
+            f'=IF($D$22="{B.TIPO_A}","206-2.6: evaluar corrosion bajo manga; '
+            'sellante/recubrimiento si aplica","")'), "D107"
+        assert ws["D109"].value == (
+            f'=IF(AND($D$22="{B.TIPO_B}",$D$103="Si"),"206-2.3: aislar la fuga '
+            'antes de soldar (ver 206-4.3 purga N2)","")'), "D109"
+
+    # --- Fase 2: t_req con sobreespesor de corrosion (Paso 2, 206-3.3) -------
+    def test_paso2_treq_con_ca(self):
+        ws = self._construir()
+        assert "PASO 2" in str(ws["A111"].value), ws["A111"].value
+        assert ws["D113"].value == 0, "C.A. default 0"
+        # t_req Type B suma C.A. (D113) en las dos columnas (la Fase 2 retiro la
+        # tercera; ver TestModeloDePresionDosCasos).
+        for celda in ("D78", "E78"):
+            assert str(ws[celda].value).endswith("+$D$113"), f"{celda}: {ws[celda].value}"
+        # Type A (2/3 Tp) NO lleva C.A.
+        assert "$D$113" not in str(ws["D79"].value), "D54 no debe llevar C.A."
+
+    # --- Fase 2 (UX): el modelo de presion de dos casos, tambien aqui --------
+    # 206-3.3 dimensiona contra "the maximum allowable design pressure"
+    # (resources/.../art_206.json, Regla n.1), no contra un tipico intermedio.
+    def test_modelo_de_presion_dos_casos(self):
+        ws = self._construir()
+        assert ws["D27"].value is None, "la fila del diseno tipico se retiro"
+        assert ws["E76"].value == "=$D$28", ws["E76"].value
+        for fila in (76, 77, 78):
+            assert ws[f"F{fila}"].value is None, f"F{fila}: {ws[f'F{fila}'].value}"
+        # El T_s,min gobernante de Type B pasa a leer el caso Diseno (E78).
+        assert ws["D80"].value == f'=IF($D$22="{B.TIPO_A}",$D$79,$E$78)', ws["D80"].value
+
+    # --- Fase 3: dimensiones del sleeve (Paso 3, 206-3.4) -------------------
+    def test_paso3_dimensiones(self):
+        ws = self._construir()
+        assert "PASO 3" in str(ws["A116"].value), ws["A116"].value
+        # F61 (longitud) ya existe y es correcto; el Paso 3 lo traza + nota 50 mm.
+        assert ws["D86"].value == '=MAX(IF($D$14="SI",100,4),$D$30+2*IF($D$14="SI",50,2))', "D61 L_s,min"
+        assert "50" in str(ws["D117"].value), ws["D117"].value
+
+    # --- Fase 4: cateto del filete y luz radial (Paso 4, 206-3.5 / 206-4.1) --
+    def test_paso4_filete_cateto(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert "PASO 4" in str(ws["A119"].value), ws["A119"].value
+        assert ws["D121"].value == (
+            f'=IF($D$22="{B.TIPO_B}",IF($D$29<=1.4*$D$21,$D$29+$D$31,'
+            f'1.4*$D$21+$D$31),"No aplica - Type A (206-1.1.1)")'), "D121 cateto"
+        # Verificacion de luz G <= 2.5 mm y su cableado a F69.
+        assert ws["D123"].value == '=IF($D$14="SI",2.5,0.09375)', "D123 req"
+        assert ws["E123"].value == "=$D$31", "E123 adoptado"
+        assert ws["F123"].value == (
+            '=IF(E123<=D123,"CUMPLE","NO CUMPLE — excede la luz maxima (206-4.1)")'), "F123"
+        assert "F123" in str(ws["F94"].value), "F69 debe incluir F123"
+
+    # --- Fase 5: presion externa, cavidades y bulging (206-3.6/7/9/10) ------
+    def test_paso5_cavidades(self):
+        ws = self._construir()
+        assert "PASO 5" in str(ws["A125"].value), ws["A125"].value
+        assert ws["D127"].value == "No"  # defecto externo
+        assert ws["D128"].value == (
+            '=IF($D$127="Si","206-3.7/3.9: rellenar cavidades con material '
+            'endurecible (epoxi) de resistencia a compresion adecuada","")'), "D128"
+
+    # --- Fase 6: fatiga por operacion ciclica (206-2.4/3.8/3.11) ------------
+    def test_paso6_fatiga(self):
+        ws = self._construir()
+        assert "PASO 6" in str(ws["A132"].value), ws["A132"].value
+        assert ws["D134"].value == "No"  # servicio ciclico
+        assert ws["D135"].value == (
+            '=IF($D$134="Si","206-2.4/3.8: requiere evaluacion de fatiga '
+            '(VIII-2 / API 579-1/ASME FFS-1)","")'), "D135"
+
+    # --- Fase 7: fabricacion y soldadura en servicio (206-4) ----------------
+    def test_paso7_fabricacion(self):
+        ws = self._construir()
+        assert "PASO 7" in str(ws["A138"].value), ws["A138"].value
+        assert ws["D140"].value == "=0.5*$D$26", "P_instal min 50%"
+        assert ws["D141"].value == "=0.8*$D$26", "P_instal max 80%"
+        assert ws["D142"].value == (
+            '=IF($D$103="Si","206-4.3: purgar el anular con N2/gas inerte en '
+            'fluidos inflamables","")'), "D142 purga N2"
+
+    # --- Fase 8: NDE y prueba de hermeticidad (206-5 / 206-6) ---------------
+    def test_paso8_nde_prueba(self):
+        import build_db_materiales as B
+        ws = self._construir()
+        assert "PASO 8" in str(ws["A145"].value), ws["A145"].value
+        origen = {}
+        for dv in ws.data_validations.dataValidation:
+            for rng in dv.sqref.ranges:
+                origen[str(rng)] = str(dv.formula1 or "")
+        assert "Prueba del anular" in origen.get("D147", ""), origen.get("D147")
+        assert ws["D149"].value == (
+            f'=IF($D$22="{B.TIPO_B}","206-5.3: UT del portador; primer/ultimo '
+            'pase MT/PT; NDE de circunferenciales >=24 h (>=48 h si servicio '
+            'con H2)","206-5.2: Type A - VT de raiz + PT/MT/UT de longitudinales")'), "D149"
+
+    # --- Fase 9: simbolos con subindice real (decision 5) -------------------
+    def test_simbolos_sin_guion_bajo_206(self):
+        _asserta_sin_guion_bajo(self._construir())
 
 
 class TestValidacionesBloqueantes:
@@ -1220,3 +2166,283 @@ class TestDatosRefRetirada:
     def test_la_deuda_de_listas_fijas_esta_saldada(self):
         import build_db_materiales as B
         assert B.DEUDA_LISTA_FIJA == {}
+
+
+# ---------------------------------------------------------------------------
+# Fase 9 — las especificaciones tecnicas, en pestana propia
+# ---------------------------------------------------------------------------
+# El valor de estas hojas es la CITA: el texto ya se generaba antes (en el 212) y
+# lo que no tenia era de donde salia. Por eso la prueba central es que ninguna
+# fila se quede sin clausula, y que toda cifra que la hoja toma del motor apunte
+# a una celda que de verdad tiene contenido — el defecto que esta fase destapo:
+# la formula del metodo seguia leyendo la fila de material de lista fija que se
+# retiro en la Tarea 7-8, e imprimia "Plancha  de 8 mm" con el hueco en medio.
+class TestEspecificacionesTecnicas:
+    PARES = ((B.ESPEC_212, "Parche_PCC2_Art212", ("212-4", "212-5", "212-6")),
+             (B.ESPEC_206, "Collar_PCC2_Art206", ("206-4", "206-5", "206-6")))
+
+    def _filas(self, ws):
+        """(fila, concepto, texto, cita) de cada fila de especificacion."""
+        return [(r, ws.cell(r, 1).value, ws.cell(r, 2).value, ws.cell(r, 7).value)
+                for r in range(1, ws.max_row + 1)
+                if ws.cell(r, 2).value is not None
+                and ws.cell(r, 1).value != "Concepto"]
+
+    def test_las_dos_hojas_existen_y_cuelgan_de_su_articulo(self, wb):
+        for hoja, motor, _ in self.PARES:
+            assert hoja in wb.sheetnames
+            assert hoja in B.NAVEGABLES
+            # Hermanas del motor bajo el nodo del articulo, no hijas del motor:
+            # un nodo tiene `hoja` o `destino`, nunca las dos.
+            assert B.PADRE[hoja] == B.PADRE[motor]
+            assert B.PADRE[hoja].startswith("NAV_CAL_ART")
+
+    def test_ninguna_fila_se_queda_sin_clausula(self, wb):
+        for hoja, _, _ in self.PARES:
+            sin_cita = [r for r, _, _, cita in self._filas(wb[hoja])
+                        if not str(cita or "").strip()]
+            assert sin_cita == [], f"{hoja}: filas sin clausula citada: {sin_cita}"
+
+    def test_toda_cifra_viene_de_una_celda_viva_del_propio_motor(self, wb):
+        """Una referencia a una celda vacia no da error en Excel: da un hueco en
+        medio de la frase. Y una referencia a OTRO motor acoplaria dos motores
+        (regla 13): estas hojas solo leen el suyo."""
+        for hoja, motor, _ in self.PARES:
+            ws = wb[hoja]
+            for r, _, texto, _ in self._filas(ws):
+                if not (isinstance(texto, str) and texto.startswith("=")):
+                    continue
+                for h, col, fila in re.findall(r"(\w+)!\$([A-Z]+)\$(\d+)", texto):
+                    assert h == motor, f"{hoja}!B{r} lee {h}, no {motor}"
+                    v = wb[motor][f"{col}{fila}"].value
+                    assert v is not None, f"{hoja}!B{r} lee {h}!{col}{fila}, vacia"
+
+    def test_el_contenido_migrado_esta_entero(self, wb):
+        """Las tres partes del articulo que el plan manda citar —fabricacion,
+        examen y prueba— tienen que estar las tres. Una hoja que solo citara la
+        fabricacion habria perdido la mitad del bloque que salio del motor."""
+        for hoja, _, marcas in self.PARES:
+            citas = " ".join(str(c) for _, _, _, c in self._filas(wb[hoja]))
+            for m in marcas:
+                assert m in citas, f"{hoja}: no cita {m}"
+
+    def test_ninguna_funcion_de_matriz_dinamica(self, wb):
+        for hoja, _, _ in self.PARES:
+            for fila in wb[hoja].iter_rows():
+                for c in fila:
+                    if isinstance(c.value, str):
+                        for mala in DINAMICAS:
+                            assert mala not in c.value, f"{hoja}!{c.coordinate}"
+
+    def test_el_atajo_va_y_vuelve(self, wb):
+        """Del motor a sus especificaciones y de vuelta, sin subir al arbol."""
+        for hoja, motor, _ in self.PARES:
+            assert (B.FILA_BTN_ESPEC, hoja) in [
+                (c.row, k) for c, k in _claves(wb[motor])], f"{motor} -> {hoja}"
+            assert motor in [k for _, k in _claves(wb[hoja])], f"{hoja} -> {motor}"
+
+    def test_no_hay_amarillo_en_estas_hojas(self, wb):
+        """El amarillo esta acotado a los dos motores (leyenda de la Fase 1): el
+        campo editable de esta hoja se distingue como en un buscador, por la
+        linea inferior de tinta. Lo comprueba tambien el guardia global del
+        amarillo; aqui se fija que SI hay campos editables, o el guardia pasaria
+        por no haber ninguno."""
+        for hoja, _, _ in self.PARES:
+            ws = wb[hoja]
+            editables = [c.coordinate for fila in ws.iter_rows(max_col=B.ESPEC_NCOLS)
+                         for c in fila
+                         if not isinstance(c, openpyxl.cell.cell.MergedCell)
+                         and c.hyperlink is None and c.protection is not None
+                         and c.protection.locked is False]
+            assert editables, f"{hoja}: ninguna especificacion es editable"
+            assert hoja not in HOJAS_CON_AMARILLO
+
+
+# ---------------------------------------------------------------------------
+# Fase 10 — la guia de uso, derivada del motor
+# ---------------------------------------------------------------------------
+# Lo que hay que proteger aqui es que la guia sea DERIVADA y no una copia: si
+# alguien anade un campo al motor y la guia no lo lista, la hoja que dice
+# explicar «cada celda» pasa a tener un hueco silencioso. La prueba fuerte es la
+# cobertura contra el manifiesto de reinicio, que se deriva del mismo estado por
+# otro camino: las dos listas tienen que salir iguales.
+class TestInstruccionesDeMotor:
+    PARES = ((B.INSTR_212, "Parche_PCC2_Art212"),
+             (B.INSTR_206, "Collar_PCC2_Art206"))
+
+    def _guia(self, ws):
+        """(celda, rotulo, tipo, texto) de cada fila de la guia celda a celda."""
+        out = []
+        for r in range(1, ws.max_row + 1):
+            celda, tipo = ws.cell(r, 1).value, ws.cell(r, 3).value
+            if tipo in ("SE TECLEA", "LISTA", "FORMULA"):
+                out.append((str(celda), ws.cell(r, 2).value, tipo,
+                            ws.cell(r, 4).value))
+        return out
+
+    def test_las_dos_hojas_cuelgan_de_su_articulo(self, wb):
+        for hoja, motor in self.PARES:
+            assert hoja in wb.sheetnames and hoja in B.NAVEGABLES
+            assert B.PADRE[hoja] == B.PADRE[motor]
+
+    def test_la_guia_lista_TODA_celda_de_entrada_del_motor(self, wb):
+        """La cobertura es lo unico que hace verdad el titulo de la hoja. Se
+        compara contra el manifiesto de reinicio (Fase 8), que sale del mismo
+        estado por otro camino: si las dos listas no coinciden, una de las dos
+        esta mal y no hay que adivinar cual."""
+        for hoja, motor in self.PARES:
+            man = set(TestReinicioDeEntradas()._manifiesto(wb[motor]))
+            guia = {c for c, _, t, _ in self._guia(wb[hoja]) if t != "FORMULA"}
+            assert guia == man, (
+                f"{hoja}: en la guia y no en el reinicio {sorted(guia - man)}; "
+                f"en el reinicio y no en la guia {sorted(man - guia)}")
+
+    def test_ninguna_fila_de_la_guia_se_queda_sin_explicacion(self, wb):
+        for hoja, _ in self.PARES:
+            mudas = [c for c, _, _, texto in self._guia(wb[hoja])
+                     if not str(texto or "").strip()]
+            assert mudas == [], f"{hoja}: filas sin explicacion: {mudas}"
+
+    def test_cada_entrada_trae_su_ejemplo_y_cada_formula_no(self, wb):
+        """El ejemplo es el valor del caso precargado: una entrada sin ejemplo
+        seria una instruccion sin un caso que mirar. Una formula no lo lleva
+        porque su valor no se teclea."""
+        for hoja, _ in self.PARES:
+            for celda, _, tipo, texto in self._guia(wb[hoja]):
+                if tipo == "FORMULA":
+                    assert "Ejemplo:" not in str(texto), f"{hoja}!{celda}"
+                else:
+                    assert "Ejemplo:" in str(texto), f"{hoja}!{celda}"
+
+    def test_la_guia_va_seccion_por_seccion_y_en_orden(self, wb):
+        """Las secciones se repiten TAL CUAL las rotula el motor —numeral
+        incluido— o el ingeniero no sabria en que parte de la hoja esta la celda
+        que lee. Y van en el mismo orden: la guia se lee mientras se rellena."""
+        for hoja, motor in self.PARES:
+            ws, wm = wb[hoja], wb[motor]
+            bandas_motor = [str(wm.cell(r, 1).value) for r in range(4, wm.max_row + 1)
+                            if B._es_banda(wm, wm.cell(r, 1))]
+            en_guia = [str(ws.cell(r, 1).value) for r in range(1, ws.max_row + 1)
+                       if str(ws.cell(r, 1).value) in bandas_motor]
+            assert en_guia, f"{hoja}: la guia no repite ninguna banda del motor"
+            assert en_guia == [b for b in bandas_motor if b in en_guia], (
+                f"{hoja}: las secciones de la guia no siguen el orden del motor")
+
+    def test_la_prosa_explica_los_cuatro_mecanismos(self, wb):
+        """Color, unidades, semaforo y reinicio: los cuatro son mecanismos que no
+        se adivinan mirando la hoja, y el plan los pide explicados."""
+        for hoja, _ in self.PARES:
+            texto = " ".join(str(c.value or "") for fila in wb[hoja].iter_rows()
+                             for c in fila).upper()
+            for clave in ("LEYENDA", "AMARILLO", "SI / US", "SEMAFORO",
+                          "REINICIAR", "DICTAMEN"):
+                assert clave in texto, f"{hoja}: la prosa no explica {clave}"
+
+    def test_la_guia_no_lleva_formulas(self, wb):
+        """Es una hoja de texto: si copiara la formula del motor en vez de
+        describirla, tendria que recalcularla y podria decir otra cosa.
+
+        El criterio es el TIPO de celda, no si el texto empieza por «=» — mismo
+        criterio que en las nueve hojas de la Seccion II. La guia copia la columna
+        de referencia del motor, y ahi hay explicaciones que empiezan asi
+        («= $D$26», «de donde sale este valor»): son texto y tienen que seguir
+        siendolo, y `_plano()` es quien lo garantiza.
+        """
+        for hoja, _ in self.PARES:
+            for fila in wb[hoja].iter_rows():
+                for c in fila:
+                    assert c.data_type != "f", f"{hoja}!{c.coordinate}: {c.value!r}"
+
+
+# ---------------------------------------------------------------------------
+# Fase 8 — el boton de reinicio y su manifiesto
+# ---------------------------------------------------------------------------
+# Lo que hay que comprobar no es que el boton exista, sino que su manifiesto
+# cubra EXACTAMENTE las celdas de entrada: una que falte deja un valor del caso
+# anterior en una hoja que dice estar en blanco, y una de mas podria borrar una
+# formula o un boton. Las dos direcciones se comprueban.
+class TestReinicioDeEntradas:
+    MOTORES = ("Parche_PCC2_Art212", "Collar_PCC2_Art206")
+
+    def _manifiesto(self, ws):
+        col = B.COL_MANIFIESTO_RESET
+        assert ws.cell(1, col).value == B.SENTINEL_RESET, (
+            f"{ws.title}: falta el centinela del manifiesto de reinicio")
+        out, r = [], 2
+        while True:
+            v = ws.cell(r, col).value
+            if v is None or str(v).strip() == "":
+                return out
+            out.append(str(v).strip())
+            r += 1
+
+    def _editables(self, ws):
+        """Celdas de entrada releidas del archivo, con el criterio de la leyenda.
+
+        Se recalcula aqui en vez de llamar a B.celdas_de_entrada() a proposito:
+        asi la prueba no comparte con el builder la funcion que podria estar mal,
+        solo el criterio (desbloqueada, sin hipervinculo, dentro de A..G).
+        """
+        colas = {rc for rango in ws.merged_cells.ranges for rc in rango.cells}
+        colas -= {(r.min_row, r.min_col) for r in ws.merged_cells.ranges}
+        fin = max((c.row for f in ws.iter_rows(max_col=B.MOTOR_NCOLS) for c in f
+                   if c.value is not None), default=1)
+        out = []
+        for f in ws.iter_rows(min_row=1, max_row=fin, max_col=B.MOTOR_NCOLS):
+            for c in f:
+                if (c.row, c.column) in colas or c.hyperlink is not None:
+                    continue
+                if c.protection is not None and c.protection.locked is False:
+                    out.append(c.coordinate)
+        return out
+
+    def test_el_manifiesto_cubre_exactamente_las_entradas(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            assert self._manifiesto(ws) == self._editables(ws), nombre
+
+    def test_el_manifiesto_no_esta_vacio(self, wb):
+        for nombre in self.MOTORES:
+            assert len(self._manifiesto(wb[nombre])) > 20, nombre
+
+    def test_el_selector_de_unidades_entra_en_el_reinicio(self, wb):
+        """Ancla explicita: el selector SI/US de la Fase 7 es una entrada y tiene
+        que volver a su estado inicial como cualquier otra."""
+        for nombre, celda in (("Parche_PCC2_Art212", "D15"),
+                              ("Collar_PCC2_Art206", "D14")):
+            ws = wb[nombre]
+            assert ws[celda].value in ("SI", "US"), f"{nombre}!{celda}"
+            assert celda in self._manifiesto(ws), f"{nombre}!{celda}"
+
+    def test_ningun_boton_ni_celda_de_clave_entra_en_el_reinicio(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            man = set(self._manifiesto(ws))
+            for c, _ in _claves(ws):
+                assert c.coordinate not in man, f"{nombre}: {c.coordinate} es un boton"
+            # Las celdas de clave viven mas alla de G; el manifiesto no las mira.
+            assert all(openpyxl.utils.column_index_from_string(
+                re.match(r"([A-Z]+)", d).group(1)) <= B.MOTOR_NCOLS for d in man)
+
+    def test_el_boton_de_reinicio_esta_en_su_sitio(self, wb):
+        for nombre in self.MOTORES:
+            ws = wb[nombre]
+            b = ws.cell(B.FILA_RESET, B.COL_RESET_1)
+            assert b.value == B.TXT_RESET, nombre
+            assert b.hyperlink is not None, nombre
+            assert b.protection.locked is False, nombre
+            clave = ws.cell(B.FILA_RESET, B.COL_CLAVE_BASE + B.COL_RESET_1).value
+            assert clave == B.PREFIJO_RESET + nombre, nombre
+
+    def test_la_columna_del_manifiesto_esta_oculta(self, wb):
+        from openpyxl.utils import get_column_letter as L
+        col = L(B.COL_MANIFIESTO_RESET)
+        for nombre in self.MOTORES:
+            assert wb[nombre].column_dimensions[col].hidden, nombre
+
+    def test_el_manifiesto_no_lleva_formulas(self, wb):
+        """Son direcciones de texto. Si alguna empezase por "=", el segundo pase
+        de remapear_filas la reescribiria como si fuese una referencia."""
+        for nombre in self.MOTORES:
+            for d in self._manifiesto(wb[nombre]):
+                assert not d.startswith("="), f"{nombre}: {d}"

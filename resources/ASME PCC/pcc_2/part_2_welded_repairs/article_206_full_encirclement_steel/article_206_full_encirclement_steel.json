@@ -455,7 +455,8 @@
       "page": 59,
       "number": "206-3.5-1",
       "caption": "Figure 206-3.5-1 Type B Sleeve Fillet Weld Size for Sleeve Thickness Less Than or Equal to 1.4 Times the Carrier Pipe Thickness",
-      "image": "figures/figure_206_3_5_1.png"
+      "image": "figures/figure_206_3_5_1.png",
+      "text": "w = Ts + G (cateto de filete completo, Ts <= 1.4 Tp) — Fig. 206-3.5-1"
     },
     {
       "type": "paragraph",
@@ -482,7 +483,8 @@
       "page": 59,
       "number": "206-3.5-2",
       "caption": "Figure 206-3.5-2 Type B Sleeve Fillet Weld Size for Sleeve Thickness Greater Than 1.4 Times the Carrier Pipe Thickness",
-      "image": "figures/figure_206_3_5_2.png"
+      "image": "figures/figure_206_3_5_2.png",
+      "text": "w_max = 1.4 Tp + G (cateto maximo, Ts > 1.4 Tp; chaflan opcional) — Fig. 206-3.5-2"
     },
     {
       "type": "paragraph",
@@ -644,5 +646,26 @@
       "page": 61,
       "text": "<22> 206-7 REFERENCES The following is a list of publications referenced in this Article. Unless otherwise specified, the latest edition shall apply. AGA, American Gas Association, Pipeline Repair Manual, December 31, 1994 AGA, American Gas Association, 6th Symposium on Line Research Defect Repair Procedures, J. F. Kiefner October 29, 1979 Publisher: American Gas Association (AGA), 400 North Capitol Street, NW, Washington, DC 20001 (www.aga.org ) API 579-1/ASME FFS-1, Fitness-for-Service API RP 2201, Safe Hot Tapping Practices in the Petroleum and Petrochemical Industries API Standard 1104, Welding of Pipelines and Related Facilities Publisher: American Petroleum Institute (API), 200 Massachusetts Avenue NW, Suite 1100, Washington, DC 20001-5571 (www.api.org ) ASME B31.3, Process Piping ASME Boiler and Pressure Vessel Code, Section V — Nondestructive Examination ASME Boiler and Pressure Vessel Code, Section VIII — Rules for Construction of Pressure Vessels; Division 2, Alternative Rules ASME Boiler and Pressure Vessel Code, Section IX — Welding, Brazing, and Fusing Qualifications Publisher: The American Society of Mechanical Engineers (ASME), Two Park Avenue, New York, NY 10016-5990 (www.asme.org)"
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-11",
+    "script": "completar_art_206_filete.py",
+    "que": "Se fijan en la capa de texto las dos ec. de cateto del filete de extremo (w = Ts + G y w_max = 1.4 Tp + G), hasta ahora presentes solo como imagen (Figs. 206-3.5-1 y 206-3.5-2).",
+    "ecuaciones": [
+      {
+        "bloque": 72,
+        "imagen_fuente": "figures/figure_206_3_5_1.png",
+        "imagen_sha256": "a4708b865eabfd3be4d3e554ff106d34bb8990ea3b2781343c58b13448946c80",
+        "texto_fijado": "w = Ts + G (cateto de filete completo, Ts <= 1.4 Tp) — Fig. 206-3.5-1"
+      },
+      {
+        "bloque": 77,
+        "imagen_fuente": "figures/figure_206_3_5_2.png",
+        "imagen_sha256": "492ec910298584524887438bbcb375dd1bfcf3475be970385d7b8f1ed7d161a0",
+        "texto_fijado": "w_max = 1.4 Tp + G (cateto maximo, Ts > 1.4 Tp; chaflan opcional) — Fig. 206-3.5-2"
+      }
+    ],
+    "procedencia": "Recuperadas leyendo los PNG del propio resources/ (Regla n.1: un dato puede vivir en resources/ como imagen). NO se uso ningun folio/PDF externo ni memoria del modelo.",
+    "alcance": "Solo el text de los dos bloques de figura y este metadato. Ningun otro valor del JSON se altera (regla 9 del proyecto)."
+  }
 }

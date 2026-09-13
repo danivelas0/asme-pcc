@@ -50,7 +50,7 @@
     {
       "type": "equation",
       "page": 306,
-      "text": "following equations: Ä Ç ÅÅ Å Å ÅÅÅ É Ö ÑÑ Ñ Ñ ÑÑÑ = [ ] × × [ ] E k P V P P 1/( 1) 1 ( / ) at a at ( 1)/ k k (II-1)"
+      "text": "E = [1/(k-1)]*Pat*V*[1 - (Pa/Pat)^((k-1)/k)] (II-1)"
     },
     {
       "type": "paragraph",
@@ -90,7 +90,7 @@
     {
       "type": "equation",
       "page": 306,
-      "text": "Ä Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ E P V P P = × × 2.5 1 ( / ) at a at 0.286 (II-2)"
+      "text": "E = 2.5*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, SI) (II-2)"
     },
     {
       "type": "paragraph",
@@ -100,7 +100,7 @@
     {
       "type": "equation",
       "page": 306,
-      "text": "TNT = (kg) E 4 266 920 (II-3)"
+      "text": "TNT = E / 4 266 920 (kg) (II-3)"
     },
     {
       "type": "paragraph",
@@ -130,7 +130,7 @@
     {
       "type": "equation",
       "page": 306,
-      "text": "Ç Å Å ÅÅ ÅÅ É Ö Ñ Ñ ÑÑ ÑÑ E P V P P = × × 360 1 ( / ) at a at 0.286 (II-4)"
+      "text": "E = 360*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, U.S. Customary) (II-4)"
     },
     {
       "type": "paragraph",
@@ -140,7 +140,7 @@
     {
       "type": "equation",
       "page": 306,
-      "text": "= E TNT 1,488,617 (lb) (II-5)"
+      "text": "TNT = E / 1,488,617 (lb) (II-5)"
     },
     {
       "type": "paragraph",
@@ -177,5 +177,44 @@
       "page": 306,
       "text": "See also paras. 501-6.2(e) and 501-6.2(f) ."
     }
-  ]
+  ],
+  "extraction_amendments": {
+    "fecha": "2026-09-11",
+    "script": "completar_app_501_energia.py",
+    "que": "Recompone la capa de texto de ecuaciones que la extraccion colapso (la fuente matematica privada del PDF born-digital mapeo corchetes y operadores a letras Latin-1: Ä Å Ç É Ñ Ö ×).",
+    "ecuaciones": [
+      {
+        "bloque": 3,
+        "rotulo": "(II-1)",
+        "texto": "E = [1/(k-1)]*Pat*V*[1 - (Pa/Pat)^((k-1)/k)] (II-1)"
+      },
+      {
+        "bloque": 11,
+        "rotulo": "(II-2)",
+        "texto": "E = 2.5*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, SI) (II-2)"
+      },
+      {
+        "bloque": 19,
+        "rotulo": "(II-4)",
+        "texto": "E = 360*Pat*V*[1 - (Pa/Pat)^0.286]  (aire/N2, k=1.4, U.S. Customary) (II-4)"
+      },
+      {
+        "bloque": 13,
+        "rotulo": "(II-3)",
+        "texto": "TNT = E / 4 266 920 (kg) (II-3)"
+      },
+      {
+        "bloque": 21,
+        "rotulo": "(II-5)",
+        "texto": "TNT = E / 1,488,617 (lb) (II-5)"
+      }
+    ],
+    "procedencia": {
+      "fuente": "ASME PCC-2 REPAIR OF PRESSURE EQUIPMENT AND PIPING.pdf",
+      "paginas_pdf": "306-308 (folios impresos 281-282)",
+      "pdf_sha256": "ab8e7b60a9659fc65f6d20df0f8c623420ae8cdf1a195093daec4f26c5cc9394",
+      "metodo": "Paginas del PDF renderizadas a imagen y leidas; el PDF solo corrige/verifica el JSON (Regla nº 1). NO se anade al repo (copyright ASME) ni alimenta ningun motor directamente."
+    },
+    "alcance": "Solo el text de las ecuaciones citadas y este metadato. Ningun valor numerico se altera (regla 9 del proyecto)."
+  }
 }

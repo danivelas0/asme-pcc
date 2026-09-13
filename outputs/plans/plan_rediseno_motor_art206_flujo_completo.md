@@ -2,7 +2,7 @@
 
 > **Para ejecutores:** SUB-SKILL REQUERIDA: usar `superpowers:subagent-driven-development`
 > (recomendado) o `superpowers:executing-plans` para ejecutar tarea por tarea. Los pasos
-> usan casillas (`- [ ]`) para el seguimiento. **NO EJECUTAR sin orden explícita del
+> usan casillas (`- [x]`) para el seguimiento. **NO EJECUTAR sin orden explícita del
 > ingeniero** (este plan se entrega para revisión, no para correr).
 
 **Objetivo:** Que la hoja `Collar_PCC2_Art206` (motor de cálculo del Art. 206, hoy en
@@ -157,18 +157,14 @@ imágenes, imprimen literalmente `T_s + G` y `1,4·T_p + G` respectivamente. El 
 confirmado desde `resources/`; esta tarea solo lo fija en la capa de texto para que sea
 citable/trazable sin reabrir la imagen.
 
-- [ ] **Step 1: confirmar el ancla.** `python -c` que imprime los bloques de figura de ambos
-  espejos → `type=figure`, `image=…fig_206_3_5_1.png` / `…_2.png`, `text` vacío. (Verificado
-  en el diseño; re-confirmar por si `resources/` cambió.)
-- [ ] **Step 2: escribir `completar_art_206_filete.py`** — idempotente, `--resources`; **lee
-  los PNG referenciados por los propios bloques**, escribe `text` (p. ej.
-  `"w = Ts + G (cateto de filete completo, Ts <= 1.4 Tp) — Fig. 206-3.5-1"` y
-  `"w_max = 1.4 Tp + G (cateto maximo, Ts > 1.4 Tp; chaflan opcional) — Fig. 206-3.5-2"`) con
-  su `extraction_amendments` (bloque, ruta del PNG, nota de procedencia), sin tocar ningún
-  otro valor. Aborta si el bloque ya no apunta a ese PNG.
-- [ ] **Step 3: correr una vez por espejo** y comprobar con `git diff` que sólo cambian esos
-  dos bloques y su metadato.
-- [ ] **Step 4: commit** — `Art. 206: fija las ec. de cateto w=Ts+G y w_max=1.4Tp+G desde las figuras de resources/ (Regla n.1)`.
+- [x] **Step 1: confirmar el ancla.** Bloques 72 (`fig_206_3_5_1.png`) y 77 (`fig_206_3_5_2.png`),
+  `type=figure`, `text` vacío, en los dos espejos. Confirmado.
+- [x] **Step 2: escribir `completar_art_206_filete.py`** — idempotente, defensivo; **leídos
+  ambos PNG**: Fig. 206-3.5-1 imprime `T_s + G` (Ts≤1.4Tp), Fig. 206-3.5-2 imprime `1.4·T_p + G`
+  (Ts>1.4Tp, chaflán opcional). Fija esos textos + `extraction_amendments` (bloque, ruta, SHA-256).
+- [x] **Step 3: correr una vez por espejo** y `git diff`: 52 ins / 6 del, solo los bloques 72/77
+  y el amendment por espejo.
+- [x] **Step 4: commit** — `Art. 206: fija las ec. de cateto w=Ts+G y w_max=1.4Tp+G desde las figuras de resources/ (Regla n.1)`.
 
 ---
 
@@ -189,26 +185,26 @@ axial) [bloque 6]; 206-2.5 (Type A no apto para defectos circunferenciales) [blo
 **aviso de contradicción** si `D22` no coincide. El dictamen es advisory: **no** bloquea el
 DICTAMEN GLOBAL (el tipo es decisión de diseño; el ingeniero puede sobreponerse).
 
-- [ ] **Step 1: test (falla).** En `TestBuildCollarArt206`, `test_paso1_seleccion_tipo`:
+- [x] **Step 1: test (falla).** En `TestBuildCollarArt206`, `test_paso1_seleccion_tipo`:
   construye la hoja y afirma que existen las entradas nuevas (`¿fuga o puede fugar?` con
   `dv_list '"Si,No"'`; `¿reduce resistencia axial / tasa de daño no clara?` con
   `dv_list '"Si,No"'`), que la celda de tipo recomendado devuelve `Type B` cuando cualquiera es
   `Si` y `Type A` cuando ambas son `No`, y que el aviso de contradicción se activa cuando
   `D22` (tipo elegido) ≠ recomendado. → FAIL.
-- [ ] **Step 2: entradas del Paso 1.** En la Sección 1: `¿Fuga o puede fugar?`
+- [x] **Step 2: entradas del Paso 1.** En la Sección 1: `¿Fuga o puede fugar?`
   (`dv_list '"Si,No"'`, ref 206-1.1.2/206-2.3), `¿Reduce resistencia axial o tasa de daño no
   clara?` (`dv_list '"Si,No"'`, ref 206-1.1.1/206-2.5). Mantener `¿Defecto circunferencial?`
   (ya existe, D24, 206-2.5).
-- [ ] **Step 3: tipo recomendado y aviso.** Celda `Tipo recomendado` =
+- [x] **Step 3: tipo recomendado y aviso.** Celda `Tipo recomendado` =
   `IF(OR(fuga="Si", axial="Si"), TIPO_B, TIPO_A)` (citar 206-1.1.1/1.1.2). Aviso de
   contradicción = `IF($D$22<>tipo_recomendado, "AVISO: el tipo elegido difiere del recomendado
   por 206-1.1 (fuga/axial) — confirmar", "")`.
-- [ ] **Step 4: avisos de 206-2.** Añadir en «Verificaciones y avisos» (avisos condicionales
+- [x] **Step 4: avisos de 206-2.** Añadir en «Verificaciones y avisos» (avisos condicionales
   `IF(cond,"…","")`, texto corto):
   - Corrosión bajo-manga: `IF($D$22=TIPO_A, "206-2.6: evaluar corrosion bajo manga; aplicar sellante/recubrimiento si aplica", "")`.
   - Interferencia con costura previa: aviso fijo `206-2.7: costura previa prominente puede impedir fit-up → esmerilar + RT/UT o manga con bulge (Fig. 206-2.7-1)`.
   - Fuga activa Type B: `IF(AND($D$22=TIPO_B,fuga="Si"), "206-2.3: aislar la fuga antes de soldar (ver 206-4.3 purga N2)", "")`.
-- [ ] **Step 5: test PASS + commit** — `Art. 206 Paso 1: seleccion guiada de tipo y avisos 206-2`.
+- [x] **Step 5: test PASS + commit** — `Art. 206 Paso 1: seleccion guiada de tipo y avisos 206-2`.
 
 ---
 
@@ -227,18 +223,18 @@ applied shall be in accordance with the engineering design»**) [bloque 38].
 **no** lleva C.A. (206-3.1 no es componente a presión). `E = 0,80/1,00` (D38) y la forma por
 código (D11) se conservan.
 
-- [ ] **Step 1: test (falla).** `test_paso2_treq_con_ca`: afirma que existe la entrada `C.A.`
+- [x] **Step 1: test (falla).** `test_paso2_treq_con_ca`: afirma que existe la entrada `C.A.`
   [mm] (tecleable), que `t_req` Type B = (forma actual por D11) **+ C.A.** en las tres columnas
   (Operación/Diseño/Envolvente), y que el Type A (⅔·T_p) **no** incluye C.A. → FAIL.
-- [ ] **Step 2: entrada C.A.** En la Sección 1 (datos de campo): `Sobreespesor de corrosion
+- [x] **Step 2: entrada C.A.** En la Sección 1 (datos de campo): `Sobreespesor de corrosion
   C.A.` [mm], `inp` tecleable, ref «206-3.3: por el diseño de ingenieria». Default 0 es un
   valor válido tecleado (no un default oculto).
-- [ ] **Step 3: `t_req` + C.A.** Cambiar D53/E53/F53 a `= (expresion actual por D11) + $CA`.
+- [x] **Step 3: `t_req` + C.A.** Cambiar D53/E53/F53 a `= (expresion actual por D11) + $CA`.
   Conservar las tres ramas (D11=1 B31.3, D11=3 esfera VIII-1, D11=2 virola VIII-1). Citar
   206-3.3.
-- [ ] **Step 4: gobernante.** `T_s,min gobernante` (D55) sigue = `IF(D22=TIPO_A, D54, F53)`
+- [x] **Step 4: gobernante.** `T_s,min gobernante` (D55) sigue = `IF(D22=TIPO_A, D54, F53)`
   (F53 = envolvente, el caso más exigente, ya con C.A.). Type A sin cambios.
-- [ ] **Step 5: `verificar.py §6f`** recalcula `t_req`+C.A. del caso semilla en Excel desde la
+- [x] **Step 5: `verificar.py §6f`** recalcula `t_req`+C.A. del caso semilla en Excel desde la
   misma expresión que emite el motor. PASS + commit — `Art. 206 Paso 2: t_req Type B con C.A. (206-3.3)`.
 
 ---
@@ -254,11 +250,11 @@ by at least 50 mm (2 in.)» [bloque 40].
 esta fase solo la deja **explícita y trazada**, y añade la lectura del cumplimiento del
 sobrepaso de 50 mm a cada lado como sub-nota (no un cálculo nuevo).
 
-- [ ] **Step 1: test (falla).** `test_paso3_dimensiones`: `L_s,min = MAX(100,$D_defecto+2*50)`
+- [x] **Step 1: test (falla).** `test_paso3_dimensiones`: `L_s,min = MAX(100,$D_defecto+2*50)`
   y su dictamen CUMPLE/NO CUMPLE; nota de «≥ 50 mm a cada lado». → FAIL (por la nota/anclaje).
-- [ ] **Step 2: confirmar/anclar** la fórmula existente y su cita 206-3.4; añadir la nota de
+- [x] **Step 2: confirmar/anclar** la fórmula existente y su cita 206-3.4; añadir la nota de
   sobrepaso a cada lado en `comentar`/columna de referencia. (Fase ligera: casi todo ya está.)
-- [ ] **Step 3: PASS + commit** — `Art. 206 Paso 3: dimensiones 206-3.4 explicitas`.
+- [x] **Step 3: PASS + commit** — `Art. 206 Paso 3: dimensiones 206-3.4 explicitas`.
 
 ---
 
@@ -278,21 +274,21 @@ cateto** `w`, con la verificación de la luz `G ≤ 2,5 mm`. `T_p` = espesor del
 (D21). `G` = luz radial (D31, ya existe como entrada). Solo aplica a Type B (Type A no lleva
 soldadura circunferencial de extremo, 206-1.1.1).
 
-- [ ] **Step 1: test (falla).** `test_paso4_filete_cateto`: en Type B,
+- [x] **Step 1: test (falla).** `test_paso4_filete_cateto`: en Type B,
   `w = IF($D$29<=1.4*$D$21, $D$29+$G, 1.4*$D$21+$G)` (Ts=D29, Tp=D21, G=luz radial); rama de
   texto conservada; y verificación de luz `IF($G<=2.5,"CUMPLE","NO CUMPLE — excede 2,5 mm
   (206-4.1)")`. En Type A, `w` = «No aplica». → FAIL.
-- [ ] **Step 2: cateto `w`.** Nueva fila «Cateto del filete de extremo `w`» [mm]:
+- [x] **Step 2: cateto `w`.** Nueva fila «Cateto del filete de extremo `w`» [mm]:
   `IF($D$22=TIPO_B, IF($D$29<=1.4*$D$21, $D$29+$Gluz, 1.4*$D$21+$Gluz), "No aplica - Type A
   (206-1.1.1)")`. Citar Figs. 206-3.5-1/2 (Fase 0). **Confirmar la referencia de la luz**: hoy
   D31 = «Luz radial sleeve-portador»; usarla como `G`. (Ver Riesgos: `T_p` nominal vs. required
   minimum de la leyenda.)
-- [ ] **Step 3: rama de texto.** Conservar F64 (filete completo 206-3.5a / as-is-chaflán
+- [x] **Step 3: rama de texto.** Conservar F64 (filete completo 206-3.5a / as-is-chaflán
   206-3.5b) tal como está, ahora acompañada del `w` numérico.
-- [ ] **Step 4: verificación de luz `G ≤ 2,5 mm`.** Nueva fila en «Verificaciones y avisos»:
+- [x] **Step 4: verificación de luz `G ≤ 2,5 mm`.** Nueva fila en «Verificaciones y avisos»:
   requerido `2,5`, adoptado `=$D$31`, resultado `IF($D$31<=2.5,"CUMPLE","NO CUMPLE — excede
   2,5 mm (206-4.1)")`. Cablear al DICTAMEN GLOBAL (entra en el AND de las verificaciones).
-- [ ] **Step 5: `verificar.py §6f`** recalcula `w` (las dos ramas) y el tope `G` del caso
+- [x] **Step 5: `verificar.py §6f`** recalcula `w` (las dos ramas) y el tope `G` del caso
   semilla en Excel. PASS + commit — `Art. 206 Paso 4: cateto del filete (Fig. 206-3.5) y luz G<=2,5 mm`.
 
 ---
@@ -312,14 +308,14 @@ filler apropiado) [bloque 58].
 aviso de relleno endurecible; avisos de presión externa y de reducción de presión al instalar.
 Todo son notas/avisos (no cálculo nuevo).
 
-- [ ] **Step 1: test (falla).** `test_paso5_cavidades`: entrada `¿Defecto externo?`
+- [x] **Step 1: test (falla).** `test_paso5_cavidades`: entrada `¿Defecto externo?`
   (`dv_list '"Si,No"'`); aviso `IF(externo="Si","206-3.7/3.9: rellenar cavidades con material
   endurecible (epoxi) de resistencia a compresion adecuada","")`; aviso fijo de presión externa
   206-3.6. → FAIL.
-- [ ] **Step 2: entrada + avisos.** Implementar la entrada y los tres avisos (relleno externo,
+- [x] **Step 2: entrada + avisos.** Implementar la entrada y los tres avisos (relleno externo,
   presión externa, reducir presión de línea al instalar 206-3.9(b) — este último se cruza con
   el rango 50-80 % de la Fase 7). Citar cada bloque.
-- [ ] **Step 3: PASS + commit** — `Art. 206 Paso 5: presion externa, cavidades y bulging (206-3.6/7/9/10)`.
+- [x] **Step 3: PASS + commit** — `Art. 206 Paso 5: presion externa, cavidades y bulging (206-3.6/7/9/10)`.
 
 ---
 
@@ -336,11 +332,11 @@ se evalúa para fatiga; si se requiere, por VIII-2 / API 579-1 / equivalente) [b
 **Interfaces:** Entrada `¿Servicio cíclico (presión/térmico)?` que activa el aviso de
 evaluación de fatiga; la nota 206-3.11 (ya existe, `nota206b`) se conserva y se traza.
 
-- [ ] **Step 1: test (falla).** `test_paso6_fatiga`: entrada `¿Servicio ciclico?`
+- [x] **Step 1: test (falla).** `test_paso6_fatiga`: entrada `¿Servicio ciclico?`
   (`dv_list '"Si,No"'`); aviso `IF(ciclico="Si","206-2.4/3.8: requiere evaluacion de fatiga
   (VIII-2 / API 579-1/ASME FFS-1)","")`; nota 206-3.11 presente. → FAIL.
-- [ ] **Step 2: entrada + aviso** de fatiga; conservar/anclar la nota 206-3.11. Citar bloques.
-- [ ] **Step 3: PASS + commit** — `Art. 206 Paso 6: fatiga (206-2.4/3.8) y dilatacion diferencial (206-3.11)`.
+- [x] **Step 2: entrada + aviso** de fatiga; conservar/anclar la nota 206-3.11. Citar bloques.
+- [x] **Step 3: PASS + commit** — `Art. 206 Paso 6: fatiga (206-2.4/3.8) y dilatacion diferencial (206-3.11)`.
 
 ---
 
@@ -360,17 +356,17 @@ cierre; bajo hidrógeno — ya existe `nota206`) [bloques 71,80]; 206-4.5 (**red
 **Interfaces:** Añade la sección de fabricación con los avisos trazados y el **rango de presión
 de instalación** calculado `[0,50·P_op ; 0,80·P_op]`. La nota 206-4.4 (ya existe) se conserva.
 
-- [ ] **Step 1: test (falla).** `test_paso7_fabricacion`: celdas `P_instal,min = 0.5*$Pop` y
+- [x] **Step 1: test (falla).** `test_paso7_fabricacion`: celdas `P_instal,min = 0.5*$Pop` y
   `P_instal,max = 0.8*$Pop` (206-4.5); aviso de purga N₂ `IF(fuga="Si","206-4.3: purgar el
   anular con N2/gas inerte en fluidos inflamables","")`; avisos fijos de metal blanco (206-4.1),
   relleno (206-4.2) y soldadura en servicio Art. 210 (206-4.6). → FAIL.
-- [ ] **Step 2: rango de presión.** `P_instal,min = 0.5*$D_Pop`, `P_instal,max = 0.8*$D_Pop`
+- [x] **Step 2: rango de presión.** `P_instal,min = 0.5*$D_Pop`, `P_instal,max = 0.8*$D_Pop`
   (usar la presión de operación en las unidades de la hoja; unidades visibles). Citar 206-4.5 +
   API RP 2201.
-- [ ] **Step 3: avisos de fabricación.** Purga N₂ (206-4.3, cruza con Paso 1), metal blanco
+- [x] **Step 3: avisos de fabricación.** Purga N₂ (206-4.3, cruza con Paso 1), metal blanco
   (206-4.1), relleno sin extruir (206-4.2), soldadura en servicio Art. 210 con los tres riesgos
   (206-4.6). Conservar `nota206` (206-4.4). Textos cortos (evitar `_LONGTEXT`).
-- [ ] **Step 4: PASS + commit** — `Art. 206 Paso 7: fabricacion, reduccion de presion 50-80% y Art. 210`.
+- [x] **Step 4: PASS + commit** — `Art. 206 Paso 7: fabricacion, reduccion de presion 50-80% y Art. 210`.
 
 ---
 
@@ -391,18 +387,18 @@ colapse**; (b) prueba sensible de fugas B31.3 345.8; Art. 501 guía adicional) [
 **Interfaces:** Notas de NDE por tipo + selector de prueba y su aviso. El selector no gobierna
 ningún cálculo (no hay energía): solo materializa el requisito y la advertencia de presión.
 
-- [ ] **Step 1: test (falla).** `test_paso8_nde_prueba`: selector `Tipo de prueba de
+- [x] **Step 1: test (falla).** `test_paso8_nde_prueba`: selector `Tipo de prueba de
   hermeticidad` (`dv_list '"Prueba del anular,Prueba sensible de fugas,No requerida"'`); aviso
   `IF(tipo="Prueba del anular","206-6(a): presion de prueba tal que el tubo interno NO colapse;
   Art. 501 guia adicional","")`; nota de NDE diferido `IF($D$22=TIPO_B,"206-5.3: NDE de
   circunferenciales >=24 h (>=48 h si servicio con H2)","")`. → FAIL.
-- [ ] **Step 2: notas de NDE.** VT (206-5.1); Type A PT/MT/UT longitudinal (206-5.2); Type B UT
+- [x] **Step 2: notas de NDE.** VT (206-5.1); Type A PT/MT/UT longitudinal (206-5.2); Type B UT
   del portador + primer/último pase MT/PT + NDE diferido (206-5.3). Avisos condicionales por
   `D22`. Textos cortos.
-- [ ] **Step 3: selector de prueba.** `dv_list` con las dos vías del 206-6 + «No requerida»; el
+- [x] **Step 3: selector de prueba.** `dv_list` con las dos vías del 206-6 + «No requerida»; el
   aviso cita la limitación de presión (que el tubo interno no colapse) y remite al Art. 501.
   **Sin** celdas de E/TNT/distancia (decisión 3).
-- [ ] **Step 4: PASS + commit** — `Art. 206 Paso 8: NDE por tipo y prueba de hermeticidad 206-6 (minima)`.
+- [x] **Step 4: PASS + commit** — `Art. 206 Paso 8: NDE por tipo y prueba de hermeticidad 206-6 (minima)`.
 
 ---
 
@@ -417,14 +413,17 @@ lo introdujo; si ya existe, reutilizarlo). Aplicarlo en los rótulos de símbolo
 `InlineFont(vertAlign="subscript")`, fuente `MONO`. No cambia ninguna fórmula (los símbolos son
 rótulos, no referencias).
 
-- [ ] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo_206`: recorre los rótulos de
-  símbolo del 206 y afirma que **ninguno** contiene `"_"` en su texto plano y que los que llevan
-  subíndice son `CellRichText`. → FAIL.
-- [ ] **Step 2: helper `sym()`** (crear/compartir) con `CellRichText`/`TextBlock`/
-  `InlineFont(vertAlign="subscript")`.
-- [ ] **Step 3: aplicar** a los símbolos de todas las secciones del 206.
-- [ ] **Step 4: comprobar `TestSistemaVisual`** (que lea los *runs* del rich text; ampliarlo si
-  solo mira `cell.font`). PASS + commit — `Art. 206 Paso 9: simbolos con subindice real`.
+- [x] **Step 1: test.** `test_simbolos_sin_guion_bajo_206` recorre la columna B y afirma que
+  ningún símbolo lleva `"_"` visible y que hay al menos uno con subíndice real (`CellRichText`).
+- [x] **Step 2: helper `sym()`/`_aplicar_subindices()`** — compartido con el 212 (creado en el
+  builder). `CellRichText` + `InlineFont(vertAlign="subscript")`, fuente `MONO`.
+- [x] **Step 3: aplicar.** Los dos símbolos del 206 que vivían en prosa (`T_s` fila 29, `L_s`
+  fila 32) se **movieron a la columna B** para poder subscriptearlos limpio (la columna A trae
+  guiones bajos que no son subíndices — tags `[MODO_S]` de la Sección 7 —, por eso solo se
+  convierte la B). Verificado en el `.xlsm`: `T_s`→T+ₛ, `L_s`→L+ₛ.
+- [x] **Step 4: `TestSistemaVisual`** pasa **sin cambios**: lee las fuentes/colores al nivel de
+  celda (que siguen en `MONO`/`TINTA`), no los *runs* del rich text. pytest 254 · verificar.py
+  **0 fallos**. Commit conjunto con la Fase 9 del 212.
 
 ---
 
@@ -433,25 +432,22 @@ rótulos, no referencias).
 **Files:** Modify `test_dashboard.py` (`TestBuildCollarArt206` completo), `verificar.py §6f`;
 Modify `CLAUDE.md` (estado del motor 206); Modify este plan (estado final).
 
-- [ ] **Step 1: build completo.** `python build_db_materiales.py --resources … --in
-  ..\..\..\templates\maestro_con_macros.xlsm --out
-  ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm`. Sin abortos.
-- [ ] **Step 2: los gates sin recálculo.** `pytest test_build_db.py test_dashboard.py
-  test_secii_tablas.py -q` → verde. Las anclas por paso de `TestBuildCollarArt206` fijan las
-  fórmulas nuevas por cadena; `TestSistemaVisual`, `TestSincroniaPythonVba` y la visibilidad/
-  navegación de `Collar_PCC2_Art206` pasan. `verificar.py §1-5` (book-wide) sin discrepancias
-  ni matriz dinámica.
-- [ ] **Step 3: entregar para F9 en Excel.** `SendUserFile` del `.xlsm`. Pedir al ingeniero:
-  F9 del caso semilla del 206 con las fórmulas nuevas (Type A y Type B), y confirmar los valores
-  esperados (que **cambian** respecto de hoy por el C.A. en el `t_req` y por el nuevo cateto
-  `w`). Registrar los nuevos valores de referencia del caso semilla del 206.
-- [ ] **Step 4: `verificar.py §6f`.** Con la hoja validada, dejar §6f recalculando en Excel
-  real —desde la misma expresión que emite el motor— `w`/`w_máx`, el tope `G≤2,5`, el `t_req`+
-  C.A. y el tipo recomendado del caso semilla; fijar los valores esperados con los que confirmó
-  el ingeniero.
-- [ ] **Step 5: `verificar.py` completo en Windows** (§1-10 + §6f) → 0 fallos.
-- [ ] **Step 6: documentar.** Actualizar `CLAUDE.md` (sección del motor 206: ahora 8 pasos
-  explícitos; citar la Fase 0 y las decisiones 1-4). Marcar este plan como ejecutado. Commit.
+- [x] **Step 1: build completo.** Sin abortos.
+- [x] **Step 2: los gates sin recálculo.** `pytest` = **252 passed** (incl. `TestBuildCollarArt206`,
+  8 anclas por paso). `TestSistemaVisual`, `TestSincroniaPythonVba` y la visibilidad/navegación
+  del collar verdes. `verificar.py §1-5` sin discrepancias ni matriz dinámica.
+- [x] **Step 3: entregar para F9 en Excel.** `.xlsm` entregado por `SendUserFile` (2026-09-11).
+  Nota: con **C.A.=0 (default) el `t_req` no cambia de valor** y el cateto solo aplica a Type B
+  (el seed es Type A → w «No aplica»); los cambios de valor los ejerce el ingeniero al teclear
+  C.A. o poner Type B.
+- [x] **Step 4: `verificar.py §6f`.** Añadida: recalcula en Excel real el cateto `w`
+  (Type B forzado en el qa), la luz `G≤2,5` y el tipo recomendado. w=9.5, luz CUMPLE, tipo Type A.
+  El `t_req`+C.A. lo fijan las anclas de cadena (`TestBuildCollarArt206`) + §1-5 book-wide.
+- [x] **Step 5: `verificar.py` completo en Windows** (§1-11 + §6f) → **0 fallos**.
+- [~] **Step 6: documentar.** Nota de estado añadida al `CLAUDE.md` del proyecto. La **Fase 9
+  (subíndices reales, agrupada con el 212 — `T_s` y `L_s` movidos a la columna B) se ejecutó en
+  `fba1417`**; `verificar.py` = **0 fallos** (§6f incl.) y `pytest` = **254** tras ella. **Único
+  pendiente de cierre: F9 del ingeniero.** El plan queda en `outputs/plans/` hasta esa firma.
 
 ---
 

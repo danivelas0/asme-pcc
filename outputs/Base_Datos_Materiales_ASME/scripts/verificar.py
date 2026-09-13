@@ -187,6 +187,45 @@ def interp(temps, vals, T, modo="Interpolado"):
     return s1 + (s2 - s1) * (T - t1) / (t2 - t1)
 
 
+def _recalc_en_us(ruta_wb, id_base, id_collar):
+    """El motor Art. 212 recalculado en modo US con las MISMAS magnitudes.
+
+    Cada entrada se convierte desde el valor que la hoja ya trae en SI, no se
+    teclea a mano: asi la comparacion es contra el caso semilla de verdad y no
+    contra unas cifras inventadas que podrian estar mal a la vez que el motor.
+    """
+    MM_IN, PSI_KGCM2 = 25.4, 14.2233433
+    wb = openpyxl.load_workbook(ruta_wb, keep_vba=True)
+    ws = wb["Parche_PCC2_Art212"]
+
+    def fila(rotulo):
+        for r in range(1, 200):
+            if str(ws.cell(r, 1).value or "").strip().startswith(rotulo):
+                return r
+        raise SystemExit(f"§6g: no se encontro la fila '{rotulo}' del Art. 212.")
+
+    # Semilla de material (misma via que §7: la celda 'Variante').
+    ws.cell(fila("5 · Variante"), 4).value = id_base
+    ws.cell(fila("5 · Variante"), 5).value = id_collar
+    ws.cell(fila("Sistema de unidades"), 4).value = "US"
+    # Temperatura: °C -> °F. Presiones: kg/cm² -> psi. Longitudes: mm -> in.
+    r = fila("Temperatura de operación")
+    ws.cell(r, 4).value = ws.cell(r, 4).value * 9 / 5 + 32
+    for rot in ("Presión de operación", "Presión de diseño"):
+        c = ws.cell(fila(rot), 4)
+        c.value = c.value * PSI_KGCM2
+    for rot in ("Espesor del parche", "Altura / dimensión", "Luz radial",
+                "Cateto del filete", "Solape mínimo", "Diámetro del defecto",
+                "Distancia defecto"):
+        c = ws.cell(fila(rot), 4)
+        c.value = c.value / MM_IN
+    tmp = OUTDIR / "qa_us.xlsm"
+    wb.save(tmp)
+    salida = OUTDIR / "qa_us_calc.xlsx"
+    recalcular_con_excel(tmp, salida)
+    return openpyxl.load_workbook(salida, data_only=True)
+
+
 def auditar():
     wb = openpyxl.load_workbook(WB)
     # Copia intacta para la seccion 8: `wb` recibe la hoja _QA en la seccion 6
@@ -1141,16 +1180,54 @@ def auditar():
     # El motor se ENTREGA sin material seleccionado: D109..D114 y E109..E114
     # estan vacias y D115 resuelve a "". Los campos D22/D23 son descripciones
     # de texto libre, no la seleccion de la base. Asi que el caso de regresion
-    # hay que conducirlo: se escribe el material_id en la celda "Variante"
-    # (D114/E114), que el motor respeta por encima de la cascada
-    # (`=IF($D$114<>"",$D$114,...)`). Eso fija la resolucion sin depender de
-    # los cinco niveles de listas desplegables.
+    # hay que conducirlo: se escribe el material_id en la celda "Variante",
+    # que el motor respeta por encima de la cascada. Eso fija la resolucion sin
+    # depender de los cinco niveles de listas desplegables. La celda se busca
+    # POR ROTULO, no por direccion: ver celda_motor().
     motor = wb["Parche_PCC2_Art212"]
     id_base = next(i for i in ib if i.startswith("A-1 | A106 | B"))
     id_collar = next(i for i in ib if i.startswith("A-1 | A516 | 70"))
-    motor["D114"] = id_base
-    motor["E114"] = id_collar
-    T_semilla = motor["D25"].value
+
+    def celda_motor(rotulo, col, *, fila=None):
+        """Localiza una fila del motor POR SU ROTULO, no por su direccion.
+
+        Las direcciones del Art. 212 se han movido dos veces (Fases 3 y 7) y
+        este bloque quedo apuntando a las viejas SIN QUE NADA LO DIJERA: el
+        material semilla se escribia en la fila de conformado en frio y la
+        verificacion comparaba un numero con un texto, cosa que en Excel da
+        CUMPLE. Es decir, la comprobacion seguia en verde comprobando otra cosa.
+        Buscar por rotulo hace imposible ese fallo: si la fila no esta, aborta.
+        """
+        for r in range(1, 200):
+            if str(motor.cell(r, 1).value or "").strip().startswith(rotulo):
+                return motor.cell(r, col)
+        raise SystemExit(
+            f"verificar.py: no se encontro la fila '{rotulo}' en "
+            f"Parche_PCC2_Art212. Si el motor se reordeno, actualice este "
+            f"bloque en vez de dejarlo apuntando a una fila que ya no es.")
+
+    celda_motor("5 · Variante", 4).value = id_base
+    celda_motor("5 · Variante", 5).value = id_collar
+    T_semilla = celda_motor("Temperatura de operación", 4).value
+    if not isinstance(T_semilla, (int, float)):
+        raise SystemExit(
+            f"verificar.py: la temperatura de operacion del caso semilla no es "
+            f"un numero ({T_semilla!r}). El bloque esta leyendo la fila que no es.")
+    # Paso 8 (energia neumatica): el motor se entrega en hidrostatica (D183). Se
+    # fuerza un caso neumatico en el libro qa (throwaway) para ejercer E/TNT/R en
+    # Excel real; no afecta F90 ni las verificaciones de Sa (que no dependen de
+    # D183). V y Pat grandes para caer en la rama eq.(III-1) de la distancia.
+    motor["D183"] = "Neumatica"
+    motor["D184"] = 100     # V, m3
+    motor["D185"] = 5       # Pat, MPa abs
+    motor["D186"] = 0.101   # Pa, MPa abs
+    motor["D187"] = 1.4     # k
+    motor["D188"] = 20      # Rscaled, m/kg^1/3
+    # Art. 206 (§6f): se fuerza Type B en el libro qa para ejercer el cateto del
+    # filete w = Ts + G / 1.4 Tp + G (Paso 4). No afecta a los checks del 212.
+    if "Collar_PCC2_Art206" in wb.sheetnames:
+        col_ws = wb["Collar_PCC2_Art206"]
+        col_ws["D22"] = "Type B (contiene presion)"
 
     qa_in = OUTDIR / "qa.xlsx"
     qa_out = OUTDIR / "qa_recalculado.xlsx"
@@ -1390,9 +1467,9 @@ def auditar():
     TOL = 1e-6
     ref_base = interp(tb, ib[id_base][1], T_semilla, "Interpolado")
     ref_collar = interp(tb, ib[id_collar][1], T_semilla, "Interpolado")
-    esperado = [("Sa collar (A516 Gr.70)", "D39", ref_collar, "E125"),
-                ("Sa metal base (A106 Gr.B)", "D40", ref_base, "D125"),
-                ("Sa gobernante", "D41", min(ref_base, ref_collar), None)]
+    esperado = [("Sa collar (A516 Gr.70)", "D68", ref_collar, "E58"),
+                ("Sa metal base (A106 Gr.B)", "D69", ref_base, "D58"),
+                ("Sa gobernante", "D70", min(ref_base, ref_collar), None)]
     semilla_bad = 0
     log(f"Temperatura de evaluacion: **{T_semilla} °C** · metal base `{id_base[:40]}` · "
         f"collar `{id_collar[:40]}`")
@@ -1405,12 +1482,243 @@ def auditar():
         semilla_bad += 0 if ok else 1
         dictamen = rec[celda_dict].value if celda_dict else "—"
         log(f"| {etiqueta} | {ref} | {got} | {dictamen} | {'OK' if ok else 'FALLO'} |")
-    dict_global = rec["F90"].value
-    ok_global = dict_global == "APTO"
+    # El dictamen global NO se contrasta contra un literal fijo ("APTO"), sino
+    # contra lo que implican los criterios de aceptacion que su propio AND
+    # consulta (F84/F85/F86/F87 de la Seccion 5 y los dos topes de filete del
+    # Paso 4). Es un guardia mas fuerte: un literal solo detecta que el veredicto
+    # cambio, y ademas obliga a reescribirlo cada vez que una decision de
+    # ingenieria mueve el resultado del caso semilla —que es justo cuando hay
+    # que MIRAR, no cuando hay que silenciar—. Asi la §7 comprueba lo que de
+    # verdad importa: que el dictamen no contradiga a sus propias verificaciones.
+    #
+    # Fase 2 (modelo de presion de dos casos): el caso semilla dejo de ser APTO
+    # y pasa a REVISAR, y es correcto que lo haga. Hasta la Fase 2 la Seccion 5
+    # evaluaba el esfuerzo de soldadura contra la presion de "diseno tipico"
+    # (10 kg/cm²) mientras la "envolvente" (20 kg/cm², el rating que la propia
+    # hoja ya traia) solo se miraba de lado, sin entrar al dictamen. Con una
+    # unica presion de diseno —la maxima admisible, que es la que nombran
+    # 212-3.2 y 206-3.3— el parche de 8 mm del caso semilla NO cumple el limite
+    # 1,5·Sa de la ec. (5) del 212-3.4c a esa presion. El hallazgo es de
+    # ingenieria, no de codigo: lo que cambia es contra que presion se juzga.
+    CRIT_DICTAMEN = (("Filete perimetral", "F113"), ("Excentricidad soldadura", "F114"),
+                     ("Conformado en frio", "F115"), ("Espesor de pared", "F116"),
+                     ("Tope de filete (min)", "F161"), ("Tope de filete (max)", "F162"))
+    fallan = [(etq, c) for etq, c in CRIT_DICTAMEN if rec[c].value != "CUMPLE"]
+    dict_esperado = "APTO" if not fallan else "REVISAR"
+    dict_global = rec["F119"].value
+    ok_global = dict_global == dict_esperado
     semilla_bad += 0 if ok_global else 1
     log("")
     log(f"Dictamen global del modulo: **{dict_global}** "
-        f"({'OK' if ok_global else 'FALLO — se esperaba APTO'}).")
+        f"({'OK' if ok_global else f'FALLO — sus criterios implican {dict_esperado}'}).")
+    if fallan:
+        log("")
+        log("Criterios que NO cumplen en el caso semilla (y por eso el dictamen "
+            "no es APTO):")
+        log("")
+        for etq, c in fallan:
+            log(f"- **{etq}** ({c}): `{rec[c].value}`")
+        log("")
+        log("Con la presion de diseno del caso semilla en su rating (D28 = 20 "
+            "kg/cm²), el esfuerzo de soldadura de la ec. (5) del 212-3.4c da "
+            f"{rec['E97'].value} MPa contra un limite 1,5·Sa de {rec['D77'].value} "
+            "MPa. Es el resultado correcto del modelo de presion de dos casos; "
+            "para volver a APTO hay que cambiar el DISENO (espesor del parche, "
+            "cateto, material) o la presion de diseno de entrada, no el motor.")
+    log("")
+
+    # ---- 6e. pasos del flujo 212 recalculados en Excel -------------------
+    # Recalcula en Excel (el mismo libro semilla de la seccion 7) las magnitudes
+    # nuevas de los pasos del flujo del Art. 212 y las contrasta con su
+    # re-derivacion en Python desde las ENTRADAS que la propia hoja recalculo
+    # -no un valor escrito a mano-. Asi la prueba ejerce la cadena real de
+    # formulas en el motor de Excel, no una copia.
+    #   Paso 2 (212-3.2): F_CP=P*Dm/2, F_LP=P*Dm/4, F_C=F_CP+F_CO,
+    #                     F_L=F_LP+F_LO, F_max=MAX(F_C,F_L).
+    #   Paso 4 (212-3.4): w_min = F_max/(E*Sa), E=D42, Sa=D41 (ec. 4).
+    # El caso semilla es cilindro (D11=1), asi que F_max aplica (no NA).
+    log("## 6e. Pasos del flujo 212 recalculados en Excel (caso semilla)")
+    log("")
+    flujo_bad = 0
+    dm = rec["D81"].value
+    fco = rec["D144"].value or 0
+    flo = rec["D145"].value or 0
+    e_fil = rec["D71"].value
+    sa_gob = rec["D70"].value
+    Tpar = rec["D30"].value
+    tpar = rec["D22"].value
+    g_edge = rec["D167"].value or 0
+    log("| Magnitud | Caso | Referencia Python | Hoja | Estado |")
+    log("|---|---|---|---|---|")
+    # Paso 5: excentricidad e = (T + t + g)/2, con g solo si g >= 1.5 (212-4c).
+    e_ref = None
+    if all(isinstance(v, (int, float)) for v in (Tpar, tpar)):
+        e_ref = (Tpar + tpar + (g_edge if g_edge >= 1.5 else 0)) / 2
+        got_e = rec["D84"].value
+        ok_e = isinstance(got_e, (int, float)) and abs(got_e - e_ref) <= max(TOL, abs(e_ref) * 1e-9)
+        flujo_bad += 0 if ok_e else 1
+        log(f"| e (excentricidad) | — | {e_ref} | {got_e} | {'OK' if ok_e else 'FALLO'} |")
+        # Paso 6: %Elong = coef*T/Rf*(1-Rf/Ro); seed cilindro (coef 50) y plancha
+        # plana (Ro en blanco -> factor 1).
+        rf = rec["D85"].value
+        modo = rec["D11"].value
+        ro = rec["D172"].value
+        if isinstance(rf, (int, float)) and rf and isinstance(Tpar, (int, float)):
+            coef = 75 if modo == 3 else 50
+            fac = 1.0 if (ro in ("", None)) else (1 - rf / ro if ro else 1.0)
+            elong_ref = coef * Tpar / rf * fac
+            got_el = rec["D106"].value
+            ok_el = isinstance(got_el, (int, float)) and abs(got_el - elong_ref) <= max(TOL, abs(elong_ref) * 1e-9)
+            flujo_bad += 0 if ok_el else 1
+            log(f"| %Elong conformado | — | {elong_ref} | {got_el} | "
+                f"{'OK' if ok_el else 'FALLO'} |")
+    # Fase 2: dos casos de presion, no tres. La columna F ("Envolvente") se
+    # retiro del motor: su caso -la presion maxima admisible- es el que ahora
+    # ocupa la columna E, rotulada "Diseno" (212-3.2 define una unica P de
+    # diseno; 206-3.3 la nombra "maximum allowable design pressure").
+    for etiq, pc, cpc, lpc, cc, lc, mc, wc, sw in (
+            ("Operacion", "D91", "D146", "D147", "D148", "D149", "D150", "D93", "D97"),
+            ("Diseno", "E91", "E146", "E147", "E148", "E149", "E150", "E93", "E97")):
+        P = rec[pc].value
+        if not isinstance(P, (int, float)) or not isinstance(dm, (int, float)):
+            flujo_bad += 1
+            log(f"| (entradas) | {etiq} | P={P} Dm={dm} | — | FALLO |")
+            continue
+        exp_cp, exp_lp = P * dm / 2, P * dm / 4
+        exp_c, exp_l = exp_cp + fco, exp_lp + flo
+        exp_max = max(exp_c, exp_l)
+        comprobaciones = [("F_CP", cpc, exp_cp), ("F_LP", lpc, exp_lp),
+                          ("F_C", cc, exp_c), ("F_L", lc, exp_l),
+                          ("F_max", mc, exp_max)]
+        if isinstance(e_fil, (int, float)) and isinstance(sa_gob, (int, float)) and e_fil * sa_gob:
+            comprobaciones.append(("w_min", wc, exp_max / (e_fil * sa_gob)))
+        # Paso 5: S_w literal de la ec.(5): P*Dm/(2T) + 3*P*Dm*e/T^2.
+        if e_ref is not None and isinstance(Tpar, (int, float)) and Tpar:
+            comprobaciones.append(
+                ("S_w", sw, P * dm / (2 * Tpar) + 3 * P * dm * e_ref / Tpar ** 2))
+        for nombre, celda, ref in comprobaciones:
+            got = rec[celda].value
+            ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-9)
+            flujo_bad += 0 if ok else 1
+            log(f"| {nombre} | {etiq} | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
+    # Paso 8: energia neumatica E (II-1), TNT (II-3) y distancia R (III-1). El qa
+    # se recalculo con D183=Neumatica y V/Pat/k conocidos. Las constantes (divisor
+    # TNT, umbral y distancia del blast wave) se leen de resources/ con la MISMA
+    # funcion que usa el motor (leer_energia_501), no se copian a mano.
+    try:
+        e501 = B.leer_energia_501(RES.root)
+    except SystemExit:
+        e501 = None
+    if e501 and rec["D183"].value == "Neumatica":
+        V, Pat, Pa = rec["D184"].value, rec["D185"].value, rec["D186"].value
+        k, rsc = rec["D187"].value, rec["D188"].value
+        if all(isinstance(x, (int, float)) for x in (V, Pat, Pa, k, rsc)) and k != 1 and Pat:
+            E_ref = (1 / (k - 1)) * (Pat * 1e6) * V * (1 - (Pa / Pat) ** ((k - 1) / k))
+            tnt_ref = E_ref / e501["tnt_div_kg"]
+            r_ref = (e501["blast_R_m"] if E_ref <= e501["blast_thr_J"]
+                     else rsc * (2 * tnt_ref) ** (1 / 3))
+            for nombre, celda, ref in (("E", "D189", E_ref), ("TNT", "D190", tnt_ref),
+                                       ("R", "D191", r_ref)):
+                got = rec[celda].value
+                ok = isinstance(got, (int, float)) and abs(got - ref) <= max(TOL, abs(ref) * 1e-6)
+                flujo_bad += 0 if ok else 1
+                log(f"| {nombre} (neumatica) | — | {ref} | {got} | {'OK' if ok else 'FALLO'} |")
+    log("")
+
+    # ---- 6f. pasos del flujo 206 recalculados en Excel -------------------
+    # Recalcula en Excel el cateto del filete w (Paso 4, 206-3.5) del Collar
+    # (forzado a Type B en el libro qa) y la luz radial (206-4.1), y comprueba la
+    # recomendacion de tipo (Paso 1). Las formulas simples/IF (t_req+C.A., avisos)
+    # las fijan las anclas de cadena de TestBuildCollarArt206; aqui se ejerce en
+    # Excel la unica formula numerica nueva no trivial (el cateto).
+    log("## 6f. Pasos del flujo 206 recalculados en Excel (Type B forzado)")
+    log("")
+    flujo206_bad = 0
+    if "Collar_PCC2_Art206" in recalc.sheetnames:
+        rc = recalc["Collar_PCC2_Art206"]
+        Ts, Tp, G = rc["D29"].value, rc["D21"].value, rc["D31"].value
+        log("| Magnitud | Referencia Python | Hoja | Estado |")
+        log("|---|---|---|---|")
+        if all(isinstance(x, (int, float)) for x in (Ts, Tp, G)):
+            w_ref = Ts + G if Ts <= 1.4 * Tp else 1.4 * Tp + G
+            got_w = rc["D121"].value
+            ok_w = isinstance(got_w, (int, float)) and abs(got_w - w_ref) <= max(TOL, abs(w_ref) * 1e-9)
+            flujo206_bad += 0 if ok_w else 1
+            log(f"| cateto w (Type B) | {w_ref} | {got_w} | {'OK' if ok_w else 'FALLO'} |")
+        else:
+            log(f"| cateto w | Ts={Ts} Tp={Tp} G={G} | — | (entradas no numericas) |")
+        # Luz radial: G=1.5 <= 2.5 -> CUMPLE.
+        got_luz = rc["F123"].value
+        ok_luz = got_luz == "CUMPLE"
+        flujo206_bad += 0 if ok_luz else 1
+        log(f"| luz G<=2.5 | CUMPLE | {got_luz} | {'OK' if ok_luz else 'FALLO'} |")
+        # Tipo recomendado (ambos criterios 'No' por defecto -> Type A).
+        got_rec = rc["D105"].value
+        ok_rec = isinstance(got_rec, str) and got_rec.startswith("Type A")
+        flujo206_bad += 0 if ok_rec else 1
+        log(f"| tipo recomendado | Type A (fuga/axial=No) | {got_rec} | "
+            f"{'OK' if ok_rec else 'FALLO'} |")
+    log("")
+
+    # ---- 6g. coherencia de unidades del modo US (recalculo Excel) ---------
+    # La Fase 7 hace que el conmutador SI/US gobierne TODO el motor, no solo el
+    # bloque de material: la edicion US publica el esfuerzo en ksi, y meter un
+    # ksi en una cadena que opera en MPa/mm da un numero equivocado.
+    #
+    # Aqui se comprueba lo unico que de verdad lo demuestra: se recalcula el
+    # caso semilla OTRA VEZ, en modo US, con las MISMAS magnitudes fisicas
+    # -cada entrada convertida desde la que ya tiene la hoja en SI- y se exige
+    # que cada resultado coincida con el metrico al reconvertirlo. No se
+    # comparan formulas: se comparan numeros salidos del motor de Excel.
+    #
+    # Lo que NO tiene que coincidir exactamente son los umbrales normativos: el
+    # codigo imprime "40 mm (1.5 in.)" y 1.5 in son 38.1 mm. Esa diferencia es
+    # del codigo, no del motor, y por eso se leen las dos cifras en vez de
+    # convertir una (regla 9). Se declaran aparte.
+    log("## 6g. Modo US: coherencia de unidades (recalculo Excel)")
+    log("")
+    us_bad = 0
+    MM_IN, KSI_MPA = 25.4, 6.894757
+    KIP_NMM = 4448.2216 / 25.4
+    PSI_KGCM2 = 1 / 14.2233433
+    try:
+        us_wb = _recalc_en_us(Path(WB), id_base, id_collar)
+    except Exception as e:          # noqa: BLE001
+        us_wb = None
+        log(f"No se pudo recalcular en modo US: {e}")
+        us_bad += 1
+    if us_wb is not None:
+        u212, s212 = us_wb["Parche_PCC2_Art212"], recalc["Parche_PCC2_Art212"]
+        comprobaciones = [
+            ("Sa gobernante", "D70", KSI_MPA), ("Dm", "D81", MM_IN),
+            ("excentricidad e", "D84", MM_IN), ("F_m", "D92", KIP_NMM),
+            ("w_min", "D93", MM_IN), ("t_req", "D94", MM_IN),
+            ("S_w total", "D97", KSI_MPA), ("L_min", "D102", MM_IN),
+            ("P_max del parche", "D103", KSI_MPA),
+            ("longitud de corte", "D108", MM_IN),
+            ("peso", "D109", 0.45359237),
+        ]
+        log("| Magnitud | SI | US | US reconvertido | Estado |")
+        log("|---|---|---|---|---|")
+        for etiq, celda, factor in comprobaciones:
+            a, b = s212[celda].value, u212[celda].value
+            if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
+                us_bad += 1
+                log(f"| {etiq} | {a} | {b} | — | FALLO (no numerico) |")
+                continue
+            conv = b * factor
+            ok = abs(conv - a) <= max(TOL, abs(a) * 1.5e-3)
+            us_bad += 0 if ok else 1
+            log(f"| {etiq} | {a:.6g} | {b:.6g} | {conv:.6g} | "
+                f"{'OK' if ok else 'FALLO'} |")
+        # Las seis verificaciones y el dictamen tienen que dar LO MISMO: si el
+        # veredicto cambiase con el sistema de unidades, el motor estaria
+        # diciendo dos cosas distintas del mismo diseño.
+        for celda in [f"F{r}" for r in range(113, 119)] + ["F119"]:
+            a, b = s212[celda].value, u212[celda].value
+            ok = a == b
+            us_bad += 0 if ok else 1
+            log(f"| veredicto {celda} | {a} | {b} | — | {'OK' if ok else 'FALLO'} |")
     log("")
 
     # ---- 8. capa de navegacion -------------------------------------------
@@ -1811,8 +2119,8 @@ def auditar():
 
     # ---- cierre -----------------------------------------------------------
     total = (nbad + bad_tot + extra_bad + len(hits) + len(malas) + len(infractoras)
-             + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + nav_bad
-             + map_bad + sec_bad + b36_bad)
+             + (0 if cont_ok else 1) + cnt_bad + uniq_bad + semilla_bad + flujo_bad
+             + flujo206_bad + nav_bad + map_bad + sec_bad + b36_bad)
     log("## Resultado")
     log("")
     log(f"| Seccion | Fallos |")
@@ -1824,6 +2132,9 @@ def auditar():
                         ("5b. Guardia listas fijas en motor (regla 12/14)", len(infractoras)),
                         ("6. Interpolacion recalculada", nbad),
                         ("7. Caso semilla", semilla_bad),
+                        ("6e. Pasos del flujo 212 (recalculo Excel)", flujo_bad),
+                        ("6f. Pasos del flujo 206 (recalculo Excel)", flujo206_bad),
+                        ("6g. Modo US: coherencia de unidades", us_bad),
                         ("8. Capa de navegacion", nav_bad),
                         ("9. Mapeo de grupos", map_bad),
                         ("10. Seccion II A/B/C", sec_bad),

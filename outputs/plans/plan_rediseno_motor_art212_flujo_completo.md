@@ -125,44 +125,50 @@ citable/trazable sin volver a abrir la imagen.
 `extraction_amendments` con la procedencia (bloque 33, la ruta del PNG de `resources/`, nota
 «recuperada de la imagen del propio `resources/`, no de un folio externo»).
 
-- [ ] **Step 1: Confirmar el ancla.** `python -c` que imprime `blocks[33]` de ambos espejos →
-  `type=figure`, `image=…diagram_3_2.png`, `text` vacío. (Verificado en el diseño.)
-- [ ] **Step 2: Escribir `completar_art_212_eq2.py`** — idempotente, `--resources`; **lee el
+- [x] **Step 1: Confirmar el ancla.** `python -c` que imprime `blocks[33]` de ambos espejos →
+  `type=figure`, `image=…diagram_3_2.png`, `text` vacío. (Verificado en el diseño y en ejecución.)
+- [x] **Step 2: Escribir `completar_art_212_eq2.py`** — idempotente, `--resources`; **lee el
   PNG referenciado por el propio bloque** (no un PDF), escribe `text="F_LP = P·Dm/4 (2)"` con
   su `extraction_amendments`, no toca ningún otro valor. Aborta si el bloque 33 ya no apunta a
-  ese PNG (defensa ante reorganización de `resources/`).
-- [ ] **Step 3: Correr una vez por espejo** y comprobar con `git diff` que sólo cambia el
-  bloque de la ec. (2) y su metadato.
-- [ ] **Step 4: Commit** — `Art. 212: fija la ec. (2) F_LP=P·Dm/4 desde la imagen de resources/ (Regla n.1)`.
+  ese PNG (defensa ante reorganización de `resources/`). Imagen leída y confirmada: `F_LP = P·Dm/4 (2)`.
+- [x] **Step 3: Correr una vez por espejo** y comprobar con `git diff` que sólo cambia el
+  bloque de la ec. (2) y su metadato. Confirmado: 28 ins / 4 del, solo el bloque 33 y el amendment.
+- [x] **Step 4: Commit** — `Art. 212: fija la ec. (2) F_LP=P·Dm/4 desde la imagen de resources/ (Regla n.1)`.
 
 ### Tarea 0.2 — Reparar el **vacío real** de la energía almacenada (App. 501-II eq. II-1/II-2) en `resources/`
 
 **Files:** Create `scripts/completar_app_501_energia.py`; Modify `app_501_ii.json` (y su
 espejo `part_5_...`); leer/validar Tabla 501-III-1-1 en `app_501_iii.json`.
 
-**Fuente (resources/):** verificado en el diseño — en los **dos** espejos, los bloques de las
-ec. (II-1)/(II-2) están **vacíos y sin `image`**; (II-3) `TNT=E/4 266 920` y (II-5) sí están
-en texto; la Tabla 501-III-1-1 (`R_scaled`) está como `table` y sólo se lee. La ec. (II-1) es
-por tanto un **vacío de extracción de `resources/`**, no algo que se pueda recuperar de una
-imagen existente.
+**Fuente (resources/) — PREMISA CORREGIDA EN EJECUCIÓN (2026-09-11).** El diseño del plan
+afirmaba que los bloques de la ec. (II-1)/(II-2) estaban **vacíos y sin `image`** (vacío real).
+Al ejecutar se comprobó que es **falso**: los bloques **sí traen texto**, pero la extracción
+está **colapsada** — el PDF de PCC-2 es born-digital y su fuente matemática privada mapeó los
+corchetes y operadores a letras Latin-1 (`Ä Å Ç É Ñ Ö ×`), no a `U+FFFD`. `figures = 0` (no
+hay imagen que leer) y el otro espejo (`part_5_…`) **no contiene** el App. 501-II. Las hermanas
+aire-only (II-2, II-4) tienen el mismo defecto; las de TNT (II-3, II-5) llegaron legibles.
 
-> **Decisión pendiente del ingeniero.** Como el dato **no está en `resources/`**, la Regla
-> nº 1 prohíbe tomarlo de `knowledge/claude.md` (derivado) o de memoria. Dos caminos, y esta
-> tarea no arranca hasta elegir uno:
-> (a) **Reparar `resources/`**: re-extraer el apéndice 501-II para capturar la imagen de la
->     ec. (II-1)/(II-2) al JSON (con `extraction_amendments`), y **entonces** la Fase 8 la
->     consume. Es la única vía que respeta «todo dato entra desde `resources/`».
-> (b) **Diferir la Fase 8**: la energía neumática queda fuera, la hidrostática es el caso
->     base, y se declara el límite. El resto del plan no depende de ello.
+> **Decisión del ingeniero (2026-09-11): «Léelo directamente de la carpeta de standards».**
+> El PDF de PCC-2 sí está en `…/0-CODES/PCC - POST CONSTRUCTION CODE/ASME PCC-2 REPAIR OF
+> PRESSURE EQUIPMENT AND PIPING.pdf` (la ruta del `CLAUDE.md` usa el usuario `dvelasquez`; en
+> esta máquina es `User`). Se leyó **solo para corregir/verificar** el JSON (uso permitido por
+> la Regla nº 1); nunca se añade al repo (copyright ASME) ni alimenta un motor directamente.
+> Las páginas 306-308 (folios 281-282) se renderizaron con PyMuPDF y se leyeron; de ahí salen
+> las formas limpias. Camino (a) cumplido **sin re-extraer con marker**: la corrección puntual
+> de la capa de texto es suficiente y más segura que re-correr el extractor.
 
-- [ ] **Step 1: Confirmar el vacío** en los dos espejos (`equation` con `text` vacío y sin
-  `image`). Ya verificado; re-confirmar en ejecución por si `resources/` cambió.
-- [ ] **Step 2 (camino a):** re-extraer el apéndice 501-II para poblar la imagen de la ec.
-  (II-1)/(II-2) en el JSON, con procedencia; escribir su `text` en función de `k`, `Pa`,
-  `Pat`, `V` **tal como el código lo imprime** (no la forma aire-only `2.5`/`0.286`).
-- [ ] **Step 3: Leer la Tabla 501-III-1-1** (`R_scaled`) y dejar constancia de sus valores por
-  criterio para que la Fase 8 los ofrezca por lista.
-- [ ] **Step 4: Commit** — `App. 501: repara el vacio de la energia almacenada (II-1/II-2) en resources/ (Regla n.1)`.
+- [x] **Step 1: Confirmar el estado real** en `resources/`. Hecho: no es vacío sino **texto
+  colapsado**; sin imagen; sin espejo `part_5`. Premisa del diseño corregida (arriba).
+- [x] **Step 2 (camino a):** `completar_app_501_energia.py` fija en la capa de texto las ec.
+  (II-1) `E = [1/(k-1)]*Pat*V*[1 - (Pa/Pat)^((k-1)/k)]`, (II-2) `2.5*…^0.286` y (II-4)
+  `360*…^0.286` **tal como las imprime el código** (la general en `k`, no la aire-only como
+  única forma), con procedencia (PDF, folios, SHA-256 `ab8e7b6…`) en `extraction_amendments`.
+  Idempotente y defensivo (localiza por rótulo y tipo). Ningún valor se altera.
+- [x] **Step 3: Leer la Tabla 501-III-1-1** (`R_scaled`) del PDF y dejar constancia estructurada
+  en `app_501_iii.json` (4 filas: 20/50 vidrio, 12/30 tímpano-bloques, 6/15 pulmón-ladrillo,
+  2/5 fatal) + reglas (`R_scaled ≥ 20 m/kg^⅓`; `R = 30 m` para `E ≤ 8 130 000 J`) y la ec.
+  (III-1) `R = Rscaled*(2*TNT)^(1/3)`, para que la Fase 8 los ofrezca por lista con trazabilidad.
+- [x] **Step 4: Commit** — `App. 501: repara la extraccion colapsada de la energia almacenada (II-1/II-2/II-4, III-1) desde el PDF (Regla n.1)`.
 
 ---
 
@@ -182,28 +188,24 @@ uso del Art. 201 (flujo, cruzado con Part 1 del estándar — bloque [10] remite
 elegibilidad** que el DICTAMEN GLOBAL (F90) consume: si no es elegible, el resultado global
 se bloquea con el motivo, en rojo, antes de cualquier cálculo.
 
-- [ ] **Step 1: test (falla).** En `TestBuildParcheContraOracle`, `test_paso1_elegibilidad`:
-  construye la hoja y afirma que existen las celdas de entrada nuevas (mecanismo de daño con
-  `dv_list` de ítems; tipo de servicio con `dv_list` incl. «letal»), y que el dictamen de
-  elegibilidad devuelve texto de bloqueo cuando T = 400 (>345) o servicio = letal, y «ELEGIBLE»
-  para el caso semilla (25 °C, agua). Correr → FAIL.
-- [ ] **Step 2: implementar las entradas del Paso 1.** Rótulos con `sym()`, unidades, celdas
-  `inp`/`dv_list`:
-  - Mecanismo de daño — `dv_list '"Adelgazamiento local,Erosion,Corrosion,Perforacion traspasante,Otro/no caracterizado"'`.
-  - ¿Daño caracterizable (tasa conocida)? — `dv_list '"Si,No"'`.
-  - Tipo de servicio — `dv_list '"General,Letal / extrema peligrosidad"'`.
-  - Presencia de grietas — `dv_list '"No,Si — arrestada + FFS,Si — activa/no analizada"'`.
-  - Solape mínimo sobre metal sano (ya existe, D33=25 mm) — mantener, citar bloque [19].
-- [ ] **Step 3: dictamen de elegibilidad** (fórmula anidada `IF`, sólo `IF/AND/OR`):
-  bloquea si servicio letal (→ «PROHIBIDO — usar Art. 201»), si daño no caracterizable
-  (→ «NO ELEGIBLE — daño no caracterizable, 212-2(c)»), si grietas activas/no analizadas
-  (→ «NO ELEGIBLE — grieta activa, 212-2»), si T > 345 (→ «FUERA DE ALCANCE — T > 345 °C,
-  evaluar creep/fatiga 212-1(e)»), si T < 0 (→ «REVISAR — T < 0 °C, evaluar tenacidad a la
-  entalla»); en otro caso «ELEGIBLE». Cada literal cita su cláusula.
-- [ ] **Step 4: cablear a F90.** El DICTAMEN GLOBAL antepone la elegibilidad: si no es
-  «ELEGIBLE» (ni el aviso de entalla, que es «REVISAR»), F90 = el motivo de bloqueo, en rojo,
-  sin evaluar los CUMPLE. Ampliar la fórmula F90 existente.
-- [ ] **Step 5: test PASS + commit** — `Art. 212 Paso 1: compuerta de elegibilidad (212-1/2)`.
+- [x] **Step 1: test (falla).** `test_paso1_elegibilidad` en `TestBuildParcheContraOracle`
+  (construye con stubs, sin Excel): afirma banda A134, D136-D139 sembradas, D140 y F90 nuevos
+  por cadena, y validación de lista en las cuatro entradas. Corrió → FAIL (A134 vacía). ✔
+- [x] **Step 2: implementar las entradas del Paso 1.** Bloque nuevo en el **anexo de pasos del
+  flujo (filas 134-140)**, direcciones estables (decisión del ingeniero 2026-09-11: bloques
+  nuevos, no reordenar). D136 mecanismo, D137 caracterizable, D138 servicio, D139 grietas, con
+  `dv_list`. Los 3 literales categóricos nuevos entran en `LITERALES_PERMITIDOS` (no son
+  materiales; regla 12/14 los permite como el selector D10). `sym()` es de la Fase 9 (aún no).
+- [x] **Step 3: dictamen de elegibilidad** en D140 (IF anidado, solo IF/OR): letal→PROHIBIDO
+  (Art. 201, flujo); no caracterizable→NO ELEGIBLE (212-2c); grieta activa→NO ELEGIBLE (212-2c);
+  T>345→FUERA DE ALCANCE (212-1e); T<0→REVISAR entalla (cribado nil-ductility, 212-1e); else
+  ELEGIBLE. **Trazado a `resources/`:** el 345 °C es del bloque [6]; el 0 °C es cribado del
+  nil-ductility (no umbral del código), anotado honestamente; el letal→Art. 201 es del flujo.
+- [x] **Step 4: cablear a F90.** F90 antepone `LEFT($D$140,·)` para PROHIBIDO/NO ELEGIBLE/
+  FUERA DE ALCANCE (bloquean); el aviso de entalla no bloquea. Declarada en
+  `DIVERGENCIAS_REEMPLAZADAS`. Verificado en Excel real: caso semilla (ELEGIBLE) → **APTO**.
+- [x] **Step 5: test PASS + commit.** pytest 237 passed; `verificar.py` **0 fallos** (§5b y §7
+  incluidos). Commit `Art. 212 Paso 1: compuerta de elegibilidad (212-1/2)`.
 
 ---
 
@@ -223,20 +225,23 @@ el ingeniero las teclea; 0 es un valor válido tecleado, no un default oculto) �
 `F_max = MAX(F_C, F_L)`. `F_max` alimenta el filete (Paso 4). Para geometría no cilíndrica, el
 motor **declara** el hand-off del 212-3.2(c) en vez de aplicar (1)/(2).
 
-- [ ] **Step 1: test (falla).** `test_paso2_cargas`: afirma celdas `F_CP=P·Dm/2`,
-  `F_LP=P·Dm/4`, entradas `F_CO`/`F_LO`, `F_C`, `F_L`, `F_max=MAX(F_C,F_L)`; y que en modo no
-  cilíndrico las celdas (1)/(2) muestran el aviso de hand-off 212-3.2(c). Correr → FAIL.
-- [ ] **Step 2: entradas externas.** Añadir en la Sección 1 (datos): `F_CO` [N/mm] y `F_LO`
-  [N/mm] como `inp` tecleables, ref «cargas externas: flexión/torsión/viento/sismo — 212-3.1(a)».
-- [ ] **Step 3: fuerzas de presión (cilindro, por columna de presión Op/Diseño/Envolvente).**
-  `F_CP = P·Dm/2` y `F_LP = P·Dm/4`, cada una en su fila triple D/E/F. Citar bloques [29]/(2).
-- [ ] **Step 4: totales y gobernante.** `F_C = F_CP + F_CO`, `F_L = F_LP + F_LO`,
-  `F_max = MAX(F_C, F_L)` por columna.
-- [ ] **Step 5: hand-off no cilíndrico.** Si `$D$11≠1` (no tubería/cilindro), las filas (1)/(2)
-  muestran «212-3.2(c): usar cálculo de fuerzas alternativo (esfera/toriesférico/elipsoidal) —
-  fuera del alcance de este motor» y `F_max` = NA(), bloqueando Pasos 4-5. (Decisión 3: literal.)
-- [ ] **Step 6: `verificar.py §6e`** recalcula `F_CP`, `F_LP`, `F_max` en Excel para el caso
-  semilla desde la misma expresión que emite el motor. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso2_cargas` afirma A142, D144/D145 (F_CO/F_LO=0),
+  F_CP=`=D62*$D$52/2`, F_LP=`=D62*$D$52/4`, F_C=`=D146+$D$144`, F_L=`=D147+$D$145`,
+  F_max=`=IF($D$11=3,NA(),MAX(D148,D149))`. → FAIL, luego PASS.
+- [x] **Step 2: entradas externas.** F_CO (D144) y F_LO (D145) en el anexo (Paso 2), `inp`
+  tecleables default 0, ref 212-3.1(a)/212-3.2(b). Van en el anexo, no en la Sección 1, para no
+  desplazar el oracle (misma decisión de maquetación).
+- [x] **Step 3: fuerzas de presión (cilindro, por columna Op/Diseño/Env).** F_CP (146) = P·Dm/2
+  [29]; F_LP (147) = P·Dm/4 [33, Fase 0.1]. Filas triples D/E/F.
+- [x] **Step 4: totales y gobernante.** F_C (148), F_L (149), F_max (150) por columna.
+- [x] **Step 5: hand-off no cilíndrico.** F_max = `IF($D$11=3,NA(),MAX(...))`: solo esfera/
+  cabezal (D11=3) es no-cilindro (virola D11=2 SÍ es cilindro — corregido respecto al «≠1» del
+  plan). D151 declara el hand-off 212-3.2(c). Decisión 3: literal, solo cilindro.
+- [x] **Step 6: `verificar.py §6e`** (nueva sección) recalcula F_CP/F_LP/F_C/F_L/F_max en Excel
+  para el caso semilla desde su re-derivación en Python (P·Dm/2 etc.) sobre las entradas que la
+  hoja recalculó. 15 casos OK. pytest 238 · verificar.py **0 fallos**. Commit.
+  **Nota:** el cableado de w_min a F_max NO es de esta fase (es Fase 4 Step 2); Fase 2 solo
+  CREA F_max, por eso no toca ninguna celda del oracle.
 
 ---
 
@@ -252,13 +257,14 @@ corners», el 75 mm es del flujo — citar como recomendación del flujo, no del
 **Interfaces:** Mantiene `L_min` y la rama 3A/3B (parche local vs refuerzo 360°). Añade la
 distancia a parches adyacentes (3C) y la nota de esquinas redondeadas.
 
-- [ ] **Step 1: test (falla).** `test_paso3_discontinuidad`: `L_min=2·SQRT(Rm·t)`, entrada
-  «distancia a parche adyacente», y dictamen 3C que exige `≥ L_min`. → FAIL.
-- [ ] **Step 2: 3C.** Entrada `inp` «Distancia a bordes de parches adyacentes» [mm]; dictamen
-  `IF(dist_adj≥L_min,"OK","< L_min — reubicar (212-3.3)")`. Reutiliza `L_min` (D73).
-- [ ] **Step 3: nota de esquinas.** Rótulo/nota: esquinas redondeadas `R_min = 75 mm (3")`
-  (recomendación del flujo) + bloque [7]. No es cálculo, es nota en `comentar_art212_base`.
-- [ ] **Step 4: PASS + commit** — `Art. 212 Paso 3: parches adyacentes (3C) y esquinas`.
+- [x] **Step 1: test (falla).** `test_paso3_discontinuidad`: A153, D156 dictamen 3C, nota de 75 mm.
+- [x] **Step 2: 3C.** Anexo (Paso 3, filas 153-156): D155 «Distancia a parches adyacentes» [mm]
+  (blanco = sin adyacente); D156 = `IF($D$155="","No aplica...",IF($D$155>=$D$73,"OK","< L_min
+  — reubicar (212-3.3)"))`. Lee L_min de D73 (no lo modifica). Cita bloque [51].
+- [x] **Step 3: nota de esquinas.** D157 (texto plano, no fórmula): R_min = 75 mm — **anotado
+  como recomendación del flujo**, no del texto del 212 (que solo dice «rounded corners», bloque
+  [7]-f). Regla n.1 respetada.
+- [x] **Step 4: PASS + commit.** pytest 239 · verificar.py **0 fallos**.
 
 ---
 
@@ -273,15 +279,14 @@ distancia a parches adyacentes (3C) y la nota de esquinas redondeadas.
 **Interfaces:** `w_min` pasa a usar `F_max` (Fase 2) en vez de `F_m`. Se añaden las dos
 verificaciones de tope que hoy faltan.
 
-- [ ] **Step 1: test (falla).** `test_paso4_filete`: `w_min = F_max/(E·Sa)` con `E=0.55`;
-  y dos verificaciones nuevas: `w ≤ MIN(T_parche, t_pared)` y `w ≤ 40`. → FAIL.
-- [ ] **Step 2: `w_min` desde `F_max`.** Cambiar `w_min = F_max/(E·Sa)` (antes `F_m`).
-- [ ] **Step 3: topes.** En la Sección 5 (verificaciones), añadir:
-  `Filete ≤ min(T,t)` → `IF(w≤MIN(T_parche,t_pared),"CUMPLE","NO CUMPLE — excede espesor menor (NOTA 212-3.4)")`;
-  `Filete ≤ 40 mm` → `IF(w≤40,"CUMPLE","NO CUMPLE — excede 40 mm (NOTA 212-3.4)")`.
-- [ ] **Step 4: nota de bisel.** `comentar_art212_base`: opción de bisel, garganta efectiva
-  ≤ nominal del parche o del componente (bloque [61]).
-- [ ] **Step 5: cablear a F90** (las dos verificaciones entran en el AND del dictamen). PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso4_filete`: D64/F64 = F_max, topes F161/F162. → PASS.
+- [x] **Step 2: `w_min` desde `F_max`.** D64/E64/F64 = `=D150/($D$42*$D$41)` (F_max, no F_m). A/B/
+  C/G64 siguen anclados; D/E/F64 en `DIVERGENCIAS_REEMPLAZADAS`. Seed sin cambio (cilindro).
+- [x] **Step 3: topes.** Anexo Paso 4 (filas 159-162): D161=`MIN($D$29,$D$21)`, F161 dictamen
+  «≤ menor espesor»; D162=40, F162 dictamen «≤ 40 mm». Bloque [60].
+- [x] **Step 4: nota de bisel.** D163 (texto): garganta efectiva ≤ nominal (212-3.4b, [61]).
+- [x] **Step 5: cablear a F90.** AND incluye F161, F162. §6e verifica w_min=F_max/(E·Sa) en
+  Excel (3 casos OK). pytest 240 · verificar.py **0 fallos** · seed → APTO (topes CUMPLE).
 
 ---
 
@@ -299,22 +304,25 @@ detectado). `S_w` se escribe **literal de la ec. (5)** (cilindro), sin el factor
 no cilíndrico, `S_w` = NA() y la verificación declara «ec. (5) aplica sólo a cilindro (212-3.4);
 esfera/cabezal → análisis» (decisión 3).
 
-- [ ] **Step 1: test (falla).** `test_paso5_excentricidad`: `e = (T+t+g)/2` cuando g≥1.5, `=(T+t)/2`
-  cuando g<1.5; `S_w = P·Dm/(2T)+3·P·Dm·e/T²` (forma literal, sin kf); NA() en no cilíndrico. → FAIL.
-- [ ] **Step 2: `e` con umbral de g.** La entrada `luz` (D31) se reinterpreta/renombra como
-  **separación en el borde `g`** (o se añade una celda explícita si `luz` significa otra cosa
-  geométrica — comprobar el uso actual de D31 en Rf/desarrollo antes de reutilizarla; si Rf usa
-  `luz` como luz radial física distinta de la separación de faying edge, **separar en dos
-  entradas**). `e = ($T + $t + IF($g≥1.5, $g, 0))/2`. Citar bloque [82].
-- [ ] **Step 3: `S_w` literal de cilindro.** `S_w = P·Dm/(2·T) + 3·P·Dm·e/T²` directamente de
-  la ec. (5), sin descomponer por `kf`. Verificación `S_w ≤ 1.5·Sa` (ya existe D48).
-- [ ] **Step 4: hand-off no cilíndrico.** Si `$D$11≠1`, `S_w`=NA() y F85 declara el hand-off.
-- [ ] **Step 5: `verificar.py §6e`** recalcula `e` (con y sin g) y `S_w` en Excel. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso5_excentricidad`: e con g, S_w literal, NA en esfera. PASS.
+- [x] **Step 2: `e` con umbral de g.** **Resuelto el riesgo del plan: D31 (luz radial de
+  conformado, alimenta Rf/desarrollo) NO es el gap de faying edge.** El flujo (línea 74)
+  confirma que `g` es la separación de fit-up. Se añade una **entrada nueva `g` (D167)**,
+  distinta de D31, default 0. `D55 = ($D$29+$D$21+IF($D$167>=1.5,$D$167,0))/2`. Bloque [82].
+- [x] **Step 3: `S_w` literal de cilindro.** D66=`P·Dm/(2T)`, D67=`3·P·Dm·e/T²` directas (sin kf);
+  D68=D66+D67 sin cambio de fórmula. C_sw (D57) también literal. Para cilindro coinciden con el
+  valor anterior (kf=0.5 ya daba la ec.5); NA en esfera.
+- [x] **Step 4: hand-off no cilíndrico.** D66/D67/D57 = `IF($D$11=3,NA(),...)` (esfera; virola
+  D11=2 SÍ es cilindro). D168 declara el hand-off. Decisión 3.
+- [x] **Step 5: `verificar.py §6e`** recalcula e (7.175) y S_w (62.08/124.16/248.32) en Excel,
+  exactos. pytest 241 · verificar.py **0 fallos** · seed → APTO.
 
-> **Nota de coherencia con Fase 2.** Al pasar a la forma literal, `C_sw` (D57, el coeficiente
-> `S_w = P·C_sw` que hoy usa `kf`) y `P_máx = 1.5·Sa/C_sw` (D74) se recomputan con la forma
-> literal de cilindro; comprobar que `P_máx` sigue siendo coherente. Esto cambia el valor del
-> caso semilla → obliga a re-validar `verificar.py §7` (Fase 10).
+> **CORRECCIÓN de la nota del plan: el caso semilla NO cambia de valor.** El plan preveía un
+> cambio por (a) ec.5 literal sin kf y (b) g. Pero (a) para cilindro la ec.5 literal es
+> **idéntica** al S_w anterior (F_m con kf=0.5 = P·Dm/2 y 6·F_m·e/T² = 3·P·Dm·e/T²), y (b) `g`
+> es entrada nueva con default 0 (no se reutiliza el 1.5 de D31). Resultado: `verificar.py §7`
+> sigue en APTO con los mismos valores, **sin re-baseline del oracle**. El cambio de valor real
+> es solo en esfera (kf=0.25 → ahora NA/hand-off, que es lo correcto por decisión 3).
 
 ---
 
@@ -329,17 +337,15 @@ doble `(75·T/R_f)·(1 − R_f/R_o) ≤ 5%` (bloque [71]); `R_o = ∞` si origin
 **Interfaces:** La deformación pasa de `50·T/Rf` (hardcode simple, sin `(1−Rf/Ro)`) a la
 fórmula completa, con **rama simple/doble** según geometría, y entrada `R_o`.
 
-- [ ] **Step 1: test (falla).** `test_paso6_conformado`: entrada `Ro` (con «∞ / plano» → celda
-  vacía o valor grande, manejada por `IF`); coef 50 (cilindro/curvatura simple) vs 75
-  (cabezal-esfera/doble) según `$D$11`; factor `(1−Rf/Ro)` presente; dictamen `≤5% → CUMPLE`,
-  `>5% → "PWHT post-conformado (212-3.5b)"`. → FAIL.
-- [ ] **Step 2: entrada `R_o`.** `inp` «Radio original de línea media Ro» [mm], ref «∞ si plano
-  (dejar en blanco)». `factor = IF($Ro="",1,1-$Rf/$Ro)`.
-- [ ] **Step 3: coef por geometría.** `coef = IF($D$11=3, 75, 50)` (cabezal/esfera = doble
-  curvatura; tubería/virola cilíndrica = simple). Citar bloques [71]/[75].
-- [ ] **Step 4: deformación y dictamen.** `%Elong = coef·T/Rf·factor`; `IF(%Elong≤5,"CUMPLE",
-  "NO CUMPLE — requiere PWHT post-conformado (212-3.5b)")`. Cablear a F90.
-- [ ] **Step 5: PASS + commit** — `Art. 212 Paso 6: curvatura simple/doble y factor (1-Rf/Ro)`.
+- [x] **Step 1: test (falla).** `test_paso6_conformado`: Ro en D172, D77 con coef 50/75 y factor. PASS.
+- [x] **Step 2: entrada `R_o`.** D172 «Radio original de línea media» [mm], blanco = plano (Ro=∞,
+  factor 1) [73]. `factor = IF($D$172="",1,1-$D$56/$D$172)`.
+- [x] **Step 3: coef por geometría.** `coef = IF($D$11=3,75,50)` (esfera/cabezal doble [71];
+  tubería/virola simple [75]). D173 declara la rama.
+- [x] **Step 4: deformación y dictamen.** D77 = `IF($D$11=3,75,50)*$D$29/$D$56*IF($D$172="",1,
+  1-$D$56/$D$172)`. El dictamen ≤5% ya existe en F86 (verificación sección 5); >5% → PWHT
+  (212-3.5b), ya en el AND de F90 vía F86. Seed: %Elong=2.389 (sin cambio).
+- [x] **Step 5: PASS + commit.** §6e recalcula %Elong en Excel. pytest 242 · verificar.py **0**.
 
 ---
 
@@ -353,12 +359,15 @@ por laminaciones (bloque [80]); prep. de superficie 40 mm a cada lado (bloque [8
 existentes esmeriladas a ras + MT/PT (bloque [86]); separación ≤ 5 mm (bloque [82]); secuencia
 (costuras internas primero, luego perímetro) (bloque [88]); venteo de gas (bloque [90]).
 
-- [ ] **Step 1: aviso condicional de MT/PT por espesor.** Celda de nota que se activa si
-  `T_parche > 25`: «T > 25 mm: examinar bordes de preparación por MT/PT (laminaciones), 212-4(a)».
-- [ ] **Step 2: aviso de separación.** Nota junto a `g`: «separación máx. 5 mm; si g ≥ 1.5 mm,
-  e incluye g (212-4c) — ver Paso 5». (Refuerza lo ya implementado.)
-- [ ] **Step 3: actualizar los textos de la Sección 6** (secuencia, venteo, prep. 40 mm) para
-  que citen las cláusulas de `resources/` en vez de texto genérico. PASS + commit.
+- [x] **Step 1: aviso condicional de MT/PT por espesor.** D178 = `IF($D$29>25,"...MT/PT
+  (laminaciones), 212-4a","...")`. Anexo Paso 7 (fila 178).
+- [x] **Step 2: aviso de separación.** D177 = aviso de g (>5 no admisible; ≥1.5 → e incluye g,
+  ver Paso 5). 212-4(c) [82]. Se deja como **aviso** (constraint de fabricación, no de
+  aceptación de diseño), fiel al plan; no entra al AND de F90.
+- [x] **Step 3: notas de fabricación citando `resources/`.** D179 (anexo): corte térmico 1.5 mm
+  [80], metal blanco 40 mm a cada lado [85], secuencia costuras internas→perímetro [88], venteo
+  [90]. **Se añaden en el anexo** (no se reescriben las celdas B94-B99 del oracle) para mantener
+  direcciones estables (estrategia elegida). pytest 243 · verificar.py **0 fallos**.
 
 ---
 
@@ -379,35 +388,50 @@ post-construcción (bloque [99]).
 calcula E, TNT y la distancia segura R, y avisa; en hidrostática, mantiene el cálculo actual
 (1.5×P_diseño). Todo dato de la ec. (II-1) sale del JSON de la Fase 0.2, nunca de memoria.
 
-- [ ] **Step 1: test (falla).** `test_paso8_prueba`: selector `dv_list '"Hidrostatica,Neumatica"'`;
-  en neumática, celdas `E`, `TNT=E/4266920`, `R=R_scaled·(2·TNT)^(1/3)`, con `R_scaled` leído
-  de la tabla; aviso de distancia segura. → FAIL.
-- [ ] **Step 2: entradas de prueba.** `V` [m³] (volumen bajo presión), `Pat` [MPa abs], `k`
-  (fluido), `R_scaled` (de Tabla 501-III-1-1 por criterio, `dv_list` de ítems con sus valores).
-- [ ] **Step 3: fórmulas.** `E` = ec. (II-1) en `k` (del JSON Fase 0.2, no aire-only);
-  `TNT = E/4 266 920`; `R = R_scaled·(2·TNT)^(1/3)`. Unidades visibles.
-- [ ] **Step 4: dictamen** «distancia mínima R m para el TNT calculado; ver Tabla 501-III-2-1
-  para fragmentos». En hidrostática, ocultar/NA() el bloque neumático y mantener el actual.
-- [ ] **Step 5: `verificar.py §6e`** recalcula `E`, `TNT`, `R` en Excel. PASS + commit.
+- [x] **Step 1: test (falla).** `test_paso8_prueba`: selector, E/TNT/R, R_scaled dv_list. PASS.
+- [x] **Step 2: entradas de prueba.** Anexo Paso 8 (filas 181-193): D183 selector, D184 V [m³],
+  D185 Pat [MPa abs], D186 Pa [MPa abs]=0.101, D187 k=1.4, D188 R_scaled (dv_list de la Tabla
+  501-III-1-1 leída de resources/, criterios en el comentario).
+- [x] **Step 3: fórmulas.** E (D189) = ec.(II-1) **general en k** (`[1/(k-1)]·Pat·V·[1-(Pa/Pat)^
+  ((k-1)/k)]`, Pat→Pa ×1e6); TNT (D190) = E/4 266 920; R (D191) = 30 m si E≤8 130 000 J, si no
+  `R_scaled·(2·TNT)^(1/3)`. **Regla n.1: todos los coeficientes los lee `leer_energia_501()` de
+  `resources/`** (App. 501, Fase 0.2); el build ABORTA si el apéndice no está reparado. Se
+  añadió `energia_501=` (keyword) a `build_parche_art212`; main() lo pasa, el test un stub.
+- [x] **Step 4: dictamen** D192 (neumática → distancia R + Tabla 501-III-2-1; hidrostática →
+  1.5×P). Bloque neumático = NA() en hidrostática (default). NDE D193 (212-5 [92],[94]).
+- [x] **Step 5: `verificar.py §6e`** recalcula E/TNT/R en Excel (qa forzado a neumática, V=100,
+  Pat=5 → rama eq(III-1)): E=840 MJ, TNT=196.9 kg, R=146.6 m, exactos. pytest 244 · verificar.py
+  **0 fallos**. **Requirió corregir la Fase 0.2**: (II-3)/(II-5) estaban reordenadas ('TNT =
+  (kg) E …'); se normalizaron a la forma canónica para que el motor lea el divisor.
 
 ---
 
-## Fase 9 — Notación de símbolos con subíndice (decisión 5)
+## Fase 9 — Notación de símbolos con subíndice (decisión 5) — **HECHA (2026-09-11)**
 
-**Files:** Modify `build_db_materiales.py` (helper `sym()`); aplicarlo en los rótulos de
-símbolo (columna B) de todas las secciones del 212. Modify `TestSistemaVisual` si hace falta.
+> **Ejecutada a petición del ingeniero, sin esperar al F9.** `sym()` +
+> `_aplicar_subindices()` convierten los símbolos de la **columna B** en `CellRichText` con
+> subíndice real (`InlineFont(vertAlign="subscript")`, fuente `MONO`). Alcance acotado a la
+> **columna B** (símbolos aislados): la columna A es prosa/rótulos y de la Sección 7 trae
+> guiones bajos que **no** son subíndices (rutas de `resources/`, tags `[MODO_S]`, nombres de
+> campo). El converter salta además fórmulas (`=…`) y textos largos (specs B93-B99). Los dos
+> símbolos del 206 que vivían en prosa (`T_s`, `L_s`) se movieron a la columna B. Verificado en
+> el `.xlsm`: `F_m`→F+ᵐ, `S_w,m`, `T_s`, `L_s` con subíndice real.
+
+**Files:** Modify `build_db_materiales.py` (`sym()` + `_aplicar_subindices()`); Modify
+`test_dashboard.py` (`_plano()` compara por texto visible; `_asserta_sin_guion_bajo`); Modify
+`parche_art212_ref.json` (celdas de símbolo de la col. B a su forma visible, `F_m`→`Fm`).
 
 **Interfaces:** `sym(base, sub)` → `CellRichText` con el subíndice en `InlineFont(vertAlign=
 "subscript")`, fuente `MONO`. Reemplaza `"F_m"`, `"P_op"`, `"C_sw"`, `"w_mín"`, etc. por su
 forma con subíndice real. No cambia ninguna fórmula (los símbolos de columna B son rótulos,
 no referencias).
 
-- [ ] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo`: recorre la columna B del 212 y
+- [x] **Step 1: test (falla).** `test_simbolos_sin_guion_bajo`: recorre la columna B del 212 y
   afirma que **ninguna** celda de símbolo contiene `"_"` en su texto plano y que las que llevan
   subíndice son `CellRichText`. → FAIL.
-- [ ] **Step 2: helper `sym()`** con `CellRichText`/`TextBlock`/`InlineFont(vertAlign="subscript")`.
-- [ ] **Step 3: aplicar** a los símbolos de todas las secciones (F_CP→F con subíndice CP, etc.).
-- [ ] **Step 4: comprobar `TestSistemaVisual`** (el rich text usa `MONO`; si la prueba no
+- [x] **Step 2: helper `sym()`** con `CellRichText`/`TextBlock`/`InlineFont(vertAlign="subscript")`.
+- [x] **Step 3: aplicar** a los símbolos de todas las secciones (F_CP→F con subíndice CP, etc.).
+- [x] **Step 4: comprobar `TestSistemaVisual`** (el rich text usa `MONO`; si la prueba no
   contempla `CellRichText`, ampliar su recorrido para leer los runs). PASS + commit.
 
 ---
@@ -418,22 +442,24 @@ no referencias).
 (`TestParidadHojaParche` re-armado), `verificar.py §7`; Modify `CLAUDE.md` (estado del motor);
 Modify este plan (estado final).
 
-- [ ] **Step 1: build completo.** `python build_db_materiales.py --resources … --in … --out
-  ..\..\Motor_de_Calculo_ASME_PCC_Rev4.xlsm`. Sin abortos.
-- [ ] **Step 2: los tres gates sin recálculo.** `pytest test_build_db.py test_dashboard.py
-  test_secii_tablas.py -q` → verde (las anclas por paso de `TestBuildParcheContraOracle`
-  cubren las fórmulas nuevas; `TestSistemaVisual` y `TestSincroniaPythonVba` pasan).
-- [ ] **Step 3: entregar para F9 en Excel.** `SendUserFile` del `.xlsm`. Pedir al ingeniero:
-  F9 del caso semilla con las fórmulas nuevas, y confirmar los valores esperados (que **cambian**
-  respecto de Rev4 por la ec. 5 literal y la posible g). Registrar los nuevos valores de
-  referencia del caso semilla.
-- [ ] **Step 4: re-armar el *oracle* y `verificar.py §7`.** Con la hoja validada, correr
-  `_dump_parche_ref.py` para regenerar `parche_art212_ref.json` desde el `.xlsm` validado, y
-  actualizar los valores esperados de `verificar.py §7` (dictamen del caso semilla). Re-armar
-  `TestParidadHojaParche` contra el nuevo *oracle*.
-- [ ] **Step 5: `verificar.py` completo en Windows** (§1-10, incl. §6e y §7 nuevos) → 0 fallos.
-- [ ] **Step 6: documentar.** Actualizar `CLAUDE.md` (sección del motor 212: ahora 8 pasos
-  explícitos; cita las Fases 0). Marcar este plan como ejecutado. Commit.
+- [x] **Step 1: build completo.** Sin abortos (build a `outputs/Motor_..._Rev4.xlsm`).
+- [x] **Step 2: los tres gates sin recálculo.** `pytest` = **252 passed**. `TestBuildParche
+  ContraOracle` (anclas por paso), `TestParidadHojaParche` (anexo excluido), `TestSistemaVisual`,
+  `TestSincroniaPythonVba` verdes.
+- [x] **Step 3: entregar para F9 en Excel.** `.xlsm` entregado por `SendUserFile` (2026-09-11).
+- [x] **Step 4: re-armar el *oracle*.** No hizo falta re-baselinar por VALORES (el caso semilla
+  no cambió). El oracle **sí se actualizó para las 20 celdas de símbolo de la columna B** al
+  hacer la Fase 9 (`F_m`→`Fm`, su forma visible), y `TestParidadHojaParche` compara por texto
+  visible (`_plano`=`str`). El resto del oracle Rev0 queda intacto. §7 sigue APTO (161/138).
+- [x] **Step 5: `verificar.py` completo en Windows** (§1-11, incl. §6e y §7) → **0 fallos** en
+  Excel real. §6e recalcula F_CP/F_LP/F_C/F_L/F_max, w_min, e, S_w, %Elong y E/TNT/R.
+- [x] **Step 6: documentar.** `CLAUDE.md` del proyecto: nota del estado (8 pasos del flujo en
+  el anexo + Fase 0 del App. 501) añadida. La **Fase 9 (subíndices reales) se ejecutó en
+  `fba1417`** y el **oracle ya se actualizó** para las 20 celdas de símbolo de la col. B (no
+  hizo falta re-baseline por valores; §7 sigue APTO); `verificar.py` = **0 fallos** (§6e/§6f
+  incl.) y `pytest` = **254** tras la Fase 9. **Único pendiente de cierre: F9 del ingeniero**
+  —revisión visual del `.xlsm` entregado, en Excel real—. Hasta esa firma el plan queda en
+  `outputs/plans/`.
 
 ---
 
