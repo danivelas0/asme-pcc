@@ -100,9 +100,9 @@ class Motor(NamedTuple):
     aplicacion: bool = True  # lleva selector de geometria y codigo
     casos: tuple = ("Operacion", "Diseno")
     secciones: tuple = ()
-    material: object = None      # Material o None
+    material: Material | None = None
     verificaciones: tuple = ()
-    dictamen: object = None      # Dictamen o None
+    dictamen: Dictamen | None = None
     pasos: tuple = ()
     especificaciones: tuple = () # ((grupo, (Especificacion, ...)), ...)
 

@@ -10066,14 +10066,30 @@ def _semaforo_de(motor):
     """celda -> (favorables, avisos), con _sem, para aplicar_semaforo_motor.
 
     `v.clave` tiene que nombrar una fila que el motor YA declaro en alguna de
-    sus secciones -es la fila que publica el veredicto-; si no, `dirs[v.clave]`
-    revienta con el mismo KeyError que protege `sustituir_nombres` en las
-    formulas: una `Verificacion` que cita una clave inexistente es un error de
-    declaracion, no un caso a tolerar en silencio.
+    sus secciones -es la fila que publica el veredicto-. Guardia SIMETRICA a
+    `_reservada()` de build_motor_declarado y al SystemExit de
+    `sustituir_nombres`: el chasis ya tiene dos vias que abortan con un
+    mensaje claro cuando una clave no existe, asi que una `Verificacion` que
+    cite una clave inexistente aborta igual -mensaje legible, no el KeyError
+    crudo de indexar `dirs` a ciegas- en vez de abrir una tercera forma de
+    fallar (ronda de arreglo 1 de la Tarea 5, hallazgo 1).
+
+    `motor.dictamen` (Dictamen.compuertas / Dictamen.verificaciones) tambien
+    son claves, pero HOY ningun pase las indexa -esa es tarea de quien
+    componga la formula del dictamen a partir de ellas, todavia sin escribir-,
+    asi que no hay una segunda indexacion que guardar aqui: el dia que exista,
+    debe llevar este mismo tratamiento.
     """
     dirs = MD.resolver_direcciones(motor)
-    return {dirs[v.clave].replace("$", ""): _sem(v.favorables, v.avisos)
-            for v in motor.verificaciones}
+    semaforo = {}
+    for v in motor.verificaciones:
+        if v.clave not in dirs:
+            raise SystemExit(
+                f"build_motor_declarado: {motor.hoja} declara la "
+                f"Verificacion {v.clave!r}, que no existe como fila de "
+                f"ninguna Seccion del motor -no hay donde leer su veredicto.")
+        semaforo[dirs[v.clave].replace("$", "")] = _sem(v.favorables, v.avisos)
+    return semaforo
 
 
 def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
