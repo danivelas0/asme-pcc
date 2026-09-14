@@ -172,7 +172,8 @@ botones (H..J) conservan el suyo aparte. En el chasis declarativo, esto lo garan
 `_helpers_del_libro.rotulo()` en la ruta de `build_motor_declarado`: escribe el
 comentario en `COLS_VALOR_MOTOR[0]` (columna D) y en ningún otro sitio.
 `build_motor_declarado()` **sí** llama después a `aplicar_reglas_de_comentario`
-(`build_db_materiales.py:10183`, con `_reglas_de_comentario_de(motor)`) — pero para
+(con `_reglas_de_comentario_de(motor)`; busque la llamada por nombre, los números de
+línea de este archivo se mueven con cada parche) — pero para
 un motor DECLARADO esa pasada es, en la práctica, un no-op de confirmación: solo
 existe una columna de valor por fila (ver el cuarto límite, más abajo:
 `motor.casos` no genera una columna por caso), así que no hay una segunda columna
@@ -210,11 +211,27 @@ número de abajo sigue entero y los cálculos aguas abajo no cambian ni un dígi
 regla es la unidad de la **fila** (su `magnitud`), no el tipo de la celda: una fila que
 publica "—", un modo o un factor adimensional se queda como está.
 
-En un motor DECLARADO esto se deriva de `Fila.magnitud` — `_unidades_de(motor)` en
-`build_db_materiales.py` construye el diccionario `fila -> magnitud` que alimentan
-`aplicar_unidades_motor` y, vía el mismo `_semaforo_de`, `aplicar_dos_decimales`. Una
-`Fila` cuyo valor es discreto (una lista, un modo) declara `magnitud=""` (el valor por
-defecto) para quedar fuera de esta regla.
+En un motor DECLARADO todo esto arranca en `Fila.magnitud`, y la cadena tiene **tres
+eslabones, no dos** (corregido 2026-09-13: esta sección decía que
+`aplicar_dos_decimales` se alimentaba de `_unidades_de` «vía el mismo `_semaforo_de`»,
+y es falso):
+
+1. `_helpers_del_libro.rotulo()` escribe el rótulo SI de la magnitud en la **columna C**
+   (`COL_UNIDAD_MOTOR`) de la fila. Hasta el 2026-09-13 no lo escribía en ningún sitio, y
+   eso dejaba muertos los dos eslabones siguientes.
+2. `aplicar_unidades_motor(ws, _unidades_de(motor), sel)` sustituye esa celda por la
+   fórmula del conmutador SI/US. Solo pisa una celda que **ya** tenga rótulo: con la C
+   vacía se limitaba a emitir un `ISSUE` por fila.
+3. `aplicar_dos_decimales(ws, semaforo)` **deriva de la columna C leída de la hoja**, no
+   de `_unidades_de` ni de `_semaforo_de`. Su argumento `semaforo` sirve para otra cosa:
+   marcar las filas de verificación, que no declaran unidad y donde el número es magnitud
+   igual.
+
+`_unidades_de` y `_reglas_de_comentario_de` recorren `MD.bloques(motor)` —Secciones **y**
+Pasos—: una fila de cálculo dentro de un `Paso` del anexo del flujo recibe unidad,
+decimales y regla de comentario como cualquier otra. Una `Fila` cuyo valor es discreto
+(una lista, un modo) declara `magnitud=""` (el valor por defecto) para quedar fuera de
+esta regla, y su columna C se queda vacía.
 
 ---
 

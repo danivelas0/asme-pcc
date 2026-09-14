@@ -71,9 +71,16 @@ def _cita(bloque, clausula, comentario=""):
 # ---------------------------------------------------------------------------
 # 1. Filas reservadas (CLAVES_RESERVADAS en motor_declarado.py): "unidad",
 #    "modo", "temperatura", "dictamen". Un motor con `motor.material is not
-#    None` y `motor.aplicacion=True` (los dos valores por defecto) los exige
-#    los cuatro -- build_motor_declarado() aborta con un SystemExit legible
-#    si falta alguno, citando que pase lo necesitaba.
+#    None` los exige los cuatro -- build_motor_declarado() aborta con un
+#    SystemExit legible si falta alguno, citando que pase lo necesitaba.
+#    Ojo con los defectos (corregido 2026-09-13: aqui se decia que
+#    `material is not None` y `aplicacion=True` eran "los dos valores por
+#    defecto", y el de `material` es None): `Motor.material` vale None por
+#    defecto -un motor sin cascada de material no exige `modo` ni
+#    `temperatura`- y `Motor.aplicacion` vale True. Y desde 2026-09-13
+#    `aplicacion=False` YA NO exime de declarar `modo` cuando hay material:
+#    antes se pasaba el literal "$D$11" -el default de los dos motores
+#    escritos a mano-, que en una hoja declarada es una fila cualquiera.
 #
 #    NOTA verificada contra el codigo: `MD.LISTA` existe como tipo, pero HOY
 #    ningun pase de build_db_materiales.py lo distingue de `MD.ENTRADA` --las
@@ -106,7 +113,7 @@ FILAS_ENTRADA = MD.Seccion("2. DATOS DE ENTRADA", filas=(
             tipo=MD.ENTRADA, ejemplo=9.5),
     MD.Fila("G", "Luz radial de ajuste (fit-up gap)", magnitud="len",
             tipo=MD.ENTRADA, ejemplo=1.5,
-            comentario=_cita(62, "206-4.1").clausula + ": el codigo exige "
+            comentario=_cita(63, "206-4.1").clausula + ": el codigo exige "
             "cerrar esta luz antes de soldar; se teclea porque es un dato de "
             "campo, no de tabla (regla 14)."),
     MD.Fila("w_adoptado", "Cateto de filete adoptado en el diseno",
@@ -180,6 +187,11 @@ FILAS_CALCULO = MD.Seccion("3. CALCULO DEL CATETO DE FILETE (206-3.5)", filas=(
 #    adoptado en la hoja, tienen que existir tambien como Fila propia dentro
 #    de alguna Seccion -como "w_requerido" y "w_adoptado" arriba-, tal como
 #    hacen el 212 y el 206 escritos a mano.
+#    Desde 2026-09-13, lo que SI hace el chasis con esos dos campos es
+#    comprobar que sus {nombres} existan como fila del motor
+#    (`comprobar_nombres_declarativos()`): asi, el dia que alguien renombre
+#    `w_requerido`, la declaracion aborta en vez de quedarse describiendo una
+#    fila que ya no esta. La llave sigue permitida; lo que no hay es emision.
 #
 #    NOTA verificada contra el codigo: `Dictamen.compuertas` no lo lee ningun
 #    pase todavia (es "tarea de quien componga la formula del dictamen a
@@ -230,7 +242,12 @@ PASO_1 = MD.Paso(
     filas=(
         MD.Fila("gap_ok", "Luz radial dentro de tolerancia?", tipo=MD.FORMULA,
                 formula='=IF({G}<=2.5,"CUMPLE","REVISAR")',
-                cita=_cita(62, "206-4.1")),
+                # Bloque 63, NO 62: el 62 es el section_header "206-4.1
+                # Installation" -un rotulo, que no publica ningun valor- y la
+                # luz radial de "2.5 mm (3/32 in.) maximum" la imprime el
+                # parrafo 63. Desde 2026-09-13 comprobar_procedencia() rechaza
+                # una Cita a un bloque section_header por este mismo caso.
+                cita=_cita(63, "206-4.1")),
     ))
 
 
@@ -238,6 +255,13 @@ PASO_1 = MD.Paso(
 # 5. Especificaciones tecnicas de la pestana propia del articulo (Fase 5,
 #    ya automatica via build_documentos_declarados: esta tupla es todo lo
 #    que hay que declarar, la pestana la construye el chasis).
+#
+#    `Especificacion.texto` admite {nombres} de verdad desde 2026-09-13:
+#    `MD.texto_de_especificacion()` los sustituye por la direccion CALIFICADA
+#    CON LA HOJA del motor ("='Collar_PCC2_Art206'!$D$40"), porque la pestana
+#    es otra hoja y un "$D$40" a secas apuntaria dentro de ella. Un nombre que
+#    no existe aborta. Antes el texto se copiaba CRUDO y un "{t_req}" salia
+#    impreso con las llaves.
 # ---------------------------------------------------------------------------
 ESPECIFICACIONES_EJEMPLO = (
     ("FABRICACION", (

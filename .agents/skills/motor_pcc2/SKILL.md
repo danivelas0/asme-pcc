@@ -158,9 +158,11 @@ Que la skill "lea `resources/`" no es una promesa, es un mecanismo que ya existe
 chasis y que la skill tiene que respetar sin sortearlo:
 
 1. **Toda `Fila`, `Verificacion` y `Especificacion` de tipo cálculo lleva su `Cita`**
-   (`archivo`, `bloque`, `clausula`). `motor_declarado.Fila` con `tipo=FORMULA` y
-   `cita=None` no se puede construir: `comprobar_procedencia()` lo aborta con
-   `SystemExit` citando la fila y la hoja.
+   (`archivo`, `bloque`, `clausula`). Una `motor_declarado.Fila` con `tipo=FORMULA` y
+   `cita=None` **sí** se puede construir —es un `NamedTuple` y `cita` vale `None` por
+   defecto—; lo que no se puede es **construir el libro** con ella:
+   `comprobar_procedencia()` aborta en tiempo de build con `SystemExit`, citando la fila
+   y la hoja (corregido 2026-09-13: aquí se afirmaba que no se podía construir el objeto).
 2. Esa procedencia se escribe **tres veces y en tres formas**, y las tres ya las
    escribe el chasis, no la declaración:
    - la **columna de referencia** que ve el ingeniero (`f.cita.clausula`, columna G,
@@ -172,8 +174,11 @@ chasis y que la skill tiene que respetar sin sortearlo:
      (`(clave, clausula, archivo, bloque)` por fila de cálculo).
 3. **El build aborta** si una celda de cálculo llega sin procedencia
    (`comprobar_procedencia` es la primera línea de `build_motor_declarado`, antes de
-   escribir una sola celda) y si una cita apunta a un bloque que no existe en el JSON
-   (`if not 0 <= f.cita.bloque < len(bloques): raise SystemExit(...)`).
+   escribir una sola celda), si una cita apunta a un bloque que no existe en el JSON
+   (`if not 0 <= f.cita.bloque < len(bloques): raise SystemExit(...)`) y si apunta a un
+   bloque de tipo `section_header` — un **rótulo no publica un valor**, y el bloque
+   existe, así que sin este guardia la cita parecía válida apuntando a donde el dato no
+   está (2026-09-13).
 4. `verificar.py` §12 repite la comprobación de procedencia contra el libro ya
    construido — el mismo guardia, no una copia — y añade lo que solo Excel puede decir:
    que el caso semilla recalcula sin error, que todo veredicto pinta y que el dictamen
