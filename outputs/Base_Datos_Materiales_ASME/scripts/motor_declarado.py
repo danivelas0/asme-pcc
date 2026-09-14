@@ -465,10 +465,11 @@ def comprobar_listas(motor):
 
     La unica excepcion son las enumeraciones que publica el PROPIO MARCO y que
     no existen en ninguna base -el sistema de unidades y el selector de
-    codigo-, acotadas por nombre a `CLAVES_RESERVADAS`. Acotarlas por nombre y
-    no por criterio es deliberado: "esto no es un dato tabulado" no se puede
-    comprobar leyendo la declaracion, y dejarlo a juicio de quien declara
-    reabre justo la puerta que la instruccion cierra.
+    codigo-, acotadas por nombre a `CLAVES_CON_ENUMERACION`. El guardia bloquea
+    **cualquier** clave con `Lista(opciones=...)` que no este en esa constante.
+    Acotarlas por nombre y no por criterio es deliberado: "esto no es un dato
+    tabulado" no se puede comprobar leyendo la declaracion, y dejarlo a juicio
+    de quien declara reabre justo la puerta que la instruccion cierra.
     """
     for _titulo, filas in _bloques(motor):
         for f in filas:

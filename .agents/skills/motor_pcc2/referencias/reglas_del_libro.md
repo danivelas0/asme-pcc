@@ -121,7 +121,7 @@ chasis **aborta** si no lo hace:
   lo publica una base de datos del libro. Es la forma normal.
 - `Lista(opciones=(...))` — enumeración cerrada que publica el propio marco (el
   sistema de unidades, el selector de código). **Solo** en las claves de
-  `CLAVES_RESERVADAS`; fuera de ellas el chasis la rechaza, porque una lista tecleada
+  `CLAVES_CON_ENUMERACION`; fuera de ellas el chasis la rechaza, porque una lista tecleada
   a mano no se audita, no se actualiza si la base cambia, y puede ofrecer un valor que
   la base ni admite.
 
