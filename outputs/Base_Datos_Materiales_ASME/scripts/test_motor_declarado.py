@@ -289,3 +289,166 @@ def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve_
         assert ws[direccion].value == valor, (
             f"{clave}: resolver_direcciones dice {direccion}, pero ese no es "
             f"el valor que emitir_tabla escribio ahi")
+
+
+# ---------------------------------------------------------------------------
+# Ronda de arreglo final de la rama skill_motor_pcc2 (2026-09-13)
+# ---------------------------------------------------------------------------
+def _json_de_prueba(tmp_path, blocks):
+    """Escribe el art_999.json que citan los motores de prueba."""
+    import json
+    d = tmp_path / "ASME PCC" / "pcc_2" / "p2_welded_repairs" / "art_999"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "art_999.json").write_text(json.dumps({"blocks": blocks}),
+                                    encoding="utf-8")
+    return tmp_path
+
+
+def test_citar_un_section_header_aborta(tmp_path):
+    """Un ROTULO no publica un valor. El caso real que lo destapo:
+    `gap_ok` de la plantilla citaba el bloque 62 de art_206.json, que es el
+    section_header "206-4.1 Installation"; la luz radial de 2,5 mm la imprime
+    el parrafo 63. El bloque EXISTE, asi que el guardia de rango pasaba y la
+    cita parecia valida apuntando a donde el dato no esta."""
+    _json_de_prueba(tmp_path, [
+        {"type": "paragraph", "text": "cero"},
+        {"type": "section_header", "text": "999-3.2 Un rotulo"},
+    ])
+    motor = _motor_minimo()
+    motor = motor._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("x", "Cita a un rotulo", tipo=M.FORMULA, formula="=1+1",
+                   cita=M.Cita("art_999.json", bloque=1, clausula="999-3.2")),
+        )),))
+    with pytest.raises(SystemExit, match="section_header"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_citar_el_parrafo_que_si_publica_el_dato_no_aborta(tmp_path):
+    """La otra direccion: el guardia rechaza el rotulo, no la cita correcta."""
+    _json_de_prueba(tmp_path, [
+        {"type": "section_header", "text": "999-3.2 Un rotulo"},
+        {"type": "paragraph", "text": "El valor es 2.5 mm"},
+    ])
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("x", "Cita al parrafo", tipo=M.FORMULA, formula="=1+1",
+                   cita=M.Cita("art_999.json", bloque=1, clausula="999-3.2")),
+        )),))
+    assert M.comprobar_procedencia(motor, tmp_path) == [
+        ("x", "999-3.2", "art_999.json", 1)]
+
+
+def test_verificar_py_pasa_a_comprobar_procedencia_un_tipo_que_acepta(tmp_path):
+    """La §12 de verificar.py llamaba `MD.comprobar_procedencia(motor, RES)`,
+    y `RES` es un `db_lib.Resources`, que NO es os.PathLike: `Path(resources)`
+    reventaba con TypeError dentro del try/finally que cierra Excel, asi que
+    `auditar()` moria sin escribir el reporte. Con el registro de motores
+    vacio el bucle no itera nunca, asi que ninguna corrida lo destapaba.
+
+    Esta prueba no reimplementa la llamada: LEE la expresion real del segundo
+    argumento en el fuente de verificar.py (via ast), la evalua contra un
+    `Resources` de verdad y con el resultado ejerce `comprobar_procedencia`.
+    Si alguien vuelve a pasar `RES` -o cualquier objeto que la funcion no
+    acepte-, esta prueba falla sin necesidad de Excel ni de un motor real."""
+    import ast
+    import os
+    from pathlib import Path
+
+    import db_lib
+
+    fuente = (Path(__file__).resolve().parent / "verificar.py").read_text(
+        encoding="utf-8")
+    llamadas = [
+        n for n in ast.walk(ast.parse(fuente))
+        if isinstance(n, ast.Call)
+        and isinstance(n.func, ast.Attribute)
+        and n.func.attr == "comprobar_procedencia"]
+    assert len(llamadas) == 1, "se esperaba UNA llamada en verificar.py"
+    expr = ast.unparse(llamadas[0].args[1])
+
+    res = db_lib.Resources(str(tmp_path))
+    valor = eval(expr, {"RES": res})              # noqa: S307 - expresion del repo
+    assert isinstance(valor, (str, os.PathLike)), (
+        f"verificar.py pasa {expr!r} = {type(valor).__name__}, que "
+        f"comprobar_procedencia no puede convertir en Path")
+    # Y se ejerce de verdad, con ese mismo valor.
+    assert M.comprobar_procedencia(_motor_sin_formulas(), valor) == []
+
+
+def _motor_con_dictamen():
+    """Motor con las cuatro claves reservadas y una fila de dictamen."""
+    cita = M.Cita("art_999.json", bloque=0, clausula="999-3.2")
+    return M.Motor(
+        articulo="999", hoja="Prueba_PCC2_Art999", titulo="MOTOR DE PRUEBA",
+        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        secciones=(
+            M.Seccion("1. APLICACION", filas=(
+                M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
+                       ejemplo="SI"),
+                M.Fila("modo", "Codigo de aplicacion", tipo=M.LISTA,
+                       ejemplo="PCC2-999"),
+                M.Fila("temperatura", "Temperatura", magnitud="temp",
+                       tipo=M.ENTRADA, ejemplo=20),
+            )),
+            M.Seccion("2. RESULTADO", filas=(
+                M.Fila("chk", "Verificacion", tipo=M.FORMULA,
+                       formula='=IF({temperatura}>0,"CUMPLE","NO CUMPLE")',
+                       cita=cita),
+                M.Fila("dictamen", "Dictamen global", tipo=M.FORMULA,
+                       formula='=IF({chk}="CUMPLE","APTO","REVISAR")',
+                       cita=cita),
+            )),
+        ),
+        verificaciones=(M.Verificacion(
+            clave="chk", rotulo="Verificacion", requerido="{temperatura}",
+            adoptado="{temperatura}", criterio="T > 0"),),
+        dictamen=M.Dictamen(verificaciones=("chk",)),
+    )
+
+
+def test_un_nombre_inexistente_en_una_verificacion_aborta():
+    motor = _motor_con_dictamen()
+    motor = motor._replace(verificaciones=(
+        motor.verificaciones[0]._replace(requerido="{no_existe}"),))
+    with pytest.raises(SystemExit, match="no_existe"):
+        M.comprobar_nombres_declarativos(motor)
+
+
+def test_los_nombres_de_una_verificacion_valida_no_abortan():
+    assert M.comprobar_nombres_declarativos(_motor_con_dictamen()) is None
+
+
+def test_el_texto_de_una_especificacion_sustituye_sus_nombres():
+    """`Especificacion.texto` se documenta como "formula con {nombres}" y se
+    copiaba CRUDO a la pestana: un `{t_req}` salia impreso con las llaves. La
+    direccion va CALIFICADA CON LA HOJA del motor -la pestana es otra hoja y
+    un `$D$9` a secas apuntaria dentro de ella-."""
+    motor = _motor_con_dictamen()
+    e = M.Especificacion(concepto="Dictamen", texto="={dictamen}",
+                         clausula="999-6")
+    assert M.texto_de_especificacion(motor, e) == \
+        "='Prueba_PCC2_Art999'!$D$11"
+
+
+def test_un_nombre_inexistente_en_una_especificacion_aborta():
+    e = M.Especificacion(concepto="X", texto="={no_existe}", clausula="999-6")
+    with pytest.raises(SystemExit, match="no existe"):
+        M.texto_de_especificacion(_motor_con_dictamen(), e)
+
+
+def test_un_texto_fijo_de_especificacion_pasa_intacto():
+    e = M.Especificacion(concepto="X", texto="100 mm (4 in.)", clausula="999-6")
+    assert M.texto_de_especificacion(_motor_con_dictamen(), e) == \
+        "100 mm (4 in.)"
+
+
+def test_bloques_es_el_alias_publico_del_recorrido():
+    """Tres consumidores del builder recorrian `motor.secciones` por su cuenta
+    e ignoraban `motor.pasos`. El alias existe para que no haya excusa para
+    escribir un cuarto recorrido paralelo."""
+    assert M.bloques is M._bloques
+    titulos = [t for t, _f in M.bloques(_motor_con_pasos())]
+    assert titulos == ["1. DATOS DE ENTRADA",
+                       "PASO 1 · ELEGIBILIDAD — 999-1",
+                       "PASO 2 · CARGAS — 999-2"]

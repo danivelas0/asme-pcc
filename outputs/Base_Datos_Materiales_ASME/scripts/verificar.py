@@ -2288,7 +2288,11 @@ def auditar():
                 # fallos: ABORTA el proceso entero, igual que ya hace para
                 # quien construye el libro -es la Regla n.1 hecha guardia, no
                 # algo que se cuenta y se sigue de largo.
-                MD.comprobar_procedencia(motor, RES)
+                # RES.root, no RES: comprobar_procedencia hace Path(resources)
+                # y `Resources` no es un os.PathLike -reventaba con TypeError
+                # dentro del try/finally que cierra Excel, asi que auditar()
+                # moria y no se escribia el reporte-.
+                MD.comprobar_procedencia(motor, RES.root)
 
                 # 3. Todo veredicto PINTA. Mismo recorrido que la §6h -la unica
                 # forma de saber si un formato condicional de verdad pinta es
@@ -2297,7 +2301,15 @@ def auditar():
                 # procedimiento sin ecuaciones), `_semaforo_de` devuelve un
                 # diccionario vacio y este bucle no itera: no hay veredicto que
                 # pueda dejar de pintar.
-                for celda, (favorables, avisos) in B._semaforo_de(motor).items():
+                # El DICTAMEN entra al mismo recorrido (2026-09-13). Es el
+                # veredicto que se firma y la regla del libro no admite
+                # excepcion; hasta aqui la §12 solo indexaba
+                # motor.verificaciones, asi que un dictamen que no pintara
+                # -el caso real: las reglas ancladas a la columna F y el texto
+                # escrito en la D- pasaba en verde.
+                todos = dict(B._semaforo_de(motor))
+                todos.update(B._semaforo_dictamen_de(motor))
+                for celda, (favorables, avisos) in todos.items():
                     r = hws.Range(celda)
                     texto = str(r.Text).strip()
                     if texto in favorables:

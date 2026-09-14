@@ -74,7 +74,9 @@ class Paso(NamedTuple):
 class Especificacion(NamedTuple):
     """Una fila de la pestana de especificaciones tecnicas del articulo."""
     concepto: str
-    texto: str               # texto fijo, o formula con {nombres}
+    # Texto fijo, o formula con {nombres}: los sustituye de verdad
+    # texto_de_especificacion(), con la direccion calificada por hoja.
+    texto: str
     clausula: str
     editable: bool = False
     cita: Cita | None = None
@@ -88,10 +90,18 @@ class Material(NamedTuple):
 
 
 class Verificacion(NamedTuple):
+    """Un veredicto del motor.
+
+    De sus campos, el chasis SOLO emite `clave`/`favorables`/`avisos` (son los
+    que pintan el semaforo). `requerido`, `adoptado`, `criterio` y `cita` se
+    declaran para documentar la verificacion y NINGUN pase los escribe en una
+    celda: si quiere verlos en la hoja, declarelos como Fila propia. Lo que si
+    se comprueba es que sus {nombres} existan (comprobar_nombres_declarativos).
+    """
     clave: str
     rotulo: str
-    requerido: str           # formula con {nombres}
-    adoptado: str            # formula con {nombres}
+    requerido: str           # {nombres} validados, pero HOY no se emiten
+    adoptado: str            # {nombres} validados, pero HOY no se emiten
     criterio: str            # el texto de la columna G: "t >= t_req"
     favorables: tuple = ("CUMPLE",)
     avisos: tuple = ()
@@ -179,6 +189,14 @@ def _bloques(motor):
         yield _titulo_paso(paso), paso.filas
 
 
+# Alias PUBLICO del recorrido. El chasis no es su unico consumidor: el builder
+# deriva de el las unidades, las reglas de comentario y el semaforo, y las
+# pruebas del libro recorren lo mismo. Un guion bajo que no impide nada solo
+# invita a escribir un `for s in motor.secciones` paralelo -que es justo el
+# defecto que se cerro el 2026-09-13: tres consumidores ignoraban motor.pasos-.
+bloques = _bloques
+
+
 def resolver_direcciones(motor):
     """clave -> direccion absoluta, asignando las filas en orden de lectura."""
     dirs, fila = {}, FILA_PRIMERA_BANDA
@@ -240,8 +258,86 @@ def comprobar_procedencia(motor, resources):
                     f"motor_declarado: {f.clave!r} cita el bloque "
                     f"{f.cita.bloque} de {f.cita.archivo}, que tiene "
                     f"{len(bloques)} bloques.")
+            # Un ROTULO no publica un valor. El bloque existe -el guardia de
+            # arriba pasa- pero `section_header` es el titulo del parrafo, no
+            # el parrafo: citarlo es la forma silenciosa de que una cita
+            # parezca valida y apunte al sitio donde el dato NO esta (caso
+            # real: "206-4.1 Installation" es el bloque 62 y la luz radial de
+            # 2,5 mm la imprime el 63). Se rechaza en vez de admitirse, que es
+            # lo que exige la Regla n.1: la trazabilidad tiene que llevar al
+            # texto que publica el numero.
+            tipo_bloque = str(bloques[f.cita.bloque].get("type", ""))
+            if tipo_bloque == "section_header":
+                raise SystemExit(
+                    f"motor_declarado: {f.clave!r} cita el bloque "
+                    f"{f.cita.bloque} de {f.cita.archivo}, que es un "
+                    f"section_header ({bloques[f.cita.bloque].get('text', '')!r}). "
+                    f"Un rotulo no publica un valor: cite el bloque que "
+                    f"imprime el dato.")
             tabla.append((f.clave, f.cita.clausula, f.cita.archivo, f.cita.bloque))
     return tabla
+
+
+def direcciones_externas(motor):
+    """clave -> direccion CALIFICADA CON LA HOJA del motor.
+
+    `resolver_direcciones()` devuelve `$D$12`, que solo vale dentro de la propia
+    hoja del motor. La pestana de especificaciones tecnicas es otra hoja y SI
+    lee las celdas de su motor -son dos pestanas del mismo artefacto, no dos
+    motores (regla 13)-, asi que ahi un `$D$12` a secas apuntaria a la fila 12
+    de la pestana: el peor error posible, uno que parece un resultado. Se
+    califica con el nombre de la hoja, entrecomillado porque un nombre con
+    caracteres raros lo exige y con comillas de mas nunca sobra.
+    """
+    hoja = motor.hoja.replace("'", "''")
+    return {c: f"'{hoja}'!{d}" for c, d in resolver_direcciones(motor).items()}
+
+
+def texto_de_especificacion(motor, especificacion):
+    """El texto de una Especificacion con sus {nombres} ya sustituidos.
+
+    `Especificacion.texto` se documenta como "texto fijo, o formula con
+    {nombres}" y hasta 2026-09-13 se copiaba CRUDO a la pestana: una
+    especificacion con `{t_req}` imprimia la llave literal, sin abortar. La
+    promesa se cierra con mecanismo y no con un veto, porque el mecanismo ya
+    existe entero -`sustituir_nombres()` mas la calificacion por hoja- y es lo
+    que hace util a esta pestana: que la especificacion tecnica cite el espesor
+    que el motor acaba de calcular en vez de repetirlo a mano y poder mentir.
+    Un nombre que no existe aborta con el mensaje de `sustituir_nombres()`.
+    """
+    return sustituir_nombres(especificacion.texto, direcciones_externas(motor))
+
+
+def comprobar_nombres_declarativos(motor):
+    """Aborta si un {nombre} de `Verificacion` no existe como fila del motor.
+
+    `Verificacion.requerido` y `.adoptado` se documentan como "formula con
+    {nombres}" y HOY no los lee ningun pase (solo `clave`/`favorables`/`avisos`
+    alimentan el semaforo). No se prohibe la llave -escribir la verificacion en
+    terminos de las filas del motor es justo como se documenta, y como la usa
+    la plantilla de la skill- pero tampoco se deja sin mecanismo: se comprueba
+    que cada nombre citado EXISTE. Asi, el dia que alguien renombre la fila
+    `w_requerido`, la declaracion que la nombraba aborta con un mensaje legible
+    en vez de quedarse describiendo una fila que ya no esta.
+
+    Lo que NO se hace es fingir que esas dos cadenas acaban en una celda: no
+    hay pase que las emita, y eso sigue declarado en la plantilla de la skill.
+    """
+    dirs = resolver_direcciones(motor)
+    for v in motor.verificaciones:
+        for campo in ("requerido", "adoptado"):
+            for nombre in _RE_NOMBRE.findall(str(getattr(v, campo))):
+                if nombre not in dirs:
+                    raise SystemExit(
+                        f"motor_declarado: la Verificacion {v.clave!r} de "
+                        f"{motor.hoja} cita {{{nombre}}} en su campo "
+                        f"{campo!r}, que no existe como fila del motor.")
+            if "{" in str(getattr(v, campo)) and not _RE_NOMBRE.search(
+                    str(getattr(v, campo))):
+                raise SystemExit(
+                    f"motor_declarado: la Verificacion {v.clave!r} de "
+                    f"{motor.hoja} trae una llave sin cerrar o con un nombre "
+                    f"invalido en {campo!r}: {getattr(v, campo)!r}.")
 
 
 def emitir_tabla(ws, motor, helpers):
