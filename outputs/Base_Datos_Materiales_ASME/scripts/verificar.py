@@ -2341,6 +2341,13 @@ def auditar():
                 # todas las verificaciones cumplan: una compuerta bloqueando y
                 # un material sin resolver. Se auditan las tres capas, que es
                 # un guardia mas fuerte que el anterior, no mas laxo.
+                # La de MATERIAL se auditaba a medias hasta 2026-09-13: era un
+                # `elif dictado in estados_material: pass` que ACEPTABA el
+                # estado sin mirar si el bloque de material lo respaldaba, asi
+                # que una formula rota que dijera siempre ELIJA MATERIAL
+                # pasaba en verde. Ahora se leen las celdas del «Dictamen de
+                # rango» (localizadas por rotulo, no por offset) y el estado
+                # tiene que corresponderse con lo que ellas dicen.
                 if motor.dictamen is not None:
                     def _texto(clave):
                         return str(hws.Range(
@@ -2364,16 +2371,42 @@ def auditar():
                             continue
                         bloqueo = t
                         break
-                    estados_material = (MD.TXT_ELIJA_MATERIAL,
-                                        MD.TXT_MATERIAL_FUERA_DE_RANGO)
+                    # Capa de MATERIAL. Se lee con Value2 y no con Text: la
+                    # fila del «Dictamen de rango» va PLEGADA (F9 del
+                    # 2026-09-13) y `.Text` es lo que se muestra -de una fila
+                    # oculta o de una columna estrecha puede no serlo entero-,
+                    # mientras que el valor es el valor.
+                    celdas_mat = B.celdas_dictamen_material(wb0, motor)
+                    if celdas_mat is None:
+                        dec_bad += 1
+                        log(f"| {motor.hoja} dictamen | sin fila "
+                            f"{B.ROTULO_DICTAMEN_MATERIAL!r} | el motor "
+                            f"declara material y el bloque no esta | FALLO |")
+                        celdas_mat = ()
+                    mats = [str(hws.Range(c).Value2 or "").strip()
+                            for c in celdas_mat]
+                    sin_material = any(t == MD.TXT_SIN_MATERIAL for t in mats)
+                    fuera_rango = any(t != MD.TXT_MATERIAL_OK for t in mats)
                     if bloqueo is not None:
                         # El texto de la compuerta que bloquea ES el dictamen.
                         if dictado != bloqueo:
                             dec_bad += 1
                             log(f"| {motor.hoja} dictamen | {dictado} | la "
                                 f"compuerta bloquea con {bloqueo!r} | FALLO |")
-                    elif dictado in estados_material:
-                        pass          # el material aun no resuelve: correcto
+                    elif sin_material:
+                        # Mismo orden que `MD.formula_dictamen`: falta de
+                        # seleccion antes que fuera de rango.
+                        if dictado != MD.TXT_ELIJA_MATERIAL:
+                            dec_bad += 1
+                            log(f"| {motor.hoja} dictamen | {dictado} | el "
+                                f"material esta sin seleccionar ({mats}) "
+                                f"| FALLO |")
+                    elif fuera_rango:
+                        if dictado != MD.TXT_MATERIAL_FUERA_DE_RANGO:
+                            dec_bad += 1
+                            log(f"| {motor.hoja} dictamen | {dictado} | el "
+                                f"material no resuelve en rango ({mats}) "
+                                f"| FALLO |")
                     elif implica_apto != (dictado == MD.TXT_APTO):
                         dec_bad += 1
                         log(f"| {motor.hoja} dictamen | {dictado} | contradice "

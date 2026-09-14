@@ -22,8 +22,23 @@ de verdad".*
 
 Ningún valor normativo —esfuerzos admisibles, factores, fórmulas, límites— puede salir
 de la memoria del modelo. Siempre se lee el archivo fuente antes de citar o calcular.
-Si un dato no existe en `resources/`, no se inventa ni se aproxima: se declara el
-vacío explícitamente y se pregunta cómo proceder.
+Si un dato no existe en `resources/`, no se inventa ni se aproxima. **Cómo se lee
+esa regla en esta skill, que es autónoma y no pregunta:** el `CLAUDE.md` la cierra
+con «se pregunta cómo proceder», y aquí no hay a quién preguntar a mitad de una
+construcción. Los dos casos, ya separados en el `SKILL.md`, agotan la regla sin
+necesidad de esa parada:
+
+- **Caso A — la extracción está defectuosa** (el dato lo publica el código y el
+  JSON no lo tiene, o lo tiene roto). Se **repara siempre**, sin preguntar: primero
+  se mira si vive como imagen del propio `resources/` (ver el párrafo siguiente), y
+  si falta de verdad se recupera del PDF del código mediante un script de corrección
+  que lo escribe en el JSON con su `extraction_amendments`. Después se sigue.
+- **Caso B — el código no publica el dato.** Ahí no hay nada que reparar: se
+  **declara el hueco** con su cláusula y su bloque, y el motor se construye sin él.
+  Es el precedente del propio proyecto (Tabla TE-2, Tablas B-2 a B-6).
+
+Lo que nunca se hace es lo que la regla prohíbe de verdad: rellenarlo de memoria o
+aproximarlo.
 
 Un valor puede vivir en `resources/` como **imagen de ecuación**: el bloque
 `figure`/`equation` que trae `image: fig/….png` es parte de `resources/`, así que se
