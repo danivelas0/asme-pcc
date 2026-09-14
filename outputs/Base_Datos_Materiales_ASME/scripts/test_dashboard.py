@@ -458,11 +458,25 @@ PALETA = {B.PAPEL, B.PAPEL_2, B.TINTA, B.TINTA_2, B.ROJO, B.GRIS, B.GRIS_2,
 FUENTES_DEL_SISTEMA = {B.MONO, B.MACRO}
 
 # El AMARILLO entra en la paleta del libro pero NO es de uso libre: marca la
-# celda editable y solo existe en los dos motores de calculo (leyenda impresa en
+# celda editable y solo existe en los MOTORES DE CALCULO (leyenda impresa en
 # la fila 3 de cada uno). La lista blanca de arriba se resuelve por indice de
 # estilo y no sabe de que hoja viene cada uno, asi que el alcance lo fija una
 # prueba aparte, por nombre de hoja —mismo patron que el rojo del aviso—.
-HOJAS_CON_AMARILLO = {"Parche_PCC2_Art212", "Collar_PCC2_Art206"}
+#
+# La lista se DERIVA del registro de motores declarados, como ya hacen ARBOL,
+# NAVEGABLES y la §12 de verificar.py: escrita a mano dejaba fuera al primer
+# motor declarado por dos lados a la vez —la asercion de alcance lo habria dado
+# por infractor (el chasis pinta MOTOR_IN_FILL en toda entrada) y las otras dos
+# pruebas del amarillo, que iteran esta misma lista, ni siquiera lo habrian
+# mirado—. Los dos motores escritos a mano no estan en el registro y se nombran
+# aparte, que es lo unico que aqui se escribe a mano.
+def _hojas_con_amarillo():
+    from motores import MOTORES_DECLARADOS
+    return ({"Parche_PCC2_Art212", "Collar_PCC2_Art206"} |
+            {m.hoja for m in MOTORES_DECLARADOS})
+
+
+HOJAS_CON_AMARILLO = _hojas_con_amarillo()
 
 
 def _rgb6(v):
@@ -2948,10 +2962,16 @@ class TestMotoresDeclarados:
             assert m.hoja in B.NAVEGABLES, m.hoja
 
     def test_cada_entrada_es_editable_y_entra_en_el_reinicio(self, wb):
+        """Recorre MD.bloques() -Secciones Y Pasos-, no solo motor.secciones:
+        una entrada declarada dentro de un Paso del anexo del flujo es una
+        entrada como cualquier otra, y mirando solo las secciones nadie
+        comprobaba que fuese editable ni que el boton de reinicio la borrase
+        (el anexo del 212 tiene 50 filas)."""
+        import motor_declarado as MD
         for m, ws in self._hojas(wb):
             man = set(TestReinicioDeEntradas()._manifiesto(ws))
-            for seccion in m.secciones:
-                for f in seccion.filas:
+            for _titulo, filas in MD.bloques(m):
+                for f in filas:
                     if f.tipo == "formula":
                         continue
                     celda = B.direccion_de(m, f.clave)
@@ -2971,10 +2991,12 @@ class TestMotoresDeclarados:
         que NO este donde no debe (columna de rotulo).
         Con el registro vacio esta prueba pasa en vacio -es deliberado
         (2026-09-13)-: empieza a morder en cuanto entre el primer motor
-        real."""
+        real. Recorre MD.bloques(): las filas de un Paso llevan comentario
+        igual que las de una Seccion."""
+        import motor_declarado as MD
         for m, ws in self._hojas(wb):
-            for seccion in m.secciones:
-                for f in seccion.filas:
+            for _titulo, filas in MD.bloques(m):
+                for f in filas:
                     if not f.comentario:
                         continue
                     celda = B.direccion_de(m, f.clave)
@@ -2983,3 +3005,204 @@ class TestMotoresDeclarados:
                     rotulo = ws.cell(fila, 1)
                     assert valor.comment is not None, f"{m.hoja}!{valor.coordinate}"
                     assert rotulo.comment is None, f"{m.hoja}!{rotulo.coordinate}"
+
+
+class TestChasisDeclarado:
+    """Los defectos del chasis que no se veian con MOTORES_DECLARADOS vacio.
+
+    Ninguna de estas pruebas necesita el libro construido: ejercen las
+    funciones del builder sobre un motor declarado de laboratorio, que es la
+    unica forma de cazarlas mientras el registro siga vacio.
+    """
+
+    @staticmethod
+    def _motor():
+        import motor_declarado as MD
+        cita = MD.Cita("art_999.json", bloque=0, clausula="999-3.2")
+        return MD.Motor(
+            articulo="999", hoja="Prueba_PCC2_Art999",
+            titulo="MOTOR DE PRUEBA",
+            fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+            secciones=(
+                MD.Seccion("1. APLICACION", filas=(
+                    MD.Fila("unidad", "Sistema de unidades", tipo=MD.LISTA,
+                            ejemplo="SI"),
+                    MD.Fila("modo", "Codigo de aplicacion", tipo=MD.LISTA,
+                            ejemplo="PCC2-999"),
+                    MD.Fila("temperatura", "Temperatura", magnitud="temp",
+                            tipo=MD.ENTRADA, ejemplo=20),
+                    MD.Fila("Tp", "Espesor", magnitud="len",
+                            tipo=MD.ENTRADA, ejemplo=6.35),
+                )),
+                MD.Seccion("2. RESULTADO", filas=(
+                    MD.Fila("chk", "Verificacion", tipo=MD.FORMULA,
+                            formula='=IF({Tp}>0,"CUMPLE","NO CUMPLE")',
+                            cita=cita),
+                    MD.Fila("dictamen", "Dictamen global", tipo=MD.FORMULA,
+                            formula='=IF({chk}="CUMPLE","APTO","REVISAR")',
+                            cita=cita),
+                )),
+            ),
+            pasos=(MD.Paso(1, "INSTALACION", "999-4.1", filas=(
+                MD.Fila("G", "Luz radial", magnitud="len", tipo=MD.ENTRADA,
+                        ejemplo=1.5, comentario="Entrada: dato de campo."),
+                MD.Fila("gap_ok", "Luz dentro de tolerancia?", tipo=MD.FORMULA,
+                        formula='=IF({G}<=2.5,"CUMPLE","REVISAR")', cita=cita),
+            )),),
+            verificaciones=(MD.Verificacion(
+                clave="chk", rotulo="Verificacion", requerido="{Tp}",
+                adoptado="{Tp}", criterio="Tp > 0"),),
+            dictamen=MD.Dictamen(verificaciones=("chk",)),
+        )
+
+    @staticmethod
+    def _refs(ws):
+        """Las referencias de celda de todo formato condicional de la hoja."""
+        return [r.formula[0]
+                for rango in ws.conditional_formatting
+                for r in rango.rules]
+
+    # --- CRITICO 2: el dictamen de un motor declarado tiene que pintar ------
+    def test_el_dictamen_declarado_se_ancla_a_la_columna_donde_vive(self):
+        """El chasis escribe TODA fila en la columna D (COL_PRIMER_CASO) y las
+        tres reglas del bloque de dictamen estaban ancladas a la F de los dos
+        motores escritos a mano: en un motor declarado la F esta vacia, ninguna
+        regla dispara y el veredicto que alguien va a firmar sale como banda de
+        tinta sin color. La §12 no lo cazaba porque solo indexaba
+        motor.verificaciones."""
+        import openpyxl
+        motor = self._motor()
+        ws = openpyxl.Workbook().active
+        B.aplicar_semaforo_declarado(ws, motor, {})
+        celda = B._celda_dictamen(motor)             # "D11"
+        esperado = f"${celda[0]}${celda[1:]}"
+        refs = self._refs(ws)
+        assert refs, "el bloque de dictamen no escribio ninguna regla"
+        for f in refs:
+            assert esperado in f, f"{f} no mira {esperado}"
+            assert "$F$" not in f, f
+
+    def test_el_semaforo_por_defecto_sigue_siendo_el_de_los_motores_a_mano(self):
+        """El 212 y el 206 son lo unico verificado celda a celda contra un
+        oracle: parametrizar aplicar_semaforo_motor no puede moverles ni una
+        regla. Sin argumento, las tres siguen mirando $F$<fila>."""
+        import openpyxl
+        ws = openpyxl.Workbook().active
+        B.aplicar_semaforo_motor(ws, {}, B.FILA_DICTAMEN_212)
+        refs = self._refs(ws)
+        assert refs == [
+            '$F$119="APTO"',
+            'LEFT($F$119,14)="ELIJA MATERIAL"',
+            'AND($F$119<>"",$F$119<>"APTO",LEFT($F$119,14)<>"ELIJA MATERIAL")']
+
+    def test_el_dictamen_entra_al_recorrido_de_todo_veredicto_pinta(self):
+        """Lo que consume verificar.py §12: la celda del dictamen tiene que
+        estar en el diccionario de semaforo que la §12 recorre, y ser la MISMA
+        que ancla las reglas de color. Dos mecanismos que discrepaban sobre
+        donde vive el dictamen (la §12 lo leia en D y el color lo buscaba en F)
+        pasan a leer los dos de _celda_dictamen()."""
+        motor = self._motor()
+        sem = B._semaforo_dictamen_de(motor)
+        assert list(sem) == [B._celda_dictamen(motor)]
+        favorables, avisos = sem[B._celda_dictamen(motor)]
+        assert favorables == ("APTO",) and avisos == ("ELIJA MATERIAL",)
+        # Y no se solapa con el semaforo de verificaciones: el dictamen lo
+        # pinta su propio bloque, no semaforo_resultado.
+        assert B._celda_dictamen(motor) not in B._semaforo_de(motor)
+
+    # --- IMPORTANTE 1: la columna de unidad --------------------------------
+    def test_el_chasis_escribe_la_columna_de_unidad(self):
+        """`Fila.magnitud` llegaba a _helpers_del_libro.rotulo y no se escribia
+        en ningun sitio. Eso dejaba la regla 6 ("unidades visibles") sin
+        cumplir, el conmutador SI/US sin gobernar un solo rotulo del motor y
+        aplicar_dos_decimales -que deriva de esta misma columna- sin aplicar a
+        ninguna fila."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        MD.emitir_tabla(ws, motor, B._helpers_del_libro(ws))
+        dirs = MD.resolver_direcciones(motor)
+        fila_t = int(dirs["temperatura"].split("$")[-1])
+        fila_chk = int(dirs["chk"].split("$")[-1])
+        assert ws.cell(fila_t, B.COL_UNIDAD_MOTOR).value == B._U["temp"][0]
+        # Una fila sin magnitud (un veredicto) no inventa unidad.
+        assert ws.cell(fila_chk, B.COL_UNIDAD_MOTOR).value is None
+
+    def test_el_conmutador_gobierna_los_rotulos_de_un_motor_declarado(self):
+        """Con la columna C escrita, aplicar_unidades_motor la convierte en la
+        formula del selector y NO emite un ISSUE por fila."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Prueba_PCC2_Art999"
+        MD.emitir_tabla(ws, motor, B._helpers_del_libro(ws))
+        antes = len(B.ISSUES)
+        B.aplicar_unidades_motor(ws, B._unidades_de(motor), '$D$6="SI"')
+        assert len(B.ISSUES) == antes, B.ISSUES[antes:]
+        fila_t = int(MD.resolver_direcciones(motor)["temperatura"]
+                     .split("$")[-1])
+        si, us = B._U["temp"]
+        assert ws.cell(fila_t, B.COL_UNIDAD_MOTOR).value == \
+            f'=IF($D$6="SI","{si}","{us}")'
+
+    def test_los_dos_decimales_alcanzan_a_un_motor_declarado(self):
+        """aplicar_dos_decimales deriva de la columna de unidad: sin ella no
+        tocaba una sola celda de un motor declarado."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        MD.emitir_tabla(ws, motor, B._helpers_del_libro(ws))
+        assert B.aplicar_dos_decimales(ws, B._semaforo_de(motor)) > 0
+        # Y no basta con que el contador suba: las filas de verificacion ya lo
+        # subian por su cuenta (entran por el semaforo, no por la unidad). Lo
+        # que hay que exigir es que la fila que declara MAGNITUD quede
+        # formateada, que es lo que la columna C gobierna.
+        fila_t = int(MD.resolver_direcciones(motor)["temperatura"]
+                     .split("$")[-1])
+        assert ws.cell(fila_t, B.COLS_VALOR_MOTOR[0]).number_format ==             B.FORMATO_2_DEC
+
+    # --- IMPORTANTE 3: tres consumidores esquivaban _bloques() -------------
+    def test_las_filas_de_un_paso_reciben_unidad_y_regla_de_comentario(self):
+        """Una fila de calculo dentro de un Paso recibia direccion, exigia cita
+        y podia llevar semaforo, pero no recibia unidad ni decimales ni entraba
+        en las reglas de comentario. El anexo del 212 tiene 50 filas."""
+        import motor_declarado as MD
+        motor = self._motor()
+        dirs = MD.resolver_direcciones(motor)
+        fila_g = int(dirs["G"].split("$")[-1])
+        assert B._unidades_de(motor).get(fila_g) == "len"
+        cubiertas = {f for ini, fin, _c, _d in B._reglas_de_comentario_de(motor)
+                     for f in range(ini, fin + 1)}
+        assert fila_g in cubiertas
+        assert int(dirs["gap_ok"].split("$")[-1]) in cubiertas
+
+    # --- IMPORTANTE 4: una direccion literal dentro del chasis -------------
+    def test_un_motor_con_material_sin_fila_modo_aborta(self):
+        """Con `aplicacion=False` se pasaba el literal "$D$11" -el default del
+        212/206-, que en una hoja declarada es una fila cualquiera: alimentaria
+        la resolucion de material con basura sin decir nada."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        # Sin filas de FORMULA que citar, comprobar_procedencia no toca
+        # resources/: el motor aborta en la fila reservada que falta, que es
+        # lo que esta prueba ejerce.
+        secciones = tuple(
+            s._replace(filas=tuple(f for f in s.filas
+                                   if f.clave != "modo" and f.tipo != MD.FORMULA))
+            for s in motor.secciones)
+        motor = motor._replace(
+            secciones=secciones, pasos=(), aplicacion=False,
+            material=MD.Material(), verificaciones=(), dictamen=None)
+        wb = openpyxl.Workbook()
+        with pytest.raises(SystemExit, match="'modo'"):
+            B.build_motor_declarado(
+                wb, motor, None, None, None, None, None, None, None,
+                b313c=None, iid1ac=None, iidbc=None, umbrales=None,
+                resources="no_se_usa")

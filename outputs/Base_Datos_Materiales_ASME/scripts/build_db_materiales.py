@@ -5996,6 +5996,13 @@ FILA_ANEXO_FLUJO_206 = 101
 # navegacion (COL_CLAVE_BASE): pintarlas seria colorear metadato invisible.
 MOTOR_NCOLS = 7
 
+# La columna de la UNIDAD en la banda de un motor (A rotulo, B simbolo, C
+# unidad, D.. los casos). La leen tres pases -aplicar_unidades_motor,
+# aplicar_dos_decimales y _guia_de_celdas- y la escriben los dos motores a mano
+# y el chasis declarativo: con el 3 suelto en cinco sitios, la fila que lo
+# olvida no se ve (es lo que le paso al chasis hasta 2026-09-13).
+COL_UNIDAD_MOTOR = 3
+
 # La leyenda impresa. Cada muestra lleva EL MISMO objeto de relleno que
 # `aplicar_leyenda_motor` pone en las celdas, no una copia del color: asi la
 # muestra no puede acabar describiendo un tono que la hoja ya no usa —el fallo
@@ -6635,9 +6642,34 @@ SEMAFORO_206 = {"F85": _sem(("CUMPLE",)), "F86": _sem(("CUMPLE",)),
                 "F123": _sem(("CUMPLE",))}
 FILA_DICTAMEN_212, FILA_DICTAMEN_206 = 119, 94
 
+# Columna en la que los dos motores ESCRITOS A MANO publican el texto del
+# dictamen global. Es el valor por defecto de aplicar_semaforo_motor, para que
+# el 212 y el 206 -lo unico verificado celda a celda contra su oracle- no
+# cambien ni un formato al parametrizar esa funcion.
+COL_DICTAMEN_MANUAL = "F"
 
-def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
-    """Semaforo en las celdas de Resultado y bloque propio para el dictamen."""
+# Lo que el bloque del dictamen pinta de cada color, declarado UNA vez y en la
+# misma forma que _sem() para el resto de veredictos: APTO en verde, "ELIJA
+# MATERIAL..." en ambar (falta una entrada, no es un fallo) y todo lo demas en
+# rojo por complemento. Las tres reglas condicionales de aplicar_semaforo_motor
+# son la contrapartida; verificar.py §12 lo lee de aqui para comprobar que el
+# dictamen de un motor declarado de verdad pinta, sin escribir una segunda
+# copia de los mismos literales.
+SEM_DICTAMEN = _sem(("APTO",), ("ELIJA MATERIAL",))
+
+
+def aplicar_semaforo_motor(ws, semaforo, fila_dictamen, col_dictamen=COL_DICTAMEN_MANUAL):
+    """Semaforo en las celdas de Resultado y bloque propio para el dictamen.
+
+    `col_dictamen` es la letra de la columna donde vive el TEXTO del dictamen,
+    que es la que leen las tres reglas condicionales del bloque. Su valor por
+    defecto es "F", que es donde lo publican los dos motores escritos a mano
+    (F119 en el 212, F94 en el 206) y por tanto deja su comportamiento
+    exactamente como estaba. Un motor DECLARADO escribe TODA fila en la
+    columna D (`COL_PRIMER_CASO` del chasis), asi que anclar las reglas a F sin
+    parametro dejaba su dictamen sin pintar jamas -banda de tinta sin color
+    justo en la frase que alguien firma-.
+    """
     for celda, (favorables, avisos) in semaforo.items():
         semaforo_resultado(ws, f"{celda}:{celda}",
                            "$" + celda[0] + "$" + celda[1:], favorables, avisos)
@@ -6656,18 +6688,27 @@ def aplicar_semaforo_motor(ws, semaforo, fila_dictamen):
     ws.row_dimensions[fila_dictamen].height = 26
 
     rango = f"A{fila_dictamen}:G{fila_dictamen}"
-    ref = f"$F${fila_dictamen}"
+    ref = f"${col_dictamen}${fila_dictamen}"
     # APTO -> verde. ELIJA MATERIAL -> ambar: no es un fallo, es que todavia
     # falta una entrada, y pintarlo de rojo confundiria "aun no has elegido"
     # con "no cumple". Todo lo demas -REVISAR, PROHIBIDO, NO ELEGIBLE, FUERA DE
     # ALCANCE- es rojo, otra vez por complemento: lo imprevisto sale bloqueado.
+    #
+    # Los dos literales salen de SEM_DICTAMEN, que es lo que lee verificar.py
+    # §12 para comprobar que este bloque de verdad pinta: escribirlos dos veces
+    # seria la misma clase de "dos fuentes de verdad" que el manifiesto de
+    # reinicio y HojasNavegables() ya evitan. El texto generado es identico al
+    # que habia (`$F$119="APTO"` y `LEFT($F$119,14)="ELIJA MATERIAL"`).
+    apto, = SEM_DICTAMEN[0]
+    espera, = SEM_DICTAMEN[1]
     ws.conditional_formatting.add(rango, FormulaRule(
-        formula=[f'{ref}="APTO"'], fill=CUMPLE_OK_FILL, font=DICTAMEN_OK_FONT))
+        formula=[f'{ref}="{apto}"'], fill=CUMPLE_OK_FILL, font=DICTAMEN_OK_FONT))
     ws.conditional_formatting.add(rango, FormulaRule(
-        formula=[f'LEFT({ref},14)="ELIJA MATERIAL"'],
+        formula=[f'LEFT({ref},{len(espera)})="{espera}"'],
         fill=DICTAMEN_ESPERA_FILL, font=DICTAMEN_ESPERA_FONT))
     ws.conditional_formatting.add(rango, FormulaRule(
-        formula=[f'AND({ref}<>"",{ref}<>"APTO",LEFT({ref},14)<>"ELIJA MATERIAL")'],
+        formula=[f'AND({ref}<>"",{ref}<>"{apto}",'
+                 f'LEFT({ref},{len(espera)})<>"{espera}")'],
         fill=CUMPLE_BAD_FILL, font=DICTAMEN_BAD_FONT))
     return ws
 
@@ -6727,10 +6768,18 @@ def aplicar_unidades_motor(ws, tabla, sel):
     """Escribe el rotulo de unidad de cada fila como formula del selector."""
     for fila, clase in tabla.items():
         si, us = _U[clase]
-        c = ws.cell(fila, 3)
+        c = ws.cell(fila, COL_UNIDAD_MOTOR)
         if c.value is None:        # fila que no existe en este motor: se avisa
+            # El sitio que hay que revisar no es el mismo en los dos caminos: en
+            # un motor escrito a mano la tabla es UNIDADES_212/UNIDADES_206; en
+            # uno DECLARADO la tabla la deriva _unidades_de() de Fila.magnitud,
+            # y mandar al ingeniero a UNIDADES_* seria mandarlo a un archivo que
+            # no tiene nada que ver con su motor.
             ISSUES.append(f"{ws.title}: la fila {fila} de la tabla de unidades "
-                          f"no tiene rotulo de unidad; revise UNIDADES_*.")
+                          f"no tiene rotulo de unidad en la columna "
+                          f"{get_column_letter(COL_UNIDAD_MOTOR)}; revise "
+                          f"UNIDADES_* (motor escrito a mano) o Fila.magnitud "
+                          f"de la declaracion (motor declarado).")
             continue
         c.value = f'=IF({sel},"{si}","{us}")'
     return ws
@@ -10009,6 +10058,23 @@ def _helpers_del_libro(ws):
         c.font = Font(name=MONO, size=10, color=TINTA)
         if simbolo:
             w.cell(fila, 2, simbolo).font = Font(name=MONO, size=10, color=TINTA)
+        if magnitud:
+            # Columna C, la de la unidad. `Fila.magnitud` llegaba hasta aqui y
+            # no se escribia en ningun sitio, y eso encadenaba tres
+            # incumplimientos: la regla 6 del libro ("unidades visibles en toda
+            # variable"), el conmutador SI/US -aplicar_unidades_motor solo pisa
+            # una celda que YA tenga rotulo, asi que emitia un ISSUE por fila en
+            # vez de escribir nada- y aplicar_dos_decimales, que deriva de esta
+            # misma columna y no aplicaba a ninguna fila declarada. Se escribe
+            # el rotulo SI como semilla; el pase de unidades lo sustituye acto
+            # seguido por la formula del selector.
+            if magnitud not in _U:
+                raise SystemExit(
+                    f"_helpers_del_libro: la fila {fila} de {w.title} declara "
+                    f"magnitud {magnitud!r}, que no esta en _U (las clases de "
+                    f"magnitud del libro: {', '.join(sorted(_U))}).")
+            u = w.cell(fila, COL_UNIDAD_MOTOR, _U[magnitud][0])
+            u.font = Font(name=MONO, size=9, color=GRIS)
         if referencia:
             w.cell(fila, MOTOR_NCOLS, referencia).font = Font(
                 name=MONO, size=9, color=GRIS)
@@ -10052,20 +10118,33 @@ def direccion_de(motor, clave):
 # `emitir_tabla` para escribir cada celda. Es la unica forma de que las dos
 # lecturas del arbol (la que escribe y la que pinta) no puedan divergir.
 def _unidades_de(motor):
-    """fila -> clase de magnitud, para aplicar_unidades_motor."""
+    """fila -> clase de magnitud, para aplicar_unidades_motor.
+
+    Recorre `MD.bloques()` y no `motor.secciones`: una fila de calculo dentro
+    de un `Paso` del anexo del flujo es una fila como cualquier otra -recibe
+    direccion, exige cita y puede llevar semaforo-, y saltarsela aqui la dejaba
+    sin rotulo de unidad y, por arrastre, sin los dos decimales que
+    aplicar_dos_decimales deriva de esa misma columna. El anexo del 212 tiene
+    50 filas: no es un rincon (corregido 2026-09-13).
+    """
     dirs = MD.resolver_direcciones(motor)
     return {int(dirs[f.clave].split("$")[-1]): f.magnitud
-            for s in motor.secciones for f in s.filas if f.magnitud}
+            for _t, filas in MD.bloques(motor) for f in filas if f.magnitud}
 
 
 def _reglas_de_comentario_de(motor):
-    """Una regla por seccion, siempre a las columnas de VALOR (F9 2026-09-13)."""
+    """Una regla por bloque, siempre a las columnas de VALOR (F9 2026-09-13).
+
+    Un bloque es una Seccion o un Paso -mismo recorrido `MD.bloques()` que usa
+    todo el chasis-. El anexo de pasos quedaba fuera de estas reglas, asi que el
+    barrido de comentarios no cubria ninguna de sus filas.
+    """
     dirs = MD.resolver_direcciones(motor)
     reglas, cols = [], "".join(chr(ord("A") + c - 1) for c in COLS_VALOR_MOTOR)
-    for s in motor.secciones:
-        if not s.filas:
+    for _titulo, filas_bloque in MD.bloques(motor):
+        if not filas_bloque:
             continue
-        filas = [int(dirs[f.clave].split("$")[-1]) for f in s.filas]
+        filas = [int(dirs[f.clave].split("$")[-1]) for f in filas_bloque]
         reglas.append((min(filas), max(filas), cols[:len(motor.casos)], "D"))
     return tuple(reglas)
 
@@ -10100,6 +10179,46 @@ def _semaforo_de(motor):
     return semaforo
 
 
+def _celda_dictamen(motor):
+    """Celda (sin '$') donde un motor DECLARADO publica el texto del dictamen.
+
+    El chasis escribe TODA fila en COL_PRIMER_CASO -la columna D-, y no en la F
+    de los dos motores escritos a mano: de aqui salen a la vez la columna que
+    leen las reglas condicionales del bloque de dictamen y la celda que
+    verificar.py §12 comprueba que pinta. Una sola fuente, o vuelven a
+    discrepar (el color se buscaba en F y el texto vivia en D).
+    """
+    return MD.resolver_direcciones(motor)["dictamen"].replace("$", "")
+
+
+def _semaforo_dictamen_de(motor):
+    """celda -> (favorables, avisos) del DICTAMEN de un motor declarado.
+
+    El dictamen no es una `Verificacion` -no entra en `_semaforo_de`- pero es
+    el veredicto que se firma, y la regla del libro no admite excepcion: toda
+    celda de resultado lleva semaforo. Se publica aparte para que verificar.py
+    §12 lo meta en el recorrido de "todo veredicto pinta" sin que la funcion
+    que alimenta `aplicar_semaforo_motor` gane una celda que ese pase ya pinta
+    por su propia via (el bloque de dictamen a todo el ancho).
+    """
+    if "dictamen" not in MD.resolver_direcciones(motor):
+        return {}
+    return {_celda_dictamen(motor): SEM_DICTAMEN}
+
+
+def aplicar_semaforo_declarado(ws, motor, semaforo):
+    """aplicar_semaforo_motor para un motor DECLARADO.
+
+    Existe para que la columna del dictamen se decida en UN solo sitio: la
+    saca de `_celda_dictamen()`, que es la misma celda que publica
+    `_semaforo_dictamen_de()` a verificar.py §12. Con la columna elegida en la
+    llamada, el color y el texto podian volver a discrepar -que es el defecto
+    que se cerro: las reglas ancladas a F y el texto escrito en D-.
+    """
+    return aplicar_semaforo_motor(ws, semaforo, _fila_dictamen(motor),
+                                  col_dictamen=_celda_dictamen(motor)[0])
+
+
 def _fila_dictamen(motor):
     """Numero de fila (int) del dictamen global del motor.
 
@@ -10129,6 +10248,7 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
                           resources):
     """Construye la hoja de un motor DECLARADO y le aplica los pases del libro."""
     MD.comprobar_procedencia(motor, resources)      # Regla n.1: antes de nada
+    MD.comprobar_nombres_declarativos(motor)        # ni una llave a una fila que no existe
     if motor.hoja in wb.sheetnames:
         del wb[motor.hoja]
     ws = new_sheet(wb, motor.hoja, motor.titulo, f"Fuente: resources/{motor.fuente}")
@@ -10161,9 +10281,17 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     es_si = f'{unidad_cell}="SI"'
 
     if motor.material is not None:
-        modo_cell = (_reservada("modo", "el selector de codigo de la seccion "
-                                "de resolucion de material")
-                     if motor.aplicacion else "$D$11")
+        # La fila reservada `modo` se exige SIEMPRE que haya material, lleve o
+        # no el motor banda de aplicacion. Antes, con `aplicacion=False` se
+        # pasaba el literal "$D$11" -el default de los dos motores escritos a
+        # mano-, que en una hoja DECLARADA es una fila cualquiera: alimentaria
+        # la resolucion de material con lo que hubiera ahi, sin decir nada.
+        # Cuarta guardia simetrica a _reservada, _fila_dictamen y _semaforo_de:
+        # el chasis existe precisamente para no tener direcciones literales.
+        modo_cell = _reservada(
+            "modo", "el selector de codigo de la seccion de resolucion de "
+            "material (un motor con material necesita la fila reservada "
+            "'modo', lleve o no banda de aplicacion)")
         refs = construir_seccion7_material(
             ws, res["ultima_fila"] + 2, b313, iid1a, iidb, fac_info, rangos,
             columnas=motor.material.columnas,
@@ -10190,8 +10318,11 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     aplicar_unidades_motor(ws, _unidades_de(motor), es_si)
     aplicar_reglas_de_comentario(ws, _reglas_de_comentario_de(motor))
     semaforo = _semaforo_de(motor)
-    fila_dictamen = _fila_dictamen(motor)
-    aplicar_semaforo_motor(ws, semaforo, fila_dictamen)
+    # La columna del dictamen NO es la F de los dos motores escritos a mano: el
+    # chasis escribe toda fila en COL_PRIMER_CASO. Sin eso las tres reglas
+    # condicionales miraban una celda vacia y el veredicto salia como banda de
+    # tinta sin color.
+    aplicar_semaforo_declarado(ws, motor, semaforo)
     aplicar_dos_decimales(ws, semaforo)
 
     build_leyenda_motor(ws)
@@ -10261,8 +10392,15 @@ def build_documentos_declarados(wb, motor):
 
     espec = None
     if motor.especificaciones:
+        # `Especificacion.texto` se documenta como "texto fijo, o formula con
+        # {nombres}" y hasta 2026-09-13 se copiaba CRUDO: un `{t_req}` salia
+        # impreso con las llaves. MD.texto_de_especificacion() lo sustituye por
+        # la direccion CALIFICADA CON LA HOJA del motor -esta pestana es otra
+        # hoja, y un `$D$12` a secas apuntaria aqui dentro-, y aborta si el
+        # nombre no existe.
         bloques = tuple(
-            (grupo, tuple((e.concepto, e.texto, e.clausula) +
+            (grupo, tuple((e.concepto, MD.texto_de_especificacion(motor, e),
+                           e.clausula) +
                           (("EDITABLE",) if e.editable else ())
                           for e in specs))
             for grupo, specs in motor.especificaciones)
