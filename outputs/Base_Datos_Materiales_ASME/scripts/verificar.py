@@ -2333,16 +2333,48 @@ def auditar():
                 # podia saberla): un articulo de procedimiento puede declarar
                 # `dictamen=None` -sin ecuaciones, sin AND que componer- y ahi
                 # no hay nada que contradecir: se salta, no es un hueco.
+                # Desde 2026-09-13 la formula del dictamen la COMPONE el
+                # chasis (MD.formula_dictamen) y tiene tres capas, no una:
+                # compuertas -> material -> AND de verificaciones. Comparar a
+                # secas `implica_apto != (dictado == "APTO")` daria FALLO en
+                # los dos casos en que el dictamen NO debe ser APTO aunque
+                # todas las verificaciones cumplan: una compuerta bloqueando y
+                # un material sin resolver. Se auditan las tres capas, que es
+                # un guardia mas fuerte que el anterior, no mas laxo.
                 if motor.dictamen is not None:
-                    veredictos = [
-                        str(hws.Range(B.direccion_de(motor, c).replace("$", ""))
-                            .Text).strip()
-                        for c in motor.dictamen.verificaciones]
-                    implica_apto = all(v == "CUMPLE" for v in veredictos)
-                    dictado = str(hws.Range(
-                        B.direccion_de(motor, "dictamen").replace("$", "")).Text
-                                  ).strip()
-                    if implica_apto != (dictado == "APTO"):
+                    def _texto(clave):
+                        return str(hws.Range(
+                            B.direccion_de(motor, clave).replace("$", "")
+                        ).Text).strip()
+
+                    veredictos = [_texto(c)
+                                  for c in motor.dictamen.verificaciones]
+                    implica_apto = all(v == MD.VEREDICTO_CUMPLE
+                                       for v in veredictos)
+                    dictado = _texto("dictamen")
+                    # Una compuerta bloquea cuando su texto no es ninguno de
+                    # sus favorables ni empieza por ninguno de sus avisos: el
+                    # mismo criterio con el que el chasis compuso la formula.
+                    por_clave = {v.clave: v for v in motor.verificaciones}
+                    bloqueo = None
+                    for c in motor.dictamen.compuertas:
+                        t, v = _texto(c), por_clave[c]
+                        if t in v.favorables or any(t.startswith(a)
+                                                    for a in v.avisos):
+                            continue
+                        bloqueo = t
+                        break
+                    estados_material = (MD.TXT_ELIJA_MATERIAL,
+                                        MD.TXT_MATERIAL_FUERA_DE_RANGO)
+                    if bloqueo is not None:
+                        # El texto de la compuerta que bloquea ES el dictamen.
+                        if dictado != bloqueo:
+                            dec_bad += 1
+                            log(f"| {motor.hoja} dictamen | {dictado} | la "
+                                f"compuerta bloquea con {bloqueo!r} | FALLO |")
+                    elif dictado in estados_material:
+                        pass          # el material aun no resuelve: correcto
+                    elif implica_apto != (dictado == MD.TXT_APTO):
                         dec_bad += 1
                         log(f"| {motor.hoja} dictamen | {dictado} | contradice "
                             f"a {veredictos} | FALLO |")

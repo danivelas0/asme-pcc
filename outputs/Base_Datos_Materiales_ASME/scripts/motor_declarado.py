@@ -33,12 +33,56 @@ FILA_PRIMERA_BANDA = 5       # 1-2 titulo y subtitulo, 3 acciones, 4 libre
 # Se declaran aqui para que dos tareas no las escriban distinto.
 CLAVES_RESERVADAS = ("unidad", "modo", "temperatura", "dictamen")
 
+# Textos del dictamen que compone el chasis. Viven aqui -no en el builder-
+# porque los consume tambien verificar.py §12 al juzgar si el dictamen
+# contradice a sus verificaciones: un literal escrito dos veces es un literal
+# que un dia diverge, y el guardia se quedaria mudo justo donde mas caro sale.
+TXT_APTO = "APTO"
+TXT_REVISAR = "REVISAR"
+TXT_ELIJA_MATERIAL = "ELIJA MATERIAL (seccion de material)"
+TXT_MATERIAL_FUERA_DE_RANGO = "REVISAR - MATERIAL FUERA DE RANGO"
+# El dictamen de rango que publica la seccion de material del libro. Sus dos
+# estados son los que el chasis antepone al AND de verificaciones.
+TXT_SIN_MATERIAL = "SIN MATERIAL SELECCIONADO"
+TXT_MATERIAL_OK = "OK"
+# El unico veredicto favorable que admite una `Verificacion` que entra al AND
+# del dictamen. No es una preferencia de estilo: verificar.py §12 punto 4
+# compara cada veredicto contra este literal para decidir si el dictamen se
+# contradice, asi que una verificacion con otro favorable dejaria al guardia
+# midiendo una cosa distinta de la que el motor calcula.
+VEREDICTO_CUMPLE = "CUMPLE"
+
 
 class Cita(NamedTuple):
     """De donde sale este valor. Sin esto, la celda no se construye."""
     archivo: str             # relativo a resources/
     bloque: int              # indice del bloque en el JSON
     clausula: str            # lo que se imprime en la columna de referencia
+
+
+class Lista(NamedTuple):
+    """De donde salen los items del desplegable de una Fila `tipo=LISTA`.
+
+    Se declara de UNA de dos formas, nunca de las dos ni de ninguna:
+
+    - `hoja` + `columna`: el desplegable lo publica una BASE DE DATOS del
+      libro (`DB_B36_10`, `DB_B31_3`, `DB_BPVC_IID`...), nombrando la columna
+      por el rotulo impreso en su cabecera. Es la forma normal y la que exigen
+      las reglas 12 y 14 del libro: toda variable que el libro tabula se elige
+      de la base que la tabula, nunca se teclea ni se copia a un literal.
+    - `opciones`: una enumeracion CERRADA que publica el propio marco y que no
+      existe en ninguna base -el sistema de unidades y el selector de codigo-.
+      Solo se admite en las claves de `CLAVES_RESERVADAS` (ver
+      `comprobar_listas`): fuera de ellas, una lista tecleada a mano es
+      exactamente lo que la regla 12 prohibe.
+
+    En los dos casos el chasis MATERIALIZA los items en una columna oculta de
+    la propia hoja y apunta la validacion a ese RANGO, nunca a una formula ni
+    a un literal en `formula1` (regla 2 del libro).
+    """
+    hoja: str = ""           # base del libro: "DB_B36_10", "DB_B31_3"...
+    columna: str = ""        # rotulo impreso de la columna, en la cabecera
+    opciones: tuple = ()     # enumeracion cerrada, solo en claves reservadas
 
 
 class Fila(NamedTuple):
@@ -51,6 +95,7 @@ class Fila(NamedTuple):
     ejemplo: object = None   # valor del caso precargado, si es entrada
     comentario: str = ""
     cita: Cita | None = None
+    lista: Lista | None = None   # obligatorio -y exclusivo- de `tipo=LISTA`
 
 
 class Seccion(NamedTuple):
@@ -109,7 +154,22 @@ class Verificacion(NamedTuple):
 
 
 class Dictamen(NamedTuple):
-    """Como se compone el veredicto global."""
+    """Que entra en el veredicto global. La FORMA la pone el chasis.
+
+    La forma del dictamen es identica en todo motor -las compuertas bloquean
+    antes de nada, el material se resuelve despues, y al final las
+    verificaciones entran a un AND-, asi que es MARCO y la compone
+    `formula_dictamen()`. Lo que cambia por articulo es QUE entra, y eso es lo
+    que declaran estos dos campos.
+
+    - `compuertas`: claves de filas cuyo texto BLOQUEA el dictamen. Una
+      compuerta tiene que estar declarada ademas como `Verificacion`, porque
+      es de ahi de donde sale que textos suyos NO bloquean (`favorables` y
+      `avisos`). Cuando una bloquea, su propio texto pasa a ser el dictamen:
+      "no elegible por servicio letal" dice mas que un "REVISAR" pelado.
+    - `verificaciones`: claves que entran al AND final. Cada una tiene que
+      estar declarada como `Verificacion` con `favorables=("CUMPLE",)`.
+    """
     compuertas: tuple = ()   # claves de filas cuyo texto bloquea
     verificaciones: tuple = ()   # claves que entran al AND
 
@@ -130,7 +190,12 @@ class Motor(NamedTuple):
     alcance: str = ""        # segunda linea de la tarjeta (NUNCA estado)
     clausulas_espec: str = ""    # "211-4 · 211-5 · 211-6"
     aplicacion: bool = True  # lleva selector de geometria y codigo
-    casos: tuple = ("Operacion", "Diseno")
+    # UN solo caso de valor. El reparto de la hoja en varias columnas de
+    # presion NO es generico y no se resuelve por adelantado (decision del
+    # ingeniero, 2026-09-13): el chasis emite una columna y `comprobar_casos()`
+    # aborta si se declaran dos, en vez de aceptarlas en silencio y dejar la
+    # segunda columna vacia -que es lo que hacia hasta hoy-.
+    casos: tuple = ("Operacion",)
     secciones: tuple = ()
     material: Material | None = None
     verificaciones: tuple = ()
@@ -151,6 +216,12 @@ class Helpers(NamedTuple):
     rotulo: object
     entrada: object
     calculo: object
+    # Materializa el desplegable de una Fila `tipo=LISTA` y apunta su
+    # validacion al rango. Va con defecto None -y no como quinto campo
+    # obligatorio- para que las pruebas del chasis que no declaran ninguna
+    # LISTA sigan construyendo un Helpers de cuatro campos; `emitir_tabla()`
+    # aborta con un mensaje claro si hace falta y no esta.
+    lista: object = None
 
 
 _RE_NOMBRE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
@@ -340,6 +411,210 @@ def comprobar_nombres_declarativos(motor):
                     f"invalido en {campo!r}: {getattr(v, campo)!r}.")
 
 
+def comprobar_casos(motor):
+    """Aborta si el motor declara mas de un caso de valor.
+
+    El chasis emite UNA columna de valor: `emitir_tabla()` fija la columna
+    fuera del bucle de filas y `resolver_direcciones()` devuelve UNA direccion
+    por clave. `Motor.casos` aceptaba dos en silencio y la segunda columna
+    salia vacia, sin aviso -el peor de los dos resultados posibles: una hoja
+    plausible e incompleta-.
+
+    No se construye un mecanismo generico de columnas por caso a proposito
+    (decision del ingeniero, 2026-09-13): el reparto por casos no es agnostico
+    y se resuelve articulo por articulo, con el articulo delante. Lo unico que
+    debe hacer el marco es no fingir que lo resuelve.
+    """
+    if len(motor.casos) != 1:
+        raise SystemExit(
+            f"motor_declarado: {motor.hoja} declara {len(motor.casos)} casos "
+            f"({', '.join(map(str, motor.casos)) or 'ninguno'}). El chasis "
+            f"emite UNA columna de valor: el reparto de la hoja por casos de "
+            f"presion NO es generico y se resuelve articulo por articulo, no "
+            f"por adelantado. Declare un solo caso, y si este articulo "
+            f"necesita de verdad dos columnas, parese aqui y decidalo con el "
+            f"articulo delante.")
+
+
+def comprobar_listas(motor):
+    """Aborta si un desplegable no sale de una base de datos del libro.
+
+    Instruccion del ingeniero (2026-09-13): "todo material debe ser extraido
+    de las bases de datos existentes, siempre". Es la regla 12/14 del libro
+    elevada a absoluta, y hasta hoy el chasis no podia ni cumplirla: una Fila
+    `tipo=LISTA` llegaba a `helpers.entrada()` igual que una ENTRADA y no
+    generaba ninguna validacion, asi que un motor declarado no podia ofrecer
+    un desplegable aunque quisiera.
+
+    La unica excepcion son las enumeraciones que publica el PROPIO MARCO y que
+    no existen en ninguna base -el sistema de unidades y el selector de
+    codigo-, acotadas por nombre a `CLAVES_RESERVADAS`. Acotarlas por nombre y
+    no por criterio es deliberado: "esto no es un dato tabulado" no se puede
+    comprobar leyendo la declaracion, y dejarlo a juicio de quien declara
+    reabre justo la puerta que la instruccion cierra.
+    """
+    for _titulo, filas in _bloques(motor):
+        for f in filas:
+            if f.tipo != LISTA:
+                if f.lista is not None:
+                    raise SystemExit(
+                        f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
+                        f"declara una Lista pero su tipo es {f.tipo!r}. Una "
+                        f"lista solo gobierna una fila `tipo=LISTA`.")
+                continue
+            if f.lista is None:
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} es "
+                    f"`tipo=LISTA` y no dice de que base sale. Todo "
+                    f"desplegable se ata a una base de datos del libro "
+                    f"-Lista(hoja='DB_...', columna='<rotulo de la "
+                    f"cabecera>')-: una lista de items tecleada a mano no se "
+                    f"audita, no se actualiza si la base cambia y puede "
+                    f"ofrecer un valor que la base ni admite (reglas 12 y 14).")
+            de_base = bool(f.lista.hoja or f.lista.columna)
+            if de_base and f.lista.opciones:
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
+                    f"declara a la vez una base y una enumeracion. Una Lista "
+                    f"es una cosa o la otra.")
+            if de_base:
+                if not (f.lista.hoja and f.lista.columna):
+                    raise SystemExit(
+                        f"motor_declarado: la Lista de {f.clave!r} en "
+                        f"{motor.hoja} declara hoja o columna, pero no las "
+                        f"dos. Hace falta la base y el rotulo de su columna.")
+                continue
+            if not f.lista.opciones:
+                raise SystemExit(
+                    f"motor_declarado: la Lista de {f.clave!r} en "
+                    f"{motor.hoja} llega vacia: ni base ni enumeracion.")
+            if f.clave not in CLAVES_RESERVADAS:
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
+                    f"declara una enumeracion tecleada "
+                    f"({', '.join(map(str, f.lista.opciones))}). Solo las "
+                    f"claves reservadas {', '.join(CLAVES_RESERVADAS)} -las "
+                    f"enumeraciones del propio marco, que ninguna base "
+                    f"publica- pueden hacerlo. Todo lo demas sale de una base "
+                    f"de datos del libro (reglas 12 y 14).")
+
+
+def comprobar_dictamen(motor):
+    """Aborta si el dictamen declarado y la fila `dictamen` no se corresponden.
+
+    Tres cosas, y las tres existen porque el chasis COMPONE la formula del
+    veredicto global (`formula_dictamen`) en vez de exigir que se teclee:
+
+    1. La fila reservada `dictamen` y `Motor.dictamen` van juntas o no van. Una
+       fila de dictamen sin declaracion no tendria con que componerse, y una
+       declaracion sin fila no tendria donde escribirse.
+    2. La fila `dictamen` no trae formula propia: la pone el chasis. Una
+       formula tecleada al lado de una declaracion es la forma segura de que
+       las dos digan cosas distintas -y verificar.py §12 lo encontraria
+       despues, en vez de prevenirlo-.
+    3. Toda clave citada -compuerta o verificacion- esta declarada como fila Y
+       como `Verificacion`: de la `Verificacion` salen los textos que NO
+       bloquean. Y la que entra al AND tiene que tener `favorables` igual a
+       ("CUMPLE",), porque es contra ese literal exacto contra el que la §12
+       juzga si el dictamen se contradice.
+    """
+    dirs = resolver_direcciones(motor)
+    fila = next((f for _t, filas in _bloques(motor) for f in filas
+                 if f.clave == "dictamen"), None)
+    if (motor.dictamen is None) != (fila is None):
+        raise SystemExit(
+            f"motor_declarado: {motor.hoja} declara "
+            f"{'Motor.dictamen sin fila `dictamen`' if fila is None else 'la fila `dictamen` sin Motor.dictamen'}"
+            f". Los dos van juntos: el chasis compone la formula del veredicto "
+            f"global desde Motor.dictamen y la escribe en esa fila.")
+    if motor.dictamen is None:
+        return
+    if fila.formula:
+        raise SystemExit(
+            f"motor_declarado: la fila `dictamen` de {motor.hoja} trae una "
+            f"formula tecleada ({fila.formula!r}). La compone el chasis desde "
+            f"Motor.dictamen (compuertas + verificaciones): declare QUE entra, "
+            f"no COMO se escribe.")
+    por_clave = {v.clave: v for v in motor.verificaciones}
+    for clase, claves in (("compuerta", motor.dictamen.compuertas),
+                          ("verificacion", motor.dictamen.verificaciones)):
+        for clave in claves:
+            if clave not in dirs:
+                raise SystemExit(
+                    f"motor_declarado: el dictamen de {motor.hoja} cita la "
+                    f"{clase} {clave!r}, que no existe como fila del motor.")
+            if clave not in por_clave:
+                raise SystemExit(
+                    f"motor_declarado: el dictamen de {motor.hoja} cita la "
+                    f"{clase} {clave!r}, que no esta declarada como "
+                    f"Verificacion. De ahi salen los textos que cuentan como "
+                    f"favorables y como aviso; sin ellos el chasis no puede "
+                    f"componer la formula sin inventarlos.")
+            if clase == "verificacion" and \
+                    tuple(por_clave[clave].favorables) != (VEREDICTO_CUMPLE,):
+                raise SystemExit(
+                    f"motor_declarado: la Verificacion {clave!r} de "
+                    f"{motor.hoja} entra al AND del dictamen con favorables="
+                    f"{tuple(por_clave[clave].favorables)!r}. Las que entran "
+                    f"al AND publican {VEREDICTO_CUMPLE!r} y solo eso: es el "
+                    f"literal contra el que verificar.py §12 juzga si el "
+                    f"dictamen contradice a sus verificaciones, y con otro "
+                    f"favorable ese guardia mediria otra cosa.")
+
+
+def formula_dictamen(motor, celdas_material=()):
+    """La formula del veredicto global, compuesta desde la declaracion.
+
+    Tres capas, en este orden y por este motivo:
+
+    1. Las COMPUERTAS. Si alguna bloquea, su propio texto ES el dictamen y no
+       se evalua nada mas -un "no elegible por servicio letal" dice mas que un
+       "REVISAR" pelado, y evaluar verificaciones de un caso que el codigo ni
+       admite seria contestar a una pregunta que no se hizo-.
+    2. El MATERIAL, si el motor lo lleva. Falta de seleccion y fuera de rango
+       son estados distintos: confundirlos hace leer un formulario recien
+       abierto como un material rechazado por temperatura.
+    3. El AND de las VERIFICACIONES.
+
+    `celdas_material` son las celdas del "Dictamen de rango" de la seccion de
+    material, una por columna. Llegan por parametro y no se adivinan aqui: el
+    chasis no sabe donde las escribio el libro.
+
+    Es la MISMA funcion la que compone la formula con y sin material -el
+    builder la llama por segunda vez cuando ya conoce esas celdas-, no dos
+    formulas parecidas: si la forma del dictamen cambiara, cambia en un solo
+    sitio.
+    """
+    dirs = resolver_direcciones(motor)
+    por_clave = {v.clave: v for v in motor.verificaciones}
+    if motor.dictamen.verificaciones:
+        cond = ",".join(f'{dirs[c]}="{VEREDICTO_CUMPLE}"'
+                        for c in motor.dictamen.verificaciones)
+        nucleo = f'IF(AND({cond}),"{TXT_APTO}","{TXT_REVISAR}")'
+    else:
+        # Sin verificaciones no hay nada que pueda fallar, y esa es tambien la
+        # lectura de verificar.py §12 (`all([])` es verdadero): el dictamen
+        # tiene que decir APTO, o el guardia y el motor discreparian.
+        nucleo = f'"{TXT_APTO}"'
+    if celdas_material:
+        sin = ",".join(f'{m}="{TXT_SIN_MATERIAL}"' for m in celdas_material)
+        mal = ",".join(f'{m}<>"{TXT_MATERIAL_OK}"' for m in celdas_material)
+        nucleo = (f'IF(OR({sin}),"{TXT_ELIJA_MATERIAL}",'
+                  f'IF(OR({mal}),"{TXT_MATERIAL_FUERA_DE_RANGO}",{nucleo}))')
+    # Se recorre al reves porque cada compuerta ENVUELVE a lo anterior: la
+    # primera declarada tiene que quedar por fuera, que es donde se evalua
+    # antes.
+    for clave in reversed(tuple(motor.dictamen.compuertas)):
+        v, d = por_clave[clave], dirs[clave]
+        # Un aviso NO bloquea y se compara por prefijo, igual que lo hace el
+        # semaforo del libro (`_sem`): el texto del aviso suele llevar detras
+        # el motivo, y exigir igualdad exacta lo convertiria en bloqueo.
+        ok = ([f'{d}="{x}"' for x in v.favorables] +
+              [f'LEFT({d},{len(a)})="{a}"' for a in v.avisos])
+        nucleo = f'IF(NOT(OR({",".join(ok)})),{d},{nucleo})'
+    return "=" + nucleo
+
+
 def emitir_tabla(ws, motor, helpers):
     """Escribe el motor completo a una hoja de Excel.
 
@@ -349,6 +624,12 @@ def emitir_tabla(ws, motor, helpers):
     clausula a la columna de referencia y la explicacion al comentario de la
     celda de valor. Son las otras dos de las tres formas que pide el diseno.
     """
+    # Los tres guardias del marco corren AQUI y no solo desde el builder: esta
+    # es la unica puerta por la que una declaracion se convierte en hoja, y un
+    # guardia que se pueda esquivar llamando a otra funcion no es un guardia.
+    comprobar_casos(motor)
+    comprobar_listas(motor)
+    comprobar_dictamen(motor)
     dirs = resolver_direcciones(motor)
     col = chr(ord("A") + COL_PRIMER_CASO - 1)
     fila = FILA_PRIMERA_BANDA
@@ -365,8 +646,22 @@ def emitir_tabla(ws, motor, helpers):
                            comentario=f.comentario)
             celda = f"{col}{fila}"
             if f.tipo == FORMULA:
-                helpers.calculo(ws, celda, sustituir_nombres(f.formula, dirs))
+                # La fila reservada `dictamen` no trae formula propia
+                # (comprobar_dictamen lo exige): la COMPONE el chasis desde lo
+                # que el motor declara que entra al veredicto.
+                expr = (formula_dictamen(motor) if f.clave == "dictamen"
+                        else sustituir_nombres(f.formula, dirs))
+                helpers.calculo(ws, celda, expr)
             else:
                 helpers.entrada(ws, celda, f.ejemplo)
+                if f.tipo == LISTA:
+                    if helpers.lista is None:
+                        raise SystemExit(
+                            f"motor_declarado: {motor.hoja} declara la fila "
+                            f"{f.clave!r} como LISTA y los helpers recibidos "
+                            f"no traen `lista`. Sin el, la celda quedaria "
+                            f"editable a mano y sin desplegable, que es "
+                            f"justo lo que las reglas 12 y 14 prohiben.")
+                    helpers.lista(ws, celda, f.lista)
             fila += 1
     return {"direcciones": dirs, "ultima_fila": fila - 1}

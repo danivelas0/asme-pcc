@@ -385,9 +385,10 @@ def _motor_con_dictamen():
         secciones=(
             M.Seccion("1. APLICACION", filas=(
                 M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
-                       ejemplo="SI"),
+                       ejemplo="SI", lista=M.Lista(opciones=("SI", "US"))),
                 M.Fila("modo", "Codigo de aplicacion", tipo=M.LISTA,
-                       ejemplo="PCC2-999"),
+                       ejemplo="PCC2-999",
+                       lista=M.Lista(opciones=("PCC2-999",))),
                 M.Fila("temperatura", "Temperatura", magnitud="temp",
                        tipo=M.ENTRADA, ejemplo=20),
             )),
@@ -395,8 +396,8 @@ def _motor_con_dictamen():
                 M.Fila("chk", "Verificacion", tipo=M.FORMULA,
                        formula='=IF({temperatura}>0,"CUMPLE","NO CUMPLE")',
                        cita=cita),
+                # Sin formula: la compone el chasis desde Motor.dictamen.
                 M.Fila("dictamen", "Dictamen global", tipo=M.FORMULA,
-                       formula='=IF({chk}="CUMPLE","APTO","REVISAR")',
                        cita=cita),
             )),
         ),
@@ -452,3 +453,211 @@ def test_bloques_es_el_alias_publico_del_recorrido():
     assert titulos == ["1. DATOS DE ENTRADA",
                        "PASO 1 · ELEGIBILIDAD — 999-1",
                        "PASO 2 · CARGAS — 999-2"]
+
+
+# ---------------------------------------------------------------------------
+# tipo=LISTA atada a una base de datos (instruccion del ingeniero 2026-09-13:
+# "todo material debe ser extraido de las bases de datos existentes, siempre")
+# ---------------------------------------------------------------------------
+def _motor_con_lista(lista):
+    """Un motor de una sola fila LISTA, para ejercer los guardias."""
+    return M.Motor(
+        articulo="999", hoja="Prueba_PCC2_Art999", titulo="MOTOR DE PRUEBA",
+        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        secciones=(M.Seccion("1. DATOS", filas=(
+            M.Fila("NPS", "Diametro nominal", tipo=M.LISTA, lista=lista),
+        )),),
+    )
+
+
+def test_una_fila_lista_sin_base_aborta():
+    """Es el guardia central de la instruccion: una lista que no dice de que
+    base sale es una lista tecleada a mano, y esas no se auditan."""
+    with pytest.raises(SystemExit, match="de que base sale"):
+        M.comprobar_listas(_motor_con_lista(None))
+
+
+def test_una_fila_lista_atada_a_una_base_pasa():
+    assert M.comprobar_listas(_motor_con_lista(
+        M.Lista(hoja="DB_B36_10", columna="NPS impreso"))) is None
+
+
+def test_una_enumeracion_tecleada_fuera_de_las_claves_reservadas_aborta():
+    """La enumeracion solo se admite en las claves del propio marco. Fuera de
+    ellas es exactamente la lista fija que la regla 12 prohibe."""
+    with pytest.raises(SystemExit, match="enumeracion tecleada"):
+        M.comprobar_listas(_motor_con_lista(M.Lista(opciones=("2", "3", "4"))))
+
+
+def test_una_enumeracion_en_una_clave_reservada_pasa():
+    motor = _motor_con_lista(None)._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
+                   lista=M.Lista(opciones=("SI", "US"))),)),))
+    assert M.comprobar_listas(motor) is None
+
+
+def test_una_lista_con_base_y_enumeracion_a_la_vez_aborta():
+    with pytest.raises(SystemExit, match="base y una enumeracion"):
+        M.comprobar_listas(_motor_con_lista(
+            M.Lista(hoja="DB_B36_10", columna="NPS impreso",
+                    opciones=("1", "2"))))
+
+
+def test_una_lista_declarada_en_una_fila_que_no_es_lista_aborta():
+    motor = _motor_con_lista(None)._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("x", "Entrada", tipo=M.ENTRADA,
+                   lista=M.Lista(hoja="DB_B36_10", columna="NPS impreso")),)),))
+    with pytest.raises(SystemExit, match="su tipo es"):
+        M.comprobar_listas(motor)
+
+
+def test_emitir_tabla_sin_helper_de_lista_aborta():
+    """Sin el helper, la celda quedaria editable a mano y sin desplegable: la
+    regla 12 incumplida en silencio, que es el estado anterior a este cambio."""
+    import openpyxl
+    ws = openpyxl.Workbook().active
+    motor = _motor_con_lista(M.Lista(hoja="DB_B36_10", columna="NPS impreso"))
+    with pytest.raises(SystemExit, match="no traen"):
+        M.emitir_tabla(ws, motor, _helpers_de_prueba())
+
+
+def test_emitir_tabla_ejerce_los_guardias_del_marco():
+    """Los tres guardias corren dentro de `emitir_tabla`, que es la unica
+    puerta por la que una declaracion se convierte en hoja. Probarlos solo
+    llamandolos a mano no demuestra que esten ENCHUFADOS: un guardia que se
+    pueda esquivar llamando a otra funcion no es un guardia."""
+    import openpyxl
+    helpers = _helpers_de_prueba()._replace(lista=lambda w, c, d: None)
+    # (a) lista sin base
+    with pytest.raises(SystemExit, match="de que base sale"):
+        M.emitir_tabla(openpyxl.Workbook().active,
+                       _motor_con_lista(None), helpers)
+    # (b) dos casos
+    with pytest.raises(SystemExit, match="UNA columna de valor"):
+        M.emitir_tabla(openpyxl.Workbook().active,
+                       _motor_minimo()._replace(casos=("A", "B")), helpers)
+    # (c) fila de dictamen con formula tecleada
+    motor = _motor_con_dictamen()
+    motor = motor._replace(secciones=tuple(
+        s._replace(filas=tuple(
+            f._replace(formula='=IF(1=1,"APTO","REVISAR")')
+            if f.clave == "dictamen" else f for f in s.filas))
+        for s in motor.secciones))
+    with pytest.raises(SystemExit, match="formula tecleada"):
+        M.emitir_tabla(openpyxl.Workbook().active, motor, helpers)
+
+
+def test_emitir_tabla_llama_al_helper_de_lista_con_su_declaracion():
+    import openpyxl
+    ws = openpyxl.Workbook().active
+    decl = M.Lista(hoja="DB_B36_10", columna="NPS impreso")
+    vistas = []
+    helpers = _helpers_de_prueba()._replace(
+        lista=lambda w, celda, d: vistas.append((celda, d)))
+    M.emitir_tabla(ws, _motor_con_lista(decl), helpers)
+    assert vistas == [("D6", decl)]
+
+
+# ---------------------------------------------------------------------------
+# casos: UNA columna de valor, y el chasis lo dice en vez de fingirlo
+# ---------------------------------------------------------------------------
+def test_declarar_dos_casos_aborta():
+    motor = _motor_minimo()._replace(casos=("Operacion", "Diseno"))
+    with pytest.raises(SystemExit, match="UNA columna de valor"):
+        M.comprobar_casos(motor)
+
+
+def test_un_solo_caso_pasa():
+    assert M.comprobar_casos(_motor_minimo()) is None
+
+
+def test_el_defecto_de_casos_es_uno_solo():
+    """El defecto prometia dos columnas y el chasis emitia una: la segunda
+    salia vacia y sin aviso."""
+    assert len(_motor_minimo().casos) == 1
+
+
+# ---------------------------------------------------------------------------
+# El dictamen lo COMPONE el chasis
+# ---------------------------------------------------------------------------
+def test_el_chasis_compone_el_dictamen_desde_lo_declarado():
+    motor = _motor_con_dictamen()
+    dirs = M.resolver_direcciones(motor)
+    assert M.formula_dictamen(motor) == (
+        '=IF(AND(' + dirs["chk"] + '="CUMPLE"),"APTO","REVISAR")')
+
+
+def test_el_dictamen_compuesto_llega_a_la_hoja():
+    import openpyxl
+    ws = openpyxl.Workbook().active
+    motor = _motor_con_dictamen()
+    helpers = _helpers_de_prueba()._replace(lista=lambda w, c, d: None)
+    M.emitir_tabla(ws, motor, helpers)
+    celda = M.resolver_direcciones(motor)["dictamen"].replace("$", "")
+    assert ws[celda].value == M.formula_dictamen(motor)
+
+
+def test_las_compuertas_envuelven_al_and_y_publican_su_propio_texto():
+    """Una compuerta que bloquea pasa a SER el dictamen: un motivo dice mas
+    que un REVISAR pelado."""
+    motor = _motor_con_dictamen()
+    motor = motor._replace(
+        verificaciones=motor.verificaciones + (M.Verificacion(
+            clave="temperatura", rotulo="Compuerta", requerido="", adoptado="",
+            criterio="", favorables=("ELEGIBLE",), avisos=("REVISAR",)),),
+        dictamen=M.Dictamen(compuertas=("temperatura",),
+                            verificaciones=("chk",)))
+    g = M.resolver_direcciones(motor)["temperatura"]
+    f = M.formula_dictamen(motor)
+    assert f.startswith(
+        '=IF(NOT(OR(' + g + '="ELEGIBLE",LEFT(' + g + ',7)="REVISAR")),'
+        + g + ',')
+    assert '"APTO","REVISAR")' in f
+
+
+def test_el_material_se_antepone_al_and_de_verificaciones():
+    motor = _motor_con_dictamen()
+    f = M.formula_dictamen(motor, celdas_material=("$D$40",))
+    assert '$D$40="' + M.TXT_SIN_MATERIAL + '"' in f
+    assert '$D$40<>"' + M.TXT_MATERIAL_OK + '"' in f
+    # Y el AND sigue dentro, no sustituido.
+    assert '"APTO","REVISAR")' in f
+
+
+def test_una_formula_de_dictamen_tecleada_aborta():
+    """Teclearla al lado de la declaracion es la forma segura de que las dos
+    digan cosas distintas."""
+    motor = _motor_con_dictamen()
+    secciones = tuple(
+        s._replace(filas=tuple(
+            f._replace(formula='=IF(1=1,"APTO","REVISAR")')
+            if f.clave == "dictamen" else f for f in s.filas))
+        for s in motor.secciones)
+    with pytest.raises(SystemExit, match="formula tecleada"):
+        M.comprobar_dictamen(motor._replace(secciones=secciones))
+
+
+def test_una_fila_dictamen_sin_declaracion_aborta():
+    with pytest.raises(SystemExit, match="van juntos"):
+        M.comprobar_dictamen(_motor_con_dictamen()._replace(dictamen=None))
+
+
+def test_una_verificacion_del_and_con_otro_favorable_aborta():
+    """verificar.py s.12 juzga el dictamen contra el literal CUMPLE: con otro
+    favorable, el guardia mediria una cosa distinta de la que el motor
+    calcula."""
+    motor = _motor_con_dictamen()
+    motor = motor._replace(verificaciones=(
+        motor.verificaciones[0]._replace(favorables=("APTO",)),))
+    with pytest.raises(SystemExit, match="entra al AND"):
+        M.comprobar_dictamen(motor)
+
+
+def test_una_compuerta_sin_verificacion_declarada_aborta():
+    motor = _motor_con_dictamen()._replace(
+        dictamen=M.Dictamen(compuertas=("temperatura",),
+                            verificaciones=("chk",)))
+    with pytest.raises(SystemExit, match="no esta declarada como"):
+        M.comprobar_dictamen(motor)

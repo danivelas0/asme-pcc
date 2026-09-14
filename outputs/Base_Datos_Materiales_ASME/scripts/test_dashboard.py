@@ -3025,10 +3025,15 @@ class TestChasisDeclarado:
             fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
             secciones=(
                 MD.Seccion("1. APLICACION", filas=(
+                    # Las dos enumeraciones que publica el propio marco, y las
+                    # unicas que pueden ir tecleadas: son claves reservadas y
+                    # ninguna base del libro las tabula (ver comprobar_listas).
                     MD.Fila("unidad", "Sistema de unidades", tipo=MD.LISTA,
-                            ejemplo="SI"),
+                            ejemplo="SI",
+                            lista=MD.Lista(opciones=("SI", "US"))),
                     MD.Fila("modo", "Codigo de aplicacion", tipo=MD.LISTA,
-                            ejemplo="PCC2-999"),
+                            ejemplo="PCC2-999",
+                            lista=MD.Lista(opciones=("PCC2-999",))),
                     MD.Fila("temperatura", "Temperatura", magnitud="temp",
                             tipo=MD.ENTRADA, ejemplo=20),
                     MD.Fila("Tp", "Espesor", magnitud="len",
@@ -3038,8 +3043,8 @@ class TestChasisDeclarado:
                     MD.Fila("chk", "Verificacion", tipo=MD.FORMULA,
                             formula='=IF({Tp}>0,"CUMPLE","NO CUMPLE")',
                             cita=cita),
+                    # Sin formula: la compone el chasis desde Motor.dictamen.
                     MD.Fila("dictamen", "Dictamen global", tipo=MD.FORMULA,
-                            formula='=IF({chk}="CUMPLE","APTO","REVISAR")',
                             cita=cita),
                 )),
             ),
@@ -3206,3 +3211,91 @@ class TestChasisDeclarado:
                 wb, motor, None, None, None, None, None, None, None,
                 b313c=None, iid1ac=None, iidbc=None, umbrales=None,
                 resources="no_se_usa")
+
+
+    # --- Instruccion del ingeniero: toda lista sale de una base de datos ----
+    def test_una_lista_atada_a_una_base_se_materializa_en_columna_oculta(self, wb):
+        """La regla 2 prohibe una formula como origen de una validacion y la 12
+        prohibe una lista de items tecleada para lo que una base publica: lo
+        unico que queda es escribir los items en una columna OCULTA de la hoja
+        y apuntar la validacion a ese RANGO. Se ejerce contra una base real del
+        libro construido, no contra una hoja de laboratorio: lo que se
+        comprueba es que los items salgan de la base."""
+        import openpyxl
+        import motor_declarado as MD
+        from openpyxl.utils import get_column_letter as L
+        ws = openpyxl.Workbook().active
+        decl = MD.Lista(hoja="DB_B36_10", columna="NPS impreso")
+        helpers = B._helpers_del_libro(ws, wb)
+        helpers.lista(ws, "D6", decl)
+        col = B.COL_LISTAS_DECLARADAS
+        letra = L(col)
+        assert ws.column_dimensions[letra].hidden is True
+        items = [ws.cell(r, col).value
+                 for r in range(B.R_DATA, B.R_DATA + 5)]
+        base = wb["DB_B36_10"]
+        j = next(c for c in range(1, base.max_column + 1)
+                 if str(base.cell(B.R_HDR, c).value).strip() == "NPS impreso")
+        de_la_base = []
+        for r in range(B.R_DATA, base.max_row + 1):
+            v = base.cell(r, j).value
+            if v is not None and v not in de_la_base:
+                de_la_base.append(v)
+        assert items == de_la_base[:5]
+        # Y la validacion apunta a ESE rango, no a un literal ni a una formula.
+        dv = ws.data_validations.dataValidation[0]
+        assert dv.formula1.startswith("=$" + letra + "$")
+        assert dv.errorStyle == "stop" and dv.showErrorMessage
+
+    def test_una_columna_que_la_base_no_imprime_aborta(self, wb):
+        with pytest.raises(SystemExit, match="no imprime ninguna columna"):
+            B._items_de_base(wb, "DB_B36_10", "Columna Inventada")
+
+    def test_una_base_que_no_esta_en_el_libro_aborta(self, wb):
+        with pytest.raises(SystemExit, match="no es una hoja de este libro"):
+            B._items_de_base(wb, "DB_NO_EXISTE", "NPS impreso")
+
+    def test_una_columna_con_demasiados_valores_aborta(self, wb):
+        """Un desplegable de mil filas no se usa, se sufre: casi siempre es un
+        MATERIAL que se esta intentando elegir de un golpe en vez de resolverlo
+        por la cascada de cinco niveles (regla 12)."""
+        with pytest.raises(SystemExit, match="mas del tope"):
+            B._items_de_base(wb, "DB_B31_3", "material_id")
+
+    def test_la_hoja_de_un_motor_declarado_entra_al_guardia_de_listas_fijas(self):
+        """La §5b de verificar.py vigila lo que esta en HOJAS_DE_MOTOR, que
+        eran solo los dos motores a mano y los diez buscadores: un motor
+        declarado podia colar una lista literal y el guardia seguia dando
+        cero. La tupla se DERIVA del registro."""
+        from motores import MOTORES_DECLARADOS
+        for m in MOTORES_DECLARADOS:
+            assert m.hoja in B.HOJAS_DE_MOTOR, m.hoja
+        # Y con un registro de LABORATORIO, para que muerda ya: con
+        # MOTORES_DECLARADOS vacio, el bucle de arriba pasaria en vacio para
+        # siempre y este guardia solo pareceria vigilar.
+        assert self._motor().hoja in B.hojas_de_motor((self._motor(),))
+        assert B.hojas_de_motor(()) == B.HOJAS_A_MANO_DE_MOTOR
+
+    # --- El dictamen lo compone el chasis ----------------------------------
+    def test_el_dictamen_de_un_motor_declarado_no_se_teclea(self):
+        """`Dictamen.compuertas` estaba en el tipo y no lo leia ningun pase: la
+        formula del veredicto global habia que escribirla a mano en cada
+        declaracion, y que no contradijera a lo declarado era cuestion de
+        suerte. Ahora la compone el chasis y la fila no admite formula."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        ws = openpyxl.Workbook().active
+        MD.emitir_tabla(ws, motor, B._helpers_del_libro(ws))
+        celda = B._celda_dictamen(motor)
+        assert ws[celda].value == MD.formula_dictamen(motor)
+        assert B.direccion_de(motor, "chk").replace("$", "") in \
+            ws[celda].value.replace("$", "")
+
+    def test_la_regla_de_comentario_admite_una_sola_columna_de_valor(self):
+        """cols[:len(motor.casos)] prometia tantas columnas como casos y el
+        chasis escribe una: con dos casos declarados admitia comentario en una
+        columna E que siempre esta vacia."""
+        motor = self._motor()
+        for _ini, _fin, cols, fuente in B._reglas_de_comentario_de(motor):
+            assert cols == "D" and fuente == "D"

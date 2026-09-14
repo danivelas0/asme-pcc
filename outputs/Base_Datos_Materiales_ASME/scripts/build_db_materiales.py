@@ -10037,12 +10037,84 @@ import motor_declarado as MD
 from motores import MOTORES_DECLARADOS
 
 
-def _helpers_del_libro(ws):
+# Primera columna oculta donde un motor DECLARADO materializa los desplegables
+# de sus filas `tipo=LISTA`. Va detras de las que ya usa la hoja de un motor:
+# la seccion de material llega hasta la U(21) mas W/X, y la cascada dimensional
+# B36 ocupa de COL_NORMA_B36 = 25(Y) a la 28(AB). La 100 y la 101 son los dos
+# manifiestos (reinicio y cascada) y no se pueden pisar.
+COL_LISTAS_DECLARADAS = 30
+# Tope de items de un desplegable declarado. No es una limitacion de Excel: un
+# desplegable de mil filas no se usa, se sufre, y una columna con tantos
+# valores distintos casi siempre significa que se esta intentando elegir un
+# MATERIAL de un golpe en vez de resolverlo por la cascada de cinco niveles,
+# que es lo que la regla 12 pide. Abortar aqui dice eso; truncar la lista
+# ofreceria una base incompleta sin avisar.
+MAX_ITEMS_LISTA_DECLARADA = 500
+
+
+def _items_de_base(wb, hoja, columna):
+    """Los valores distintos de una columna de una base del libro, en su orden.
+
+    La columna se localiza por el ROTULO IMPRESO de su cabecera y no por un
+    indice: un indice es un numero magico que nadie puede auditar y que se
+    desplaza el dia que una base gane una columna. Si el rotulo no esta, se
+    aborta nombrando los que si hay.
+
+    Los items se leen de la HOJA YA CONSTRUIDA, que es la que `verificar.py`
+    audita fila a fila contra `resources/`: la lista hereda esa trazabilidad
+    en vez de abrir una segunda via de entrada del dato (Regla n.1).
+    """
+    if wb is None:
+        raise SystemExit(
+            f"build_motor_declarado: una fila LISTA se ata a la base {hoja!r} "
+            f"y los helpers se construyeron sin libro. Pase el libro a "
+            f"_helpers_del_libro(ws, wb) para poder leer sus items.")
+    if hoja not in wb.sheetnames:
+        raise SystemExit(
+            f"build_motor_declarado: una fila LISTA se ata a la base {hoja!r}, "
+            f"que no es una hoja de este libro. Bases disponibles: "
+            f"{', '.join(sorted(n for n in wb.sheetnames if n.startswith('DB_')))}.")
+    ws = wb[hoja]
+    cabeceras = {str(ws.cell(R_HDR, j).value).strip(): j
+                 for j in range(1, ws.max_column + 1)
+                 if ws.cell(R_HDR, j).value is not None}
+    if columna not in cabeceras:
+        raise SystemExit(
+            f"build_motor_declarado: la base {hoja!r} no imprime ninguna "
+            f"columna {columna!r}. Columnas de esa base: "
+            f"{', '.join(sorted(cabeceras))}.")
+    j = cabeceras[columna]
+    vistos, items = set(), []
+    for r in range(R_DATA, ws.max_row + 1):
+        v = ws.cell(r, j).value
+        if v is None or str(v).strip() == "" or v in vistos:
+            continue
+        vistos.add(v)
+        items.append(v)
+    if not items:
+        raise SystemExit(
+            f"build_motor_declarado: la columna {columna!r} de {hoja!r} no "
+            f"tiene ni un valor: no hay desplegable que construir.")
+    if len(items) > MAX_ITEMS_LISTA_DECLARADA:
+        raise SystemExit(
+            f"build_motor_declarado: la columna {columna!r} de {hoja!r} tiene "
+            f"{len(items)} valores distintos, mas del tope de "
+            f"{MAX_ITEMS_LISTA_DECLARADA}. Una lista asi no se elige: si lo "
+            f"que se busca es un MATERIAL, se resuelve por la cascada de la "
+            f"seccion de material (regla 12), no de un golpe.")
+    return items
+
+
+def _helpers_del_libro(ws, wb=None):
     """Los helpers de estilo del libro, para el chasis.
 
     Son los MISMOS gestos que usan los dos motores escritos a mano: banda de
     tinta con franja roja, rotulo en mono, campo con linea inferior. El chasis
     no los conoce; se los pasamos.
+
+    `wb` solo hace falta para los desplegables atados a una base de datos: es
+    de donde se leen sus items. Va opcional para que las pruebas del chasis que
+    no declaran ninguna LISTA de base sigan pidiendo solo la hoja.
     """
     def banda(w, fila, texto):
         w.merge_cells(start_row=fila, start_column=1, end_row=fila,
@@ -10104,7 +10176,46 @@ def _helpers_del_libro(ws):
     def calculo(w, celda, formula):
         w[celda].value = formula
 
-    return MD.Helpers(banda=banda, rotulo=rotulo, entrada=entrada, calculo=calculo)
+    # Columna oculta que consume el siguiente desplegable. Es una lista de un
+    # elemento y no un `nonlocal` porque estas cuatro funciones se cierran
+    # sobre ella y la claridad importa mas que la micro-elegancia: el estado
+    # que avanza esta a la vista.
+    siguiente_col = [COL_LISTAS_DECLARADAS]
+
+    def lista(w, celda, decl):
+        """Materializa el desplegable de una Fila LISTA y valida contra su rango.
+
+        La regla 2 del libro prohibe una FORMULA como origen de una validacion,
+        y la 12 prohibe una lista de items tecleada para lo que una base
+        publica. Lo que queda -y es lo que ya hacen `construir_seccion7_material`
+        y `_materializar_cascada_b36`- es escribir los items en una columna
+        OCULTA de la propia hoja y apuntar la validacion a ese rango literal.
+        Se sigue ese patron, no se inventa otro.
+        """
+        col = siguiente_col[0]
+        if col >= COL_MANIFIESTO_RESET:
+            raise SystemExit(
+                f"build_motor_declarado: {w.title} agota las columnas ocultas "
+                f"para desplegables antes de llegar al manifiesto de reinicio "
+                f"(columna {COL_MANIFIESTO_RESET}). Son demasiadas filas LISTA "
+                f"en una sola hoja.")
+        siguiente_col[0] = col + 1
+        # Una enumeracion del marco (SI/US, selector de codigo) no necesita el
+        # libro; una lista atada a una base lo necesita entero para leerla.
+        items = (list(decl.opciones) if decl.opciones
+                 else _items_de_base(wb, decl.hoja, decl.columna))
+        letra = get_column_letter(col)
+        origen = (decl.hoja + " · " + decl.columna if decl.hoja
+                  else "enumeracion del marco")
+        w.cell(R_HDR, col, f"lista {celda} ({origen})").font = SRC_F
+        for k, v in enumerate(items):
+            w.cell(R_DATA + k, col, v).font = SRC_F
+        w.column_dimensions[letra].hidden = True
+        dv_list(w, celda,
+                f"=${letra}${R_DATA}:${letra}${R_DATA + len(items) - 1}")
+
+    return MD.Helpers(banda=banda, rotulo=rotulo, entrada=entrada,
+                      calculo=calculo, lista=lista)
 
 
 def direccion_de(motor, clave):
@@ -10138,14 +10249,30 @@ def _reglas_de_comentario_de(motor):
     Un bloque es una Seccion o un Paso -mismo recorrido `MD.bloques()` que usa
     todo el chasis-. El anexo de pasos quedaba fuera de estas reglas, asi que el
     barrido de comentarios no cubria ninguna de sus filas.
+
+    La columna admitida es UNA -la primera de valor-, no `cols[:len(casos)]`:
+    el chasis emite una sola columna de valor y `MD.comprobar_casos()` aborta si
+    se declara mas de un caso, asi que recortar por el numero de casos solo
+    podia dar el mismo resultado o uno equivocado.
+
+    Que hace y que NO hace esto en un motor declarado, dicho aqui para que no
+    vuelva a describirse mal: con una sola columna de valor, la regla por
+    bloque no REPARTE nada -no hay una segunda columna a la que clonar el
+    comentario-; lo que si hace es BORRAR el comentario de cualquier otra
+    columna de esas filas. La garantia sobre toda la banda A..G la da el
+    barrido final de `aplicar_reglas_de_comentario()`, que cubre tambien las
+    filas que ninguna regla nombra (el bloque de material, que el chasis
+    inserta despues). Por eso la llamada se conserva: no es una confirmacion
+    vacia, borra de verdad.
     """
     dirs = MD.resolver_direcciones(motor)
-    reglas, cols = [], "".join(chr(ord("A") + c - 1) for c in COLS_VALOR_MOTOR)
+    reglas = []
+    col_valor = chr(ord("A") + COLS_VALOR_MOTOR[0] - 1)
     for _titulo, filas_bloque in MD.bloques(motor):
         if not filas_bloque:
             continue
         filas = [int(dirs[f.clave].split("$")[-1]) for f in filas_bloque]
-        reglas.append((min(filas), max(filas), cols[:len(motor.casos)], "D"))
+        reglas.append((min(filas), max(filas), col_valor, col_valor))
     return tuple(reglas)
 
 
@@ -10255,7 +10382,9 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     autosize(ws, {"A": 50, "B": 8, "C": 14, "D": 16, "E": 16, "F": 16, "G": 46})
     ws.merge_cells(f"A1:{get_column_letter(MOTOR_NCOLS)}1")
     ws.merge_cells(f"A2:{get_column_letter(MOTOR_NCOLS)}2")
-    res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws))
+    # El libro entra a los helpers porque un desplegable atado a una base lee
+    # sus items de la hoja de esa base (regla 12: nunca de un literal).
+    res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws, wb))
     dirs = res["direcciones"]      # la MISMA resolucion que uso emitir_tabla
 
     def _reservada(clave, pase):
@@ -10314,6 +10443,19 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
         # ecuaciones ni cascada) pasara por aqui.
         build_manifiesto_cascada(ws, motor.material.columnas, refs["fila_banda"],
                                  {}, unidad_cell)
+        if motor.dictamen is not None:
+            # El dictamen se RECOMPONE, no se parchea: la misma
+            # `MD.formula_dictamen()` que escribio `emitir_tabla`, llamada
+            # ahora con las celdas del "Dictamen de rango" que el bloque de
+            # material acaba de crear -y que el chasis no podia conocer antes
+            # de construirlo-. Dos llamadas a una funcion, no dos formulas
+            # parecidas: la forma del veredicto sigue viviendo en un solo
+            # sitio. Sin esto, un motor con material podria decir APTO con la
+            # cascada a medio rellenar.
+            ws[_celda_dictamen(motor)] = MD.formula_dictamen(
+                motor, celdas_material=tuple(
+                    refs["por_columna"][letra]["dictamen"]
+                    for letra, _et in motor.material.columnas))
 
     aplicar_unidades_motor(ws, _unidades_de(motor), es_si)
     aplicar_reglas_de_comentario(ws, _reglas_de_comentario_de(motor))
@@ -12862,11 +13004,33 @@ HOJAS_HEREDADAS = ("Instrucciones",)
 
 # Las doce hojas donde el ingeniero introduce datos. El guardia de verificar.py §5
 # solo mira estas: una DB_*, MAP_* o NAV_* no lleva entradas y no le aplica.
-HOJAS_DE_MOTOR = (MOTOR, COLLAR_MOTOR,
-                  "Buscar_B31_3", "Buscar_BPVC_IID", "Buscar_BPVC_IID_B",
-                  "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
-                  "Buscar_Prop_B31_3", "Buscar_B31_B1",
-                  "Buscar_Ec_A2", "Buscar_Ej_A3")
+# La hoja de todo motor DECLARADO entra aqui derivada del registro, no
+# tecleada: el guardia de la §5b -"ninguna lista fija en una hoja de motor"-
+# vigilaba solo los dos motores escritos a mano, asi que un motor declarado
+# podia colar una lista literal y el guardia seguia dando cero. Derivarla es
+# ademas la unica forma de que no se olvide al declarar el articulo numero
+# doce.
+HOJAS_A_MANO_DE_MOTOR = (MOTOR, COLLAR_MOTOR,
+                         "Buscar_B31_3", "Buscar_BPVC_IID", "Buscar_BPVC_IID_B",
+                         "Buscar_Su", "Buscar_Sy", "Buscar_Prop_IID",
+                         "Buscar_Prop_B31_3", "Buscar_B31_B1",
+                         "Buscar_Ec_A2", "Buscar_Ej_A3")
+
+
+def hojas_de_motor(declarados=None):
+    """Las hojas que vigila la §5b, con las de los motores declarados dentro.
+
+    Es funcion y no solo una tupla congelada para que la prueba pueda
+    ejercerla con un registro de laboratorio: con `MOTORES_DECLARADOS` vacio,
+    una prueba que recorriera la tupla pasaria en vacio para siempre, que es
+    justo la clase de guardia -parece que vigila y no vigila nada- que esta
+    rama ya ha pagado tres veces.
+    """
+    ms = MOTORES_DECLARADOS if declarados is None else declarados
+    return HOJAS_A_MANO_DE_MOTOR + tuple(m.hoja for m in ms)
+
+
+HOJAS_DE_MOTOR = hojas_de_motor()
 
 # Listas literales que SI pueden quedarse: son modos y booleanos del propio motor,
 # no datos tabulados por un codigo. Todo lo demas que sea literal en una hoja de
