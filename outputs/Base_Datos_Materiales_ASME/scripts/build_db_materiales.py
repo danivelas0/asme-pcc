@@ -10230,9 +10230,25 @@ def _helpers_del_libro(ws, wb=None):
         # libro; una lista atada a una base lo necesita entero para leerla.
         items = (list(decl.opciones) if decl.opciones
                  else _items_de_base(wb, decl.hoja, decl.columna))
-        letra = get_column_letter(col)
+        # El `ejemplo` de la fila ya esta escrito en la celda (emitir_tabla
+        # llama a `entrada` antes que a `lista`), asi que se comprueba contra
+        # los items REALES de la base, que es lo unico que puede desmentirlo:
+        # una validacion "detener" no rechaza un valor que ya estaba puesto
+        # -solo actua al teclear-, asi que un ejemplo que la base no publica se
+        # queda ahi, con aspecto de dato valido, hasta que alguien lo toca. Es
+        # el fallo que nombra la regla 12 ("puede ofrecer un valor que la base
+        # ni siquiera admite"), aplicado al valor precargado.
         origen = (decl.hoja + " · " + decl.columna if decl.hoja
                   else "enumeracion del marco")
+        valor = w[celda].value
+        if valor not in (None, "") and str(valor) not in [str(i) for i in items]:
+            raise SystemExit(
+                f"build_motor_declarado: la celda {w.title}!{celda} trae el "
+                f"valor precargado {valor!r}, que no esta entre los "
+                f"{len(items)} items de su desplegable ({origen}). "
+                f"Los primeros que si publica: "
+                f"{', '.join(repr(i) for i in items[:5])}.")
+        letra = get_column_letter(col)
         w.cell(R_HDR, col, f"lista {celda} ({origen})").font = SRC_F
         for k, v in enumerate(items):
             w.cell(R_DATA + k, col, v).font = SRC_F
@@ -10342,6 +10358,38 @@ def _celda_dictamen(motor):
     discrepar (el color se buscaba en F y el texto vivia en D).
     """
     return MD.resolver_direcciones(motor)["dictamen"].replace("$", "")
+
+
+ROTULO_DICTAMEN_MATERIAL = "Dictamen de rango"
+
+
+def celdas_dictamen_material(wb, motor):
+    """Celdas (sin '$') del «Dictamen de rango» de un motor DECLARADO.
+
+    Son la capa de MATERIAL del dictamen: `MD.formula_dictamen` las antepone al
+    AND de verificaciones, y hasta hoy verificar.py §12 las aceptaba a ciegas
+    (`elif dictado in estados_material: pass`) mientras su comentario afirmaba
+    auditar las tres capas. Con esto la §12 puede comprobarlas de verdad: una
+    formula rota que dijera siempre ELIJA MATERIAL dejaria de pasar en verde.
+
+    Se localizan POR ROTULO en la columna A y no por la aritmetica de
+    `construir_seccion7_material` (`fila_base + 20`): ese offset vive dentro de
+    esa funcion y copiarlo aqui seria una segunda fuente de verdad del mismo
+    numero. Es ademas el precedente del propio proyecto -el defecto 3 de la
+    Fase 7 se cerro buscando las celdas por rotulo-. Devuelve () si el motor no
+    lleva material, y None si lo lleva y el rotulo no esta: son dos cosas
+    distintas -"no aplica" frente a "el bloque no se construyo"- y quien llama
+    tiene que poder distinguirlas.
+    """
+    if motor.material is None:
+        return ()
+    ws = wb[motor.hoja]
+    fila = next((r for r in range(1, ws.max_row + 1)
+                 if str(ws.cell(r, 1).value or "").strip()
+                 == ROTULO_DICTAMEN_MATERIAL), None)
+    if fila is None:
+        return None
+    return tuple(f"{letra}{fila}" for letra, _et in motor.material.columnas)
 
 
 def _semaforo_dictamen_de(motor):
@@ -12299,7 +12347,7 @@ ARBOL = Nodo(
                                             titulo="ART. 212 · PARCHE DE PLANCHA",
                                             corto="ART. 212",
                                             subtitulo=f"{T_CAL} · ASME PCC-2 Art. 212 "
-                                                      f"(Fillet Welded Patches)",
+                                                      f"(Parches soldados con filete)",
                                             lineas=("Parche con soldadura de filete",
                                                     "Motor, especificaciones e "
                                                     "instrucciones"),
@@ -12326,8 +12374,13 @@ ARBOL = Nodo(
                                             titulo="ART. 206 · COLLAR DE ENCIERRO TOTAL",
                                             corto="ART. 206",
                                             subtitulo=f"{T_CAL} · ASME PCC-2 Art. 206 "
-                                                      f"(Full Encirclement Sleeves)",
-                                            lineas=("Sleeve de refuerzo, Type A/B",
+                                                      f"(Envolventes de encierro total)",
+                                            # "Type A/B" se queda: es la
+                                            # designacion que imprime el
+                                            # codigo para los dos tipos de
+                                            # envolvente -como un grado de
+                                            # material-, no prosa en ingles.
+                                            lineas=("Envolvente de refuerzo, Type A/B",
                                                     "Motor, especificaciones e "
                                                     "instrucciones"),
                                             hoja="NAV_CAL_ART206",

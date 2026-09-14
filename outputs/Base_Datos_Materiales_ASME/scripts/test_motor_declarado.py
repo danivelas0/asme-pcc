@@ -661,3 +661,99 @@ def test_una_compuerta_sin_verificacion_declarada_aborta():
                             verificaciones=("chk",)))
     with pytest.raises(SystemExit, match="no esta declarada como"):
         M.comprobar_dictamen(motor)
+
+
+# ---------------------------------------------------------------------------
+# El dictamen no se elige a mano (revision del bloque plantilla, 2026-09-13)
+# ---------------------------------------------------------------------------
+def _con_dictamen_de_lista():
+    """El mismo motor, con la fila `dictamen` convertida en desplegable.
+
+    Es la declaracion que el revisor ejecuto y que los TRES guardias dejaban
+    pasar: `comprobar_dictamen` solo miraba `fila.formula` -vacia en una fila
+    LISTA- y `emitir_tabla` solo componia la formula en la rama FORMULA. La
+    celda del veredicto global quedaba editable, amarilla, con desplegable y
+    dentro del manifiesto de reinicio.
+    """
+    motor = _motor_con_dictamen()
+    secciones = tuple(
+        s._replace(filas=tuple(
+            f._replace(tipo=M.LISTA, ejemplo="APTO",
+                       lista=M.Lista(opciones=("APTO", "REVISAR")))
+            if f.clave == "dictamen" else f for f in s.filas))
+        for s in motor.secciones)
+    return motor._replace(secciones=secciones)
+
+
+def test_la_fila_dictamen_declarada_como_desplegable_aborta():
+    """Primera via: el tipo. El veredicto global lo CALCULA el libro."""
+    with pytest.raises(SystemExit, match="tipo='lista'"):
+        M.comprobar_dictamen(_con_dictamen_de_lista())
+
+
+def test_la_fila_dictamen_declarada_como_entrada_aborta():
+    """Sin `Lista` de por medio -tipo=ENTRADA- la fila tampoco trae formula,
+    asi que el guardia viejo tampoco la veia."""
+    motor = _motor_con_dictamen()
+    secciones = tuple(
+        s._replace(filas=tuple(
+            f._replace(tipo=M.ENTRADA, ejemplo="APTO")
+            if f.clave == "dictamen" else f for f in s.filas))
+        for s in motor.secciones)
+    with pytest.raises(SystemExit, match="tipo='entrada'"):
+        M.comprobar_dictamen(motor._replace(secciones=secciones))
+
+
+def test_emitir_tabla_rechaza_el_dictamen_de_desplegable():
+    """Segunda via, y por la puerta real: `emitir_tabla` es lo unico que
+    convierte una declaracion en hoja.
+
+    Los helpers llevan `lista` a proposito. Sin el, esta prueba pasaba
+    revirtiendo LOS DOS guardias -abortaba con "no traen `lista`", que es otra
+    cosa-: una prueba que se pone verde por el motivo equivocado es justo lo
+    que esta rama ya ha pagado cuatro veces. Con el helper puesto, el unico
+    motivo posible de aborto es el guardia del dictamen.
+    """
+    import openpyxl
+    h = _helpers_de_prueba()._replace(lista=lambda ws, celda, decl: None)
+    ws = openpyxl.Workbook().active
+    with pytest.raises(SystemExit, match="dictamen"):
+        M.emitir_tabla(ws, _con_dictamen_de_lista(), h)
+    # Y la declaracion legitima -misma fila, tipo FORMULA- SI construye: el
+    # guardia rechaza el desplegable, no el motor.
+    ws2 = openpyxl.Workbook().active
+    M.emitir_tabla(ws2, _motor_con_dictamen(), h)
+
+
+def test_la_enumeracion_tecleada_solo_vale_en_unidad_y_modo():
+    """La puerta de `Lista(opciones=...)` NO son las cuatro claves
+    reservadas: `temperatura` es un dato de servicio que se teclea y
+    `dictamen` es el veredicto que compone el chasis. Solo el conmutador
+    SI/US y el selector de codigo son enumeraciones del marco."""
+    assert M.CLAVES_CON_ENUMERACION == ("unidad", "modo")
+    for clave in ("temperatura", "dictamen"):
+        motor = _motor_con_lista(None)._replace(secciones=(
+            M.Seccion("1. DATOS", filas=(
+                M.Fila(clave, "Reservada", tipo=M.LISTA,
+                       lista=M.Lista(opciones=("A", "B"))),)),))
+        with pytest.raises(SystemExit, match="enumeracion tecleada"):
+            M.comprobar_listas(motor)
+
+
+def test_el_ejemplo_de_una_enumeracion_tiene_que_estar_entre_sus_items():
+    """Una validacion 'detener' no rechaza un valor que ya estaba puesto: un
+    ejemplo fuera de lista se queda con aspecto de dato valido."""
+    motor = _motor_con_lista(None)._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
+                   ejemplo="Metrico", lista=M.Lista(opciones=("SI", "US"))),)),))
+    with pytest.raises(SystemExit, match="no esta entre los items"):
+        M.comprobar_listas(motor)
+
+
+def test_el_ejemplo_que_si_esta_entre_los_items_pasa():
+    motor = _motor_con_lista(None)._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
+                   ejemplo="SI", lista=M.Lista(opciones=("SI", "US"))),)),))
+    assert M.comprobar_listas(motor) is None

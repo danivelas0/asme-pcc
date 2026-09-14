@@ -3276,6 +3276,87 @@ class TestChasisDeclarado:
         assert self._motor().hoja in B.hojas_de_motor((self._motor(),))
         assert B.hojas_de_motor(()) == B.HOJAS_A_MANO_DE_MOTOR
 
+    def test_hojas_de_motor_es_la_tupla_derivada_y_no_una_copia_tecleada(self):
+        """El CABLE, no la funcion. `hojas_de_motor()` ya tenia prueba de
+        laboratorio, pero lo que lee la §5b es la constante `HOJAS_DE_MOTOR`:
+        sustituirla por la tupla de los dos motores a mano dejaba las 419
+        pruebas en verde -la unica asercion que lo cubria recorre
+        MOTORES_DECLARADOS, que hoy esta vacio-. Es la clase de guardia que
+        parece vigilar y no vigila nada, la cuarta de esta rama.
+
+        Se comprueba la FORMA de la asignacion y no solo su valor, y eso es
+        deliberado: con `MOTORES_DECLARADOS` vacio, una tupla tecleada a mano
+        es IGUAL a la derivada, asi que `HOJAS_DE_MOTOR == hojas_de_motor()`
+        vuelve a pasar en verde con el cable cortado -comprobado: revertirlo a
+        la tupla literal dejaba esta prueba pasando-. Lo unico que distingue
+        las dos hoy es de donde sale, y eso esta en el fuente.
+        """
+        import ast
+        import inspect
+        arbol = ast.parse(inspect.getsource(B))
+        asignaciones = [n for n in arbol.body
+                        if isinstance(n, ast.Assign)
+                        and any(getattr(t, "id", None) == "HOJAS_DE_MOTOR"
+                                for t in n.targets)]
+        assert len(asignaciones) == 1, "HOJAS_DE_MOTOR se asigna mas de una vez"
+        valor = asignaciones[0].value
+        assert isinstance(valor, ast.Call) and \
+            getattr(valor.func, "id", None) == "hojas_de_motor", (
+                "HOJAS_DE_MOTOR no se DERIVA: la §5b lee esta constante, y "
+                "tecleada deja fuera a todo motor declarado")
+        # Y el valor, que es lo que la §5b consume de verdad.
+        assert B.HOJAS_DE_MOTOR == B.hojas_de_motor()
+
+    # --- El ejemplo de una LISTA existe en la base que la valida ------------
+    def test_el_ejemplo_de_una_lista_de_base_tiene_que_existir_en_la_base(self, wb):
+        """Un valor precargado que la base no publica no lo rechaza nadie: la
+        validacion 'detener' solo actua al teclear, asi que se queda en la
+        celda con aspecto de dato valido. Es el fallo que nombra la regla 12
+        ('puede ofrecer un valor que la base ni siquiera admite'), aplicado al
+        ejemplo -y la propia plantilla de la skill lo tenia: sembraba '2"' en
+        una lista atada a DB_B36_10, cuya columna imprime '2 (50)'."""
+        import openpyxl
+        import motor_declarado as MD
+        motor = self._motor()
+        fila = MD.Fila("NPS", "Diametro nominal", tipo=MD.LISTA,
+                       ejemplo='2"',      # el que la base NO publica
+                       lista=MD.Lista(hoja="DB_B36_10", columna="NPS impreso"))
+        secciones = (motor.secciones[0]._replace(
+            filas=motor.secciones[0].filas + (fila,)),) + motor.secciones[1:]
+        ws = openpyxl.Workbook().active
+        with pytest.raises(SystemExit, match="no esta entre los"):
+            MD.emitir_tabla(ws, motor._replace(secciones=secciones),
+                            B._helpers_del_libro(ws, wb))
+        # Y el que SI publica pasa: el guardia no rechaza todo por igual.
+        ws2 = openpyxl.Workbook().active
+        bueno = fila._replace(ejemplo="2 (50)")
+        secciones2 = (motor.secciones[0]._replace(
+            filas=motor.secciones[0].filas + (bueno,)),) + motor.secciones[1:]
+        MD.emitir_tabla(ws2, motor._replace(secciones=secciones2),
+                        B._helpers_del_libro(ws2, wb))
+
+    # --- La capa de material del dictamen se audita, no se acepta -----------
+    def test_las_celdas_del_dictamen_de_material_se_localizan_por_rotulo(self, wb):
+        """verificar.py §12 aceptaba a ciegas el estado de material
+        (`elif dictado in estados_material: pass`) mientras su comentario
+        afirmaba auditar las tres capas. Para auditarlo hay que poder leer el
+        «Dictamen de rango», y se localiza por ROTULO -no por el offset de
+        construir_seccion7_material, que seria una segunda copia del mismo
+        numero."""
+        import motor_declarado as MD
+        motor = self._motor()
+        # Sin material no hay capa que auditar, y eso es () -no None.
+        assert B.celdas_dictamen_material(wb, motor) == ()
+        # Los dos motores a mano SI la tienen, y ahi se comprueba contra el
+        # libro construido: la fila del rotulo existe y publica un dictamen.
+        falso = motor._replace(hoja=B.MOTOR, material=MD.Material())
+        celdas = B.celdas_dictamen_material(wb, falso)
+        assert celdas and celdas[0].startswith("D")
+        fila = int(celdas[0][1:])
+        assert str(wb[B.MOTOR].cell(fila, 1).value).strip() == \
+            B.ROTULO_DICTAMEN_MATERIAL
+        assert str(wb[B.MOTOR][celdas[0]].value or "").startswith("=")
+
     # --- El dictamen lo compone el chasis ----------------------------------
     def test_el_dictamen_de_un_motor_declarado_no_se_teclea(self):
         """`Dictamen.compuertas` estaba en el tipo y no lo leia ningun pase: la

@@ -81,9 +81,16 @@ def _cita(bloque, clausula):
 #        desplegable lo publica una base de datos del libro. Es la forma
 #        normal y la que exigen las reglas 12 y 14.
 #      - `Lista(opciones=(...))`: enumeracion cerrada que publica el propio
-#        marco. SOLO en las claves reservadas -- fuera de ellas el chasis la
-#        rechaza, porque una lista tecleada a mano es lo que la regla 12
-#        prohibe.
+#        marco. SOLO en `CLAVES_CON_ENUMERACION` -- es decir "unidad" y
+#        "modo", las dos unicas que el marco publica de verdad como
+#        enumeracion. NO son las cuatro reservadas: "temperatura" es un dato
+#        de servicio que se teclea y "dictamen" es el veredicto que COMPONE el
+#        chasis (y que ademas tiene que ser `tipo=FORMULA`, o el build aborta:
+#        un dictamen elegido de un desplegable seria el usuario firmando su
+#        propio resultado). Fuera de esas dos claves, una lista tecleada a
+#        mano es lo que la regla 12 prohibe.
+#      El `ejemplo` de toda Fila LISTA tiene que estar entre los items del
+#      desplegable -de la base o de la enumeracion-, y el build aborta si no.
 #    En los dos casos el chasis materializa los items en una columna oculta de
 #    la hoja y apunta la validacion a ESE rango (regla 2: nunca una formula
 #    como origen).
@@ -107,8 +114,14 @@ FILAS_ENTRADA = MD.Seccion("2. DATOS DE ENTRADA", filas=(
     # Un valor que una base del libro TABULA se elige, nunca se teclea
     # (regla 14). El desplegable se ata a la base y a la columna, por el
     # rotulo impreso de su cabecera.
+    # El `ejemplo` tiene que ser UNO DE LOS ITEMS que la base publica, y el
+    # build aborta si no lo es: la validacion "detener" solo actua al teclear,
+    # asi que un valor precargado que la base no admite se queda en la celda
+    # con aspecto de dato valido. Aqui el rotulo impreso es '2 (50)' -la
+    # columna `NPS impreso` conserva el texto del codigo tal cual (regla 9),
+    # con el DN entre parentesis-, nunca un '2"' escrito de memoria.
     MD.Fila("NPS", "Diametro nominal de la tuberia", tipo=MD.LISTA,
-            ejemplo='2"',
+            ejemplo="2 (50)",
             lista=MD.Lista(hoja="DB_B36_10", columna="NPS impreso"),
             comentario="Se elige de DB_B36_10 (ASME B36.10M), no se teclea: "
             "la base es la que lo publica (reglas 12 y 14)."),

@@ -33,6 +33,23 @@ FILA_PRIMERA_BANDA = 5       # 1-2 titulo y subtitulo, 3 acciones, 4 libre
 # Se declaran aqui para que dos tareas no las escriban distinto.
 CLAVES_RESERVADAS = ("unidad", "modo", "temperatura", "dictamen")
 
+# Las claves reservadas que el MARCO publica de verdad como ENUMERACION, y las
+# unicas donde se admite `Lista(opciones=...)` tecleada.
+#
+# No son las cuatro reservadas, y confundirlas costaba caro: `CLAVES_RESERVADAS`
+# es la lista de claves que los pases transversales exigen, no la de las que son
+# una enumeracion del marco. De las cuatro, solo dos lo son -el conmutador SI/US
+# (`unidad`) y el selector de codigo (`modo`), que ninguna base del libro tabula-.
+# Las otras dos NO: `temperatura` es un dato de servicio que se TECLEA, y
+# `dictamen` es el veredicto global, que lo COMPONE el chasis
+# (`formula_dictamen`). Con la puerta abierta a las cuatro se podia declarar
+#     Fila("dictamen", ..., tipo=LISTA, lista=Lista(opciones=("APTO","REVISAR")))
+# y los tres guardias pasaban: la celda del veredicto quedaba editable, amarilla,
+# con desplegable y dentro del manifiesto de reinicio -quien usara el motor
+# elegiria a mano su propio dictamen-. Se cierra por las dos vias: aqui, y con
+# `comprobar_dictamen`, que exige que esa fila sea de tipo FORMULA.
+CLAVES_CON_ENUMERACION = ("unidad", "modo")
+
 # Textos del dictamen que compone el chasis. Viven aqui -no en el builder-
 # porque los consume tambien verificar.py §12 al juzgar si el dictamen
 # contradice a sus verificaciones: un literal escrito dos veces es un literal
@@ -72,7 +89,7 @@ class Lista(NamedTuple):
       de la base que la tabula, nunca se teclea ni se copia a un literal.
     - `opciones`: una enumeracion CERRADA que publica el propio marco y que no
       existe en ninguna base -el sistema de unidades y el selector de codigo-.
-      Solo se admite en las claves de `CLAVES_RESERVADAS` (ver
+      Solo se admite en las claves de `CLAVES_CON_ENUMERACION` (ver
       `comprobar_listas`): fuera de ellas, una lista tecleada a mano es
       exactamente lo que la regla 12 prohibe.
 
@@ -488,15 +505,30 @@ def comprobar_listas(motor):
                 raise SystemExit(
                     f"motor_declarado: la Lista de {f.clave!r} en "
                     f"{motor.hoja} llega vacia: ni base ni enumeracion.")
-            if f.clave not in CLAVES_RESERVADAS:
+            if f.clave not in CLAVES_CON_ENUMERACION:
                 raise SystemExit(
                     f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
                     f"declara una enumeracion tecleada "
-                    f"({', '.join(map(str, f.lista.opciones))}). Solo las "
-                    f"claves reservadas {', '.join(CLAVES_RESERVADAS)} -las "
-                    f"enumeraciones del propio marco, que ninguna base "
-                    f"publica- pueden hacerlo. Todo lo demas sale de una base "
-                    f"de datos del libro (reglas 12 y 14).")
+                    f"({', '.join(map(str, f.lista.opciones))}). Solo "
+                    f"{' y '.join(CLAVES_CON_ENUMERACION)} -las dos "
+                    f"enumeraciones que publica el propio marco y que ninguna "
+                    f"base tabula- pueden hacerlo. Todo lo demas sale de una "
+                    f"base de datos del libro (reglas 12 y 14).")
+            # El `ejemplo` es el valor que el chasis escribe en la celda, y una
+            # celda con validacion "detener" cuyo valor precargado no esta en
+            # la lista es un formulario que nace invalido: Excel no lo rechaza
+            # -la validacion solo actua al teclear- asi que nadie lo ve hasta
+            # que se toca. Es la misma clase de fallo que nombra la regla 12
+            # ("puede ofrecer un valor que la base ni admite"), aplicada al
+            # valor precargado. La rama de base se comprueba en el builder,
+            # que es quien conoce los items materializados.
+            if f.ejemplo not in (None, "") and \
+                    str(f.ejemplo) not in [str(o) for o in f.lista.opciones]:
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
+                    f"trae ejemplo={f.ejemplo!r}, que no esta entre los items "
+                    f"de su enumeracion "
+                    f"({', '.join(map(repr, f.lista.opciones))}).")
 
 
 def comprobar_dictamen(motor):
@@ -508,6 +540,14 @@ def comprobar_dictamen(motor):
     1. La fila reservada `dictamen` y `Motor.dictamen` van juntas o no van. Una
        fila de dictamen sin declaracion no tendria con que componerse, y una
        declaracion sin fila no tendria donde escribirse.
+    1b. La fila `dictamen` es de tipo FORMULA. Este guardia miraba solo
+       `fila.formula`, que en una fila ENTRADA o LISTA esta vacia, asi que
+       pasaba sin ver nada: se podia declarar el veredicto global como
+       desplegable y la celda que dice si la reparacion cumple quedaba
+       editable, con lista y dentro del manifiesto de reinicio -el usuario
+       elegiria a mano su propio dictamen-. El dictamen no es un dato de
+       entrada: lo CALCULA el libro, y se dice aqui por el tipo, no por la
+       ausencia de formula.
     2. La fila `dictamen` no trae formula propia: la pone el chasis. Una
        formula tecleada al lado de una declaracion es la forma segura de que
        las dos digan cosas distintas -y verificar.py §12 lo encontraria
@@ -527,6 +567,14 @@ def comprobar_dictamen(motor):
             f"{'Motor.dictamen sin fila `dictamen`' if fila is None else 'la fila `dictamen` sin Motor.dictamen'}"
             f". Los dos van juntos: el chasis compone la formula del veredicto "
             f"global desde Motor.dictamen y la escribe en esa fila.")
+    if fila is not None and fila.tipo != FORMULA:
+        raise SystemExit(
+            f"motor_declarado: la fila `dictamen` de {motor.hoja} se declara "
+            f"con tipo={fila.tipo!r}. El veredicto global lo CALCULA el libro "
+            f"(lo compone el chasis desde Motor.dictamen): declarado como "
+            f"{ENTRADA!r} o {LISTA!r}, la celda que dice si la reparacion "
+            f"cumple quedaria editable, con desplegable y dentro del "
+            f"manifiesto de reinicio. Declarela tipo={FORMULA!r}, sin formula.")
     if motor.dictamen is None:
         return
     if fila.formula:
