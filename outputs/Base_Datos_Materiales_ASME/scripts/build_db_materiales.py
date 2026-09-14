@@ -7349,14 +7349,40 @@ def umbral(umbrales, clave, sel):
     return f"IF({sel},{si:g},{us:g})"
 
 
+def _json_de_articulo(articulo, declarados=None):
+    """Ruta en resources/ del JSON de un articulo de PCC-2.
+
+    Los dos motores escritos a mano traen su ruta como constante de modulo;
+    un motor DECLARADO la trae en `Motor.fuente`, asi que registrar un umbral
+    de un articulo nuevo no pide tocar esta funcion: basta con que el articulo
+    este en el registro. Sin esto, `leer_umbrales_pcc2` solo sabia de los
+    articulos 212 y 206 y el primer umbral de un articulo nuevo reventaba con
+    un KeyError en vez de leerse.
+
+    `declarados` admite un registro de laboratorio por la misma razon que
+    `hojas_de_motor()`: con `MOTORES_DECLARADOS` vacio, una prueba de la
+    derivacion pasaria en vacio y no vigilaria nada.
+    """
+    rutas = {"212": _ART_212_JSON, "206": _ART_206_JSON}
+    ms = MOTORES_DECLARADOS if declarados is None else declarados
+    rutas.update({m.articulo: m.fuente for m in ms})
+    if articulo not in rutas:
+        raise SystemExit(
+            f"UMBRALES_PCC2 registra un umbral del Art. {articulo}, que no es "
+            f"ninguno de los motores del libro. Declare el articulo -y con el "
+            f"su `fuente`- antes de registrarle un umbral.")
+    return rutas[articulo]
+
+
 def leer_umbrales_pcc2(resources):
     """Los umbrales de longitud de PCC-2, en sus dos unidades impresas."""
     from pathlib import Path as _Path
     raiz = _Path(resources)
     textos = {}
-    for art, ruta in (("212", _ART_212_JSON), ("206", _ART_206_JSON)):
+    for art in sorted({a for a, _ancla in UMBRALES_PCC2.values()}):
         textos[art] = json.dumps(
-            json.loads((raiz / ruta).read_text(encoding="utf-8")),
+            json.loads((raiz / _json_de_articulo(art)).read_text(
+                encoding="utf-8")),
             ensure_ascii=False)
     fuera = {}
     for clave, (art, ancla) in UMBRALES_PCC2.items():

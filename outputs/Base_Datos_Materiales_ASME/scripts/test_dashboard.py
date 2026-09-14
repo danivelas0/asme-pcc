@@ -3292,6 +3292,29 @@ class TestChasisDeclarado:
         assert B.direccion_de(motor, "chk").replace("$", "") in \
             ws[celda].value.replace("$", "")
 
+    # --- Los umbrales son por articulo, y el mecanismo tiene que alcanzarlos -
+    def test_un_umbral_de_un_articulo_no_declarado_aborta(self):
+        """`leer_umbrales_pcc2` resolvia la ruta del JSON contra una pareja
+        tecleada (212 y 206): el primer umbral de un articulo nuevo reventaba
+        con un KeyError en vez de leerse. Ahora la ruta sale del registro, y un
+        articulo que no esta dice por que."""
+        with pytest.raises(SystemExit, match="no es ninguno de los motores"):
+            B._json_de_articulo("999")
+        # Y con un registro de LABORATORIO, para que muerda con el registro
+        # real vacio: un articulo declarado SI resuelve, por su `fuente`.
+        m = self._motor()
+        assert B._json_de_articulo(m.articulo, (m,)) == m.fuente
+
+    def test_los_dos_articulos_a_mano_siguen_resolviendo_su_json(self):
+        assert B._json_de_articulo("212") == B._ART_212_JSON
+        assert B._json_de_articulo("206") == B._ART_206_JSON
+
+    def test_todo_umbral_registrado_resuelve_su_articulo(self):
+        """El guardia util: ningun umbral de UMBRALES_PCC2 puede apuntar a un
+        articulo cuyo JSON nadie sabe localizar."""
+        for clave, (art, _ancla) in B.UMBRALES_PCC2.items():
+            assert B._json_de_articulo(art), clave
+
     def test_la_regla_de_comentario_admite_una_sola_columna_de_valor(self):
         """cols[:len(motor.casos)] prometia tantas columnas como casos y el
         chasis escribe una: con dos casos declarados admitia comentario en una

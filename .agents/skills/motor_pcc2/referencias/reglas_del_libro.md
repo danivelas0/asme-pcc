@@ -97,6 +97,29 @@ de `build_motor_declarado()`, antes de escribir una sola celda, y de nuevo desde
     publica: datos de proceso y de campo (temperatura y presión de operación,
     dimensiones del defecto, sobreespesor de corrosión, medidas de la reparación).
 
+### Cómo cumplen las reglas 12 y 14 un motor DECLARADO
+
+Toda `Fila` de tipo `LISTA` declara **de dónde salen sus ítems** (`Lista`), y el
+chasis **aborta** si no lo hace:
+
+- `Lista(hoja="DB_...", columna="<rótulo impreso de su cabecera>")` — el desplegable
+  lo publica una base de datos del libro. Es la forma normal.
+- `Lista(opciones=(...))` — enumeración cerrada que publica el propio marco (el
+  sistema de unidades, el selector de código). **Solo** en las claves de
+  `CLAVES_RESERVADAS`; fuera de ellas el chasis la rechaza, porque una lista tecleada
+  a mano no se audita, no se actualiza si la base cambia, y puede ofrecer un valor que
+  la base ni admite.
+
+En los dos casos los ítems se **materializan en una columna oculta** de la propia hoja
+y la validación apunta a **ese rango** (regla 2), con `errorStyle="stop"` para que
+Excel rechace lo que no esté en la lista. Los ítems de una lista atada a base se leen
+de la hoja de esa base — la misma que `verificar.py` audita fila a fila contra
+`resources/` —, así que la lista hereda esa trazabilidad en vez de abrir una segunda
+vía de entrada del dato.
+
+El guardia de `verificar.py` §5b ("ninguna lista fija en hoja de motor") cubre también
+las hojas de los motores declarados: `HOJAS_DE_MOTOR` se **deriva** del registro.
+
 ---
 
 ## Las tres reglas del flujo de la cascada de material
@@ -173,12 +196,13 @@ botones (H..J) conservan el suyo aparte. En el chasis declarativo, esto lo garan
 comentario en `COLS_VALOR_MOTOR[0]` (columna D) y en ningún otro sitio.
 `build_motor_declarado()` **sí** llama después a `aplicar_reglas_de_comentario`
 (con `_reglas_de_comentario_de(motor)`; busque la llamada por nombre, los números de
-línea de este archivo se mueven con cada parche) — pero para
-un motor DECLARADO esa pasada es, en la práctica, un no-op de confirmación: solo
-existe una columna de valor por fila (ver el cuarto límite, más abajo:
-`motor.casos` no genera una columna por caso), así que no hay una segunda columna
-donde redistribuir el comentario. La garantía real de esta regla, hoy, sigue siendo
-la línea de `rotulo()` — no el barrido posterior.
+línea de este archivo se mueven con cada parche). Con **una** columna de valor —el
+chasis emite una, y `comprobar_casos()` aborta si se declara más de un caso— esa
+pasada no **reparte** nada: no hay una segunda columna a la que clonar el comentario.
+Lo que sí hace, y por eso se conserva, es **borrar** el comentario de cualquier otra
+columna, y su **barrido final** cubre toda la banda A..G incluyendo las filas que
+ninguna regla nombra (el bloque de material, que el chasis inserta después). No es
+una confirmación vacía: borra de verdad.
 
 El comentario se **dimensiona con su texto y se ancla a su celda** (ver siguiente
 regla); 90 px fijos cortaban 102 de 811 comentarios reales.
