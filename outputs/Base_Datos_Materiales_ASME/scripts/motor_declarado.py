@@ -71,10 +71,25 @@ VEREDICTO_CUMPLE = "CUMPLE"
 
 
 class Cita(NamedTuple):
-    """De donde sale este valor. Sin esto, la celda no se construye."""
-    archivo: str             # relativo a resources/
-    bloque: int              # indice del bloque en el JSON
+    """De donde sale este valor. Sin esto, la celda no se construye.
+
+    `archivo` es una ETIQUETA legible ("art_204.json", "B31.3 cap. II"), para
+    que el ingeniero vea de un vistazo de que documento sale el dato. La ruta
+    que de verdad se abre y se valida es `fuente` si esta, y `motor.fuente` si
+    no -que es el caso normal: casi todas las citas de un motor describen
+    bloques del articulo del motor-.
+
+    `fuente` existe desde 2026-09-15 y es lo que hace posible declarar un
+    articulo que DELEGA el calculo. El Art. 204 no publica ni una ecuacion:
+    remite ocho veces al "applicable construction or post-construction code",
+    asi que sus filas de calculo citan el B31.3, no el 204. Sin este campo, un
+    motor solo podia citar un JSON, y el unico modo de declarar el 204 habria
+    sido mentir en la cita o no citarlo.
+    """
+    archivo: str             # ETIQUETA legible del documento
+    bloque: int              # indice del bloque, segun bloques_citables()
     clausula: str            # lo que se imprime en la columna de referencia
+    fuente: str = ""         # ruta real en resources/; "" = la del motor
 
 
 class Lista(NamedTuple):
@@ -87,11 +102,23 @@ class Lista(NamedTuple):
       por el rotulo impreso en su cabecera. Es la forma normal y la que exigen
       las reglas 12 y 14 del libro: toda variable que el libro tabula se elige
       de la base que la tabula, nunca se teclea ni se copia a un literal.
-    - `opciones`: una enumeracion CERRADA que publica el propio marco y que no
-      existe en ninguna base -el sistema de unidades y el selector de codigo-.
-      Solo se admite en las claves de `CLAVES_CON_ENUMERACION` (ver
-      `comprobar_listas`): fuera de ellas, una lista tecleada a mano es
-      exactamente lo que la regla 12 prohibe.
+    - `opciones`: una enumeracion CERRADA que no existe en ninguna base. Se
+      admite en dos sitios y solo en dos (ver `comprobar_listas`):
+      (i) las claves de `CLAVES_CON_ENUMERACION` -el sistema de unidades y el
+      selector de codigo-, que publica el propio MARCO;
+      (ii) cualquier otra clave **acompanada de `cita`**, cuando la enumeracion
+      la publica el CODIGO -los cuatro metodos de prueba de `para. 204-6.2`, o
+      la caja estructural / no estructural de `para. 204-1(f)`-.
+      Fuera de esos dos casos, una lista tecleada a mano es exactamente lo que
+      la regla 12 prohibe.
+
+      Lo que la regla 12 ataca es la lista "que no se audita, no se actualiza
+      si la base cambia, y puede ofrecer un material que la base ni siquiera
+      admite". Una enumeracion con `cita` SI se audita:
+      `comprobar_procedencia()` exige que el bloque citado exista y que no sea
+      un `section_header`. LIMITE DECLARADO: comprueba que el bloque publique
+      texto, NO que cada opcion aparezca literalmente en el -el libro esta en
+      espanol y el codigo en ingles-. Eso va en el comentario de la celda.
 
     En los dos casos el chasis MATERIALIZA los items en una columna oculta de
     la propia hoja y apunta la validacion a ese RANGO, nunca a una formula ni
@@ -99,7 +126,15 @@ class Lista(NamedTuple):
     """
     hoja: str = ""           # base del libro: "DB_B36_10", "DB_B31_3"...
     columna: str = ""        # rotulo impreso de la columna, en la cabecera
-    opciones: tuple = ()     # enumeracion cerrada, solo en claves reservadas
+    opciones: tuple = ()     # enumeracion cerrada: marco, o codigo con `cita`
+    cita: Cita | None = None  # obligatoria si `opciones` sale del codigo
+    # Tercera forma: un nivel de una CASCADA dimensional (ver `Dimensional`).
+    # Los items no salen de una columna suelta sino del nivel anterior -las
+    # cedulas que existen PARA ESE NPS-, asi que no los materializa el helper
+    # generico: los escribe el constructor de la cascada, que es el que sabe
+    # encadenarlos. Aqui solo se marca para que el helper no la toque y para
+    # que la declaracion diga de donde sale, que es lo que exige la regla 12.
+    cascada: str = ""        # hoy solo "B36"
 
 
 class Fila(NamedTuple):
@@ -113,6 +148,34 @@ class Fila(NamedTuple):
     comentario: str = ""
     cita: Cita | None = None
     lista: Lista | None = None   # obligatorio -y exclusivo- de `tipo=LISTA`
+
+
+class Dimensional(NamedTuple):
+    """Una cascada norma -> NPS -> cedula contra `DB_B36_10` / `DB_B36_19`.
+
+    Es la regla 14 aplicada a la geometria: NPS, cedula, OD y espesor estan
+    TABULADOS, asi que se eligen de la base que los tabula y no se teclean. El
+    mecanismo ya existia y estaba probado (`_materializar_cascada_b36`), pero
+    cableado a los dos motores escritos a mano: a una sola tanda de columnas
+    ocultas y a la columna D. Un motor DECLARADO no podia usarlo.
+
+    El Art. 204 necesita DOS: una para el componente portador y otra para la
+    envolvente -la caja de te + caps, que es como se fabrican en planta-, y
+    cada una con su propio NPS y su propia cedula. De ahi que esto sea una
+    tupla en `Motor.dimensionales` y no un campo suelto.
+
+    `norma`, `nps` y `cedula` nombran filas `tipo=LISTA` con
+    `Lista(cascada="B36")`. `od` y `espesor` son opcionales y nombran filas
+    `tipo=FORMULA` **sin formula propia**: la escribe el chasis con el mismo
+    CHOOSE de la cascada -que es quien conoce la norma elegida y el conmutador
+    SI/US-, y `comprobar_dimensionales()` exige que lleguen vacias para que
+    nadie escriba ahi una formula creyendo que se usa.
+    """
+    norma: str               # clave de la fila del selector de norma B36
+    nps: str                 # clave de la fila de NPS
+    cedula: str              # clave de la fila de cedula
+    od: str = ""             # clave de la fila que publica el OD
+    espesor: str = ""        # clave de la fila que publica el espesor de pared
 
 
 class Seccion(NamedTuple):
@@ -214,6 +277,7 @@ class Motor(NamedTuple):
     # segunda columna vacia -que es lo que hacia hasta hoy-.
     casos: tuple = ("Operacion",)
     secciones: tuple = ()
+    dimensionales: tuple = ()    # (Dimensional, ...) — cascadas NPS/cedula
     material: Material | None = None
     verificaciones: tuple = ()
     dictamen: Dictamen | None = None
@@ -297,13 +361,117 @@ def resolver_direcciones(motor):
     return dirs
 
 
-def sustituir_nombres(formula, direcciones):
+# --------------------------------------------------------------------------
+# Los cuatro valores que publica la SECCION DE MATERIAL, y no una fila.
+#
+# `resolver_direcciones()` solo indexa `motor.secciones` y `motor.pasos`, asi
+# que hasta 2026-09-15 una formula declarada NO podia usar el esfuerzo
+# admisible que resuelve la cascada: la plantilla de la skill lo decia
+# explicitamente ("si el articulo necesita {S} dentro de una ecuacion, eso es
+# una extension del chasis que todavia no existe").
+#
+# El Art. 204 la necesita: delega el espesor de la envolvente al B31.3, y la
+# eq. (3a) del `para. 304.1.2` es `t = PD/(2(SEW + PY))` -- sin S no hay
+# ecuacion. Se resuelve como ya se resolvia el dictamen: el bloque de material
+# se construye DESPUES de la tabla, asi que su direccion no existe cuando se
+# emiten las formulas; se emite un CENTINELA y `resolver_material()` lo cambia
+# por la direccion real en cuanto el bloque existe. Dos pases sobre la misma
+# hoja, no dos formulas parecidas en dos sitios.
+#
+# La sintaxis es `{S}` para la primera columna de material y `{S@E}` para la
+# columna E, que es como se declara un motor con metal base y material de la
+# caja por separado.
+NOMBRES_MATERIAL = {
+    "S": "s_t",                      # esfuerzo admisible a la temperatura
+    "Tmax": "tmax",                  # temperatura maxima del material
+    "material_id": "material_id",    # el id resuelto por la cascada
+    "dictamen_material": "dictamen",  # OK / el motivo del bloqueo
+}
+_RE_MATERIAL = re.compile(
+    r"\{(" + "|".join(NOMBRES_MATERIAL) + r")(?:@([A-Z]))?\}")
+
+
+def _centinela(nombre, columna):
+    """Marca que `resolver_material()` cambiara por una direccion real.
+
+    Lleva `@` a proposito: Excel no admite ese caracter en un nombre definido
+    ni en una referencia, asi que un centinela que sobreviviera a los dos pases
+    no se puede confundir con una formula valida -- se ve, y revienta, en vez
+    de calcular en silencio contra la celda equivocada.
+    """
+    return f"__MAT@{nombre}@{columna}__"
+
+
+_RE_UMBRAL = re.compile(r"\{UMBRAL:([A-Za-z0-9_]+)\}")
+
+
+def _centinela_umbral(clave):
+    """Marca que `resolver_umbrales()` cambiara por `IF(es_SI, si, us)`.
+
+    Mismo patron que `_centinela()` para el material: un umbral normativo -"4.8
+    mm (0.188 in.)"- no se puede teclear en la declaracion (seria sacarlo de la
+    memoria de quien declara, y en modo US no se convertiria en nada). Pero
+    `UMBRALES_PCC2` solo existe en build_db_materiales y se lee de resources/
+    en tiempo de build, no cuando se declara el Motor: se emite un centinela y
+    build_motor_declarado lo cambia por la expresion real -leida del codigo, en
+    sus dos unidades impresas- en cuanto conoce los umbrales del libro.
+    """
+    return f"__UMB@{clave}__"
+
+
+def nombres_de_umbral(motor):
+    """Claves {UMBRAL:...} que el motor pide, para que build_motor_declarado
+    sepa que resolver y pueda avisar si una clave no esta en UMBRALES_PCC2."""
+    claves = set()
+    for _titulo, filas in _bloques(motor):
+        for f in filas:
+            claves.update(_RE_UMBRAL.findall(f.formula or ""))
+    return claves
+
+
+def resolver_umbrales(ws, reemplazos, ultima_fila, ncols):
+    """Cambia los centinelas de umbral por la expresion `IF(es_SI, si, us)`.
+
+    `reemplazos` es {clave: expresion}, ya compuesta por quien SI conoce
+    `UMBRALES_PCC2` y `umbral()` (build_db_materiales, para no crear un import
+    circular con este modulo). Mismo patron de dos pases que `resolver_material`.
+    """
+    if not reemplazos:
+        return 0
+    cambios = {_centinela_umbral(c): e for c, e in reemplazos.items()}
+    tocadas = 0
+    for fila in ws.iter_rows(min_row=1, max_row=ultima_fila, max_col=ncols):
+        for celda in fila:
+            v = celda.value
+            if not isinstance(v, str) or "__UMB@" not in v:
+                continue
+            for marca, destino in cambios.items():
+                v = v.replace(marca, destino)
+            celda.value = v
+            tocadas += 1
+    return tocadas
+
+
+def sustituir_nombres(formula, direcciones, columna_material=""):
     """Cambia {clave} por su direccion. Un nombre que no existe ABORTA.
 
     Sin este guardia, una referencia a una fila que se renombro produciria un
     #REF! en la hoja, que es un error que nadie mira hasta que alguien firma un
     calculo con el.
+
+    Los cuatro nombres de `NOMBRES_MATERIAL` son la excepcion: no son filas del
+    motor y su direccion todavia no existe cuando se emite la formula, asi que
+    salen como centinela y los resuelve `resolver_material()`. `{UMBRAL:...}`
+    es la misma idea aplicada a un umbral normativo: lo resuelve
+    `resolver_umbrales()`.
     """
+    formula = _RE_UMBRAL.sub(lambda m: _centinela_umbral(m.group(1)), formula)
+
+    def _material(m):
+        return _centinela(m.group(1), m.group(2) or columna_material or "D")
+
+    formula = _RE_MATERIAL.sub(_material, formula)
+
     def _uno(m):
         clave = m.group(1)
         if clave not in direcciones:
@@ -315,54 +483,280 @@ def sustituir_nombres(formula, direcciones):
     return _RE_NOMBRE.sub(_uno, formula)
 
 
+def nombres_de_material(motor):
+    """(nombre, columna) que el motor pide a la seccion de material."""
+    fuera = set()
+    for _titulo, filas in _bloques(motor):
+        for f in filas:
+            col = motor.material.columnas[0][0] if motor.material else "D"
+            for nombre, columna in _RE_MATERIAL.findall(f.formula or ""):
+                fuera.add((nombre, columna or col))
+    return fuera
+
+
+def comprobar_material_citable(motor):
+    """Aborta si una formula pide {S} y el motor no tiene cascada de material.
+
+    Un centinela sin quien lo resuelva llega a la hoja tal cual y Excel lo
+    rechaza: mejor decirlo al declarar, con el nombre de la fila delante.
+    """
+    pedidos = nombres_de_material(motor)
+    if not pedidos:
+        return
+    if motor.material is None:
+        raise SystemExit(
+            f"motor_declarado: {motor.hoja} usa "
+            f"{', '.join(sorted('{' + n + '}' for n, _c in pedidos))} en una "
+            f"formula, pero no declara `material`. Esos nombres los publica la "
+            f"seccion de resolucion de material; sin ella no existen.")
+    columnas = {letra for letra, _et in motor.material.columnas}
+    for nombre, columna in sorted(pedidos):
+        if columna not in columnas:
+            raise SystemExit(
+                f"motor_declarado: {motor.hoja} cita {{{nombre}@{columna}}}, "
+                f"pero su seccion de material no tiene columna {columna!r} "
+                f"(tiene {', '.join(sorted(columnas))}).")
+
+
+def comprobar_dimensionales(motor):
+    """Aborta si una cascada dimensional no encaja con las filas que nombra."""
+    filas = {f.clave: f for _t, fs in _bloques(motor) for f in fs}
+    declaradas = set()
+    for d in motor.dimensionales:
+        for campo in ("norma", "nps", "cedula"):
+            clave = getattr(d, campo)
+            f = filas.get(clave)
+            if f is None:
+                raise SystemExit(
+                    f"motor_declarado: la cascada dimensional de {motor.hoja} "
+                    f"nombra {clave!r} como su nivel {campo!r}, y no existe "
+                    f"como fila del motor.")
+            if f.tipo != LISTA or f.lista is None or f.lista.cascada != "B36":
+                raise SystemExit(
+                    f"motor_declarado: la fila {clave!r} de {motor.hoja} es el "
+                    f"nivel {campo!r} de una cascada dimensional, asi que "
+                    f"tiene que ser `tipo=LISTA` con "
+                    f"`Lista(cascada=\"B36\")`. Es {f.tipo!r}.")
+            if clave in declaradas:
+                raise SystemExit(
+                    f"motor_declarado: la fila {clave!r} de {motor.hoja} es "
+                    f"nivel de dos cascadas dimensionales a la vez.")
+            declaradas.add(clave)
+        for campo in ("od", "espesor"):
+            clave = getattr(d, campo)
+            if not clave:
+                continue
+            f = filas.get(clave)
+            if f is None:
+                raise SystemExit(
+                    f"motor_declarado: la cascada dimensional de {motor.hoja} "
+                    f"publica su {campo!r} en {clave!r}, que no existe como "
+                    f"fila del motor.")
+            if f.tipo != FORMULA:
+                raise SystemExit(
+                    f"motor_declarado: la fila {clave!r} de {motor.hoja} "
+                    f"recibe el {campo!r} de una cascada dimensional: tiene "
+                    f"que ser `tipo=FORMULA`. Es {f.tipo!r}.")
+            if f.formula:
+                raise SystemExit(
+                    f"motor_declarado: la fila {clave!r} de {motor.hoja} trae "
+                    f"formula propia ({f.formula!r}) y ademas recibe el "
+                    f"{campo!r} de una cascada dimensional. La escribe el "
+                    f"chasis -es quien conoce la norma elegida y el conmutador "
+                    f"SI/US-, asi que la declarada no se usaria: dejela vacia.")
+    # El reverso: una fila marcada como nivel de cascada que ninguna
+    # `Dimensional` recoge se quedaria SIN desplegable y sin que nada lo diga.
+    for _t, fs in _bloques(motor):
+        for f in fs:
+            if (f.tipo == LISTA and f.lista is not None and f.lista.cascada
+                    and f.clave not in declaradas):
+                raise SystemExit(
+                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} dice "
+                    f"salir de la cascada {f.lista.cascada!r}, pero ninguna "
+                    f"`Dimensional` de `motor.dimensionales` la nombra: se "
+                    f"quedaria sin desplegable y sin decirlo.")
+
+
+def resolver_material(ws, motor, refs, ultima_fila, ncols):
+    """Cambia los centinelas de material por las direcciones que ya existen.
+
+    Segundo pase, hermano del que RECOMPONE el dictamen: el bloque de material
+    se construye despues de la tabla, asi que este es el primer momento en que
+    `refs["por_columna"][letra]["s_t"]` tiene un valor.
+    """
+    pedidos = nombres_de_material(motor)
+    if not pedidos:
+        return 0
+    cambios = {}
+    for nombre, columna in pedidos:
+        destino = refs["por_columna"][columna][NOMBRES_MATERIAL[nombre]]
+        cambios[_centinela(nombre, columna)] = destino
+    tocadas = 0
+    for fila in ws.iter_rows(min_row=1, max_row=ultima_fila, max_col=ncols):
+        for celda in fila:
+            v = celda.value
+            if not isinstance(v, str) or "__MAT@" not in v:
+                continue
+            for marca, destino in cambios.items():
+                v = v.replace(marca, destino)
+            celda.value = v
+            tocadas += 1
+    return tocadas
+
+
+def bloques_citables(doc):
+    """Los bloques direccionables de un JSON de `resources/`, normalizados.
+
+    `Cita.bloque` es un INDICE, y hasta 2026-09-15 solo tenia sentido en los
+    JSON de PCC-2, que traen una lista plana `blocks`. Un motor que delega el
+    dimensionamiento al codigo de construccion -el Art. 204 lo hace ocho veces-
+    tiene que poder citar el B31.3, cuyo JSON no usa esa clave: trae `preamble`
+    y un arbol `sections`, cada una con `paragraphs` y `sections` anidadas. Y
+    sus tablas son otro archivo mas, con `columns`/`rows`.
+
+    Aqui se normalizan las tres formas a una sola lista de `{type, text}`. El
+    orden es el del documento y es DETERMINISTA, que es la unica propiedad que
+    de verdad importa: si el aplanado cambiara, TODAS las citas a ese archivo
+    se re-apuntarian en silencio a otro parrafo. `test_motor_declarado.py` fija
+    el indice de un parrafo conocido para que eso falle en vez de pasar.
+    """
+    # 1. PCC-2 y todo lo extraido con marker: lista plana, ya normalizada.
+    if isinstance(doc.get("blocks"), list):
+        return doc["blocks"]
+
+    # 2. Tabla suelta del B31.3: el rotulo primero, despues una entrada por
+    #    fila impresa. Asi `bloque=0` es el titulo -que NO publica un valor y
+    #    el guardia de abajo rechaza- y `bloque=n` es la fila n-1.
+    if isinstance(doc.get("rows"), list) and doc.get("columns") is not None:
+        fuera = [{"type": "section_header",
+                  "text": f"{doc.get('table_id', '')} {doc.get('title', '')}".strip()}]
+        fuera += [{"type": "table_row", "text": json.dumps(r, ensure_ascii=False)}
+                  for r in doc["rows"]]
+        return fuera
+
+    # 3. Capitulo del B31.3: preambulo y arbol de secciones, en preorden.
+    if isinstance(doc.get("sections"), list):
+        fuera = []
+
+        def _parrafos(nodo):
+            for p in nodo.get("paragraphs") or ():
+                fuera.append({"type": p.get("kind") or "paragraph",
+                              "text": p.get("text") or ""})
+
+        def _rama(nodo):
+            for s in nodo.get("sections") or ():
+                fuera.append({
+                    "type": "section_header",
+                    "text": f"{s.get('id', '')} {s.get('heading', '')}".strip()})
+                _parrafos(s)
+                _rama(s)
+
+        for p in doc.get("preamble") or ():
+            fuera.append({"type": p.get("kind") or "paragraph",
+                          "text": p.get("text") or ""})
+        _parrafos(doc)
+        _rama(doc)
+        return fuera
+
+    return []
+
+
+def _citas_del_motor(motor):
+    """(clave, etiqueta, cita, obligatoria) de todo lo que el motor puede citar.
+
+    `clave` es lo que va a la tabla de trazabilidad -la misma que tenia antes,
+    para no cambiarle la forma a quien la consuma-; `etiqueta` es la
+    descripcion que sale en el mensaje de error, que sin ella no diria si el
+    fallo esta en una fila, en una verificacion o en una especificacion.
+
+    Las `Fila` de calculo son las unicas donde la cita es OBLIGATORIA -sin ella
+    no hay numero trazable-, pero `Verificacion` y `Especificacion` tambien la
+    declaran, y hasta 2026-09-15 NADIE las comprobaba: una cita a un bloque
+    inexistente en una especificacion pasaba en verde. Se validan igual cuando
+    estan; seguir sin declararlas sigue siendo legal.
+    """
+    # Las filas od/espesor de una cascada dimensional son FORMULA pero SIN
+    # formula propia (comprobar_dimensionales lo exige): las escribe el
+    # chasis con el lookup contra DB_B36_10/19, cuya procedencia ya audita
+    # verificar.py §11 fila a fila. Exigirles ademas una Cita a un bloque de
+    # texto seria pedir una trazabilidad que no les corresponde -el dato no
+    # sale de un parrafo, sale de una base de datos ya auditada-.
+    sin_cita_exigible = {d.od for d in motor.dimensionales if d.od} | \
+        {d.espesor for d in motor.dimensionales if d.espesor}
+    for _titulo, filas in _bloques(motor):
+        for f in filas:
+            if f.tipo == FORMULA:
+                yield (f.clave, f"fila {f.clave!r}", f.cita,
+                       f.clave not in sin_cita_exigible)
+            elif f.cita is not None:
+                yield f.clave, f"fila {f.clave!r}", f.cita, False
+            # Una enumeracion que publica el codigo se cita igual (ver Lista).
+            if f.lista is not None and f.lista.cita is not None:
+                yield (f"{f.clave}.lista", f"lista de {f.clave!r}",
+                       f.lista.cita, False)
+    for v in motor.verificaciones:
+        if v.cita is not None:
+            yield v.clave, f"verificacion {v.clave!r}", v.cita, False
+    for _grupo, especs in motor.especificaciones:
+        for e in especs:
+            if e.cita is not None:
+                yield (e.concepto, f"especificacion {e.concepto!r}",
+                       e.cita, False)
+
+
 def comprobar_procedencia(motor, resources):
     """Tabla de trazabilidad del motor. Aborta si algo no se puede rastrear.
 
     Un numero que nadie puede rastrear no se construye: es la Regla n.1 hecha
     mecanismo. Se comprueba ademas que el bloque citado EXISTE en el JSON, el
     mismo guardia que la s.9 de verificar.py hace con MAP_Grupo.
+
+    La cita se valida contra SU PROPIO archivo (`Cita.archivo`), no contra
+    `motor.fuente`. Hasta 2026-09-15 `archivo` era decorativo -solo se imprimia-
+    y todo se validaba contra la fuente unica del motor; un articulo que delega
+    el calculo a su codigo de construccion no se puede declarar asi. `archivo`
+    vacio sigue significando "la fuente del motor", que es el caso normal.
     """
     resources = Path(resources)
     cache, tabla = {}, []
-    for _titulo, filas in _bloques(motor):
-        for f in filas:
-            if f.tipo != FORMULA:
-                continue
-            if f.cita is None:
+    for clave, etiqueta, cita, obligatoria in _citas_del_motor(motor):
+        if cita is None:
+            if obligatoria:
                 raise SystemExit(
-                    f"motor_declarado: la fila {f.clave!r} de {motor.hoja} es un "
+                    f"motor_declarado: la {etiqueta} de {motor.hoja} es un "
                     f"calculo sin procedencia. Un numero que nadie puede "
                     f"rastrear no se construye (Regla n.1).")
-            ruta = resources / motor.fuente
-            if ruta not in cache:
-                if not ruta.exists():
-                    raise SystemExit(
-                        f"motor_declarado: no existe {ruta}. La fuente del motor "
-                        f"tiene que estar en resources/.")
-                cache[ruta] = json.loads(ruta.read_text(encoding="utf-8"))
-            bloques = cache[ruta].get("blocks", [])
-            if not 0 <= f.cita.bloque < len(bloques):
+            continue
+        ruta = resources / (cita.fuente or motor.fuente)
+        if ruta not in cache:
+            if not ruta.exists():
                 raise SystemExit(
-                    f"motor_declarado: {f.clave!r} cita el bloque "
-                    f"{f.cita.bloque} de {f.cita.archivo}, que tiene "
-                    f"{len(bloques)} bloques.")
-            # Un ROTULO no publica un valor. El bloque existe -el guardia de
-            # arriba pasa- pero `section_header` es el titulo del parrafo, no
-            # el parrafo: citarlo es la forma silenciosa de que una cita
-            # parezca valida y apunte al sitio donde el dato NO esta (caso
-            # real: "206-4.1 Installation" es el bloque 62 y la luz radial de
-            # 2,5 mm la imprime el 63). Se rechaza en vez de admitirse, que es
-            # lo que exige la Regla n.1: la trazabilidad tiene que llevar al
-            # texto que publica el numero.
-            tipo_bloque = str(bloques[f.cita.bloque].get("type", ""))
-            if tipo_bloque == "section_header":
-                raise SystemExit(
-                    f"motor_declarado: {f.clave!r} cita el bloque "
-                    f"{f.cita.bloque} de {f.cita.archivo}, que es un "
-                    f"section_header ({bloques[f.cita.bloque].get('text', '')!r}). "
-                    f"Un rotulo no publica un valor: cite el bloque que "
-                    f"imprime el dato.")
-            tabla.append((f.clave, f.cita.clausula, f.cita.archivo, f.cita.bloque))
+                    f"motor_declarado: la {etiqueta} de {motor.hoja} cita "
+                    f"{cita.archivo!r}, cuya ruta ({cita.fuente or motor.fuente}) "
+                    f"no existe en {resources}. Todo lo que cita un motor tiene "
+                    f"que estar en resources/.")
+            cache[ruta] = bloques_citables(
+                json.loads(ruta.read_text(encoding="utf-8")))
+        bloques = cache[ruta]
+        donde = cita.archivo or cita.fuente or motor.fuente
+        if not 0 <= cita.bloque < len(bloques):
+            raise SystemExit(
+                f"motor_declarado: la {etiqueta} de {motor.hoja} cita el bloque "
+                f"{cita.bloque} de {donde}, que tiene {len(bloques)} bloques.")
+        # Un ROTULO no publica un valor. El bloque existe -el guardia de arriba
+        # pasa- pero `section_header` es el titulo del parrafo, no el parrafo:
+        # citarlo es la forma silenciosa de que una cita parezca valida y
+        # apunte al sitio donde el dato NO esta (caso real: "206-4.1
+        # Installation" es el bloque 62 y la luz radial de 2,5 mm la imprime el
+        # 63). Se rechaza en vez de admitirse, que es lo que exige la Regla n.1:
+        # la trazabilidad tiene que llevar al texto que publica el numero.
+        if str(bloques[cita.bloque].get("type", "")) == "section_header":
+            raise SystemExit(
+                f"motor_declarado: la {etiqueta} de {motor.hoja} cita el bloque "
+                f"{cita.bloque} de {donde}, que es un section_header "
+                f"({bloques[cita.bloque].get('text', '')!r}). Un rotulo no "
+                f"publica un valor: cite el bloque que imprime el dato.")
+        tabla.append((clave, cita.clausula, donde, cita.bloque))
     return tabla
 
 
@@ -489,6 +883,23 @@ def comprobar_listas(motor):
                     f"cabecera>')-: una lista de items tecleada a mano no se "
                     f"audita, no se actualiza si la base cambia y puede "
                     f"ofrecer un valor que la base ni admite (reglas 12 y 14).")
+            if f.lista.cascada:
+                # Los items de un nivel dependen del nivel de arriba, asi que
+                # no es una columna que se pueda copiar: la escribe el
+                # constructor de la cascada. Aqui solo se exige que la fila no
+                # diga ademas otra procedencia, que seria decir dos cosas.
+                if f.lista.hoja or f.lista.columna or f.lista.opciones:
+                    raise SystemExit(
+                        f"motor_declarado: la Lista de {f.clave!r} en "
+                        f"{motor.hoja} dice que sale de la cascada "
+                        f"{f.lista.cascada!r} y ademas declara hoja, columna u "
+                        f"opciones. Una Lista es una cosa o la otra.")
+                if f.lista.cascada != "B36":
+                    raise SystemExit(
+                        f"motor_declarado: la Lista de {f.clave!r} en "
+                        f"{motor.hoja} pide la cascada {f.lista.cascada!r}, "
+                        f"que no existe. Hoy solo hay 'B36'.")
+                continue
             de_base = bool(f.lista.hoja or f.lista.columna)
             if de_base and f.lista.opciones:
                 raise SystemExit(
@@ -506,15 +917,25 @@ def comprobar_listas(motor):
                 raise SystemExit(
                     f"motor_declarado: la Lista de {f.clave!r} en "
                     f"{motor.hoja} llega vacia: ni base ni enumeracion.")
-            if f.clave not in CLAVES_CON_ENUMERACION:
+            if f.clave in CLAVES_CON_ENUMERACION:
+                if f.lista.cita is not None:
+                    raise SystemExit(
+                        f"motor_declarado: la Lista de {f.clave!r} en "
+                        f"{motor.hoja} trae `cita`, pero {f.clave!r} es una "
+                        f"enumeracion del MARCO -el conmutador SI/US y el "
+                        f"selector de codigo no los publica ningun articulo-. "
+                        f"Una cita ahi afirmaria una procedencia que no existe.")
+            elif f.lista.cita is None:
                 raise SystemExit(
                     f"motor_declarado: la fila {f.clave!r} de {motor.hoja} "
                     f"declara una enumeracion tecleada "
-                    f"({', '.join(map(str, f.lista.opciones))}). Solo "
-                    f"{' y '.join(CLAVES_CON_ENUMERACION)} -las dos "
-                    f"enumeraciones que publica el propio marco y que ninguna "
-                    f"base tabula- pueden hacerlo. Todo lo demas sale de una "
-                    f"base de datos del libro (reglas 12 y 14).")
+                    f"({', '.join(map(str, f.lista.opciones))}) sin `cita`. "
+                    f"Una enumeracion se admite en dos sitios: "
+                    f"{' y '.join(CLAVES_CON_ENUMERACION)} -las que publica el "
+                    f"propio marco- o cualquier clave cuya enumeracion la "
+                    f"publique el CODIGO, y entonces tiene que decir DONDE "
+                    f"(Lista(opciones=..., cita=Cita(...))). Sin una de las "
+                    f"dos cosas, sale de una base del libro (reglas 12 y 14).")
             # El `ejemplo` es el valor que el chasis escribe en la celda, y una
             # celda con validacion "detener" cuyo valor precargado no esta en
             # la lista es un formulario que nace invalido: Excel no lo rechaza
@@ -699,7 +1120,10 @@ def emitir_tabla(ws, motor, helpers):
                 # (comprobar_dictamen lo exige): la COMPONE el chasis desde lo
                 # que el motor declara que entra al veredicto.
                 expr = (formula_dictamen(motor) if f.clave == "dictamen"
-                        else sustituir_nombres(f.formula, dirs))
+                        else sustituir_nombres(
+                            f.formula, dirs,
+                            motor.material.columnas[0][0]
+                            if motor.material else ""))
                 helpers.calculo(ws, celda, expr)
             else:
                 helpers.entrada(ws, celda, f.ejemplo)

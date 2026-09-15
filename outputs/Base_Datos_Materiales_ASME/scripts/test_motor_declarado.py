@@ -757,3 +757,247 @@ def test_el_ejemplo_que_si_esta_entre_los_items_pasa():
             M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
                    ejemplo="SI", lista=M.Lista(opciones=("SI", "US"))),)),))
     assert M.comprobar_listas(motor) is None
+
+
+# ---------------------------------------------------------------------------
+# Multifuente (2026-09-15). Un articulo que DELEGA el calculo -el Art. 204 lo
+# hace ocho veces- cita el codigo de construccion, no solo su propio JSON.
+# ---------------------------------------------------------------------------
+from pathlib import Path as _Path
+
+_RESOURCES = _Path(__file__).resolve().parents[3] / "resources"
+_B313_CAP2 = "ASME B31/ASME B31.3/CHAPTERS/chapter_02.json"
+
+
+def _segundo_json(tmp_path, blocks, rel="otro/art_888.json"):
+    import json
+    ruta = tmp_path / rel
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    ruta.write_text(json.dumps({"blocks": blocks}), encoding="utf-8")
+    return rel
+
+
+def test_bloques_citables_deja_intacta_la_forma_de_marker():
+    """Un JSON de PCC-2 ya viene plano: no se toca."""
+    doc = {"blocks": [{"type": "paragraph", "text": "a"}]}
+    assert M.bloques_citables(doc) is doc["blocks"]
+
+
+def test_bloques_citables_aplana_un_capitulo_del_b31_3():
+    """Encabezado, luego sus parrafos, luego sus subsecciones: preorden."""
+    doc = {"preamble": [{"kind": "paragraph", "text": "pre"}],
+           "sections": [{"id": "1", "heading": "Uno",
+                         "paragraphs": [{"kind": "paragraph", "text": "p1"},
+                                        {"kind": "equation", "text": "e1"}],
+                         "sections": [{"id": "1.1", "heading": "Uno uno",
+                                       "paragraphs": [{"kind": "paragraph",
+                                                       "text": "p11"}]}]}]}
+    assert [(b["type"], b["text"]) for b in M.bloques_citables(doc)] == [
+        ("paragraph", "pre"),
+        ("section_header", "1 Uno"),
+        ("paragraph", "p1"),
+        ("equation", "e1"),
+        ("section_header", "1.1 Uno uno"),
+        ("paragraph", "p11"),
+    ]
+
+
+def test_bloques_citables_aplana_una_tabla_suelta():
+    """El rotulo primero -y es section_header, asi que no se puede citar- y
+    despues una entrada por fila impresa."""
+    doc = {"table_id": "Table 304.4.1-1", "title": "Closures",
+           "columns": [{"key": "a"}], "rows": [{"a": 1}, {"a": 2}]}
+    bs = M.bloques_citables(doc)
+    assert bs[0]["type"] == "section_header"
+    assert [b["type"] for b in bs[1:]] == ["table_row", "table_row"]
+    assert len(bs) == 3
+
+
+def test_el_aplanado_del_b31_3_es_estable():
+    """EL guardia del aplanado, y el motivo de que exista.
+
+    `Cita.bloque` es un INDICE. Si el aplanado cambiara de orden o de criterio,
+    TODAS las citas al B31.3 se re-apuntarian a otro parrafo **en silencio** y
+    ningun otro guardia lo veria: el bloque seguiria existiendo y seguiria sin
+    ser un rotulo. Se fija aqui contra el archivo real: la eq. (3a) de
+    `para. 304.1.2` tiene que seguir siendo el bloque 297.
+    """
+    import json
+    doc = json.loads((_RESOURCES / _B313_CAP2).read_text(encoding="utf-8"))
+    bs = M.bloques_citables(doc)
+    assert len(bs) == 1106
+    assert bs[295]["type"] == "section_header"
+    assert bs[295]["text"] == "304.1.2 Straight Pipe Under Internal Pressure"
+    assert bs[297]["type"] == "equation"
+    assert "(3a)" in bs[297]["text"] and "SEW" in bs[297]["text"]
+    # Las tres del refuerzo por area, que son las que calculan la abertura
+    # mecanizada en el cap de la caja (304.4.2(e) remite a 304.3.3).
+    assert "(6)" in bs[401]["text"]
+    assert "(7)" in bs[407]["text"]
+    assert "(8)" in bs[409]["text"]
+
+
+def test_una_cita_con_fuente_propia_se_valida_contra_ESE_archivo(tmp_path):
+    _json_de_prueba(tmp_path, [{"type": "paragraph", "text": "del 999"}])
+    rel = _segundo_json(tmp_path, [{"type": "section_header", "text": "rotulo"},
+                                   {"type": "equation", "text": "t = PD/2SE"}])
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("t", "Espesor delegado", tipo=M.FORMULA, formula="=1",
+                   cita=M.Cita("B31.3 cap. II", bloque=1, clausula="304.1.2",
+                               fuente=rel)),
+        )),))
+    assert M.comprobar_procedencia(motor, tmp_path) == [
+        ("t", "304.1.2", "B31.3 cap. II", 1)]
+
+
+def test_una_cita_a_un_segundo_archivo_que_no_existe_aborta(tmp_path):
+    _json_de_prueba(tmp_path, [{"type": "paragraph", "text": "x"}])
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("t", "Espesor", tipo=M.FORMULA, formula="=1",
+                   cita=M.Cita("B31.3", bloque=0, clausula="304.1.2",
+                               fuente="no/existe.json")),
+        )),))
+    with pytest.raises(SystemExit, match="no existe"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_el_guardia_del_rotulo_tambien_rige_en_el_segundo_archivo(tmp_path):
+    _json_de_prueba(tmp_path, [{"type": "paragraph", "text": "x"}])
+    rel = _segundo_json(tmp_path, [{"type": "section_header", "text": "304.4.1"}])
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("t", "Espesor", tipo=M.FORMULA, formula="=1",
+                   cita=M.Cita("B31.3", bloque=0, clausula="304.4.1",
+                               fuente=rel)),
+        )),))
+    with pytest.raises(SystemExit, match="section_header"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_la_cita_de_una_verificacion_tambien_se_comprueba(tmp_path):
+    """Hasta 2026-09-15 nadie las miraba: una cita rota pasaba en verde."""
+    _json_de_prueba(tmp_path, [{"type": "paragraph", "text": "x"}])
+    motor = _motor_minimo()._replace(
+        secciones=(),
+        verificaciones=(M.Verificacion(
+            "v", "Una verificacion", requerido="", adoptado="", criterio="a>=b",
+            cita=M.Cita("art_999.json", bloque=99, clausula="999-5")),))
+    with pytest.raises(SystemExit, match="verificacion"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_la_cita_de_una_especificacion_tambien_se_comprueba(tmp_path):
+    _json_de_prueba(tmp_path, [{"type": "paragraph", "text": "x"}])
+    motor = _motor_minimo()._replace(
+        secciones=(),
+        especificaciones=(("Grupo", (M.Especificacion(
+            "Un concepto", "Un texto", "204-4.1",
+            cita=M.Cita("art_999.json", bloque=99, clausula="204-4.1")),)),))
+    with pytest.raises(SystemExit, match="especificacion"):
+        M.comprobar_procedencia(motor, tmp_path)
+
+
+def test_una_enumeracion_del_codigo_sin_cita_aborta():
+    """Regla 12: una lista tecleada que nadie puede auditar no entra."""
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("metodo_prueba", "Metodo de prueba", tipo=M.LISTA,
+                   ejemplo="Hidrostatica",
+                   lista=M.Lista(opciones=("Hidrostatica", "Neumatica"))),
+        )),))
+    with pytest.raises(SystemExit, match="cita"):
+        M.comprobar_listas(motor)
+
+
+def test_una_enumeracion_del_codigo_con_cita_se_admite():
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("metodo_prueba", "Metodo de prueba", tipo=M.LISTA,
+                   ejemplo="Hidrostatica",
+                   lista=M.Lista(opciones=("Hidrostatica", "Neumatica"),
+                                 cita=M.Cita("art_204.json", bloque=101,
+                                             clausula="204-6.2"))),
+        )),))
+    assert M.comprobar_listas(motor) is None          # no aborta
+
+
+def test_una_enumeracion_del_MARCO_con_cita_aborta():
+    """El conmutador SI/US no lo publica ningun articulo: citarlo seria
+    afirmar una procedencia que no existe."""
+    motor = _motor_minimo()._replace(secciones=(
+        M.Seccion("1. DATOS", filas=(
+            M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA, ejemplo="SI",
+                   lista=M.Lista(opciones=("SI", "US"),
+                                 cita=M.Cita("art_204.json", bloque=2,
+                                             clausula="204-1"))),
+        )),))
+    with pytest.raises(SystemExit, match="MARCO"):
+        M.comprobar_listas(motor)
+
+
+# ---------------------------------------------------------------------------
+# {S} de la cascada dentro de una ecuacion (2026-09-15). Lo pide el Art. 204:
+# delega el espesor al B31.3 y la eq. (3a) es t = PD/(2(SEW + PY)).
+# ---------------------------------------------------------------------------
+def _motor_con_S(formula="={P}*2/(2*({S}*{E}))", columnas=(("D", "Metal base"),)):
+    return _motor_minimo()._replace(
+        material=M.Material(columnas=columnas),
+        secciones=(
+            M.Seccion("1. DATOS", filas=(
+                M.Fila("P", "Presion", magnitud="pres", tipo=M.ENTRADA,
+                       ejemplo=20),
+                M.Fila("E", "Eficiencia", tipo=M.ENTRADA, ejemplo=1.0),
+                M.Fila("t_req", "Espesor requerido", magnitud="len",
+                       tipo=M.FORMULA, formula=formula,
+                       cita=M.Cita("B31.3", bloque=1, clausula="304.1.2")),
+            )),))
+
+
+def test_el_nombre_de_material_sale_como_centinela():
+    """La direccion del S(T) no existe cuando se emite la formula: el bloque
+    de material se construye DESPUES de la tabla."""
+    salida = M.sustituir_nombres("={S}*2", {}, "D")
+    assert salida == "=__MAT@S@D__*2"
+    # El centinela lleva '@', que Excel no admite en una referencia: uno que
+    # sobreviva a los dos pases revienta en vez de calcular contra otra celda.
+    assert "@" in salida
+
+
+def test_se_puede_pedir_el_material_de_otra_columna():
+    assert M.sustituir_nombres("={S@E}", {}, "D") == "=__MAT@S@E__"
+
+
+def test_nombres_de_material_los_encuentra_en_las_formulas():
+    assert M.nombres_de_material(_motor_con_S()) == {("S", "D")}
+
+
+def test_pedir_S_sin_cascada_de_material_aborta():
+    motor = _motor_con_S()._replace(material=None)
+    with pytest.raises(SystemExit, match="no declara `material`"):
+        M.comprobar_material_citable(motor)
+
+
+def test_pedir_una_columna_de_material_que_no_existe_aborta():
+    motor = _motor_con_S(formula="={P}*{S@E}")
+    with pytest.raises(SystemExit, match="columna 'E'"):
+        M.comprobar_material_citable(motor)
+
+
+def test_un_motor_sin_material_en_formulas_no_exige_cascada():
+    assert M.comprobar_material_citable(_motor_minimo()) is None
+
+
+def test_resolver_material_cambia_el_centinela_por_la_direccion():
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws["D6"] = "=__MAT@S@D__*2"
+    ws["D7"] = "=1+1"
+    refs = {"por_columna": {"D": {"s_t": "$D$99", "tmax": "$D$97",
+                                  "material_id": "$D$88", "dictamen": "$D$98"}}}
+    tocadas = M.resolver_material(ws, _motor_con_S(), refs, 10, 7)
+    assert tocadas == 1
+    assert ws["D6"].value == "=$D$99*2"
+    assert ws["D7"].value == "=1+1"

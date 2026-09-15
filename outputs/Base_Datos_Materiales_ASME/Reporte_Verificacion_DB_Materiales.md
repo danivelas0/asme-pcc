@@ -1,6 +1,6 @@
 # Reporte de verificacion — PLAN-DB-MAT-001
 
-Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  78 hojas
+Libro verificado: `Motor_de_Calculo_ASME_PCC_Rev4.xlsm`  ·  82 hojas
 
 ## 1. Conteo de filas (JSON fuente -> hoja)
 
@@ -312,11 +312,11 @@ La letra del dictamen se compara contra su propio relleno: un dxf que aplique la
 | Comprobacion | Detalle | Estado |
 |---|---|---|
 | Unica hoja visible es el Dashboard | Dashboard | OK |
-| Las 43 hojas navegables estan hidden | 43 hojas | OK |
+| Las 47 hojas navegables estan hidden | 47 hojas | OK |
 | El resto esta veryHidden | 34 hojas | OK |
 | Ninguna base que alimente un motor es alcanzable desde la UI |  | OK |
 | El paquete conserva xl/vbaProject.bin | .xlsm | OK |
-| Los botones del arbol cubren las 43 hojas navegables | 44 destinos distintos en 18 hojas | OK |
+| Los botones del arbol cubren las 47 hojas navegables | 48 destinos distintos en 19 hojas | OK |
 | Cada hoja navegable vuelve a SU PADRE, no a la raiz |  | OK |
 | Toda hoja navegable se alcanza desde el Dashboard | huerfanas: ninguna | OK |
 
@@ -369,9 +369,10 @@ Discrepancias: **0**
 
 ## 12. Motores declarados (maquinaria, no ingenieria)
 
-Registro vacio (`motores.MOTORES_DECLARADOS == ()`): ningun motor declarado que recorrer todavia.
+| Motor!Celda | Detalle | Estado |
+|---|---|---|
 
-**0 motores declarados, 0 fallos.**
+**1 motores declarados, 0 fallos.**
 
 ## Resultado
 

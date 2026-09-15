@@ -7316,6 +7316,10 @@ _ART_212_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
                  "art_212_fillet_welded_patches/art_212.json")
 _ART_206_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
                  "art_206_full_encirclement_steel/art_206.json")
+# El Art. 210 NO es un motor del libro: se cita desde el Art. 204, que le
+# remite la soldadura en servicio (`para. 204-4.4`). Por eso entra como RUTA.
+_ART_210_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+                 "art_210_service_welding_onto/art_210.json")
 _APP_501_II = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
                "app_501_ii/app_501_ii.json")
 _APP_501_III = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
@@ -7337,6 +7341,18 @@ UMBRALES_PCC2 = {
     "206_longitud_min": ("206", "at least 100 mm"),
     "206_sobrepaso": ("206", "extend beyond the defect by at least 50mm"),
     "206_luz_radial": ("206", "radial gap of up to 2.5 mm"),
+    # Art. 204. El articulo NO imprime ni una cifra -barrido completo: cero
+    # umbrales de doble unidad-, asi que lo unico que se le registra viene del
+    # Art. 210, al que remite `para. 204-4.4` para la soldadura en servicio.
+    #
+    # OJO CON QUE ES: el 210 NO publica un minimo de espesor. Dice que soldar
+    # sobre pared delgada "[e.g., 4.8 mm (0.188 in.) or less] IS POSSIBLE as
+    # long as precautions are taken". Es un EJEMPLO de pared delgada que pide
+    # precauciones, no un criterio de aceptacion: el motor lo usa para avisar,
+    # nunca para bloquear. Tratarlo como minimo inventaria un requisito que el
+    # codigo no pone.
+    "210_pared_delgada": (_ART_210_JSON, "4.8 mm"),
+    "210_pared_reducir_aporte": (_ART_210_JSON, "less than 6.4 mm"),
 }
 # "1 ∕ 16" y "3 ∕ 32" llegan como fraccion con el signo de division de Unicode.
 _RE_UMBRAL = re.compile(
@@ -7366,12 +7382,22 @@ def _json_de_articulo(articulo, declarados=None):
     rutas = {"212": _ART_212_JSON, "206": _ART_206_JSON}
     ms = MOTORES_DECLARADOS if declarados is None else declarados
     rutas.update({m.articulo: m.fuente for m in ms})
-    if articulo not in rutas:
-        raise SystemExit(
-            f"UMBRALES_PCC2 registra un umbral del Art. {articulo}, que no es "
-            f"ninguno de los motores del libro. Declare el articulo -y con el "
-            f"su `fuente`- antes de registrarle un umbral.")
-    return rutas[articulo]
+    if articulo in rutas:
+        return rutas[articulo]
+    # Una RUTA directa en resources/ (2026-09-15). Un motor puede necesitar un
+    # umbral que imprime un articulo que NO es el suyo y que tampoco es un
+    # motor del libro: el Art. 204 remite a la soldadura en servicio del Art.
+    # 210 (para. 204-4.4), y es el 210 quien imprime "4.8 mm (0.188 in.)".
+    # Antes, la unica forma de citarlo era declarar el 210 como motor entero.
+    # Se admite la ruta con la misma exigencia de siempre: el par de unidades
+    # se LEE de ese JSON, nunca se convierte (Regla n.1 y regla 9).
+    if "/" in articulo or "\\" in articulo:
+        return articulo
+    raise SystemExit(
+        f"UMBRALES_PCC2 registra un umbral del Art. {articulo}, que no es "
+        f"ninguno de los motores del libro. Declare el articulo -y con el "
+        f"su `fuente`- antes de registrarle un umbral, o registre el umbral "
+        f"con la RUTA de su JSON en resources/.")
 
 
 def leer_umbrales_pcc2(resources):
@@ -10131,7 +10157,7 @@ def _items_de_base(wb, hoja, columna):
     return items
 
 
-def _helpers_del_libro(ws, wb=None):
+def _helpers_del_libro(ws, wb=None, siguiente_col=None):
     """Los helpers de estilo del libro, para el chasis.
 
     Son los MISMOS gestos que usan los dos motores escritos a mano: banda de
@@ -10141,6 +10167,13 @@ def _helpers_del_libro(ws, wb=None):
     `wb` solo hace falta para los desplegables atados a una base de datos: es
     de donde se leen sus items. Va opcional para que las pruebas del chasis que
     no declaran ninguna LISTA de base sigan pidiendo solo la hoja.
+
+    `siguiente_col` es el contador de columnas ocultas, que el llamador puede
+    aportar para SEGUIR contando despues. Las cascadas dimensionales se
+    materializan cuando `emitir_tabla` ya ha terminado, y tienen que caer en
+    columnas que ningun desplegable haya usado: con dos contadores
+    independientes se pisarian, y el sintoma seria un desplegable que ofrece
+    los items de otro.
     """
     def banda(w, fila, texto):
         w.merge_cells(start_row=fila, start_column=1, end_row=fila,
@@ -10206,7 +10239,8 @@ def _helpers_del_libro(ws, wb=None):
     # elemento y no un `nonlocal` porque estas cuatro funciones se cierran
     # sobre ella y la claridad importa mas que la micro-elegancia: el estado
     # que avanza esta a la vista.
-    siguiente_col = [COL_LISTAS_DECLARADAS]
+    siguiente_col = ([COL_LISTAS_DECLARADAS] if siguiente_col is None
+                     else siguiente_col)
 
     def lista(w, celda, decl):
         """Materializa el desplegable de una Fila LISTA y valida contra su rango.
@@ -10218,6 +10252,12 @@ def _helpers_del_libro(ws, wb=None):
         OCULTA de la propia hoja y apuntar la validacion a ese rango literal.
         Se sigue ese patron, no se inventa otro.
         """
+        if decl.cascada:
+            # Los items de un nivel dependen del nivel de arriba (las cedulas
+            # que existen PARA ESE NPS), asi que no son una columna que se
+            # pueda copiar: los escribe _materializar_cascada_b36, que corre
+            # despues de emitir_tabla y es quien sabe encadenarlos.
+            return
         col = siguiente_col[0]
         if col >= COL_MANIFIESTO_RESET:
             raise SystemExit(
@@ -10450,6 +10490,8 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     """Construye la hoja de un motor DECLARADO y le aplica los pases del libro."""
     MD.comprobar_procedencia(motor, resources)      # Regla n.1: antes de nada
     MD.comprobar_nombres_declarativos(motor)        # ni una llave a una fila que no existe
+    MD.comprobar_material_citable(motor)            # ni un {S} sin cascada que lo publique
+    MD.comprobar_dimensionales(motor)               # ni un nivel de cascada suelto
     if motor.hoja in wb.sheetnames:
         del wb[motor.hoja]
     ws = new_sheet(wb, motor.hoja, motor.titulo, f"Fuente: resources/{motor.fuente}")
@@ -10458,7 +10500,10 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     ws.merge_cells(f"A2:{get_column_letter(MOTOR_NCOLS)}2")
     # El libro entra a los helpers porque un desplegable atado a una base lee
     # sus items de la hoja de esa base (regla 12: nunca de un literal).
-    res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws, wb))
+    # El contador de columnas ocultas se comparte con las cascadas
+    # dimensionales, que se materializan despues: dos contadores se pisarian.
+    siguiente_col = [COL_LISTAS_DECLARADAS]
+    res = MD.emitir_tabla(ws, motor, _helpers_del_libro(ws, wb, siguiente_col))
     dirs = res["direcciones"]      # la MISMA resolucion que uso emitir_tabla
 
     def _reservada(clave, pase):
@@ -10482,6 +10527,35 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
     # una sola vez y se reutiliza dentro y fuera de la seccion de material.
     unidad_cell = _reservada("unidad", "el conmutador SI/US de todo motor")
     es_si = f'{unidad_cell}="SI"'
+
+    # Cascadas dimensionales (etapa 1c de la skill motor_pcc2). Cada
+    # `Dimensional` de motor.dimensionales pide su propia tanda de 4 columnas
+    # ocultas -_materializar_cascada_b36 las cuenta desde `col_base`, y aqui se
+    # le pasa `siguiente_col[0]`, el MISMO contador que ya avanzaron las Fila
+    # LISTA de emitir_tabla: dos contadores independientes se pisarian (dos
+    # cascadas, o una cascada y un desplegable de base, cayendo en la misma
+    # columna). `comprobar_dimensionales()` ya valido en la cabecera de esta
+    # funcion que cada Dimensional nombra filas LISTA/FORMULA coherentes; aqui
+    # solo queda escribir lo que esas filas prometen.
+    for d in motor.dimensionales:
+        col_valor_d = chr(ord("A") + MD.COL_PRIMER_CASO - 1)
+        casc = _materializar_cascada_b36(
+            ws, b3610, b3619,
+            fila_norma=int(dirs[d.norma].split("$")[-1]),
+            fila_nps=int(dirs[d.nps].split("$")[-1]),
+            fila_ced=int(dirs[d.cedula].split("$")[-1]),
+            col_base=siguiente_col[0], col_valor=col_valor_d)
+        siguiente_col[0] = casc["ultima_col"] + 1
+        idx = casc["idx"]
+        clave_key = f'{dirs[d.nps]}&"|"&{dirs[d.cedula]}'
+        if d.od:
+            ws[dirs[d.od].replace("$", "")] = (
+                f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "od_mm", es_si, "od_in")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")')
+        if d.espesor:
+            ws[dirs[d.espesor].replace("$", "")] = (
+                f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "t_mm", es_si, "t_in")},'
+                f'MATCH({clave_key},{_choose_b36(idx, b3610, b3619, "clave")},0)),"")')
 
     if motor.material is not None:
         # La fila reservada `modo` se exige SIEMPRE que haya material, lleve o
@@ -10515,6 +10589,11 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
         # guardia. Fuera de el reventaria con un AttributeError en cuanto un
         # motor sin material (una tarea posterior declara justamente uno, sin
         # ecuaciones ni cascada) pasara por aqui.
+        # Segundo pase, hermano del que recompone el dictamen: hasta aqui las
+        # formulas que usan el esfuerzo admisible de la cascada llevan un
+        # centinela, porque el bloque de material no existia cuando se
+        # emitieron. Ahora si, y `refs` trae su direccion.
+        MD.resolver_material(ws, motor, refs, ws.max_row, MOTOR_NCOLS)
         build_manifiesto_cascada(ws, motor.material.columnas, refs["fila_banda"],
                                  {}, unidad_cell)
         if motor.dictamen is not None:
@@ -10530,6 +10609,22 @@ def build_motor_declarado(wb, motor, b313, iid1a, iidb, fac_info, rangos,
                 motor, celdas_material=tuple(
                     refs["por_columna"][letra]["dictamen"]
                     for letra, _et in motor.material.columnas))
+
+    # Umbrales normativos citados con {UMBRAL:clave} dentro de una formula
+    # declarada (motor_declarado.resolver_umbrales): el centinela ya esta en
+    # la hoja desde emitir_tabla, y aqui se cambia por IF(es_SI, si, us) leido
+    # de UMBRALES_PCC2/leer_umbrales_pcc2 -nunca tecleado en la declaracion.
+    pedidos_umbral = MD.nombres_de_umbral(motor)
+    if pedidos_umbral:
+        faltan = pedidos_umbral - set(umbrales)
+        if faltan:
+            raise SystemExit(
+                f"build_motor_declarado: {motor.hoja} cita "
+                f"{{UMBRAL:{sorted(faltan)[0]}}}, que no esta registrado en "
+                f"UMBRALES_PCC2.")
+        MD.resolver_umbrales(
+            ws, {c: umbral(umbrales, c, es_si) for c in pedidos_umbral},
+            ws.max_row, MOTOR_NCOLS)
 
     aplicar_unidades_motor(ws, _unidades_de(motor), es_si)
     aplicar_reglas_de_comentario(ws, _reglas_de_comentario_de(motor))
@@ -13820,7 +13915,8 @@ def _choose_b36(idx, b3610, b3619, clave, sel=None, clave_us=None):
             f"{_rango_b36(b3610, clave_us)},{_rango_b36(b3619, clave_us)})")
 
 
-def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
+def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced,
+                              col_base=None, col_valor="D"):
     """Cascada norma -> NPS -> cedula de un motor, en columnas ocultas.
 
     La regla 2 prohibe una formula como origen de una validacion, asi que cada
@@ -13833,12 +13929,23 @@ def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
 
     Devuelve {"idx": ref del indice escalar de norma, "ultima_col": ...} para que
     el llamador arme el lookup de OD/espesor con el mismo CHOOSE.
+
+    `col_base` y `col_valor` existen desde 2026-09-15, cuando el chasis
+    DECLARADO empezo a usar esta funcion. Los dos motores escritos a mano
+    tienen UNA cascada, en las columnas ocultas de COL_NORMA_B36 y con sus
+    celdas en la columna D, y por eso los dos parametros van con ese defecto:
+    llamarla como siempre hace exactamente lo de siempre. Un motor declarado
+    puede tener VARIAS -el Art. 204 lleva dos, una para el componente portador
+    y otra para la envolvente de te + caps- y entonces cada una necesita su
+    propia tanda de cuatro columnas, o la segunda pisaria las listas de la
+    primera y el desplegable ofreceria las cedulas del otro NPS.
     """
     hl = get_column_letter
     n_nps = max(b3610["n_nps"], b3619["n_nps"])
     n_ced = max(b3610["max_ced"], b3619["max_ced"])
-    col = COL_NORMA_B36
+    col = COL_NORMA_B36 if col_base is None else col_base
     L_norma, L_nps, L_ced, L_idx = (hl(col), hl(col + 1), hl(col + 2), hl(col + 3))
+    V = col_valor
 
     # Nivel 0: las dos normas, literales en la hoja (no en el formula1 de la
     # validacion: asi el origen sigue siendo un rango). Anadir una tercera norma
@@ -13847,11 +13954,11 @@ def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
     for k, n in enumerate(("B36.10M", "B36.19M")):
         ws.cell(R_DATA + k, col, n).font = SRC_F
     ws.column_dimensions[L_norma].hidden = True
-    dv_list(ws, f"D{fila_norma}", f"=${L_norma}${R_DATA}:${L_norma}${R_DATA + 1}")
+    dv_list(ws, f"{V}{fila_norma}", f"=${L_norma}${R_DATA}:${L_norma}${R_DATA + 1}")
 
     # Indice escalar 1/2 de la norma elegida, para el CHOOSE de todos los rangos.
     idx = f"${L_idx}${R_SRC}"
-    ws.cell(R_SRC, col + 3, f'=IF($D${fila_norma}="B36.10M",1,2)').font = SRC_F
+    ws.cell(R_SRC, col + 3, f'=IF(${V}${fila_norma}="B36.10M",1,2)').font = SRC_F
     ws.column_dimensions[L_idx].hidden = True
 
     # Nivel 1: NPS distintos de la norma elegida. El k-esimo es el de nps_orden=k
@@ -13863,7 +13970,7 @@ def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
                 f'MATCH({k},{_choose_b36(idx, b3610, b3619, "nps_orden")},0)),"")'
                 ).font = SRC_F
     ws.column_dimensions[L_nps].hidden = True
-    dv_list(ws, f"D{fila_nps}", f"=${L_nps}${R_DATA}:${L_nps}${R_DATA + n_nps - 1}")
+    dv_list(ws, f"{V}{fila_nps}", f"=${L_nps}${R_DATA}:${L_nps}${R_DATA + n_nps - 1}")
 
     # Nivel 2: cedulas (designador) del NPS elegido, en la norma elegida. El
     # k-esimo designador NO vacio del bloque se localiza por clave_ced = NPS&"|"&k,
@@ -13872,10 +13979,10 @@ def _materializar_cascada_b36(ws, b3610, b3619, fila_norma, fila_nps, fila_ced):
     for k in range(1, n_ced + 1):
         ws.cell(R_DATA + k - 1, col + 2,
                 f'=IFERROR(INDEX({_choose_b36(idx, b3610, b3619, "designador")},'
-                f'MATCH($D${fila_nps}&"|"&{k},'
+                f'MATCH(${V}${fila_nps}&"|"&{k},'
                 f'{_choose_b36(idx, b3610, b3619, "clave_ced")},0)),"")').font = SRC_F
     ws.column_dimensions[L_ced].hidden = True
-    dv_list(ws, f"D{fila_ced}", f"=${L_ced}${R_DATA}:${L_ced}${R_DATA + n_ced - 1}")
+    dv_list(ws, f"{V}{fila_ced}", f"=${L_ced}${R_DATA}:${L_ced}${R_DATA + n_ced - 1}")
     return {"idx": idx, "ultima_col": col + 3}
 
 
