@@ -14,7 +14,7 @@ import unicodedata
 from fractions import Fraction
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[3] / "resources" / "ASME B36"
+RAIZ = Path(__file__).resolve().parents[3] / "resources" / "asme_b36"
 RUTA_B3610 = RAIZ / "b36_10m_2022" / "table_dimensiones.json"
 RUTA_B3619 = RAIZ / "b36_19m_2022" / "table_dimensiones.json"
 

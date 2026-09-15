@@ -51,7 +51,7 @@ except ModuleNotFoundError:
 #    documento de resources/, y mezclar fuentes dentro de un mismo motor
 #    perderia la propiedad de "un motor, un JSON, un `--pdfs` para auditarlo".
 # ---------------------------------------------------------------------------
-FUENTE = ("ASME PCC/pcc_2/p2_welded_repairs/"
+FUENTE = ("asme_pcc/pcc_2/p2_welded_repairs/"
           "art_206_full_encirclement_steel/art_206.json")
 
 

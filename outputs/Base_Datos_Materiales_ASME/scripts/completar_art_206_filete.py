@@ -41,9 +41,9 @@ import sys
 from pathlib import Path
 
 MIRRORS = (
-    Path("ASME PCC") / "pcc_2" / "p2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "p2_welded_repairs"
     / "art_206_full_encirclement_steel" / "art_206.json",
-    Path("ASME PCC") / "pcc_2" / "part_2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "part_2_welded_repairs"
     / "article_206_full_encirclement_steel"
     / "article_206_full_encirclement_steel.json",
 )

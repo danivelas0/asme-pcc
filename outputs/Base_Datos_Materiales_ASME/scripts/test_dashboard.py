@@ -284,7 +284,7 @@ class TestNodoDeArticuloDerivado:
             articulo="999",
             hoja="Motor_PCC2_Art999",
             titulo="ARTICULO DE PRUEBA",
-            fuente="ASME PCC/pcc_2/articulo_999.json",
+            fuente="asme_pcc/pcc_2/articulo_999.json",
             corto="ARTICULO DE PRUEBA",
             descripcion="Descripcion del articulo de prueba",
             alcance="Alcance del articulo de prueba",
@@ -3022,7 +3022,7 @@ class TestChasisDeclarado:
         return MD.Motor(
             articulo="999", hoja="Prueba_PCC2_Art999",
             titulo="MOTOR DE PRUEBA",
-            fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+            fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
             secciones=(
                 MD.Seccion("1. APLICACION", filas=(
                     # Las dos enumeraciones que publica el propio marco, y las

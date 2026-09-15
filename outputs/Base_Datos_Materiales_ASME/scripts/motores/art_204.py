@@ -15,11 +15,11 @@ from __future__ import annotations
 
 import motor_declarado as MD
 
-FUENTE_204 = ("ASME PCC/pcc_2/p2_welded_repairs/"
+FUENTE_204 = ("asme_pcc/pcc_2/p2_welded_repairs/"
               "art_204_welded_leak_box/art_204.json")
-FUENTE_B313 = "ASME B31/ASME B31.3/CHAPTERS/chapter_02.json"
-FUENTE_TABLA_Y = "ASME B31/ASME B31.3/CHAPTERS/tables/table_304_1_1_1.json"
-FUENTE_TABLA_CIERRE = "ASME B31/ASME B31.3/CHAPTERS/tables/table_304_4_1_1.json"
+FUENTE_B313 = "asme_b31/asme_b31_3/chapters/chapter_02.json"
+FUENTE_TABLA_Y = "asme_b31/asme_b31_3/chapters/tables/table_304_1_1_1.json"
+FUENTE_TABLA_CIERRE = "asme_b31/asme_b31_3/chapters/tables/table_304_4_1_1.json"
 
 
 def _c204(bloque, clausula):

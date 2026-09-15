@@ -63,7 +63,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-SEC_II = Path("ASME_BPVC") / "Sec_II"
+SEC_II = Path("asme_bpvc") / "sec_ii"
 PARTES = ("bpvc_ii_a_1", "bpvc_ii_a_2", "bpvc_ii_b", "bpvc_ii_c")
 
 # Las 12 especificaciones del piloto: elegidas por ser las que duelen, no por

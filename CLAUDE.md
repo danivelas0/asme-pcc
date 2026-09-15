@@ -39,14 +39,14 @@ motor.
 ```
 knowledge/     Instrucciones de cálculo ASME PCC-2 en SI. Leer antes de cualquier tarea.
 resources/     Códigos y normas (JSON). Fuente única de verdad.
-               ├─ ASME B31/ASME B31.3/
+               ├─ asme_b31/asme_b31_3/
                │  ├─ APPEX/                    Apéndices A, B y C
-               │  └─ CHAPTERS/tables/          Tablas del cuerpo normativo
+               │  └─ chapters/tables/          Tablas del cuerpo normativo
                ├─ ASME B36/                    Dimensiones de tubería
                │  ├─ b36_10m_2022/             B36.10M (acero al carbono)
                │  └─ b36_19m_2022/             B36.19M (acero inoxidable)
-               ├─ ASME PCC/pcc_2/              Artículos de PCC-2
-               └─ ASME_BPVC/Sec_II/
+               ├─ asme_pcc/pcc_2/              Artículos de PCC-2
+               └─ asme_bpvc/sec_ii/
                   ├─ bpvc_ii_a_1/, a_2/, b/, c/  Partes A, B y C: texto íntegro
                   │                              de 379 especificaciones
                   ├─ bpvc_ii_d_metric_2025/    II-D métrica (MPa, °C)
@@ -498,7 +498,7 @@ python completar_apendice_a.py --resources ..\..\..\resources
 #            en el repo (copyright ASME); el ingeniero lo aporta con --pdf. El
 #            builder ABORTA si no se ha corrido (o si el cuerpo vuelve a
 #            colapsarse): Buscar_Ej_A3 no se construye con un dato que no esta.
-#   canonicas: resuelve los 32 pares de doble prefijo de CHAPTERS/tables. Si
+#   canonicas: resuelve los 32 pares de doble prefijo de chapters/tables. Si
 #            algun par deja de encajar en una de las clases mecanicas o
 #            declaradas EXTERNA, no escribe nada y lo dice.
 python completar_tabla_302_3_3.py --resources ..\..\..\resources
@@ -1608,7 +1608,7 @@ bloqueadas**. Verificado que ninguna coincide con una nota con los elementos
 en otro orden.
 
 **Comprobado también contra Sección II Partes A/B/C (2026-09-08).** Las 379
-especificaciones ya extraídas en `resources/ASME_BPVC/Sec_II/{a_1,a_2,b,c}`
+especificaciones ya extraídas en `resources/asme_bpvc/sec_ii/{a_1,a_2,b,c}`
 —no volcadas al libro, ver más abajo— no aportan ninguna cita nueva: sus
 tablas de composición imprimen rangos numéricos (%Cr, %Ni, %Mo), y
 `comp_key()` exige coincidencia literal con el vocabulario taquigráfico de

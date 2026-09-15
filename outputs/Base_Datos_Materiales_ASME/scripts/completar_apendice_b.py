@@ -55,7 +55,7 @@ import re
 import sys
 from pathlib import Path
 
-APXB = Path("ASME B31") / "ASME B31.3" / "APPEX" / "appendix_b"
+APXB = Path("asme_b31") / "asme_b31_3" / "appex" / "appendix_b"
 
 FOLIOS = {
     "table_b_1.json": [400, 401], "table_b_1c.json": [402, 403],

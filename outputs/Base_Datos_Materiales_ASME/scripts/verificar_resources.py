@@ -121,7 +121,7 @@ def localizar(pdf, pagina, muestra):
 # ---------------------------------------------------------------------------
 def bloques_pcc2(base):
     """(archivo, pagina, texto, tipo, pagina_propia) de cada bloque de PCC-2."""
-    raiz = base / "ASME PCC" / "pcc_2"
+    raiz = base / "asme_pcc" / "pcc_2"
     for p in sorted(raiz.rglob("art_*.json")):
         j = json.loads(p.read_text(encoding="utf-8"))
         for b in j.get("blocks") or []:
@@ -168,7 +168,7 @@ def _prosa(p, raiz, etiqueta):
 
 
 def bloques_b313_capitulos(base):
-    raiz = base / "ASME B31" / "ASME B31.3" / "CHAPTERS"
+    raiz = base / "asme_b31" / "asme_b31_3" / "chapters"
     for p in sorted(raiz.glob("chapter_*.json")):
         for x in _prosa(p, raiz, p.name):
             yield x
@@ -176,7 +176,7 @@ def bloques_b313_capitulos(base):
 
 def bloques_b313_apendices(base):
     """Prosa de los apendices D a Z."""
-    ap = base / "ASME B31" / "ASME B31.3" / "APPEX"
+    ap = base / "asme_b31" / "asme_b31_3" / "appex"
     for d in sorted(ap.iterdir()):
         if not d.is_dir() or d.name in ("appendix_a", "appendix_b", "appendix_c"):
             continue
@@ -194,9 +194,9 @@ def bloques_b313_tablas(base):
     general, pero un rotulo de tabla ES distintivo: se marca como 'rotulo' para
     que el auditor lo compruebe entero en vez de tomar una muestra del centro.
     """
-    b3 = base / "ASME B31" / "ASME B31.3"
-    rutas = list((b3 / "CHAPTERS" / "tables").glob("*.json"))
-    for ap in sorted((b3 / "APPEX").iterdir()):
+    b3 = base / "asme_b31" / "asme_b31_3"
+    rutas = list((b3 / "chapters" / "tables").glob("*.json"))
+    for ap in sorted((b3 / "appex").iterdir()):
         if ap.is_dir() and ap.name not in ("appendix_a", "appendix_b", "appendix_c"):
             rutas += sorted(ap.glob("*.json"))
     for p in sorted(rutas):
@@ -218,7 +218,7 @@ def bloques_iid(base, edicion):
     `verificar.py` demuestra que la hoja reproduce el JSON, no que el JSON
     reproduzca el impreso.
     """
-    raiz = base / "ASME_BPVC" / "Sec_II" / edicion
+    raiz = base / "asme_bpvc" / "sec_ii" / edicion
     for p in sorted(raiz.glob("table_*.json")):
         j = json.loads(p.read_text(encoding="utf-8"))
         pp = j.get("pdf_pages")

@@ -85,7 +85,7 @@ def _motor_minimo():
         articulo="999",
         hoja="Prueba_PCC2_Art999",
         titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. DATOS DE ENTRADA", filas=(
                 M.Fila("P", "Presion de diseno", magnitud="pres", tipo=M.ENTRADA,
@@ -276,7 +276,7 @@ def test_una_fila_de_calculo_sin_cita_aborta(tmp_path):
 
 def test_una_cita_a_un_bloque_que_no_existe_aborta(tmp_path):
     import json
-    d = tmp_path / "ASME PCC" / "pcc_2" / "p2_welded_repairs" / "art_999"
+    d = tmp_path / "asme_pcc" / "pcc_2" / "p2_welded_repairs" / "art_999"
     d.mkdir(parents=True)
     (d / "art_999.json").write_text(
         json.dumps({"blocks": [{"type": "paragraph", "text": "uno"}]}),

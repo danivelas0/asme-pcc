@@ -55,9 +55,9 @@ from pathlib import Path
 
 # Los dos espejos del Art. 210 en resources/.
 MIRRORS = (
-    Path("ASME PCC") / "pcc_2" / "p2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "p2_welded_repairs"
     / "art_210_service_welding_onto" / "art_210.json",
-    Path("ASME PCC") / "pcc_2" / "part_2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "part_2_welded_repairs"
     / "article_210_in_service_welding_onto_carbon"
     / "article_210_in_service_welding_onto_carbon.json",
 )

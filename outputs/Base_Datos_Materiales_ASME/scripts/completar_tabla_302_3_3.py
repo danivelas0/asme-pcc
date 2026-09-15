@@ -14,7 +14,7 @@ error que la Nota (4) de A-2 advierte que no se cometa. Tenia dos defectos:
    con contenido identico. Un motor que cite «la Tabla 302.3.3-1 de resources/»
    sin decir cual de los dos archivos no es auditable.
 
-   El patron es mas amplio: en `CHAPTERS/tables/` hay 32 pares con ese doble
+   El patron es mas amplio: en `chapters/tables/` hay 32 pares con ese doble
    prefijo. En 21 son identicos; en 11 NO lo son, y ahi el archivo de prefijo
    simple trae las filas ya recompuestas y el de prefijo doble los fragmentos
    crudos del corte de linea (`table_302_3_3_2.json` tiene 8 filas legibles
@@ -70,8 +70,8 @@ import re
 import sys
 from pathlib import Path
 
-TABLAS = Path("ASME B31") / "ASME B31.3" / "CHAPTERS" / "tables"
-CAPITULOS = Path("ASME B31") / "ASME B31.3" / "CHAPTERS"
+TABLAS = Path("asme_b31") / "asme_b31_3" / "chapters" / "tables"
+CAPITULOS = Path("asme_b31") / "asme_b31_3" / "chapters"
 
 CANONICO = "table_302_3_3_1.json"
 DUPLICADO = "table_table_302_3_3_1.json"
@@ -160,7 +160,7 @@ def sha256(ruta: Path) -> str:
 
 
 def censo_de_pares(base: Path):
-    """(pares totales, identicos, distintos) del doble prefijo en CHAPTERS/tables."""
+    """(pares totales, identicos, distintos) del doble prefijo en chapters/tables."""
     nombres = {p.name for p in base.glob("*.json")}
     pares = []
     for n in sorted(nombres):
@@ -234,7 +234,7 @@ def main(argv=None):
     print(f"    column_1 -> {col1}")
     print(f"    column_2 -> {col2}")
     print()
-    print(f"  censo del doble prefijo en CHAPTERS/tables: {len(pares)} pares, "
+    print(f"  censo del doble prefijo en chapters/tables: {len(pares)} pares, "
           f"{n_ident} identicos, {len(pares) - n_ident} distintos.")
     print("    En los distintos, el de prefijo SIMPLE trae las filas recompuestas.")
     print("    Fuera del alcance de este plan: no se tocan.")
@@ -256,7 +256,7 @@ def main(argv=None):
     for c, rot in zip(can["columns"], (col1, col2)):
         c["header_derivado"] = rot
         c["fuente_derivacion"] = (
-            "CHAPTERS/chapter_02.json, para. 302.3.3(c): " + c33)
+            "chapters/chapter_02.json, para. 302.3.3(c): " + c33)
     can["extraction_amendments"] = {
         "fecha": hoy,
         "script": "completar_tabla_302_3_3.py",

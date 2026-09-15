@@ -108,7 +108,7 @@ hay que declarar el motor.
 
 | Fase | Qué hace |
 |---|---|
-| **0. Localizar** | A partir del número de artículo, encuentra `art_XXX.json` en los **dos espejos** del árbol de `resources/ASME PCC/pcc_2/` (`part_N_.../article_XXX_.../` y `pN_.../art_XXX_.../`). Aborta si no está en ninguno de los dos. |
+| **0. Localizar** | A partir del número de artículo, encuentra `art_XXX.json` en los **dos espejos** del árbol de `resources/asme_pcc/pcc_2/` (`part_N_.../article_XXX_.../` y `pN_.../art_XXX_.../`). Aborta si no está en ninguno de los dos. |
 | **1. Barrer el artículo entero** | Lee el JSON **completo** —todos los `blocks`— y levanta el inventario de todo lo que el artículo publica, con el número de bloque al lado de cada hallazgo. Ver abajo: la cobertura es criterio de aceptación. |
 | **2. Declarar** | Escribe `motores/art_XXX.py`: un `Motor(...)` con sus `Seccion`, `Fila`, `Lista`, `Verificacion`, `Dictamen`, `Paso`, `Especificacion`, cada elemento de cálculo con su `Cita`. Registra los umbrales del artículo en `UMBRALES_PCC2`. Añade el motor a `MOTORES_DECLARADOS`. |
 | **3. Chasis** | `build_motor_declarado()` construye la hoja: material, listas, unidades, dictamen, semáforo, reinicio, cascada, leyenda, decimales, impresión. **Ya está escrito y se llama solo** para todo motor del registro. |

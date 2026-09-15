@@ -4,7 +4,7 @@ Transcripción del diagrama de flujo aportado por el ingeniero
 (`asmepcc2articulo206flujo.pdf`, 3 páginas, rotulado *ASME PCC-2*). Es el
 **flujo de referencia** contra el que debe alinearse el motor de cálculo del
 Art. 206 (`Collar_PCC2_Art206`). Cada paso se cruza con la cláusula del Art. 206
-en `resources/ASME PCC/pcc_2/p2_welded_repairs/art_206_full_encirclement_steel/
+en `resources/asme_pcc/pcc_2/p2_welded_repairs/art_206_full_encirclement_steel/
 art_206.json` (y su espejo `part_2_welded_repairs/...`), que es la fuente de
 verdad (Regla nº 1); si el flujo y `resources/` discreparan, manda `resources/`.
 

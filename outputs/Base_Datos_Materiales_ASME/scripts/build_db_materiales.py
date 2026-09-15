@@ -697,7 +697,7 @@ def build_material_sheet(res, wb, name, title, source, tables, family, base_temp
 # ---------------------------------------------------------------------------
 # Bases de esfuerzos y propiedades por material
 # ---------------------------------------------------------------------------
-APX = "ASME B31/ASME B31.3/APPEX"
+APX = "asme_b31/asme_b31_3/appex"
 
 
 def build_b313(res, wb, system):
@@ -725,7 +725,7 @@ def build_b313(res, wb, system):
 
 def build_iid(res, wb, system, group):
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     t = ([("1A", f"{ed}/table_1a.json")] if group == "1A"
          else [("1B", f"{ed}/table_1b.json"), ("3", f"{ed}/table_3.json")])
     base = "DB_BPVC_IID" if group == "1A" else "DB_BPVC_IID_B"
@@ -749,7 +749,7 @@ def build_iid(res, wb, system, group):
 
 def build_prop(res, wb, system, kind):
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     fn = "table_u.json" if kind == "U" else "table_y_1.json"
     tag = "U" if kind == "U" else "Y-1"
     base = "DB_Su" if kind == "U" else "DB_Sy"
@@ -787,7 +787,7 @@ GRP_COLS = ["clave", "Tabla", "clave_sf", "Grupo / material", "Detalle",
 
 def build_modulo(res, wb, system):
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     temps, recs = set(), []
     for i in range(1, 6):
         d = res.load(f"{ed}/table_tm_{i}.json")
@@ -837,7 +837,7 @@ def build_modulo(res, wb, system):
 
 def build_prd(res, wb, system):
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     d = res.load(f"{ed}/table_prd.json")
     rows = sorted(d["rows"], key=lambda r: (txt(g(r, "material_group")).upper(),
                                             txt(g(r, "material")).upper()))
@@ -870,7 +870,7 @@ def build_te(res, wb, system):
     """TE-1..5 se imprimen indexadas por temperatura con bloques de grupos.
     Se escriben tal como estan impresas (hoja de consulta con autofiltro)."""
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     name = "DB_TE" if si else "DB_TEC"
     unit = "10^-6 mm/mm/C" if si else "10^-6 in/in/F"
     ws = new_sheet(wb, name,
@@ -958,7 +958,7 @@ def _clave_fila_te1(titulo):
 
 def build_dilatacion_grupo(res, wb, system):
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     temps, recs, sin_rotulo = set(), [], []
     for i in range(1, 6):
         d = res.load(f"{ed}/table_te_{i}.json")
@@ -1826,7 +1826,7 @@ def build_ec_incremento(res, wb):
     aplica. Se cita SIEMPRE table_302_3_3_1.json: su gemelo de doble prefijo
     quedo declarado como duplicado por completar_tabla_302_3_3.py.
     """
-    fn = "ASME B31/ASME B31.3/CHAPTERS/tables/table_302_3_3_1.json"
+    fn = "asme_b31/asme_b31_3/chapters/tables/table_302_3_3_1.json"
     d = res.load(fn)
     cols = d.get("columns") or []
     if len(cols) != 2:
@@ -1980,7 +1980,7 @@ def texto_incremento_ej(res):
     a colapsarse (el sintoma que declaraba el hueco original), esto aborta en
     vez de mostrar un motor que aparenta tener el dato y no lo tiene.
     """
-    cap = res.load("ASME B31/ASME B31.3/CHAPTERS/chapter_02.json")
+    cap = res.load("asme_b31/asme_b31_3/chapters/chapter_02.json")
 
     def _txt(o):
         if isinstance(o, dict):
@@ -2000,7 +2000,7 @@ def texto_incremento_ej(res):
             "No se encuentra el para. 302.3.4(b) en chapter_02.json. Sin el, el "
             "motor de A-3 no puede declarar si el codigo publica un incremento "
             "para Ej, y no se afirma nada sin fuente.")
-    t34 = res.load("ASME B31/ASME B31.3/CHAPTERS/tables/table_302_3_4_1.json")
+    t34 = res.load("asme_b31/asme_b31_3/chapters/tables/table_302_3_4_1.json")
     nota1 = None
     for t in t34.get("notes") or []:
         m = re.search(r"NOTE:\s*\(1\)\s*(.+?\.)", clean(t) or "")
@@ -2595,7 +2595,7 @@ def build_map_grupo(res, wb, iid_infos, comp_infos, ruta_decisiones,
     # Las dos ediciones se mapean por separado contra SUS PROPIAS Notas: no
     # numeran igual y son extracciones independientes (ver extraer_notas_ii_d).
     si = system == "SI"
-    ed = "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025" if si else "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    ed = "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025" if si else "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
     nombre = "MAP_Grupo" if si else "MAP_GrupoC"
     tm_index = {}
     for i in range(1, 6):
@@ -3268,7 +3268,7 @@ def build_cat_secii(wb, datos):
                   "H": 12, "I": 12, "J": 9, "K": 9, "L": 12, "M": 52})
     ws.auto_filter.ref = f"A{R_HDR_SECII}:M{last}"
     record_meta("CAT_SecII", "Indice de las partes A/B/C",
-                "ASME_BPVC/Sec_II/{bpvc_ii_a_1,a_2,b,c}/index.json", "2025", "-",
+                "asme_bpvc/sec_ii/{bpvc_ii_a_1,a_2,b,c}/index.json", "2025", "-",
                 last - R_DATA_SECII + 1,
                 "Catalogo de las 379 entradas. Pagina PDF publicada 1-based.")
     return last
@@ -3324,7 +3324,7 @@ def build_idx_secii(wb, datos):
                   "O": 9, "P": 44, "Q": 14, "R": 60})
     ws.auto_filter.ref = f"A{R_HDR_SECII}:R{last}"
     record_meta("IDX_SecII_Tablas", "Tablas logicas de las partes A/B/C",
-                "ASME_BPVC/Sec_II/*/specifications/*.json (bloques Table -> Line)",
+                "asme_bpvc/sec_ii/*/specifications/*.json (bloques Table -> Line)",
                 "2025", "-", last - R_DATA_SECII + 1,
                 "Reparto por confianza y motivo de la fila. AMBIGUA conserva el "
                 "texto entero, no lo pierde.")
@@ -3378,7 +3378,7 @@ def build_db_secii(wb, datos, ncols_max):
         ws.auto_filter.ref = (f"A{R_HDR_SECII}:"
                               f"{get_column_letter(n_ident + ncols_max)}{lasts[nombre]}")
         record_meta(nombre, f"Tablas de {p['parte']}",
-                    f"ASME_BPVC/Sec_II/{p['parte']}/specifications/*.json",
+                    f"asme_bpvc/sec_ii/{p['parte']}/specifications/*.json",
                     "2025", "-", lasts[nombre] - R_DATA_SECII + 1,
                     "Volcado integro. Ninguna celda se rellena por "
                     "interpolacion; AMBIGUA conserva la fila entera.")
@@ -3417,7 +3417,7 @@ def build_notas_secii(wb, datos):
     autosize(ws, {"A": 14, "B": 20, "C": 7, "D": 40, "E": 11, "F": 110, "G": 22})
     ws.auto_filter.ref = f"A{R_HDR_SECII}:G{last}"
     record_meta("DB_SecII_Notas", "Notas al pie de las tablas de A/B/C",
-                "ASME_BPVC/Sec_II/*/specifications/*.json (Footnote / Text)",
+                "asme_bpvc/sec_ii/*/specifications/*.json (Footnote / Text)",
                 "2025", "-", last - R_DATA_SECII + 1, "")
     return last
 
@@ -3484,7 +3484,7 @@ def build_normalizadas_secii(wb, datos):
                               f"{max(last, R_DATA_SECII)}")
         resultados[hoja] = (last, n_tablas)
         record_meta(hoja, "Normalizada desde las tablas de A/B/C",
-                    "ASME_BPVC/Sec_II/*/specifications/*.json", "2025", "-",
+                    "asme_bpvc/sec_ii/*/specifications/*.json", "2025", "-",
                     max(last - R_DATA_SECII + 1, 0),
                     f"{n_tablas} tablas normalizadas. El resto se queda en el "
                     f"volcado integro y IDX_SecII_Tablas dice por que.")
@@ -3588,11 +3588,11 @@ def build_notas(res, wb):
     n = write_headers(ws, ["Fuente", "Tabla", "Seccion", "Nota", "Texto"])
     srcs = [("B31.3", "A-1/A-1C", f"{APX}/appendix_a/notes_tables_a_1_a_1c.json"),
             ("B31.3", "A-4/A-4C", f"{APX}/appendix_a/notes_tables_a_4_a_4c.json"),
-            ("II-D", "1A", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_1a.json"),
-            ("II-D", "1B", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_1b.json"),
-            ("II-D", "3", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_3.json"),
-            ("II-D", "U", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_u.json"),
-            ("II-D", "Y-1", "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/notes_table_y_1.json")]
+            ("II-D", "1A", "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/notes_table_1a.json"),
+            ("II-D", "1B", "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/notes_table_1b.json"),
+            ("II-D", "3", "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/notes_table_3.json"),
+            ("II-D", "U", "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/notes_table_u.json"),
+            ("II-D", "Y-1", "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/notes_table_y_1.json")]
     recs = []
     total = 0
     for code, tab, f in srcs:
@@ -7312,17 +7312,17 @@ SEED_ART212_COLLAR = 'A-1 | A516 | 70 | Plate, bar, shps., sheet | K02700 | P-1'
 
 # Ruta de los dos apendices del App. 501 en resources/ (reparados en la Fase 0.2
 # del plan del Art. 212: la extraccion habia colapsado la capa de texto).
-_ART_212_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+_ART_212_JSON = ("asme_pcc/pcc_2/p2_welded_repairs/"
                  "art_212_fillet_welded_patches/art_212.json")
-_ART_206_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+_ART_206_JSON = ("asme_pcc/pcc_2/p2_welded_repairs/"
                  "art_206_full_encirclement_steel/art_206.json")
 # El Art. 210 NO es un motor del libro: se cita desde el Art. 204, que le
 # remite la soldadura en servicio (`para. 204-4.4`). Por eso entra como RUTA.
-_ART_210_JSON = ("ASME PCC/pcc_2/p2_welded_repairs/"
+_ART_210_JSON = ("asme_pcc/pcc_2/p2_welded_repairs/"
                  "art_210_service_welding_onto/art_210.json")
-_APP_501_II = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
+_APP_501_II = ("asme_pcc/pcc_2/p5_examination/art_501_pressure_tightness/app/"
                "app_501_ii/app_501_ii.json")
-_APP_501_III = ("ASME PCC/pcc_2/p5_examination/art_501_pressure_tightness/app/"
+_APP_501_III = ("asme_pcc/pcc_2/p5_examination/art_501_pressure_tightness/app/"
                 "app_501_iii/app_501_iii.json")
 
 
@@ -7980,7 +7980,7 @@ def build_parche_art212(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     # "diseno tipico" intermedio y una "envolvente". Ese caso intermedio no lo
     # pide el codigo: 212-3.2 define una UNICA P = "internal design pressure"
     # para las ec. (1)/(2) —comprobado en
-    # resources/ASME PCC/pcc_2/p2_welded_repairs/art_212_fillet_welded_patches/
+    # resources/asme_pcc/pcc_2/p2_welded_repairs/art_212_fillet_welded_patches/
     # art_212.json, Regla n.1— y el Art. 206, que comparte modelo de presion en
     # este libro, es explicito en 206-3.3: el espesor se dimensiona contra "the
     # maximum allowable design pressure". Mantener el caso intermedio ademas de
@@ -9327,7 +9327,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     frio (esas son del Art. 212): remite al codigo de construccion para el
     t_req (206-3.3) y solo anade reglas geometricas impresas en el propio
     articulo (206-3.1, 206-3.2, 206-3.4, 206-3.5), citadas de
-    resources/ASME PCC/pcc_2/p2_welded_repairs/art_206_full_encirclement_steel.
+    resources/asme_pcc/pcc_2/p2_welded_repairs/art_206_full_encirclement_steel.
     """
     if umbrales is None:
         raise SystemExit(
@@ -9338,7 +9338,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     ws = new_sheet(wb, COLLAR_MOTOR,
                    "MOTOR DE CALCULO — COLLAR DE ENCIERRO TOTAL (ASME PCC-2 Art. 206)",
                    "ASME PCC-2 Art. 206 (Full Encirclement Steel Reinforcing Sleeves), "
-                   "Type A y Type B. Fuente: resources/ASME PCC/pcc_2/"
+                   "Type A y Type B. Fuente: resources/asme_pcc/pcc_2/"
                    "p2_welded_repairs/art_206_full_encirclement_steel/art_206.json")
     # Titulo y subtitulo fusionados A:G, igual que en el Art. 212. Sin el merge,
     # el titulo se cortaba a media palabra —«[ MOTOR DE CALCULO // COLLAR DE
@@ -9535,7 +9535,7 @@ def build_collar_art206(wb, b313, iid1a, iidb, fac_info, rangos, b3610, b3619,
     inp("D26", 5, com26_206)
     # Fase 2 (modelo de presion de 2 casos, igual que el Art. 212). La fila 27
     # —"Presion de diseno tipica"— se retira: 206-3.3 dimensiona contra "the
-    # maximum allowable design pressure" (resources/ASME PCC/pcc_2/
+    # maximum allowable design pressure" (resources/asme_pcc/pcc_2/
     # p2_welded_repairs/art_206_full_encirclement_steel/art_206.json, Regla n.1),
     # no contra un valor tipico intermedio. Tener las dos dejaba dos columnas
     # compitiendo por gobernar el T_s,min. La fila 27 queda vacia a proposito.
@@ -13849,7 +13849,7 @@ def build_db_b36(wb, norma):
     filas.sort(key=lambda f: (f["nps_in"] if f["nps_in"] is not None else 1e9,
                               f["t_mm"] if f["t_mm"] is not None else 1e9))
     ws = new_sheet(wb, nombre, titulo,
-                   f"Fuente: resources/ASME B36/{ruta.parent.name}/{ruta.name}")
+                   f"Fuente: resources/asme_b36/{ruta.parent.name}/{ruta.name}")
     for j, h in enumerate(CABECERA_B36, start=1):
         c = ws.cell(R_HDR, j, h)
         c.font, c.fill, c.border = HDR_F, HDR_FILL, BOX_FRANJA
@@ -14256,14 +14256,14 @@ def main(argv=None):
         "A-1 + A-4 -> DB_B31_3":
             f"{len(res.rows(f'{APX}/appendix_a/table_a_1.json')) + len(res.rows(f'{APX}/appendix_a/table_a_4.json'))}"
             f" -> {b313['last_row'] - R_DATA + 1}",
-        "1A -> DB_BPVC_IID": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1a.json'))}"
+        "1A -> DB_BPVC_IID": f"{len(res.rows('asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/table_1a.json'))}"
                              f" -> {iid['last_row'] - R_DATA + 1}",
         "1B + 3 -> DB_BPVC_IID_B":
-            f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_1b.json')) + len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_3.json'))}"
+            f"{len(res.rows('asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/table_1b.json')) + len(res.rows('asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/table_3.json'))}"
             f" -> {iidb['last_row'] - R_DATA + 1}",
-        "U -> DB_Su": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_u.json'))}"
+        "U -> DB_Su": f"{len(res.rows('asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/table_u.json'))}"
                       f" -> {su['last_row'] - R_DATA + 1}",
-        "Y-1 -> DB_Sy": f"{len(res.rows('ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025/table_y_1.json'))}"
+        "Y-1 -> DB_Sy": f"{len(res.rows('asme_bpvc/sec_ii/bpvc_ii_d_metric_2025/table_y_1.json'))}"
                         f" -> {sy['last_row'] - R_DATA + 1}",
         "MAP_Grupo": " · ".join(f"{k}={v}" for k, v in map_stats.items()),
         "MAP_GrupoC": " · ".join(f"{k}={v}" for k, v in mapc_stats.items()),

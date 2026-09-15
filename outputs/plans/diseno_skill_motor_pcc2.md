@@ -47,7 +47,7 @@ La skill no escribe 1 400 líneas de `calc("D45", "=...")`. Escribe una **declar
 artículo, y un **chasis** la convierte en hoja:
 
 ```
-resources/ASME PCC/pcc_2/.../art_211.json
+resources/asme_pcc/pcc_2/.../art_211.json
         │  (Fase 1: lectura + parada de ingeniería)
         ▼
 outputs/Base_Datos_Materiales_ASME/scripts/motores/art_211.py     ← la DECLARACIÓN
@@ -93,7 +93,7 @@ MOTOR_211 = Motor(
     articulo="211",
     hoja="Recargue_PCC2_Art211",
     titulo="MOTOR DE CALCULO — RECARGUE POR SOLDADURA (ASME PCC-2 Art. 211)",
-    fuente="ASME PCC/pcc_2/p2_welded_repairs/art_211_weld_buildup_weld/art_211.json",
+    fuente="asme_pcc/pcc_2/p2_welded_repairs/art_211_weld_buildup_weld/art_211.json",
     aplicacion=SELECTOR_GEOMETRIA,        # o un código fijo, si el artículo no varía
     casos=("Operacion", "Diseno"),        # 1 o 2 columnas de caso
     material=Material(columnas=(("D", "Metal base"),), incluir_ej_ec=False),

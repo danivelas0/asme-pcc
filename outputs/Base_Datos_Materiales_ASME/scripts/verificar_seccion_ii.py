@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 verificar_seccion_ii - audita las partes A, B y C de ASME BPVC Seccion II
-cargadas en `resources/ASME_BPVC/Sec_II/` contra sus PDF de origen.
+cargadas en `resources/asme_bpvc/sec_ii/` contra sus PDF de origen.
 
 QUE COMPRUEBA, Y POR QUE
 ------------------------
@@ -40,7 +40,7 @@ import sys
 import unicodedata
 from pathlib import Path
 
-SEC_II = Path("ASME_BPVC") / "Sec_II"
+SEC_II = Path("asme_bpvc") / "sec_ii"
 
 # carpeta en resources  ->  nombre del PDF
 PARTES = {

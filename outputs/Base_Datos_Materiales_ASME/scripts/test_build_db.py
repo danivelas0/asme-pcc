@@ -105,7 +105,7 @@ class TestNotasDeGrupoEnResources:
     """Las Notas de TM-1 y TE-1 deben estar completas en resources/."""
 
     @staticmethod
-    def _notas(archivo, edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
+    def _notas(archivo, edicion="asme_bpvc/sec_ii/bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" /
                 edicion / archivo)
@@ -166,7 +166,7 @@ class TestNotasEnLasDosEdiciones:
     # staticmethod() explicito: al reasignar la funcion como atributo de clase
     # se pierde el descriptor y Python volveria a inyectar `self` como 1er arg.
     _N = staticmethod(TestNotasDeGrupoEnResources._notas)
-    US = "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"
+    US = "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"
 
     def test_la_edicion_us_trae_sus_notas(self):
         assert {n["grupo"] for n in self._N("table_tm_1.json", self.US)
@@ -199,7 +199,7 @@ class TestNotasEnLasDosEdiciones:
                     "table_tm_1.json")
             with open(ruta, encoding="utf-8") as fh:
                 return B.notas_referenciadas(json.load(fh))
-        assert tabla("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025")["Material Group H"] == "(9)"
+        assert tabla("asme_bpvc/sec_ii/bpvc_ii_d_metric_2025")["Material Group H"] == "(9)"
         assert tabla(self.US)["Material Group H"] == "(8)"
 
     def test_la_pertenencia_es_la_misma_en_ambas_ediciones(self):
@@ -471,7 +471,7 @@ class TestColumnasNombradasTE1:
     """TE-1 publica dilatacion en columnas que se autodescriben, no solo por Grupo."""
 
     @staticmethod
-    def _cols(edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
+    def _cols(edicion="asme_bpvc/sec_ii/bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" / edicion /
                 "table_te_1.json")
@@ -504,7 +504,7 @@ class TestColumnasNombradasTE1:
         # La metrica rotula «7% Nickel Steel» y la US «7Ni Steels»: es la misma
         # columna. Sin unificarlo, el mismo material tendria dilatacion en una
         # hoja y no en la otra.
-        si, us = self._cols(), self._cols("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")
+        si, us = self._cols(), self._cols("asme_bpvc/sec_ii/bpvc_ii_d_customary_2025")
         assert set(si) == set(us)
         for k in si:
             assert (si[k][1] or "") == (us[k][1] or ""), k
@@ -525,7 +525,7 @@ class TestCondicionesTratamientoTE1:
     impreso (Clase/Cond./Temple)."""
 
     @staticmethod
-    def _cond(edicion="ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025"):
+    def _cond(edicion="asme_bpvc/sec_ii/bpvc_ii_d_metric_2025"):
         import json
         ruta = (Path(__file__).resolve().parents[3] / "resources" / edicion /
                 "table_te_1.json")
@@ -545,7 +545,7 @@ class TestCondicionesTratamientoTE1:
         assert "9CR-1MO" not in c
 
     def test_las_dos_ediciones_dan_las_mismas_condiciones(self):
-        si, us = self._cond(), self._cond("ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025")
+        si, us = self._cond(), self._cond("asme_bpvc/sec_ii/bpvc_ii_d_customary_2025")
         assert set(si["17CR-4NI-4CU"]) == set(us["17CR-4NI-4CU"])
 
 
@@ -591,8 +591,8 @@ class TestEtiquetaColumnaBTE1:
         # build lo explique.
         import json
         base = Path(__file__).resolve().parents[3] / "resources"
-        for edicion in ("ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025",
-                        "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"):
+        for edicion in ("asme_bpvc/sec_ii/bpvc_ii_d_metric_2025",
+                        "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"):
             for i in range(1, 6):
                 ruta = base / edicion / f"table_te_{i}.json"
                 with open(ruta, encoding="utf-8") as fh:
@@ -776,8 +776,8 @@ class TestApendiceCCompletado:
     @staticmethod
     def _tabla(archivo):
         import json
-        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
-                "ASME B31.3" / "APPEX" / "appendix_c" / archivo)
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "asme_b31" /
+                "asme_b31_3" / "appex" / "appendix_c" / archivo)
         with open(ruta, encoding="utf-8") as fh:
             return json.load(fh)
 
@@ -884,8 +884,8 @@ class TestApendiceBCorregido:
     @staticmethod
     def _tabla(archivo):
         import json
-        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
-                "ASME B31.3" / "APPEX" / "appendix_b" / archivo)
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "asme_b31" /
+                "asme_b31_3" / "appex" / "appendix_b" / archivo)
         with open(ruta, encoding="utf-8") as fh:
             return json.load(fh)
 
@@ -975,8 +975,8 @@ class TestApendiceACorregido:
     @staticmethod
     def _tabla(archivo):
         import json
-        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
-                "ASME B31.3" / "APPEX" / "appendix_a" / archivo)
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "asme_b31" /
+                "asme_b31_3" / "appex" / "appendix_a" / archivo)
         with open(ruta, encoding="utf-8") as fh:
             return json.load(fh)
 
@@ -1102,8 +1102,8 @@ class TestFactoresDeCalidad:
     @staticmethod
     def _tabla(archivo, sub="APPEX/appendix_a"):
         import json
-        ruta = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
-                "ASME B31.3")
+        ruta = (Path(__file__).resolve().parents[3] / "resources" / "asme_b31" /
+                "asme_b31_3")
         for parte in sub.split("/"):
             ruta = ruta / parte
         with open(ruta / archivo, encoding="utf-8") as fh:
@@ -1170,7 +1170,7 @@ class TestFactoresDeCalidad:
         assert any(x["detalle"] and "corte de pagina" in x["detalle"] for x in recs)
 
     def test_la_tabla_302_3_3_1_publica_los_seis_examenes(self):
-        d = self._tabla("table_302_3_3_1.json", "CHAPTERS/tables")
+        d = self._tabla("table_302_3_3_1.json", "chapters/tables")
         assert [r["column_2"] for r in d["rows"]] == [0.85, 0.85, 0.95, 0.9, 1.0, 1.0]
         assert d["rows"][4]["column_1"] == "(1) and (3)(a) or (3)(b)"
 
@@ -1178,18 +1178,18 @@ class TestFactoresDeCalidad:
         # Existen table_302_3_3_1.json y table_table_302_3_3_1.json. Sin declarar
         # cual manda, el motor citaria una fuente ambigua.
         am = self._tabla("table_302_3_3_1.json",
-                         "CHAPTERS/tables")["extraction_amendments"]
+                         "chapters/tables")["extraction_amendments"]
         assert am["archivo_canonico"] == "table_302_3_3_1.json"
         assert am["duplicado_descartado"]["archivo"] == "table_table_302_3_3_1.json"
         assert len(am["duplicado_descartado"]["sha256"]) == 64
-        dup = self._tabla("table_table_302_3_3_1.json", "CHAPTERS/tables")
+        dup = self._tabla("table_table_302_3_3_1.json", "chapters/tables")
         assert dup["superseded_by"]["archivo"] == "table_302_3_3_1.json"
 
     def test_los_rotulos_de_columna_son_derivados_y_lo_dicen(self):
         # El impreso no se capturo y el PDF no esta en el repositorio: los
         # rotulos salen del para. 302.3.3(c) y llevan su procedencia. El campo
         # `header` sigue en null porque sigue siendo verdad que falta.
-        cols = self._tabla("table_302_3_3_1.json", "CHAPTERS/tables")["columns"]
+        cols = self._tabla("table_302_3_3_1.json", "chapters/tables")["columns"]
         assert all(c["header"] is None for c in cols)
         assert "supplementary examination" in cols[0]["header_derivado"]
         assert "Ec" in cols[1]["header_derivado"]
@@ -1230,14 +1230,14 @@ class TestFactoresDeCalidad:
 
 
 # ---------------------------------------------------------------------------
-# El doble prefijo de CHAPTERS/tables y el hueco de la Tabla 302.3.4-1
+# El doble prefijo de chapters/tables y el hueco de la Tabla 302.3.4-1
 # ---------------------------------------------------------------------------
 # 66 archivos que son 32 pares, y en 11 de ellos el contenido DIFIERE. Citar "la
 # Tabla X de resources/" sin decir cual de los dos archivos no es auditable.
 class TestTablasCanonicas:
 
-    RUTA = (Path(__file__).resolve().parents[3] / "resources" / "ASME B31" /
-            "ASME B31.3" / "CHAPTERS" / "tables")
+    RUTA = (Path(__file__).resolve().parents[3] / "resources" / "asme_b31" /
+            "asme_b31_3" / "chapters" / "tables")
 
     @classmethod
     def _json(cls, nombre):

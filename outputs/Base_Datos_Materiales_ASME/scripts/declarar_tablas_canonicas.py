@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 declarar_tablas_canonicas - resuelve el doble prefijo de
-`resources/ASME B31/ASME B31.3/CHAPTERS/tables/`.
+`resources/asme_b31/asme_b31_3/chapters/tables/`.
 
 EL PROBLEMA
 -----------
@@ -78,7 +78,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-TABLAS = Path("ASME B31") / "ASME B31.3" / "CHAPTERS" / "tables"
+TABLAS = Path("asme_b31") / "asme_b31_3" / "chapters" / "tables"
 
 # Claves que escribe esta herramienta (y su hermana de la 302.3.3-1). Se ignoran
 # al comparar para que una segunda corrida no crea que el contenido cambio.
@@ -261,7 +261,7 @@ def main(argv=None):
         (decididos if clase else sin_criterio).append((simple, doble, clase, da, db))
 
     print("=" * 78)
-    print(f"Doble prefijo en CHAPTERS/tables: {len(pares)} pares")
+    print(f"Doble prefijo en chapters/tables: {len(pares)} pares")
     print("=" * 78)
     for clase in CLASES:
         del_clase = [p for p in decididos if p[2] == clase]

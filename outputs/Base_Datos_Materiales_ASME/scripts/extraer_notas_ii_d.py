@@ -306,7 +306,7 @@ TABLAS = [("TM-1", "table_tm_1.json"), ("TE-1", "table_te_1.json")]
 
 # Las dos ediciones se extraen por separado, cada una de su propio PDF. No son
 # conversiones una de otra y tampoco numeran igual sus notas.
-EDICIONES = {"si": "ASME_BPVC/Sec_II/bpvc_ii_d_metric_2025", "us": "ASME_BPVC/Sec_II/bpvc_ii_d_customary_2025"}
+EDICIONES = {"si": "asme_bpvc/sec_ii/bpvc_ii_d_metric_2025", "us": "asme_bpvc/sec_ii/bpvc_ii_d_customary_2025"}
 
 
 def main(argv=None) -> int:

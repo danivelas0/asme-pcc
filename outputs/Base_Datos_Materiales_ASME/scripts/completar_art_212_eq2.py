@@ -45,9 +45,9 @@ from pathlib import Path
 # `figure` de la ec. (2) por su PNG (el mismo diagrama en las dos ramas, con
 # nombre de archivo distinto por como se nombro la extraccion de cada espejo).
 MIRRORS = (
-    Path("ASME PCC") / "pcc_2" / "p2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "p2_welded_repairs"
     / "art_212_fillet_welded_patches" / "art_212.json",
-    Path("ASME PCC") / "pcc_2" / "part_2_welded_repairs"
+    Path("asme_pcc") / "pcc_2" / "part_2_welded_repairs"
     / "article_212_fillet_welded_patches"
     / "article_212_fillet_welded_patches.json",
 )

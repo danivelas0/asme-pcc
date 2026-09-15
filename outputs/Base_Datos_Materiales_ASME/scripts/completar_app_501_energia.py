@@ -60,9 +60,9 @@ import re
 import sys
 from pathlib import Path
 
-APP_II = (Path("ASME PCC") / "pcc_2" / "p5_examination"
+APP_II = (Path("asme_pcc") / "pcc_2" / "p5_examination"
           / "art_501_pressure_tightness" / "app" / "app_501_ii" / "app_501_ii.json")
-APP_III = (Path("ASME PCC") / "pcc_2" / "p5_examination"
+APP_III = (Path("asme_pcc") / "pcc_2" / "p5_examination"
            / "art_501_pressure_tightness" / "app" / "app_501_iii" / "app_501_iii.json")
 
 # Procedencia: el PDF del codigo (fuera del repo, copyright ASME). El SHA-256 se

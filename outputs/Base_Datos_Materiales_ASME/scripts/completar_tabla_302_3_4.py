@@ -47,7 +47,7 @@ import re
 import sys
 from pathlib import Path
 
-TABLAS = Path("ASME B31") / "ASME B31.3" / "CHAPTERS" / "tables"
+TABLAS = Path("asme_b31") / "asme_b31_3" / "chapters" / "tables"
 CANONICO = "table_302_3_4_1.json"
 
 # Transcripcion literal de la Tabla 302.3.4-1, verificada contra el PDF citado

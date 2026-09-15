@@ -310,7 +310,7 @@ número que tendría que inventar.
 SHA-256 del descartado— y recupera los rótulos del propio código, del
 para. 302.3.3(c), dejándolos como `header_derivado` con su procedencia; el campo
 `header` **sigue en null**, porque sigue siendo verdad que el impreso no se capturó.
-De paso deja censado el patrón: en `CHAPTERS/tables/` hay **32 pares** con doble
+De paso deja censado el patrón: en `chapters/tables/` hay **32 pares** con doble
 prefijo, 21 idénticos y 11 distintos, y en los distintos el de prefijo simple es la
 extracción buena. Los otros 31 pares no se tocan.
 

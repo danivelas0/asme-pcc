@@ -4,7 +4,7 @@ Transcripción del diagrama de flujo aportado por el ingeniero
 (`flujo_proceso_art_212.pdf`, 3 páginas, rotulado *ASME PCC-2–2022*). Es el
 **flujo de referencia** contra el que debe alinearse el motor de cálculo del
 Art. 212. Cada paso se cruza con la cláusula del Art. 212 en
-`resources/ASME PCC/pcc_2/.../article_212_fillet_welded_patches.json`, que es
+`resources/asme_pcc/pcc_2/.../article_212_fillet_welded_patches.json`, que es
 la fuente de verdad (Regla nº 1); si el flujo y `resources/` discreparan,
 manda `resources/`.
 

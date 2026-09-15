@@ -73,7 +73,7 @@ import re
 import sys
 from pathlib import Path
 
-APXC = Path("ASME B31") / "ASME B31.3" / "APPEX" / "appendix_c"
+APXC = Path("asme_b31") / "asme_b31_3" / "appex" / "appendix_c"
 OCR_POR_DEFECTO = "ocr_apendice_c_datalab.json"
 
 # Folios impresos del PDF aportado (24 paginas del escaneo -> 407..428 impresos).

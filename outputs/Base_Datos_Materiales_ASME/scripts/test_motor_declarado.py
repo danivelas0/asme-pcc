@@ -9,7 +9,7 @@ def _motor_minimo():
         articulo="999",
         hoja="Prueba_PCC2_Art999",
         titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. DATOS DE ENTRADA", filas=(
                 M.Fila("P", "Presion de diseno", magnitud="pres", tipo=M.ENTRADA,
@@ -58,7 +58,7 @@ def _motor_sin_formulas():
         articulo="999",
         hoja="Prueba_PCC2_Art999",
         titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. DATOS DE ENTRADA", filas=(
                 M.Fila("P", "Presion de diseno", tipo=M.ENTRADA, ejemplo=20),
@@ -110,7 +110,7 @@ def test_un_paso_con_solo_entradas_no_aborta_por_procedencia(tmp_path):
 
 def test_una_cita_a_un_bloque_que_no_existe_aborta(tmp_path):
     import json
-    d = tmp_path / "ASME PCC" / "pcc_2" / "p2_welded_repairs" / "art_999"
+    d = tmp_path / "asme_pcc" / "pcc_2" / "p2_welded_repairs" / "art_999"
     d.mkdir(parents=True)
     (d / "art_999.json").write_text(
         json.dumps({"blocks": [{"type": "paragraph", "text": "uno"}]}),
@@ -186,7 +186,7 @@ def _motor_dos_secciones():
         articulo="999",
         hoja="Prueba_PCC2_Art999",
         titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. DATOS DE ENTRADA", filas=(
                 M.Fila("P", "Presion", tipo=M.ENTRADA, ejemplo=20),
@@ -244,7 +244,7 @@ def _motor_con_pasos():
         articulo="999",
         hoja="Prueba_PCC2_Art999",
         titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. DATOS DE ENTRADA", filas=(
                 M.Fila("P", "Presion", tipo=M.ENTRADA, ejemplo=20),
@@ -297,7 +297,7 @@ def test_emitir_tabla_escribe_en_la_direccion_que_resolver_direcciones_devuelve_
 def _json_de_prueba(tmp_path, blocks):
     """Escribe el art_999.json que citan los motores de prueba."""
     import json
-    d = tmp_path / "ASME PCC" / "pcc_2" / "p2_welded_repairs" / "art_999"
+    d = tmp_path / "asme_pcc" / "pcc_2" / "p2_welded_repairs" / "art_999"
     d.mkdir(parents=True, exist_ok=True)
     (d / "art_999.json").write_text(json.dumps({"blocks": blocks}),
                                     encoding="utf-8")
@@ -381,7 +381,7 @@ def _motor_con_dictamen():
     cita = M.Cita("art_999.json", bloque=0, clausula="999-3.2")
     return M.Motor(
         articulo="999", hoja="Prueba_PCC2_Art999", titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(
             M.Seccion("1. APLICACION", filas=(
                 M.Fila("unidad", "Sistema de unidades", tipo=M.LISTA,
@@ -463,7 +463,7 @@ def _motor_con_lista(lista):
     """Un motor de una sola fila LISTA, para ejercer los guardias."""
     return M.Motor(
         articulo="999", hoja="Prueba_PCC2_Art999", titulo="MOTOR DE PRUEBA",
-        fuente="ASME PCC/pcc_2/p2_welded_repairs/art_999/art_999.json",
+        fuente="asme_pcc/pcc_2/p2_welded_repairs/art_999/art_999.json",
         secciones=(M.Seccion("1. DATOS", filas=(
             M.Fila("NPS", "Diametro nominal", tipo=M.LISTA, lista=lista),
         )),),
@@ -766,7 +766,7 @@ def test_el_ejemplo_que_si_esta_entre_los_items_pasa():
 from pathlib import Path as _Path
 
 _RESOURCES = _Path(__file__).resolve().parents[3] / "resources"
-_B313_CAP2 = "ASME B31/ASME B31.3/CHAPTERS/chapter_02.json"
+_B313_CAP2 = "asme_b31/asme_b31_3/chapters/chapter_02.json"
 
 
 def _segundo_json(tmp_path, blocks, rel="otro/art_888.json"):
